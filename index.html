@@ -6327,9 +6327,9 @@ function say(text){
     if(tk) headers["x-hq-token"]=tk;
   }catch(e){}
 
-  /* ?route= goes straight at the function, so a new route never needs a
-     vercel.json rewrite — one less file to upload and one less thing to forget. */
-  fetch("/api/hq?route=speak",{
+  /* api/voice.js is its own function. Editing hq.js in place kept failing on
+     GitHub, and there was no reason to put these routes in there anyway. */
+  fetch("/api/voice?route=speak",{
     method:"POST", headers:headers,
     body:JSON.stringify({text:clean.slice(0,1200), agent:who})
   }).then(function(r){
@@ -8128,7 +8128,7 @@ function placeCall(name, number){
   var headers={"Content-Type":"application/json"};
   try{ var tk=localStorage.getItem("exodus_hq_token"); if(tk) headers["x-hq-token"]=tk; }catch(e){}
 
-  fetch("/api/hq?route=call",{method:"POST",headers:headers,body:JSON.stringify({to:tel,name:name})})
+  fetch("/api/voice?route=call",{method:"POST",headers:headers,body:JSON.stringify({to:tel,name:name})})
     .then(function(r){
       return r.json().catch(function(){return {};}).then(function(j){
         if(!r.ok){
