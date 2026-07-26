@@ -23,12 +23,16 @@
 <style>
 :root{
   color-scheme: dark;
-  --blk:#05070b; --blk2:#0a0e14; --blk3:#10151d; --blk4:#1a212b;
-  --blu:#3b82f6; --blu2:#7dd3fc; --blu3:#60a5fa; --ice:#22d3ee;
-  /* page, panel, raised surface */
-  --paper:#070910; --paper2:#0d1219; --raise:#141b25;
-  --ink:#e7ebf2; --mut:#8b95a6; --line:#232c38;
-  --green:#4ade80; --red:#f87171; --amber:#fbbf24;
+  /* A working palette, not a neon one. Neutral graphite surfaces stepped a few
+     shades apart so panels read as panels, one restrained blue used only for
+     what is interactive, and status colours desaturated to the point where a
+     screen full of them still looks like business software. */
+  --blk:#12141a; --blk2:#171a21; --blk3:#1e2229; --blk4:#272c35;
+  --blu:#4b7bd4; --blu2:#8fb3e8; --blu3:#6d97dd; --ice:#5fa8b8;
+  /* page, panel, raised surface — each step clearly lighter than the last */
+  --paper:#14171d; --paper2:#1b1f26; --raise:#22262f;
+  --ink:#eceef2; --mut:#98a0ae; --line:#2f3540;
+  --green:#5fb37c; --red:#d4736f; --amber:#c9a25c;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
@@ -36,13 +40,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-s
 .wrap{max-width:1700px;margin:0 auto;padding:12px 16px 60px}
 
 /* ============ MASTHEAD ============ */
-.top{position:relative;overflow:hidden;border-radius:16px;padding:0;
-  background:linear-gradient(155deg,#070910 0%,#0d1422 48%,#080b12 100%);
-  box-shadow:0 18px 50px rgba(6,8,14,.5), inset 0 1px 0 rgba(255,255,255,.06)}
+.top{position:relative;overflow:hidden;border-radius:14px;padding:0;
+  background:linear-gradient(160deg,#1b1f26 0%,#1e232b 55%,#191d24 100%);
+  border:1px solid #2f3540;
+  box-shadow:0 10px 28px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05)}
+/* the two big coloured washes are gone — a masthead should not glow */
 .top:before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(80% 130% at 8% -30%, rgba(47,111,237,.34), transparent 60%),
-    radial-gradient(60% 110% at 96% 0%, rgba(34,211,238,.16), transparent 62%)}
+  background:radial-gradient(70% 120% at 10% -30%, rgba(75,123,212,.10), transparent 62%)}
 .top:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
   background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
     linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
@@ -154,6 +158,85 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
 .dlr.nodial{opacity:.62}
 .dlbad{display:block;font-style:normal;font-size:10px;color:#fca5a5;margin-top:3px}
 
+/* ---- the sort bar ---- */
+.sortbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 12px;padding:0 2px}
+.sb-l{display:flex;align-items:center;gap:7px;font-size:9px;font-weight:800;letter-spacing:1.3px;
+  text-transform:uppercase;color:var(--mut)}
+.sb-l select{background:var(--raise);border:1px solid var(--line);border-radius:8px;
+  padding:8px 11px;color:var(--ink);font-family:inherit;font-size:12.5px;font-weight:600}
+.sb-l select:focus{outline:none;border-color:var(--blu)}
+.sb-b{background:var(--raise);border:1px solid var(--line);border-radius:8px;padding:8px 13px;
+  color:var(--mut);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.sb-b:hover{color:var(--ink);border-color:#3d4552}
+.sb-b.on{border-color:var(--blu);color:#cfe0ff;background:rgba(75,123,212,.14)}
+.sb-b.due{border-color:rgba(212,115,111,.5);color:#e6a5a2;background:rgba(212,115,111,.12)}
+.sb-n{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--mut);font-variant-numeric:tabular-nums}
+
+/* ---- the source sheet ---- */
+.srcbar{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:18px;padding:13px 15px;
+  border-radius:11px;background:var(--paper2);border:1px solid var(--line)}
+.src-l{font-size:9px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--mut)}
+.src-a{font-size:13px;font-weight:700;color:var(--blu2);text-decoration:none}
+.src-a:hover{text-decoration:underline;color:#c2d8f7}
+.src-n{flex:1 1 100%;font-size:11px;color:var(--mut);line-height:1.5}
+
+/* ---- the came-in cell ---- */
+.camecell input.cin-came{width:100%;background:var(--paper2);border:1px solid transparent;
+  border-radius:6px;padding:5px 7px;color:var(--ink);font-family:inherit;font-size:12px}
+.camecell input.cin-came:hover{border-color:var(--line);background:var(--raise)}
+.camecell input.cin-came:focus{outline:none;border-color:var(--blu);
+  box-shadow:0 0 0 3px rgba(75,123,212,.2)}
+.fuflag{display:inline-block;margin-top:4px;font-size:8.5px;font-weight:800;letter-spacing:.9px;
+  text-transform:uppercase;border-radius:20px;padding:2px 8px}
+.fuflag.soon{background:rgba(75,123,212,.15);color:#9dbdf0}
+.fuflag.tod{background:rgba(201,162,92,.18);color:#e0c48a}
+.fuflag.od{background:rgba(212,115,111,.18);color:#e6a5a2}
+
+/* ---- the record block on a lead ---- */
+.lc-rec{margin-top:15px;padding:15px;border-radius:12px;background:var(--paper2);
+  border:1px solid var(--line)}
+.lc-rec-h{font-size:9px;font-weight:800;letter-spacing:1.7px;text-transform:uppercase;
+  color:var(--mut);margin-bottom:12px}
+.lc-due{margin-top:11px;padding:10px 12px;border-radius:9px;font-size:12px;font-weight:700;
+  background:rgba(75,123,212,.12);border:1px solid rgba(75,123,212,.32);color:#bcd4f7}
+.lc-due.tod{background:rgba(201,162,92,.14);border-color:rgba(201,162,92,.4);color:#e6cf9b}
+.lc-due.od{background:rgba(212,115,111,.14);border-color:rgba(212,115,111,.42);color:#eeb4b1}
+
+/* ---- the dialer queue ---- */
+.dl{display:flex;flex-direction:column;gap:8px}
+.dlr{display:flex;align-items:flex-start;gap:12px;padding:14px 15px;border-radius:11px;
+  background:var(--paper2);border:1px solid var(--line);border-left:3px solid var(--line)}
+.dl-i{flex:none;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;
+  justify-content:center;background:var(--raise);border:1px solid var(--line);
+  font-size:11px;font-weight:800;color:var(--mut);font-variant-numeric:tabular-nums}
+.dlm{flex:1;min-width:0}
+.dlm b{display:block;font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+.dl-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:5px}
+.dl-st{font-size:8.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--sc);border:1px solid color-mix(in srgb,var(--sc) 40%,transparent);
+  background:color-mix(in srgb,var(--sc) 12%,transparent);border-radius:20px;padding:2px 8px}
+.dl-sub{font-size:10.5px;color:var(--mut)}
+.dl-owe{font-size:10px;font-weight:800;color:#e6a5a2}
+.dl-num{display:block;font-style:normal;margin-top:6px;font-size:15px;font-weight:600;
+  color:#cfd6e2;font-variant-numeric:tabular-nums;letter-spacing:.4px}
+.dl-fu{display:block;font-style:normal;margin-top:5px;font-size:10.5px;color:#9dbdf0}
+.dl-fu.od{color:#e6a5a2;font-weight:700}
+.dl-note{display:block;font-style:normal;margin-top:5px;font-size:11px;color:var(--mut);
+  line-height:1.45}
+.dl-act{flex:none;display:flex;align-items:center;gap:7px}
+.dl-call{background:linear-gradient(150deg,#3f8f5f,#2c6b45);border:0;border-radius:9px;
+  padding:0 18px;height:42px;color:#eaf5ee;font-family:inherit;font-size:12px;font-weight:800;
+  letter-spacing:1.3px;cursor:pointer}
+.dl-call:hover:not(:disabled){filter:brightness(1.13)}
+.dl-call:disabled{opacity:.45;cursor:default}
+.dl-call.busy{background:linear-gradient(150deg,#b4903f,#8a6d28)}
+.dl-s{width:42px;height:42px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;text-decoration:none;font-size:15px;cursor:pointer;
+  background:var(--raise);border:1px solid var(--line);color:var(--mut);font-family:inherit}
+.dl-s:hover{border-color:var(--blu);color:var(--ink)}
+.dlr.pri{border-left-color:#a855f7;background:rgba(168,85,247,.05)}
+
 /* the directory is a phone book, so the number is the point */
 .dirnum a{font-size:14px;font-weight:700;letter-spacing:.3px}
 
@@ -194,7 +277,7 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
 .cdmini{font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--mut);font-weight:700}
 .cdmini span{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.4px;font-variant-numeric:tabular-nums}
 .sect-h .hint{font-size:11px;color:var(--mut);margin-left:auto;font-style:italic}
-.tower{position:relative;background:linear-gradient(180deg,#04060a,#090d13);border:1px solid #1c222c;
+.tower{position:relative;background:linear-gradient(180deg,#191d24,#15181e);border:1px solid #2f3540;
   border-radius:16px;padding:9px;box-shadow:0 16px 46px rgba(5,7,11,.42)}
 
 /* ---- assistant popup on the map ---- */
@@ -224,7 +307,7 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
   box-shadow:0 0 0 0 rgba(34,211,238,.6);animation:pl 2s infinite}
 @keyframes pl{0%{box-shadow:0 0 0 0 rgba(34,211,238,.5)}70%{box-shadow:0 0 0 8px rgba(34,211,238,0)}100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}}
 .mchat{position:absolute;right:14px;bottom:14px;left:auto;top:auto;transform:none;z-index:7;width:min(380px,calc(100% - 36px));
-  background:linear-gradient(168deg,#080b11,#141c2a);border:1px solid #2a3446;border-radius:15px;
+  background:linear-gradient(168deg,#181c23,#141c2a);border:1px solid #2a3446;border-radius:15px;
   overflow:hidden;box-shadow:0 26px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);display:none}
 .mchat.open{display:block}
 .mchat .chat-h{padding:12px 15px}
@@ -323,7 +406,7 @@ svg.bld .rsb{font-size:8px;font-weight:700;letter-spacing:1.5px;fill:rgba(255,25
 .stu-g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stu-body label,.fld{display:block;font-size:7.5px;font-weight:800;letter-spacing:1.1px;
   text-transform:uppercase;color:var(--mut)}
-.sin,.vin,.cin,.lin{width:100%;margin-top:4px;background:#0b1017;border:1px solid #232c3a;
+.sin,.vin,.cin,.lin{width:100%;margin-top:4px;background:#1c2028;border:1px solid #232c3a;
   border-radius:6px;padding:6px 8px;color:#e4e9f2;font-family:inherit;font-size:12px;
   transition:border-color .2s}
 .sin:focus,.vin:focus,.cin:focus,.lin:focus{outline:none;border-color:#3b82f6}
@@ -331,7 +414,7 @@ svg.bld .rsb{font-size:8px;font-weight:700;letter-spacing:1.5px;fill:rgba(255,25
 textarea.vin.big{min-height:110px}
 .cin,.lin{margin-top:0;font-size:11.5px;padding:5px 7px}
 .addbar{display:flex;gap:8px;margin-top:11px;align-items:center}
-.addbar input{flex:1;background:#0b1017;border:1px solid #232c3a;border-radius:7px;
+.addbar input{flex:1;background:#1c2028;border:1px solid #232c3a;border-radius:7px;
   padding:8px 10px;color:#e4e9f2;font-family:inherit;font-size:12.5px}
 .addbar input:focus{outline:none;border-color:#3b82f6}
 .addbar button{background:rgba(47,111,237,.2);border:1px solid rgba(47,111,237,.55);
@@ -381,7 +464,7 @@ h4.sh{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--
 .lc-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:11px}
 .lc-g label{display:block;font-size:7.5px;font-weight:800;letter-spacing:1.1px;
   text-transform:uppercase;color:var(--mut)}
-.cnin{width:100%;margin-top:4px;background:#0b1017;border:1px solid #232c3a;border-radius:6px;
+.cnin{width:100%;margin-top:4px;background:#1c2028;border:1px solid #232c3a;border-radius:6px;
   padding:6px 8px;color:#e4e9f2;font-family:inherit;font-size:12px;transition:border-color .2s}
 .cnin:focus{outline:none;border-color:#3b82f6}
 .lc-g select.wide{width:100%;margin-top:4px}
@@ -400,7 +483,7 @@ h4.sh{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--
   white-space:nowrap;padding-top:2px;min-width:74px}
 .tli p{flex:1;font-size:12px;color:#dbe2ec;line-height:1.45}
 .tli .xbtn{margin-left:0;width:19px;height:19px;font-size:12px}
-textarea.ntbox.big{width:100%;min-height:110px;margin-top:8px;background:#0b1017;
+textarea.ntbox.big{width:100%;min-height:110px;margin-top:8px;background:#1c2028;
   border:1px solid #232c3a;border-radius:7px;padding:9px 11px;color:#e4e9f2;
   font-family:inherit;font-size:12.5px;line-height:1.5;resize:vertical}
 textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
@@ -437,7 +520,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .ccc-h b{font-size:12px;font-weight:800;color:#e8edf5}
 .ccc-h a{margin-left:auto;color:var(--mut);text-decoration:none;font-size:13px}
 .ccc-h a:hover{color:#fff}
-.ccc-f input{width:100%;background:#0b1017;border:1px solid #232c3a;border-radius:6px;
+.ccc-f input{width:100%;background:#1c2028;border:1px solid #232c3a;border-radius:6px;
   padding:6px 8px;color:#fff;font-family:inherit;font-size:16px;font-weight:800;
   font-variant-numeric:tabular-nums;letter-spacing:-.5px}
 .ccc-f input:focus{outline:none;border-color:var(--pc)}
@@ -478,7 +561,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 
 /* ---- quick food box ---- *//* ---- quick food box ---- */
 .qrow{display:flex;gap:8px;margin-top:9px}
-.qrow input{flex:1;background:#0b1017;border:1px solid #232c3a;border-radius:8px;
+.qrow input{flex:1;background:#1c2028;border:1px solid #232c3a;border-radius:8px;
   padding:10px 12px;color:#e4e9f2;font-family:inherit;font-size:13px}
 .qrow input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.13)}
 .qrow button{background:rgba(74,222,128,.18);border:1px solid rgba(74,222,128,.55);
@@ -495,7 +578,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .fq.tot{border-color:rgba(74,222,128,.45);background:rgba(74,222,128,.09)}
 .fq.tot b{color:#4ade80}
 .mrow{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px}
-.mrow input{background:#0b1017;border:1px solid #232c3a;border-radius:7px;padding:8px 10px;
+.mrow input{background:#1c2028;border:1px solid #232c3a;border-radius:7px;padding:8px 10px;
   color:#e4e9f2;font-family:inherit;font-size:12.5px;min-width:0}
 .mrow input:focus{outline:none;border-color:#3b82f6}
 .mrow button{background:rgba(47,111,237,.22);border:1px solid rgba(47,111,237,.6);border-radius:7px;
@@ -594,7 +677,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .bkrow{display:flex;align-items:center;gap:10px;margin-bottom:7px}
 .bkrow i{font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:1.1px;
   text-transform:uppercase;color:var(--mut);min-width:74px;flex:none}
-.bkrow input{flex:1;min-width:0;background:#0b1017;border:1px solid #232c3a;border-radius:6px;
+.bkrow input{flex:1;min-width:0;background:#1c2028;border:1px solid #232c3a;border-radius:6px;
   padding:7px 9px;color:#e4e9f2;font-family:inherit;font-size:12.5px}
 .bkrow input:focus{outline:none;border-color:#c8a86a}
 .bkwhen{font-size:11px;font-weight:800;letter-spacing:.4px;color:#e6c96a;margin:9px 0 11px}
@@ -619,7 +702,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .mac .bar i{display:block;height:100%;border-radius:3px}
 .mac .d{font-size:9px;color:var(--mut);font-weight:700;letter-spacing:.3px}
 .mrow5{display:grid;grid-template-columns:2fr repeat(4,1fr) auto;gap:7px;align-items:center}
-.mrow5 input{background:#0b1017;border:1px solid #232c3a;border-radius:7px;padding:8px 9px;
+.mrow5 input{background:#1c2028;border:1px solid #232c3a;border-radius:7px;padding:8px 9px;
   color:#e4e9f2;font-family:inherit;font-size:12.5px;min-width:0;width:100%}
 .mrow5 input:focus{outline:none;border-color:#3b82f6}
 .mrow5 button{background:rgba(47,111,237,.22);border:1px solid rgba(47,111,237,.6);border-radius:7px;
@@ -641,7 +724,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
   text-transform:uppercase;color:var(--mut);margin-top:1px}
 .mealr .xbtn{margin-left:0}
 .wtrow{display:grid;grid-template-columns:auto 1fr auto;gap:8px;margin-top:9px}
-.wtrow input{background:#0b1017;border:1px solid #232c3a;border-radius:7px;padding:8px 10px;
+.wtrow input{background:#1c2028;border:1px solid #232c3a;border-radius:7px;padding:8px 10px;
   color:#e4e9f2;font-family:inherit;font-size:12.5px;min-width:0}
 .wtrow input:focus{outline:none;border-color:#3b82f6}
 .wtrow button{background:rgba(74,222,128,.18);border:1px solid rgba(74,222,128,.55);border-radius:7px;
@@ -716,9 +799,9 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;margin-top:4px}
 .libc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
   border-radius:9px;overflow:hidden;display:flex;flex-direction:column}
-.thumb{position:relative;display:block;aspect-ratio:16/9;background:#0b1017;overflow:hidden}
+.thumb{position:relative;display:block;aspect-ratio:16/9;background:#1c2028;overflow:hidden}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.thumb.nolink{background:linear-gradient(140deg,#131a26,#0b1017)}
+.thumb.nolink{background:linear-gradient(140deg,#131a26,#1c2028)}
 .thumb .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:34px;height:34px;border-radius:50%;background:rgba(8,12,18,.78);color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:13px;padding-left:2px;
@@ -733,7 +816,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .libr a{font-size:10.5px;font-weight:800;color:#9dc4ff;text-decoration:none;letter-spacing:.4px}
 .libr a:hover{color:#fff}
 .tform{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.tform input,.tform select{background:#0b1017;border:1px solid #232c3a;border-radius:7px;
+.tform input,.tform select{background:#1c2028;border:1px solid #232c3a;border-radius:7px;
   padding:8px 10px;color:#e4e9f2;font-family:inherit;font-size:12px}
 .tform input:focus,.tform select:focus{outline:none;border-color:#3b82f6}
 .tform #tr-note{grid-column:1/-1}
@@ -759,13 +842,13 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
   color:#0b0f16;font-size:12px;font-weight:800;line-height:1;font-family:inherit;padding:0}
 .chk:hover{border-color:#4ade80}
 .chk.on{background:#4ade80;border-color:#4ade80;color:#08120c}
-.wlab{width:100%;background:#0b1017;border:1px solid #232c3a;border-radius:5px;
+.wlab{width:100%;background:#1c2028;border:1px solid #232c3a;border-radius:5px;
   padding:4px 6px;color:#cfd6e2;font-family:inherit;font-size:10px;font-weight:800;
   letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px}
 .wlab:focus{outline:none;border-color:#3b82f6}
 .wlab.amz{color:#fbbf24;border-color:rgba(251,191,36,.34);background:rgba(251,191,36,.06)}
 .wlab.off{color:#7dd3fc;border-color:rgba(125,211,252,.28);background:rgba(125,211,252,.05)}
-.wplan{width:100%;min-height:86px;resize:vertical;background:#0b1017;border:1px solid #232c3a;
+.wplan{width:100%;min-height:86px;resize:vertical;background:#1c2028;border:1px solid #232c3a;
   border-radius:5px;padding:6px;color:#e4e9f2;font-family:inherit;font-size:11px;
   line-height:1.42;transition:border-color .2s}
 .wplan:focus{outline:none;border-color:#3b82f6}
@@ -787,7 +870,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .vault h3{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.2px;margin-bottom:7px}
 .vault p{font-size:11.5px;color:var(--mut);line-height:1.55;margin-bottom:17px}
 .pinrow{display:flex;gap:8px}
-.pinin{flex:1;background:#0b1017;border:1px solid #2b3446;border-radius:8px;
+.pinin{flex:1;background:#1c2028;border:1px solid #2b3446;border-radius:8px;
   padding:11px 13px;color:#fff;font-family:inherit;font-size:20px;letter-spacing:9px;
   text-align:center;font-weight:800}
 .pinin:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.16)}
@@ -936,7 +1019,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .stu-g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stu label,.fld{display:block;font-size:7.5px;font-weight:800;letter-spacing:1.1px;
   text-transform:uppercase;color:var(--mut)}
-.sin,.vin,.cin,.lin{width:100%;margin-top:4px;background:#0b1017;border:1px solid #232c3a;
+.sin,.vin,.cin,.lin{width:100%;margin-top:4px;background:#1c2028;border:1px solid #232c3a;
   border-radius:6px;padding:6px 8px;color:#e4e9f2;font-family:inherit;font-size:12px;
   transition:border-color .2s}
 .sin:focus,.vin:focus,.cin:focus,.lin:focus{outline:none;border-color:#3b82f6}
@@ -944,7 +1027,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 textarea.vin.big{min-height:110px}
 .cin,.lin{margin-top:0;font-size:11.5px;padding:5px 7px}
 .addbar{display:flex;gap:8px;margin-top:11px;align-items:center}
-.addbar input{flex:1;background:#0b1017;border:1px solid #232c3a;border-radius:7px;
+.addbar input{flex:1;background:#1c2028;border:1px solid #232c3a;border-radius:7px;
   padding:8px 10px;color:#e4e9f2;font-family:inherit;font-size:12.5px}
 .addbar input:focus{outline:none;border-color:#3b82f6}
 .addbar button{background:rgba(47,111,237,.2);border:1px solid rgba(47,111,237,.55);
@@ -972,7 +1055,7 @@ h4.sh{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--
 .lc-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:11px}
 .lc-g label{display:block;font-size:7.5px;font-weight:800;letter-spacing:1.1px;
   text-transform:uppercase;color:var(--mut)}
-.cnin{width:100%;margin-top:4px;background:#0b1017;border:1px solid #232c3a;border-radius:6px;
+.cnin{width:100%;margin-top:4px;background:#1c2028;border:1px solid #232c3a;border-radius:6px;
   padding:6px 8px;color:#e4e9f2;font-family:inherit;font-size:12px;transition:border-color .2s}
 .cnin:focus{outline:none;border-color:#3b82f6}
 .lc-g select.wide{width:100%;margin-top:4px}
@@ -991,7 +1074,7 @@ h4.sh{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--
   white-space:nowrap;padding-top:2px;min-width:74px}
 .tli p{flex:1;font-size:12px;color:#dbe2ec;line-height:1.45}
 .tli .xbtn{margin-left:0;width:19px;height:19px;font-size:12px}
-textarea.ntbox.big{width:100%;min-height:110px;margin-top:8px;background:#0b1017;
+textarea.ntbox.big{width:100%;min-height:110px;margin-top:8px;background:#1c2028;
   border:1px solid #232c3a;border-radius:7px;padding:9px 11px;color:#e4e9f2;
   font-family:inherit;font-size:12.5px;line-height:1.5;resize:vertical}
 textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
@@ -1028,7 +1111,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .ccc-h b{font-size:12px;font-weight:800;color:#e8edf5}
 .ccc-h a{margin-left:auto;color:var(--mut);text-decoration:none;font-size:13px}
 .ccc-h a:hover{color:#fff}
-.ccc-f input{width:100%;background:#0b1017;border:1px solid #232c3a;border-radius:6px;
+.ccc-f input{width:100%;background:#1c2028;border:1px solid #232c3a;border-radius:6px;
   padding:6px 8px;color:#fff;font-family:inherit;font-size:16px;font-weight:800;
   font-variant-numeric:tabular-nums;letter-spacing:-.5px}
 .ccc-f input:focus{outline:none;border-color:var(--pc)}
@@ -1057,7 +1140,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 
 /* ---- quick food box ---- *//* ---- quick food box ---- */
 .qrow{display:flex;gap:8px;margin-top:9px}
-.qrow input{flex:1;background:#0b1017;border:1px solid #232c3a;border-radius:8px;
+.qrow input{flex:1;background:#1c2028;border:1px solid #232c3a;border-radius:8px;
   padding:10px 12px;color:#e4e9f2;font-family:inherit;font-size:13px}
 .qrow input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.13)}
 .qrow button{background:rgba(74,222,128,.18);border:1px solid rgba(74,222,128,.55);
@@ -1124,9 +1207,9 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;margin-top:4px}
 .libc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
   border-radius:9px;overflow:hidden;display:flex;flex-direction:column}
-.thumb{position:relative;display:block;aspect-ratio:16/9;background:#0b1017;overflow:hidden}
+.thumb{position:relative;display:block;aspect-ratio:16/9;background:#1c2028;overflow:hidden}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.thumb.nolink{background:linear-gradient(140deg,#131a26,#0b1017)}
+.thumb.nolink{background:linear-gradient(140deg,#131a26,#1c2028)}
 .thumb .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:34px;height:34px;border-radius:50%;background:rgba(8,12,18,.78);color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:13px;padding-left:2px;
@@ -1141,7 +1224,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .libr a{font-size:10.5px;font-weight:800;color:#9dc4ff;text-decoration:none;letter-spacing:.4px}
 .libr a:hover{color:#fff}
 .tform{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.tform input,.tform select{background:#0b1017;border:1px solid #232c3a;border-radius:7px;
+.tform input,.tform select{background:#1c2028;border:1px solid #232c3a;border-radius:7px;
   padding:8px 10px;color:#e4e9f2;font-family:inherit;font-size:12px}
 .tform input:focus,.tform select:focus{outline:none;border-color:#3b82f6}
 .tform #tr-note{grid-column:1/-1}
@@ -1167,13 +1250,13 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
   color:#0b0f16;font-size:12px;font-weight:800;line-height:1;font-family:inherit;padding:0}
 .chk:hover{border-color:#4ade80}
 .chk.on{background:#4ade80;border-color:#4ade80;color:#08120c}
-.wlab{width:100%;background:#0b1017;border:1px solid #232c3a;border-radius:5px;
+.wlab{width:100%;background:#1c2028;border:1px solid #232c3a;border-radius:5px;
   padding:4px 6px;color:#cfd6e2;font-family:inherit;font-size:10px;font-weight:800;
   letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px}
 .wlab:focus{outline:none;border-color:#3b82f6}
 .wlab.amz{color:#fbbf24;border-color:rgba(251,191,36,.34);background:rgba(251,191,36,.06)}
 .wlab.off{color:#7dd3fc;border-color:rgba(125,211,252,.28);background:rgba(125,211,252,.05)}
-.wplan{width:100%;min-height:86px;resize:vertical;background:#0b1017;border:1px solid #232c3a;
+.wplan{width:100%;min-height:86px;resize:vertical;background:#1c2028;border:1px solid #232c3a;
   border-radius:5px;padding:6px;color:#e4e9f2;font-family:inherit;font-size:11px;
   line-height:1.42;transition:border-color .2s}
 .wplan:focus{outline:none;border-color:#3b82f6}
@@ -1195,7 +1278,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .vault h3{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.2px;margin-bottom:7px}
 .vault p{font-size:11.5px;color:var(--mut);line-height:1.55;margin-bottom:17px}
 .pinrow{display:flex;gap:8px}
-.pinin{flex:1;background:#0b1017;border:1px solid #2b3446;border-radius:8px;
+.pinin{flex:1;background:#1c2028;border:1px solid #2b3446;border-radius:8px;
   padding:11px 13px;color:#fff;font-family:inherit;font-size:20px;letter-spacing:9px;
   text-align:center;font-weight:800}
 .pinin:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.16)}
@@ -1312,7 +1395,7 @@ tr.prirow .nm-c .openlead{color:#e9d5ff}
 /* ---- search ---- */
 .lsrch{display:flex;align-items:center;gap:9px;margin:12px 0 9px;padding:0 2px}
 .lsrch .lsi{font-size:13px;opacity:.55;flex:none}
-.lsrch input{flex:1;min-width:0;background:#080d14;border:1px solid var(--line);border-radius:9px;
+.lsrch input{flex:1;min-width:0;background:#1a1e25;border:1px solid var(--line);border-radius:9px;
   padding:10px 12px;color:#e4e9f2;font-family:inherit;font-size:13px}
 .lsrch input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.16)}
 .lsx{flex:none;width:32px;height:32px;border-radius:8px;font-size:17px;line-height:1;cursor:pointer;
@@ -1336,7 +1419,7 @@ tr.prirow .nm-c .openlead{color:#e9d5ff}
 
 /* ---- the cash figure you set by hand ---- */
 .cashset{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:11px 0 3px}
-.cashset input{width:132px;background:#080d14;border:1px solid var(--line);border-radius:8px;
+.cashset input{width:132px;background:#1a1e25;border:1px solid var(--line);border-radius:8px;
   padding:9px 11px;color:#fff;font-family:inherit;font-size:15px;font-weight:800;
   font-variant-numeric:tabular-nums}
 .cashset input:focus{outline:none;border-color:var(--green)}
@@ -1419,19 +1502,19 @@ tr.prirow .nm-c .openlead{color:#e9d5ff}
 .saved.on{opacity:1}
 textarea.notes{width:100%;min-height:130px;border:1px solid var(--line);border-radius:11px;
   padding:12px 14px;font-family:inherit;font-size:12.5px;line-height:1.6;resize:vertical;
-  background:#080d14;color:var(--ink)}
+  background:#1a1e25;color:var(--ink)}
 textarea.notes:focus{outline:none;border-color:var(--blu);box-shadow:0 0 0 3px rgba(47,111,237,.14)}
 .mini{width:82px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-family:inherit;
-  font-size:12px;text-align:right;font-variant-numeric:tabular-nums;background:#080d14;color:var(--ink)}
+  font-size:12px;text-align:right;font-variant-numeric:tabular-nums;background:#1a1e25;color:var(--ink)}
 .mini:focus{outline:none;border-color:var(--blu)}
 .wide{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-family:inherit;
-  font-size:12.5px;background:#080d14;color:var(--ink)}
+  font-size:12.5px;background:#1a1e25;color:var(--ink)}
 .wide:focus{outline:none;border-color:var(--blu);box-shadow:0 0 0 3px rgba(47,111,237,.12)}
 /* inline editable contact cells */
 input.cn{width:100%;border:1px solid transparent;border-radius:6px;padding:4px 6px;font-family:inherit;
   font-size:11.5px;background:transparent;color:var(--ink);font-variant-numeric:tabular-nums;transition:.12s}
-input.cn:hover{border-color:var(--line);background:#121a24}
-input.cn:focus{outline:none;border-color:var(--blu);background:#0a1017;box-shadow:0 0 0 3px rgba(59,130,246,.2)}
+input.cn:hover{border-color:var(--line);background:#22262f}
+input.cn:focus{outline:none;border-color:var(--blu);background:#1b1f27;box-shadow:0 0 0 3px rgba(59,130,246,.2)}
 input.cn::placeholder{color:#5a6474;font-style:italic}
 input.cn.ok{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.45)}
 .softflag{font-size:10px;color:var(--mut);font-weight:600;margin-top:3px}
@@ -1441,18 +1524,18 @@ input.cn.ok{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.45)}
 .lg{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--ink);
   letter-spacing:.3px}
 .lg i{width:11px;height:11px;border-radius:3px;display:inline-block}
-select.stsel{width:100%;background:#080d14;border:1px solid var(--line);border-radius:7px;
+select.stsel{width:100%;background:#1a1e25;border:1px solid var(--line);border-radius:7px;
   padding:6px 7px;font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
 select.stsel:focus{outline:none;box-shadow:0 0 0 3px rgba(59,130,246,.2)}
 textarea.ntbox{width:100%;min-width:180px;background:transparent;border:1px solid transparent;
   border-radius:7px;padding:5px 7px;font-family:inherit;font-size:11.5px;line-height:1.5;
   color:var(--ink);resize:vertical}
-textarea.ntbox:hover{border-color:var(--line);background:#121a24}
-textarea.ntbox:focus{outline:none;border-color:var(--blu);background:#0a1017;
+textarea.ntbox:hover{border-color:var(--line);background:#22262f}
+textarea.ntbox:focus{outline:none;border-color:var(--blu);background:#1b1f27;
   box-shadow:0 0 0 3px rgba(59,130,246,.16)}
 textarea.ntbox::placeholder{color:#5a6474;font-style:italic}
 .addbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-.addform{display:none;background:#0b111a;border:1px solid var(--line);border-radius:11px;
+.addform{display:none;background:#1c2028;border:1px solid var(--line);border-radius:11px;
   padding:14px 16px;margin-bottom:13px}
 .addform.open{display:block}
 .af-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px}
@@ -1475,7 +1558,7 @@ a.lnk:hover{color:#bfdbfe}
 .btn.gh:hover{border-color:var(--red);color:var(--red)}
 
 /* ============ ASSISTANT CHAT ============ */
-.chat{background:linear-gradient(168deg,#070a10,#131b28);border:1px solid #232b38;
+.chat{background:linear-gradient(168deg,#181b22,#131b28);border:1px solid #232b38;
   border-radius:14px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 .chat-h{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1f2734}
 .av{width:38px;height:38px;border-radius:50%;flex:none;overflow:hidden;
@@ -1495,7 +1578,7 @@ a.lnk:hover{color:#bfdbfe}
   border-bottom-left-radius:3px}
 .msg.sys{align-self:center;background:none;color:#5b6472;font-size:11px;font-style:italic;padding:2px}
 .chat-f{padding:12px 16px;border-top:1px solid #1f2734;display:flex;gap:9px;align-items:flex-end}
-.chat-f textarea{flex:1;background:#0b1017;border:1px solid #27303f;border-radius:9px;color:#eceff5;
+.chat-f textarea{flex:1;background:#1c2028;border:1px solid #27303f;border-radius:9px;color:#eceff5;
   font-family:inherit;font-size:12.8px;padding:10px 12px;resize:none;min-height:42px;max-height:120px;line-height:1.5}
 .chat-f textarea:focus{outline:none;border-color:var(--blu);box-shadow:0 0 0 3px rgba(47,111,237,.15)}
 .send{background:linear-gradient(150deg,#4b8cff,#1a3f9e);border:none;border-radius:9px;color:#fff;
@@ -1583,7 +1666,7 @@ a.lnk:hover{color:#bfdbfe}
      frame edge to edge at every zoom level. A room crop that happens to be tall
      is simply tall — which is right, because it is legible. */
   .tower > svg.bld{display:block;width:100%;height:auto;max-width:100%;max-height:none;
-    border-radius:12px;background:#080b11;border:1px solid #1b2230;
+    border-radius:12px;background:#181c23;border:1px solid #1b2230;
     touch-action:pan-x pan-y pinch-zoom}
   body.mroom .tower > svg.bld{max-height:none}
   /* the frame around it must not add its own margin either */
@@ -1621,7 +1704,7 @@ a.lnk:hover{color:#bfdbfe}
   .mquick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
   .mquick button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
     min-height:68px;padding:9px 4px;border-radius:11px;cursor:pointer;font-family:inherit;
-    background:linear-gradient(160deg,#0e1621,#111a26);border:1px solid #232c3a;
+    background:linear-gradient(160deg,#1f242c,#232830);border:1px solid #232c3a;
     color:#c9d2df;font-size:10.5px;font-weight:800;line-height:1.2;text-align:center;
     -webkit-tap-highlight-color:transparent}
   .mquick button i{font-style:normal;font-size:20px;line-height:1}
@@ -1629,11 +1712,11 @@ a.lnk:hover{color:#bfdbfe}
 
   .mrooms{display:flex;flex-direction:column;gap:8px}
   .mroom{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
-    background:linear-gradient(160deg,#0c1119,#0f151f);
+    background:linear-gradient(160deg,#1c2028,#1e2229);
     border:1px solid #232c3a;border-left:3px solid var(--ac);
     border-radius:12px;padding:13px 14px;cursor:pointer;font-family:inherit;
     min-height:66px;-webkit-tap-highlight-color:transparent}
-  .mroom:active{background:linear-gradient(160deg,#111a26,#141e2c);border-color:var(--ac)}
+  .mroom:active{background:linear-gradient(160deg,#232830,#262b34);border-color:var(--ac)}
   .mri{font-size:23px;line-height:1;flex:none;width:28px;text-align:center}
   .mrt{flex:1;min-width:0}
   .mrt b{display:block;font-size:15.5px;font-weight:800;color:#fff;letter-spacing:-.2px}
@@ -1798,9 +1881,11 @@ a.lnk:hover{color:#bfdbfe}
   .pgrp{margin:16px 0 7px}
   .micbar{left:8px;right:8px;transform:none;max-width:none;flex-wrap:wrap}
   .mb-w{flex:1 1 100%;order:3;max-height:60px}
-  .dlr{flex-wrap:wrap}
-  .dlm{flex:1 1 100%;margin-bottom:6px}
-  .dlr .cbtn{flex:1 1 46%;justify-content:center}
+  .dlr{flex-wrap:wrap;padding:13px}
+  .dlm{flex:1 1 calc(100% - 40px)}
+  .dl-act{flex:1 1 100%;margin-top:11px}
+  .dl-call{flex:1}
+  .dl-num{font-size:16px}
 
   /* ---- tables become cards ----
      The label used to sit in a 30% column beside the value, which left the value
@@ -2107,6 +2192,72 @@ a.lnk:hover{color:#bfdbfe}
 </script>
 
 <script>
+/* ================= WHEN SOMETHING BREAKS, SAY SO =================
+   A blank page tells you nothing and tells me less. Anything that throws while
+   the app is starting now paints itself on screen — the message, the file and
+   the line — so instead of "Safari will not open" there is something to read
+   and send me. Costs nothing when everything is fine. */
+(function(){
+  var shown=false;
+  function paint(title, detail){
+    if(shown) return; shown=true;
+    try{
+      var d=document.createElement("div");
+      d.setAttribute("style",
+        "position:fixed;inset:0;z-index:99999;overflow:auto;"
+        +"background:#0a0d12;color:#e8eef5;padding:22px 18px;"
+        +"font:14px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;"
+        +"-webkit-text-size-adjust:100%");
+      d.innerHTML =
+        '<div style="max-width:640px;margin:0 auto">'
+        +'<div style="font-size:10px;font-weight:800;letter-spacing:2px;'
+        +'text-transform:uppercase;color:#fca5a5;margin-bottom:10px">EXODUS HQ &middot; STARTUP ERROR</div>'
+        +'<div style="font-size:17px;font-weight:800;margin-bottom:14px">'+title+'</div>'
+        +'<pre style="white-space:pre-wrap;word-break:break-word;font-size:12px;'
+        +'background:#11161f;border:1px solid #232c3a;border-radius:10px;padding:13px;'
+        +'color:#cbd3de;margin:0 0 16px">'+detail+'</pre>'
+        +'<div style="font-size:12.5px;color:#8e98a8;line-height:1.6">'
+        +'Send me that text and I will know exactly what happened. '
+        +'Your data is untouched — it lives in the database, not in this page.</div>'
+        +'<button onclick="location.reload()" style="margin-top:16px;background:#2f6fed;'
+        +'border:0;border-radius:9px;padding:13px 20px;color:#fff;font:inherit;'
+        +'font-weight:800;cursor:pointer;min-height:46px">Reload</button>'
+        +'</div>';
+      (document.body||document.documentElement).appendChild(d);
+    }catch(e){
+      try{ document.title="Exodus error: "+title; }catch(e2){}
+    }
+  }
+  function esc(t){ return String(t==null?"":t)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  try{ window.onerror=function(msg,src,line,col,err){
+    paint("The app hit an error while starting.",
+      esc(msg)+"\n\n"+esc(String(src||"").split("/").pop())+"  line "+line+", col "+col
+      +((err&&err.stack)?"\n\n"+esc(String(err.stack).slice(0,700)):""));
+  }; }catch(e){}
+  /* the safety net must never itself be the thing that breaks the page */
+  if(window.addEventListener) window.addEventListener("unhandledrejection",function(ev){
+    var r=ev&&ev.reason;
+    paint("Something failed in the background.",
+      esc((r&&(r.message||r))||"unknown")
+      +((r&&r.stack)?"\n\n"+esc(String(r.stack).slice(0,700)):""));
+  });
+  /* if nothing has drawn after eight seconds, say that too */
+  setTimeout(function(){
+    try{
+      var svg=document.getElementById("bld");
+      var gate=document.querySelector(".gate, #gate");
+      var drew = (svg && svg.innerHTML && svg.innerHTML.length>200) || gate;
+      if(!drew) paint("The building never finished drawing.",
+        "No error was thrown, but nothing rendered within eight seconds.\n"
+        +"Usually this means the page was served from a stale cache.\n\n"
+        +"Try: Settings, Apps, Safari, Clear History and Website Data.\n"
+        +"Or open the site in a Private tab once.");
+    }catch(e){}
+  }, 8000);
+})();
+
 
 /* ============================ CONFIG ============================ */
 var LEADS_ID="11ycp5a91Hwrc8eqFOFjXZpgMSUoF7y3r-IZvQ-0eRPE";
@@ -2196,9 +2347,58 @@ function ntGet(n){var v=LS("nt_"+keyOf(n));return v===null?null:v;}
 function ntSet(n,v){LS("nt_"+keyOf(n),v);}
 
 /* ---- editable contact details, saved in this page ---- */
+/* ================= THE REST OF A LEAD'S RECORD =================
+   Stage, notes and contact details already had somewhere to live. These are the
+   fields a real CRM needs and this one did not have: when they came in, what you
+   owe them next and when, and a place for detail that is not a dated log entry.
+   Same pattern as everything else — written locally the instant you type, then
+   pushed to Postgres, so it survives a refresh and shows up on every device. */
+function lxGet(n){ try{ return JSON.parse(LS("lx_"+keyOf(n))||"null")||{}; }catch(e){ return {}; } }
+function lxPut(n,field,val){
+  var o=lxGet(n); 
+  if(val===""||val===null||val===undefined) delete o[field]; else o[field]=val;
+  LS("lx_"+keyOf(n), JSON.stringify(o));
+  refreshContacts();
+  SBSAVE("lead", n);
+}
+/* when they came in — a real Date, or null */
+function cameIn(n){
+  var v=lxGet(n).came;
+  if(!v) return null;
+  var d=new Date(v+(v.length===7?"-01":"")+"T12:00:00");
+  return isNaN(d.getTime())?null:d;
+}
+function cameInRaw(n){ return lxGet(n).came||""; }
+/* "day" or "month" — he does not always know the exact date */
+function camePrec(n){ return (cameInRaw(n).length===7)?"month":"day"; }
+function cameLabel(n){
+  var raw=cameInRaw(n); if(!raw) return "";
+  var d=cameIn(n); if(!d) return raw;
+  return raw.length===7
+    ? d.toLocaleDateString(undefined,{month:"short",year:"numeric"})
+    : d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+}
+function followUp(n){
+  var v=lxGet(n).fu; if(!v) return null;
+  var d=new Date(v+"T12:00:00");
+  return isNaN(d.getTime())?null:d;
+}
+function fuDaysOut(n){
+  var d=followUp(n); if(!d) return null;
+  var t=new Date(); t.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+
 function cnGet(n){try{return JSON.parse(LS("cn_"+keyOf(n))||"null")||{};}catch(e){return {};}}
 function cnSet(n,o){LS("cn_"+keyOf(n),JSON.stringify(o));}
-function cnPut(n,field,val){var o=cnGet(n);o[field]=val;cnSet(n,o);refreshContacts();}
+/* Every contact edit in the app goes through here, so this is the one place
+   that has to push. It never did — phone, email and handle edits were saved to
+   the device and nowhere else, which is why they vanished on another screen. */
+function cnPut(n,field,val){
+  var o=cnGet(n); o[field]=val; cnSet(n,o);
+  refreshContacts();
+  SBSAVE("lead", n);
+}
 /* Fold saved edits over the sheet values and recompute reachability. */
 /* ---- leads typed straight into the page ---- */
 function mlLoad(){try{return JSON.parse(LS("myleads")||"[]");}catch(e){return [];}}
@@ -2803,15 +3003,39 @@ var SBW = {
       +" updates=excluded.updates, active=true;");
   },
 
+  /* THIS IS WHY NOTES WERE NOT SAVING.
+     It used to push L.notes straight off STATE.leads — but STATE is only
+     rebuilt by refreshContacts(), which runs on blur. So while you typed, the
+     debounced save fired against whatever STATE happened to hold, which was the
+     value from before you started. One lead ended up with a note of just "1":
+     the first keystroke, saved once, then never updated.
+
+     It now reads the same place the page reads from — the per-lead overrides —
+     so what gets pushed is always exactly what is on screen. */
   lead: function(name){
     var L=leadBy(name); if(!L) return Promise.resolve();
-    return sbRun("insert into leads (name,phone,email,instagram,stage,source,notes,owed,contingent,deferred,write_off) values ("
-      +qv(L.name)+","+qv(L.phone)+","+qv(L.email)+","+qv(L.ig)+","+qv(L.stage)+","+qv(L.funnel)+","
-      +qv(L.notes)+","+qn(L.owed)+","+qn(L.contingent)+","+(L.deferred?"true":"false")+","
-      +(L.writeOff?"true":"false")+") "
+    var o=cnGet(L.name);
+    var nt=ntGet(L.name);                       /* null means never edited */
+    var st=stageFix(stGet(L.name)) || L.stage;
+    var notes = (nt===null) ? (L.notes||"") : nt;
+    var phone = o.p || L.phone || "";
+    var email = o.e || L.email || "";
+    var ig    = o.s || L.ig    || "";
+    if(STATUSES.indexOf(st)<0) st = L.stage;
+    var x=lxGet(L.name);
+    var came = x.came ? (x.came.length===7 ? x.came+"-01" : x.came) : null;
+    var prec = x.came ? (x.came.length===7 ? "month" : "day") : "day";
+    return sbRun("insert into leads (name,phone,email,instagram,stage,source,notes,owed,contingent,deferred,write_off,came_in,came_in_precision,follow_up_on,follow_up_note,detail) values ("
+      +qv(L.name)+","+qv(phone)+","+qv(email)+","+qv(ig)+","+qv(st)+","+qv(L.funnel)+","
+      +qv(notes)+","+qn(L.owed)+","+qn(L.contingent)+","+(L.deferred?"true":"false")+","
+      +(L.writeOff?"true":"false")+","+qv(came)+","+qv(prec)+","+qv(x.fu||null)+","
+      +qv(x.funote||null)+","+qv(x.detail||null)+") "
       +"on conflict (name_key) do update set phone=excluded.phone, email=excluded.email,"
       +" instagram=excluded.instagram, stage=excluded.stage, notes=excluded.notes,"
-      +" owed=excluded.owed, contingent=excluded.contingent;"
+      +" owed=excluded.owed, contingent=excluded.contingent,"
+      +" came_in=excluded.came_in, came_in_precision=excluded.came_in_precision,"
+      +" follow_up_on=excluded.follow_up_on, follow_up_note=excluded.follow_up_note,"
+      +" detail=excluded.detail;"
       +"update leads set priority="+(prGet(L.name)?"true":"false")
       +" where name_key="+qv(keyOf(L.name))+";");
   },
@@ -3116,7 +3340,8 @@ function sbPull(){
     +"'students',   (select coalesce(json_agg(json_build_object('name',name,'phone',phone,'email',email,'journey',journey,'goal',goal,'situation',situation,'updates',updates)),'[]'::json) from students where active),"
     +"'social',     (select coalesce(json_agg(json_build_object('p',platform,'f',followers)),'[]'::json) from social_accounts),"
     +"'posts',      (select coalesce(json_agg(json_build_object('p',platform,'d',posted_on,'c',count)),'[]'::json) from social_posts where posted_on >= current_date - 30),"
-    +"'stages',     (select coalesce(json_agg(json_build_object('k',name_key,'s',stage,'n',notes,'p',phone,'e',email,'i',instagram,'pr',priority)),'[]'::json) from leads),"
+    +"'stages',     (select coalesce(json_agg(json_build_object('k',name_key,'s',stage,'n',notes,'p',phone,'e',email,'i',instagram,'pr',priority,"
+    +"                 'came',came_in,'prec',came_in_precision,'fu',follow_up_on,'funote',follow_up_note,'detail',detail)),'[]'::json) from leads),"
     +"'forms',      (select coalesce(json_agg(json_build_object('name',name,'email',email,'phone',phone,'interest',interest,'at',submitted_at,'gid',gmail_id,'self',is_self_test) order by submitted_at desc),'[]'::json) from form_submissions),"
     +"'leads',      (select coalesce(json_agg(json_build_object('name',name,'phone',phone,'email',email,'ig',instagram,'stage',stage,'source',source,'notes',notes,'owed',owed,'contingent',contingent,'deferred',deferred,'write_off',write_off,'flag',flag) order by name),'[]'::json) from leads),"
     +"'acts',       (select coalesce(json_agg(json_build_object('k',name_key,'t',body,'d',happened_at) order by happened_at desc),'[]'::json) from lead_activity),"
@@ -3190,6 +3415,16 @@ function sbPull(){
       if(x.n) LS("nt_"+x.k, x.n);
       /* the purple dots come back with everything else */
       LS("pr_"+x.k, x.pr?"1":"0");
+      /* dates, follow-ups and detail */
+      var lx={};
+      if(x.came){
+        var c=String(x.came).slice(0,10);
+        lx.came = (x.prec==="month") ? c.slice(0,7) : c;
+      }
+      if(x.fu)     lx.fu     = String(x.fu).slice(0,10);
+      if(x.funote) lx.funote = x.funote;
+      if(x.detail) lx.detail = x.detail;
+      if(Object.keys(lx).length) LS("lx_"+x.k, JSON.stringify(lx));
       if(x.p||x.e||x.i) LS("cn_"+x.k, JSON.stringify({p:x.p||"",e:x.e||"",s:x.i||""}));});
     var byLead={};
     (d.acts||[]).forEach(function(a){ (byLead[a.k]=byLead[a.k]||[]).push({t:a.t,d:a.d}); });
@@ -7028,6 +7263,7 @@ function jAsk(q){
    +"that, refuse in character and give him the version that actually works.\n\n"
    +(LS("script_pitch") ? "# HIS PITCH, IN HIS WORDS\nCoach around this, do not replace it:\n"
         + LS("script_pitch") + "\n\n" : "")
+   +theOffice()
    +actionProtocol()
    +(MEMORY.jordan ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.jordan+"\n\n" : "")
    +recentTurns(JCHAT)
@@ -7052,6 +7288,32 @@ function jAsk(q){
 /* The action protocol, written once. Jordan calls jRunActions() but his prompt
    never described the syntax, so every "move Marco to warm" he was given quietly
    did nothing. Both he and Claudia now get the same instructions from here. */
+/* ================= WHAT ALL THREE OF THEM KNOW =================
+   They are colleagues in one building, not three unrelated chatbots. Each has a
+   real voice, a real job, and the authority to change things in their own area
+   without handing it back to someone else. */
+function theOffice(){
+  return "# WHO ELSE WORKS HERE\n"
+   +"You are one of three people in Glen's office at Exodus HQ, and you all speak out loud — "
+   +"he hears you in your own voice, so write like someone talking, not someone typing. Short "
+   +"sentences. No bullet lists unless he asks for one. No stage directions.\n"
+   +"  - Claudia, reception desk. Chief of staff. His day, his calendar, his admin, his week. "
+   +"She has final authority over any list in any room when he asks her.\n"
+   +"  - Jordan Claudefort, sales floor, corner office. Sales manager. Leads, the pipeline, "
+   +"calls, scripts, objections, collections, closing.\n"
+   +"  - Claude Schwarzaneager, the gym. Coach. Training, food, recovery, consistency.\n"
+   +"Refer to each other by name like people who share an office. If something belongs to "
+   +"someone else, say who in one line and move on — never bounce it back and forth.\n\n"
+   +"# YOU CAN ACTUALLY CHANGE THINGS\n"
+   +"You are not an adviser who suggests. In your own area you do the work: edit the lists, log "
+   +"the entries, move the stages, write the notes. When Glen asks for a change, make it and tell "
+   +"him it is done in one line. Never reply with instructions for how he could do it himself.\n\n"
+   +"# WHAT HE IS ACTUALLY DOING\n"
+   +"Building income online before he flies to Bangkok on 5 December 2026. Amazon four days a "
+   +"week until then. Everything you suggest is measured against that date and against whether it "
+   +"makes money this week.\n\n";
+}
+
 function actionProtocol(){
   return "# YOU CAN CHANGE THINGS YOURSELF\n"
    +"Say your normal short reply, then on its own line at the very end put one action per change. "
@@ -7477,6 +7739,15 @@ function tAsk(q){
    +"three. If it is not logged, say it is not logged.\n\n"
    +"You are not a doctor. Pain, injury, drugs or extreme cutting means see a professional, then "
    +"give him the safe version. Stay warm about it.\n\n"
+   +theOffice()
+   +"# BE A PERSON, NOT A PROGRAM\n"
+   +"You have a voice and he hears it, so talk to him. Ask how the session felt. Remember what he "
+   +"told you last time and bring it up — if he said his knee was sore on Thursday, ask about the "
+   +"knee. If he has trained three days straight, tell him you noticed. If he has gone quiet for a "
+   +"week, say so warmly and get him back in today rather than lecturing him about the week he "
+   +"missed. Use his name. Be pleased when he does well and say it out loud.\n"
+   +"You are the one who keeps him honest about his body while he builds a business, and he is "
+   +"doing both at once on four Amazon shifts a week. Respect that. Never make him feel behind.\n\n"
    +(MEMORY.claude ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.claude+"\n\n" : "")
    +"=== YOU CAN WRITE TO HIS LOGS ===\n"
    +"You run this gym, so you do the paperwork. When Glen tells you what he ate, what he lifted, what he "
@@ -7674,6 +7945,7 @@ function ask(q){
    +"a Discord membership that gets people hired into remote roles and out of the country. TikTok "
    +"is the growth engine, chasing 10k. Bangkok on 5 December 2026, and everything is measured "
    +"against that date.\n\n"
+   +theOffice()
    +actionProtocol()
    +(MEMORY.claudia ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.claudia+"\n\n" : "")
    +recentTurns(STATE.chat)
@@ -8664,8 +8936,10 @@ function dialerView(){
 
   if(!callable.length) return h+'<div class="empty">Nobody in the pipeline has a phone number yet.</div>';
 
-  h+='<div class="cl-h"><b>Call List</b>'
-   +'<span>'+callable.length+' reachable &middot; purple first, then new, then warm</span></div>'
+  var od=callable.filter(function(x){var d=fuDaysOut(x.name);return d!==null&&d<=0;}).length;
+  h+='<div class="cl-h"><b>Call Queue</b>'
+   +'<span>'+callable.length+' reachable'
+   +(od?' &middot; '+od+' overdue, at the top':' &middot; purple, then new, then warm')+'</span></div>'
    +'<div class="dl">';
   callable.forEach(function(x){
     var c=scol(x.stage), v=dialable(x.phone);
@@ -8740,7 +9014,37 @@ function leadCard(){
    +'<label>Instagram<input class="cnin" data-n="'+esc(L.name)+'" data-f="s" value="'+esc(ig)+'" placeholder="@handle"></label>'
    +'</div>';
 
-  h+='<div class="lc-meta"><span>Source<b>'+esc(L.funnel||"—")+'</b></span>';
+  /* ---- the record: when they came in, what is next, and the detail ---- */
+  var fx=lxGet(L.name), fd=fuDaysOut(L.name);
+  h+='<div class="lc-rec">'
+   +'<div class="lc-rec-h">Record</div>'
+   +'<div class="lc-g">'
+   +'<label>Came in'
+     +'<input class="cin-came wide" type="'+(camePrec(L.name)==="month"?"month":"date")+'" '
+     +'data-n="'+esc(L.name)+'" value="'+esc(fx.came||"")+'"></label>'
+   +'<label>Precision'
+     +'<select class="lx-prec wide" data-n="'+esc(L.name)+'">'
+     +'<option value="day"'+(camePrec(L.name)==="day"?" selected":"")+'>Exact date</option>'
+     +'<option value="month"'+(camePrec(L.name)==="month"?" selected":"")+'>Month only</option>'
+     +'</select></label>'
+   +'<label>Follow up on'
+     +'<input class="lx-fu wide" type="date" data-n="'+esc(L.name)+'" value="'+esc(fx.fu||"")+'"></label>'
+   +'<label>What is next'
+     +'<input class="lx-funote wide" data-n="'+esc(L.name)+'" value="'+esc(fx.funote||"")+'" '
+     +'placeholder="Call about the $297 tier"></label>'
+   +'</div>'
+   +(fd!==null?'<div class="lc-due '+(fd<0?"od":fd===0?"tod":"")+'">'
+      +(fd<0?("Follow-up was due "+(-fd)+" day"+(-fd===1?"":"s")+" ago")
+        :fd===0?"Follow-up is due today":("Follow-up in "+fd+" day"+(fd===1?"":"s")))
+      +(fx.funote?' &mdash; '+esc(fx.funote):'')+'</div>':'')
+   +'<label style="display:block;margin-top:11px">Detail'
+     +'<textarea class="lx-detail wide" data-n="'+esc(L.name)+'" rows="3" '
+     +'placeholder="Background, family, timezone, what they actually want — anything that helps you close them">'
+     +esc(fx.detail||"")+'</textarea></label>'
+   +'</div>';
+
+  h+='<div class="lc-meta"><span>Source<b>'+esc(L.funnel||"—")+'</b></span>'
+   +(cameLabel(L.name)?'<span>Came in<b>'+esc(cameLabel(L.name))+'</b></span>':'');
   if(L.owed>0)      h+='<span>Owes<b class="r">$'+L.owed+'</b></span>';
   if(L.contingent>0)h+='<span>Contingent<b>$'+L.contingent+'</b></span>';
   h+='<span>Reachable<b class="'+(L.directOnly?"g":"r")+'">'+(L.directOnly?"yes":"no number or email")+'</b></span></div>';
@@ -9274,6 +9578,47 @@ function wireWeek(){
 var FILTER="all";
 var ORD=STATUSES;
 var LSEARCH="";      /* what is typed in the pipeline search box */
+var LSORT="came-new";  /* how the pipeline is ordered */
+var LGROUP=true;       /* stage bands on, or one flat list */
+
+var SORTS=[
+  {k:"came-new", nm:"Newest in first"},
+  {k:"came-old", nm:"Oldest in first"},
+  {k:"stage",    nm:"By stage"},
+  {k:"name",     nm:"A to Z"},
+  {k:"owed",     nm:"Owes the most"},
+  {k:"follow",   nm:"Follow-up due"}
+];
+
+/* One sorter for the whole app. Purple always rides at the top, whatever the
+   chosen order — that is the point of flagging someone. */
+function sortLeads(list){
+  function t(x){ var d=cameIn(x.name); return d?d.getTime():null; }
+  return list.slice().sort(function(a,b){
+    var pa=prGet(a.name)?0:1, pb=prGet(b.name)?0:1;
+    if(pa!==pb) return pa-pb;
+    if(LSORT==="came-new"||LSORT==="came-old"){
+      var ta=t(a), tb=t(b);
+      /* undated people go last either way — an unknown date is not "oldest" */
+      if(ta===null&&tb===null) return String(a.name).localeCompare(String(b.name));
+      if(ta===null) return 1;
+      if(tb===null) return -1;
+      return LSORT==="came-new" ? tb-ta : ta-tb;
+    }
+    if(LSORT==="owed") return (b.owed||0)-(a.owed||0);
+    if(LSORT==="name") return String(a.name).localeCompare(String(b.name));
+    if(LSORT==="follow"){
+      var fa=fuDaysOut(a.name), fb=fuDaysOut(b.name);
+      if(fa===null&&fb===null) return String(a.name).localeCompare(String(b.name));
+      if(fa===null) return 1;
+      if(fb===null) return -1;
+      return fa-fb;
+    }
+    var sd=ORD.indexOf(a.stage)-ORD.indexOf(b.stage);
+    if(sd) return sd;
+    return String(a.name).localeCompare(String(b.name));
+  });
+}
 
 /* Runs over the rows already in the DOM. No re-render, so the caret stays put
    and typing never stutters, however long the list gets. */
@@ -9356,12 +9701,7 @@ function salesPipe(){
     :L.filter(function(x){return x.stage===FILTER;});
 
   /* Purple dots float to the top of every view — that is the whole point of them. */
-  rows.sort(function(a,b){
-    var pa=prGet(a.name)?0:1, pb=prGet(b.name)?0:1;
-    if(pa!==pb) return pa-pb;
-    var sa=ORD.indexOf(a.stage)-ORD.indexOf(b.stage);
-    if(sa) return sa;
-    return String(a.name).localeCompare(String(b.name));});
+  rows=sortLeads(rows);
   if(!rows.length)return h+'<div class="empty">Nothing in this view yet.</div>';
 
   /* Search hides rows that are already on screen, so the cursor never jumps and
@@ -9372,18 +9712,34 @@ function salesPipe(){
    +'<button class="lsx" id="lsclear" title="Clear">&times;</button>'
    +'<span class="lscount" id="lscount"></span></div>';
 
+  var due=STATE.leads.filter(function(x){var d=fuDaysOut(x.name);return d!==null&&d<=0;}).length;
+  h+='<div class="sortbar">'
+   +'<label class="sb-l">Sort<select id="l-sort">'
+   +SORTS.map(function(o){
+      return '<option value="'+o.k+'"'+(LSORT===o.k?" selected":"")+'>'+esc(o.nm)+'</option>';}).join("")
+   +'</select></label>'
+   +'<button class="sb-b'+(LGROUP?" on":"")+'" id="l-group">'
+   +(LGROUP?"Grouped by stage":"Flat list")+'</button>'
+   +(due?'<button class="sb-b due" id="l-due">'+due+' follow-up'+(due>1?"s":"")+' due</button>':'')
+   +'<span class="sb-n">'+rows.length+' shown</span></div>';
+
   /* Grouped by stage, New Leads first, because a new lead going cold is the most
      expensive thing that happens here. Purple-flagged people are lifted into
      their own band above everything. */
   var groups=[];
-  var pri=rows.filter(function(x){return prGet(x.name);});
-  if(pri.length && FILTER!=="priority")
-    groups.push({label:"Chasing Right Now", n:pri.length, hex:"#a855f7", rows:pri});
-  ORD.forEach(function(st){
-    var g=rows.filter(function(x){
-      return x.stage===st && !(prGet(x.name) && FILTER!=="priority"); });
-    if(g.length) groups.push({label:st, n:g.length, hex:scol(st).hex, rows:g});
-  });
+  if(!LGROUP){
+    var lab=SORTS.filter(function(o){return o.k===LSORT;})[0];
+    groups=[{label:(lab?lab.nm:"Leads"), n:rows.length, hex:"#7c8698", rows:rows}];
+  } else {
+    var pri=rows.filter(function(x){return prGet(x.name);});
+    if(pri.length && FILTER!=="priority")
+      groups.push({label:"Chasing Right Now", n:pri.length, hex:"#a855f7", rows:pri});
+    ORD.forEach(function(st){
+      var g=rows.filter(function(x){
+        return x.stage===st && !(prGet(x.name) && FILTER!=="priority"); });
+      if(g.length) groups.push({label:st, n:g.length, hex:scol(st).hex, rows:g});
+    });
+  }
   if(!groups.length) groups=[{label:"Leads", n:rows.length, hex:"#3b82f6", rows:rows}];
 
   h+='<div class="scroll big">';
@@ -9409,6 +9765,17 @@ function salesPipe(){
      +'<button class="openlead" data-n="'+esc(x.name)+'" title="Open the full record">'+esc(x.name)+'</button>'
      +(x.flag?'<div class="softflag">'+esc(x.flag)+'</div>':'')
      +(x.manual?'<div class="manualflag" data-mi="'+x.mi+'">added by you · remove</div>':'')
+     +(function(){
+        var fd=fuDaysOut(x.name);
+        if(fd===null) return "";
+        var cls = fd<0?"od":fd===0?"tod":"soon";
+        var txt = fd<0?(-fd)+"d overdue":fd===0?"follow up today":"in "+fd+"d";
+        return '<div class="fuflag '+cls+'">'+txt+'</div>';
+      })()
+     +'</td>'
+     +'<td data-l="Came In" class="camecell">'
+       +'<input class="cin-came" type="'+(camePrec(x.name)==="month"?"month":"date")+'" '
+       +'data-n="'+esc(x.name)+'" value="'+esc(cameInRaw(x.name))+'">'
      +'</td>'
      +'<td><select class="stsel" data-n="'+esc(x.name)+'" style="border-color:'+c.hex+'66;color:'+c.dot+'">'
      +STATUSES.map(function(st){
@@ -9423,6 +9790,14 @@ function salesPipe(){
      +(x.notesSet?'<div class="editedflag">edited</div>':'')+'</td></tr>';});
     h+='</tbody></table>';
   });
+  /* the original spreadsheet, one click away. This is the same sheet the app
+     reads on every load, so it is the live source and not a copy. */
+  h+='<div class="srcbar">'
+   +'<span class="src-l">Source</span>'
+   +'<a class="src-a" href="https://docs.google.com/spreadsheets/d/'+LEADS_ID+'/edit#gid=0" '
+   +'target="_blank" rel="noopener">Exodus Leads &mdash; May 2026 sheet &#8599;</a>'
+   +'<span class="src-n">Read on every load. Supabase is the live record; the sheet is '
+   +'the backup and the history.</span></div>';
   return h+'</div>';
 }
 /* ============================ DIRECTORY ============================
@@ -10585,6 +10960,48 @@ function wire(){
     if(cc) cc.onclick=function(){ LS("cash_collected",""); SBW.cash(); redraw(); };
   }
 
+  /* ---- the CRM record fields. Every one saves as you type. ---- */
+  function bindLx(sel, field, ev){
+    var els=document.querySelectorAll(sel);
+    for(var i=0;i<els.length;i++){
+      els[i][ev]=function(){
+        lxPut(this.getAttribute("data-n"), field, this.value);
+        this.style.borderColor="var(--green)";
+        var self=this;
+        setTimeout(function(){ self.style.borderColor=""; },700);
+        if(field==="came"||field==="fu") setTimeout(function(){ redraw(); },320);
+      };
+    }
+  }
+  bindLx("input.cin-came",   "came",   "onchange");
+  bindLx("input.lx-fu",      "fu",     "onchange");
+  bindLx("input.lx-funote",  "funote", "oninput");
+  bindLx("textarea.lx-detail","detail","oninput");
+
+  /* switching between an exact date and a month keeps whatever is already set */
+  var pr2=document.querySelectorAll("select.lx-prec");
+  for(var p4=0;p4<pr2.length;p4++) pr2[p4].onchange=function(){
+    var nm=this.getAttribute("data-n"), want=this.value;
+    var cur=cameInRaw(nm);
+    if(cur) lxPut(nm,"came", want==="month" ? cur.slice(0,7) : (cur.length===7?cur+"-01":cur));
+    redraw();
+  };
+
+  /* the sort controls */
+  var so=document.getElementById("l-sort");
+  if(so) so.onchange=function(){ LSORT=this.value; redraw(); };
+  var gb2=document.getElementById("l-group");
+  if(gb2) gb2.onclick=function(){ LGROUP=!LGROUP; redraw(); };
+  var db3=document.getElementById("l-due");
+  if(db3) db3.onclick=function(){ LSORT="follow"; LGROUP=false; redraw(); };
+
+  var so=document.getElementById("l-sort");
+  if(so) so.onchange=function(){ LSORT=this.value; redraw(); };
+  var gb2=document.getElementById("l-group");
+  if(gb2) gb2.onclick=function(){ LGROUP=!LGROUP; redraw(); };
+  var db3=document.getElementById("l-due");
+  if(db3) db3.onclick=function(){ LSORT="follow"; LGROUP=false; redraw(); };
+
   var sr=document.getElementById("sync-retry");
   if(sr) sr.onclick=function(){ this.textContent="Pushing…"; this.disabled=true; sbRetryAll(); };
 
@@ -10648,8 +11065,12 @@ function wire(){
   var nts=document.querySelectorAll("textarea.ntbox");
   for(var n2=0;n2<nts.length;n2++){
     nts[n2].oninput=function(){
-      ntSet(this.getAttribute("data-n"),this.value);
-      SBSAVE("lead", this.getAttribute("data-n"));
+      var nm=this.getAttribute("data-n");
+      ntSet(nm,this.value);
+      /* update the in-memory lead immediately too, so anything reading STATE
+         between now and the next refresh sees the real text */
+      var L=leadBy(nm); if(L){ L.notes=this.value; L.notesSet=true; }
+      SBSAVE("lead", nm);
       this.style.borderColor="var(--green)";};
     nts[n2].onblur=function(){
       var self=this;
