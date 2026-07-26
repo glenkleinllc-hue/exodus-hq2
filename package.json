@@ -1,0 +1,8 @@
+{
+  "name": "exodus-hq",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Exodus HQ — Glen Klein's operations homebase",
+  "engines": { "node": ">=20.x" }
+}
