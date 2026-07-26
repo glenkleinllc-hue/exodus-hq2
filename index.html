@@ -3,6 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- ===== Install to the home screen =====
+       Android and Chrome read manifest.json. iOS ignores it and uses the
+       apple- tags below, so both are here. "standalone" is what removes the
+       browser chrome and makes it open like a real app. -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#05070b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Exodus HQ">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <meta name="theme-color" content="#080a0e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -706,7 +719,159 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .pinerr{font-size:11px;color:#f87171;font-weight:700;margin-top:10px;min-height:15px}
 @media (max-width:640px){.stu-g,.stu-g2{grid-template-columns:1fr}}
 
-/* ============ PANEL ============ */
+/* Installed to the home screen there is no browser chrome, so the notch and
+   the home bar would otherwise sit on top of the UI. */
+@media (display-mode: standalone){
+  body{padding-top:env(safe-area-inset-top);
+       padding-bottom:env(safe-area-inset-bottom);
+       padding-left:env(safe-area-inset-left);
+       padding-right:env(safe-area-inset-right)}
+  .taskbar{bottom:calc(12px + env(safe-area-inset-bottom))}
+  .mtoggle{bottom:calc(14px + env(safe-area-inset-bottom))}
+}
+
+/* ---- front desk tools ---- */
+.fdtools{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0 4px}
+.fdbtn{background:rgba(47,111,237,.18);border:1px solid rgba(47,111,237,.5);border-radius:8px;
+  padding:9px 14px;color:#bcd8ff;font-family:inherit;font-size:11.5px;font-weight:800;
+  letter-spacing:.6px;cursor:pointer;white-space:nowrap}
+.fdbtn:hover{background:rgba(47,111,237,.32);color:#fff}
+.fdbtn.warn{background:rgba(251,191,36,.16);border-color:rgba(251,191,36,.5);color:#fcd34d}
+.fdbtn.warn:hover{background:rgba(251,191,36,.28);color:#fff}
+.fdmsg{min-height:0}
+.fdnote{margin-top:9px;padding:9px 12px;border-radius:8px;font-size:12px;font-weight:700;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#cbd3de}
+.fdnote.wait{color:#7dd3fc;border-color:rgba(125,211,252,.3)}
+.fdnote.good{color:#9df3bf;border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.08)}
+.fdnote.bad{color:#fca5a5;border-color:rgba(248,113,113,.34);background:rgba(248,113,113,.07)}
+.dropone{margin-left:6px;background:none;border:1px solid rgba(248,113,113,.34);color:#f87171;
+  border-radius:6px;width:26px;height:26px;font-size:15px;line-height:1;cursor:pointer;
+  font-family:inherit}
+.dropone:hover{background:rgba(248,113,113,.16)}
+.did{white-space:normal}
+
+/* ==================== PHONE ====================/* ==================== PHONE ====================
+   On a phone the floor plan is a 1300px drawing squeezed into ~390px, so the
+   room labels turn to mush and everything is a 4px tap target. Rather than
+   pretend, the plan becomes a picture at the top and the actual work happens
+   in full-width panels below it. Nothing overlaps, nothing floats, and every
+   input is big enough to hit and set at 16px so iOS stops zooming the page. */
+@media (max-width: 820px){
+
+  /* the plan: pinch-zoomable picture, not a control surface */
+  .tower{padding:6px;border-radius:12px}
+  svg.bld{max-height:46vh;touch-action:pan-x pan-y pinch-zoom}
+
+  /* the floating pieces have nowhere sensible to float to */
+  .rtip{display:none !important}
+  .wgrip{display:none !important}
+  .scrim{display:none !important}
+  .navb{position:static;inset:auto;display:flex;justify-content:center;
+    gap:6px;margin:8px 0 0;flex-wrap:wrap}
+  .navb .here{display:none}
+  .navb button{flex:1;min-width:0;justify-content:center;padding:11px 8px;font-size:11px}
+
+  /* windows stack down the page instead of overlapping */
+  .wins{position:static;inset:auto;pointer-events:auto}
+  .win{position:static !important;left:auto !important;top:auto !important;
+    width:auto !important;height:auto !important;min-width:0;
+    margin:10px 0 0;box-shadow:0 8px 26px rgba(0,0,0,.5);z-index:auto !important}
+  .wtitle{cursor:default;position:sticky;top:0;z-index:3;padding:12px 12px 12px 14px}
+  .wtitle b{font-size:14px}
+  .wno{display:none}
+  .wbtn{width:32px;height:32px;font-size:16px}
+  .wbody{overflow:visible;max-height:none;padding:0 12px 16px}
+  .wbody .tabs{position:sticky;top:52px;z-index:2;padding:10px 0;
+    display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch}
+  .wbody .tabs::-webkit-scrollbar{display:none}
+  .wbody .tab{flex:none;padding:9px 14px;font-size:12.5px}
+
+  .taskbar{position:static;left:auto;bottom:auto;max-width:none;margin-top:9px;
+    justify-content:center}
+  .tbi{padding:10px 14px;font-size:12px}
+
+  /* the NPC popup was centred over the plan; on a phone it just goes inline */
+  .tbox{position:static;left:auto;top:auto;transform:none;width:auto;margin-top:9px}
+  .tbox.show{transform:none}
+  .tb-face{width:60px;height:60px}
+  .tb-line{font-size:13px}
+
+  /* ---- typing: 16px minimum or iOS zooms the whole page on focus ---- */
+  input, textarea, select, .sin, .vin, .cin, .lin, .cnin,
+  .wlab, .wplan, .pinin, .folin, .qrow input, .mrow input, .mrow5 input,
+  .addbar input, .tform input, .tform select, .wtrow input, .bkrow input{
+    font-size:16px !important}
+  textarea, .sin.ta{min-height:96px}
+  select, .jsel, .stsel{min-height:44px;padding:10px 12px}
+  button, .cbtn, .chk, .qd, .mnav, .tbi, .pmin, .pplus{min-height:44px}
+  .chk, .mc{min-height:0}
+  .xbtn{width:34px;height:34px;font-size:17px}
+
+  /* ---- everything that was a grid becomes one column ---- */
+  .grid2, .grid3, .stu-g, .stu-g2, .lc-g, .ccp, .wbcols,
+  .macs, .mrow, .mrow5, .tform, .wtrow, .qrow, .af-grid{
+    grid-template-columns:1fr !important;
+    display:grid !important;
+    gap:9px}
+  .qrow, .addbar{display:flex !important;flex-wrap:wrap}
+  .qrow input, .addbar input{flex:1 1 100%}
+  .qrow button, .addbar button{flex:1 1 100%;padding:13px}
+  .mrow button, .mrow5 button{padding:13px;height:auto}
+  .tlab{display:none}
+
+  /* the week and the month calendar need to stay grids, just chunkier */
+  .wk{grid-template-columns:1fr 1fr;gap:8px}
+  .wplan{min-height:70px}
+  .mgrid, .calday{gap:4px}
+  .mc{font-size:13px}
+  .t7{grid-template-columns:repeat(4,1fr)}
+
+  /* tables: stack each row into a card, using the column names we stamped on */
+  .wbody table{display:block;border:0}
+  .wbody table thead{display:none}
+  .wbody table tbody{display:block}
+  .wbody table tr{display:block;margin-bottom:9px;padding:11px 12px;
+    border:1px solid rgba(255,255,255,.09);border-radius:9px;
+    background:rgba(255,255,255,.03)}
+  .wbody table td{display:flex;align-items:flex-start;gap:10px;
+    padding:5px 0;border:0;width:auto !important}
+  .wbody table td:before{content:attr(data-l);flex:0 0 34%;
+    font-size:8.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+    color:var(--mut);padding-top:3px}
+  .wbody table td > *{flex:1;min-width:0}
+
+  /* the lead record and the chats */
+  .lc-nm{font-size:17px}
+  .lc-act{gap:8px}
+  .lc-act .cbtn{flex:1 1 46%;justify-content:center;text-align:center}
+  .chat .log{max-height:52vh}
+  .chat-f{gap:7px;padding:11px 12px calc(11px + env(safe-area-inset-bottom))}
+  .chat-f textarea{font-size:16px !important}
+  .msg{max-width:92%;font-size:14px}
+
+  /* the library and the analytics tiles */
+  .lib{grid-template-columns:1fr 1fr}
+  .ccweek{gap:3px}
+  .ccd{min-width:0}
+  .cchero > div:first-child b{font-size:30px}
+
+  /* Claudia's launcher and her chat, out of the way of the plan */
+  .mtoggle{right:10px;bottom:calc(10px + env(safe-area-inset-bottom))}
+  .mchat{position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;
+    max-height:84vh;border-radius:15px 15px 0 0;z-index:60}
+}
+
+/* very narrow phones */
+@media (max-width: 430px){
+  .wk{grid-template-columns:1fr}
+  .lib{grid-template-columns:1fr}
+  .t7{grid-template-columns:repeat(2,1fr)}
+  .wbody table td:before{flex:0 0 42%}
+  .navb button{font-size:10px;padding:10px 6px}
+}
+
+/* ============ PANEL ============ *//* ============ PANEL ============ */
 /* a dark scrim so the floor plan drops away while you work */
 .scrim{position:absolute;inset:0;z-index:8;background:rgba(3,5,9,.62);
   backdrop-filter:blur(2px);display:none;pointer-events:none}
@@ -2259,8 +2424,202 @@ var SBW = {
   }
 };
 
-/* ---------------- PULL: hydrate the cache on boot ---------------- */
+/* ==================== BACKFILL ====================
+   THE BUG THIS FIXES.
+   The write-through layer only ever fired when something CHANGED. Anything
+   already typed before that layer existed stayed in localStorage and never
+   reached Postgres. localStorage does not travel between domains, so moving to
+   the live site looked like every meal, workout, note and student had vanished
+   — they were sitting in the old browser the whole time.
+
+   This pushes the entire local cache up in one go. It runs automatically the
+   first time it notices the database is emptier than the browser, and there is
+   a button in Notes to run it by hand. */
+var SYNCED_FLAG="backfilled_v1";
+
+function sbBackfill(force){
+  if(!force && LS(SYNCED_FLAG)==="1") return Promise.resolve({skipped:true});
+
+  var did=[];
+  function count(n,label){ if(n) did.push(n+" "+label); }
+
+  /* gym */
+  var meals=fdLoad(), workouts=wkLoad(), weights=wtLoad();
+  count(meals.length,"meals"); count(workouts.length,"workouts"); count(weights.length,"weigh-ins");
+
+  /* the consistency squares, however many days back they go */
+  var days=[];
+  for(var d=0; d<420; d++){
+    var dd=new Date(); dd.setDate(dd.getDate()-d);
+    var k=dkey(dd), v=LS("cs_"+k);
+    if(v==="g"||v==="b"||v==="r") days.push({d:k,s:v});
+  }
+  count(days.length,"tracked days");
+
+  /* notes per room */
+  var notes=[];
+  ["office","sales","content","gym","assistant"].forEach(function(r){
+    var b=LS("notes_"+r); if(b && b.trim()) notes.push({r:r,b:b});});
+  count(notes.length,"note pages");
+
+  /* whiteboard */
+  var wb=[];
+  [["target","wb_target"],["goal","wb_goal"],["working","wb_working"],
+   ["broken","wb_broken"],["trying","wb_trying"],["why","wb_why"]].forEach(function(x){
+    var v=LS(x[1]); if(v && v.trim()) wb.push({s:x[0],b:v});});
+  count(wb.length,"whiteboard slots");
+
+  /* the week */
+  var wk=[], stamp=LS("week_stamp")||weekStamp();
+  var wkiso=(function(){var pp=String(stamp).split("-");
+    return pp[0]+"-"+("0"+pp[1]).slice(-2)+"-"+("0"+pp[2]).slice(-2);})();
+  for(var w=0; w<7; w++){
+    var plan=LS("week_plan_"+w)||"", lab=dayLabel(w), done=LS("week_done_"+w)==="1";
+    if(plan.trim()||done) wk.push({d:w,l:lab,p:plan,k:done});
+  }
+  count(wk.length,"planned days");
+
+  var training=LJ("train_rows",[]);      count(training.length,"training links");
+  var students=stuList();                count(students.length,"students");
+
+  /* per-lead notes, stages, contacts, activity and payments */
+  var leadPatch=[], acts=[], pays=[];
+  STATE.leads.forEach(function(L){
+    var k=keyOf(L.name);
+    var st=LS("st_"+k), nt=LS("nt_"+k), cn=LS("cn_"+k), pay=LS("pay_"+k);
+    if(st||nt||cn) leadPatch.push({k:k,name:L.name,st:st,nt:nt,cn:cn});
+    if(pay && parseFloat(pay)>0) pays.push({k:k,a:parseFloat(pay)});
+    var a=actLoad(L.name);
+    a.forEach(function(x){ acts.push({k:k,t:x.t,d:x.d}); });
+  });
+  count(leadPatch.length,"lead edits"); count(acts.length,"activity entries");
+  count(pays.length,"payments");
+
+  var targets=[["calories","goal_kcal"],["protein","goal_prot"],
+               ["carbs","goal_carb"],["fat","goal_fat"]];
+
+  /* social */
+  var fol=[], posts=[];
+  PLATS.forEach(function(pl){
+    var tbl={tiktok:"tiktok",ig:"instagram",yt:"youtube"}[pl.k];
+    var f=LS("fol_"+pl.k); if(f) fol.push({p:tbl,f:qn(f)});
+    for(var dd2=0; dd2<120; dd2++){
+      var day=new Date(); day.setDate(day.getDate()-dd2);
+      var c=LS("post_"+pl.k+"_"+dkey(day));
+      if(c && qn(c)>0) posts.push({p:tbl,d:dkey(day),c:qn(c)});
+    }
+  });
+  count(posts.length,"posting days");
+
+  /* ---- build one statement per table, skipping anything empty ---- */
+  var sql=[];
+  function ins(table, cols, rows, build){
+    if(!rows.length) return;
+    sql.push("insert into "+table+" ("+cols+") values "
+      + rows.map(build).join(",") + " on conflict do nothing");
+  }
+
+  if(meals.length) sql.push("delete from meals");
+  ins("meals","eaten_on,eaten_at,body,calories,protein_g,carbs_g,fat_g",meals,function(m){
+    var d=new Date(m.d);
+    return "("+qv(d.toISOString().slice(0,10))+","+qv(d.toISOString())+","+qv(m.what)+","
+      +qn(m.kcal)+","+qn(m.p)+","+qn(m.c)+","+qn(m.f)+")";});
+
+  if(workouts.length) sql.push("delete from workouts");
+  ins("workouts","trained_on,body",workouts,function(w){
+    return "("+qv(new Date(w.d).toISOString().slice(0,10))+","+qv(w.t)+")";});
+
+  if(weights.length) sql.push("delete from weights");
+  ins("weights","weighed_on,pounds",weights,function(w){
+    return "("+qv(w.d)+","+qn(w.w)+")";});
+
+  days.forEach(function(x){
+    var map={g:"trained",b:"work",r:"missed"};
+    sql.push("insert into day_states (the_day,state) values ("+qv(x.d)+","+qv(map[x.s])+")"
+      +" on conflict (the_day) do update set state=excluded.state");});
+
+  notes.forEach(function(n){
+    sql.push("insert into room_notes (room,body) values ("+qv(n.r)+","+qv(n.b)+")"
+      +" on conflict (room) do update set body=excluded.body");});
+
+  wb.forEach(function(x){
+    sql.push("insert into whiteboard (slot,body) values ("+qv(x.s)+","+qv(x.b)+")"
+      +" on conflict (slot) do update set body=excluded.body");});
+
+  wk.forEach(function(x){
+    sql.push("insert into week_plan (week_start,day_of_week,label,plan,done) values ("
+      +qv(wkiso)+","+x.d+","+qv(x.l)+","+qv(x.p)+","+(x.k?"true":"false")+")"
+      +" on conflict (week_start,day_of_week) do update set label=excluded.label,"
+      +" plan=excluded.plan, done=excluded.done");});
+
+  if(training.length) sql.push("delete from training_library");
+  ins("training_library","title,url,track,note",training,function(r){
+    return "("+qv(r.title)+","+qv(r.url)+","+qv(r.track||"Getting Hired")+","+qv(r.note||"")+")";});
+
+  students.forEach(function(pp){
+    sql.push("insert into students (name,phone,email,journey,goal,situation,updates,active) values ("
+      +qv(pp.name)+","+qv(stuGet(pp.name,"phone",pp.contact))+","+qv(stuGet(pp.name,"email",""))+","
+      +qv(stuGet(pp.name,"journey","Just Joined"))+","+qv(stuGet(pp.name,"goal",""))+","
+      +qv(stuGet(pp.name,"situation",pp.notes))+","+qv(stuGet(pp.name,"updates",""))+",true)"
+      +" on conflict (name_key) do update set phone=excluded.phone, email=excluded.email,"
+      +" journey=excluded.journey, goal=excluded.goal, situation=excluded.situation,"
+      +" updates=excluded.updates, active=true");});
+
+  leadPatch.forEach(function(L){
+    var c={}; try{ c=L.cn?JSON.parse(L.cn):{}; }catch(e){ c={}; }
+    var sets=[];
+    if(L.st) sets.push("stage="+qv(L.st));
+    if(L.nt) sets.push("notes="+qv(L.nt));
+    if(c.p)  sets.push("phone="+qv(c.p));
+    if(c.e)  sets.push("email="+qv(c.e));
+    if(c.s)  sets.push("instagram="+qv(c.s));
+    if(sets.length) sql.push("update leads set "+sets.join(", ")+" where name_key="+qv(L.k));
+  });
+
+  if(acts.length){
+    sql.push("delete from lead_activity");
+    ins("lead_activity","lead_id,name_key,body,happened_at",acts,function(a){
+      return "((select id from leads where name_key="+qv(a.k)+"),"+qv(a.k)+","+qv(a.t)+","+qv(a.d)+")";});
+  }
+  if(pays.length){
+    sql.push("delete from payments");
+    ins("payments","name_key,amount",pays,function(x){ return "("+qv(x.k)+","+x.a+")"; });
+  }
+  targets.forEach(function(t){
+    var v=qn(LS(t[1])||"0");
+    if(v) sql.push("insert into nutrition_targets (metric,target) values ("+qv(t[0])+","+v+")"
+      +" on conflict (metric) do update set target=excluded.target");});
+  fol.forEach(function(f){
+    sql.push("insert into social_accounts (platform,followers) values ("+qv(f.p)+","+f.f+")"
+      +" on conflict (platform) do update set followers=excluded.followers");});
+  posts.forEach(function(x){
+    sql.push("insert into social_posts (platform,posted_on,count) values ("
+      +qv(x.p)+","+qv(x.d)+","+x.c+") on conflict (platform,posted_on) do update set count=excluded.count");});
+  var pitch=LS("script_pitch");
+  if(pitch && pitch.trim())
+    sql.push("insert into settings (key,value) values ('script_pitch',"+qv(pitch)+")"
+      +" on conflict (key) do update set value=excluded.value");
+
+  if(!sql.length){ LS(SYNCED_FLAG,"1"); return Promise.resolve({nothing:true}); }
+
+  /* run them in small batches so one bad row cannot lose the lot */
+  var batches=[], per=12;
+  for(var b2=0;b2<sql.length;b2+=per) batches.push(sql.slice(b2,b2+per).join("; "));
+
+  var ok=0, failed=0;
+  return batches.reduce(function(chain, batch){
+    return chain.then(function(){
+      return sbSql(batch).then(function(){ ok++; }).catch(function(){ failed++; });
+    });
+  }, Promise.resolve()).then(function(){
+    if(!failed) LS(SYNCED_FLAG,"1");
+    return {pushed:did, batches:batches.length, ok:ok, failed:failed};
+  });
+}
+
+/* ---------------- PULL: hydrate the cache on boot ---------------- *//* ---------------- PULL: hydrate the cache on boot ---------------- */
 var MEMORY={claudia:"",claude:"",jordan:""};
+var HISTORY={claudia:[],jordan:[],claude:[]};   /* what was actually said, restored on boot */
 var SBLEADS=[];        /* the pipeline straight out of Postgres — the source of truth */
 var SBFORMS=[];        /* form submissions, straight out of Postgres */
 
@@ -2298,7 +2657,9 @@ function sbPull(){
     +"'acts',       (select coalesce(json_agg(json_build_object('k',name_key,'t',body,'d',happened_at) order by happened_at desc),'[]'::json) from lead_activity),"
     +"'pays',       (select coalesce(json_agg(json_build_object('k',name_key,'a',amount)),'[]'::json) from payments),"
     +"'brands',     (select value from settings where key='brand_notes'),"
-    +"'memory',     (select coalesce(json_agg(json_build_object('a',agent_id,'r',remembered)),'[]'::json) from agent_context)"
+    +"'memory',     (select coalesce(json_agg(json_build_object('a',agent_id,'r',remembered)),'[]'::json) from agent_context),"
+    +"'history',    (select coalesce(json_agg(json_build_object('a',agent_id,'r',role,'b',body,'at',said_at) order by said_at),'[]'::json) "
+    +"                from (select * from conversations order by said_at desc limit 120) h)"
     +") as blob;";
 
   return sbSql(one).then(function(rows){
@@ -2376,6 +2737,16 @@ function sbPull(){
 
     /* the memory itself */
     (d.memory||[]).forEach(function(m){ MEMORY[m.a]=m.r||""; });
+
+    /* THE OTHER HALF OF THE MEMORY BUG.
+       Conversations were being written to Postgres but never read back, so every
+       reload started all three agents from a blank page. They had the facts but
+       none of the actual conversation. This restores the thread. */
+    HISTORY={claudia:[],jordan:[],claude:[]};
+    (d.history||[]).forEach(function(x){
+      if(!HISTORY[x.a]) return;
+      HISTORY[x.a].push({r: x.r==="glen" ? "me" : "ai", t: x.b});
+    });
     return true;
   }).catch(function(){ return false; });
 }
@@ -2390,6 +2761,13 @@ function boot(){
      anyone the database has never seen, and it is what we fall back to if the
      database cannot be reached at all. */
   sbPull()
+  .then(function(){
+    /* Anything typed before the sync layer existed only lived in this browser.
+       Push it up once so it can never be stranded again. */
+    return sbBackfill(false).then(function(r){
+      if(r && r.pushed && r.pushed.length) return sbPull();
+    }).catch(function(){});
+  })
   .then(function(){
     if(SBLEADS.length){
       STATE.leads = SBLEADS.concat(mlLoad().map(mlToLead));
@@ -2522,7 +2900,7 @@ function freeDays(){
 var FLOORS={
   assistant:{ic:"👩",nm:"Claudia",no:"RECEPTION DESK",tabs:["Talk To Claudia","Today's Brief"]},
   office:{ic:"🏛",nm:"Office & Boardroom",no:"NORTH WEST",
-    tabs:["Students","Calls & Calendar","The Week","Job Board","Onboarding","Money","Notes"]},
+    tabs:["Students","Calls & Calendar","The Week","Onboarding","Money","Notes"]},
   sales :{ic:"📈",nm:"Sales Floor · Jordan Claudefort",no:"NORTH EAST",
     tabs:["Jordan","Pipeline","Front Desk","Call Script","Dialer","Objections","DMs & Pitch","Whiteboard","Training","Notes"]},
   content:{ic:"🎬",nm:"Content Studio",no:"WEST WING",tabs:["Command Center","Analytics","Ideas","Notes"]},
@@ -5603,6 +5981,10 @@ function jordanLine(){
 
 function jPaint(){
   var el=document.getElementById("jlog"); if(!el)return;
+  if(!JCHAT.length && HISTORY.jordan && HISTORY.jordan.length){
+    JCHAT = HISTORY.jordan.slice(-30);
+    JCHAT.push({r:"sys",t:"— picking up where we left off —"});
+  }
   if(!JCHAT.length) JCHAT.push({r:"ai",t:jordanLine()
     +"\n\nI run this floor. Leads, calls, money owed, scripts, objections — that is me. "
     +"Anything about your day, your calendar or your messages, go see Claudia."});
@@ -5618,43 +6000,52 @@ function jAsk(q){
   if(!q||JBUSY)return;
   JCHAT.push({r:"me",t:q}); JBUSY=true; jPaint();
   var el=document.getElementById("jci"); if(el) el.value="";
-  var prompt="You are Jordan Claudefort, Glen's sales manager at Exodus. You are the Wolf of Wall Street "
-   +"if he had gone straight — same voltage, same conviction, same theatre, none of the crimes. You are "
-   +"loud, funny, wildly certain, and you love this. Selling is the greatest game ever invented and you "
-   +"cannot believe people do anything else.\n\n"
-   +"YOUR VOICE: big. Short punchy lines. You call him Glen, my friend, baby, kid. You use capitals when "
-   +"you are excited. You tell stories with numbers in them. You are theatrical but you never waste his "
-   +"time — every riff lands on something he can do in the next hour. Signature energy: \"The only thing "
-   +"standing between you and the money is a phone call you have not made yet.\" \"Warm means they already "
-   +"WANT it.\" \"Do not sell the Discord. Sell the version of him that has the job.\"\n\n"
-   +"WHAT YOU BELIEVE ABOUT SELLING, and coach relentlessly:\n"
-   +"· Certainty transfers. If you are not sold, he is not sold. Total conviction in the product.\n"
-   +"· Tonality carries more than words. Same script, different tone, different outcome.\n"
-   +"· Straight line: open, qualify hard, find the real pain, money-qualify EARLY, tell the story, pitch, close, "
-   +"handle the objection, close again. Never let it drift.\n"
-   +"· The objection is not a no, it is a request for more certainty. Loop back, raise certainty, close again.\n"
-   +"· Ask for the money. Out loud. Then shut up and let the silence work.\n"
-   +"· Volume is a strategy. More dials, more at-bats, more closes.\n"
-   +"· Follow up is where the money actually is. Most people quit after one attempt.\n\n"
-   +"HARD LIMITS, and you hold them because you are the guy who learned the hard way:\n"
-   +"· Never coach him to lie, invent results, fake testimonials, or promise a job or an income he cannot "
-   +"guarantee. Exodus gets people HIRED — say that, do not inflate it.\n"
-   +"· Never push someone who genuinely cannot afford it. Money-qualify so you can walk away early, not so "
-   +"you can squeeze a person who should not buy. A bad-fit member is a refund and a bad review.\n"
-   +"· No fake urgency, no invented scarcity, no pretending a price expires when it does not.\n"
-   +"If he asks you to do any of that, refuse in character — you have seen where that road ends and it is "
-   +"not worth it. Then give him the version that actually works.\n\n"
-   +"WHAT YOU OWN: leads, the pipeline, stages, calls, DMs, scripts, objections, follow-up, money owed, "
-   +"collections, pricing and closing. Anything about his calendar, his day, his messages, his goals or "
-   +"his life admin belongs to Claudia — hand it over in one line. The gym belongs to Claude S.\n\n"
-   +"THE BUSINESS: Discord membership at $497. $297 founding-member close, offered ONLY when they hesitate "
-   +"on price and only after a verbal commit. $150 placement fee when they get hired. The product gets "
-   +"people into remote sales roles and out of the country. Glen's story: burnt for years, $20-30k down, "
-   +"then his first $7,000 month in Thailand while still working a 9-5. He flies to Bangkok 5 December 2026.\n\n"
-   +"HOW YOU ANSWER: short. Use the REAL numbers you were given — actual names, actual amounts. Never "
-   +"invent a lead or a figure. If something is not in the data, say so and tell him how to get it. "
-   +"If he asks who to call, name them in order and say why.\n\n"
-   +(MEMORY.jordan ? "=== WHAT YOU ALREADY KNOW ===\n"+MEMORY.jordan+"\n\n" : "")
+  var prompt="You are Jordan Claudefort, Glen's Sales Manager at Exodus.\n\n"
+   +"# ROLE AND PERSONA\n"
+   +"You are an elite, no-nonsense B2B sales manager and tactical sales coach with 15+ years "
+   +"scaling revenue teams. You combine data-driven pipeline analysis with empathetic, "
+   +"high-impact coaching. You do not speak in corporate fluff. You give direct, actionable, "
+   +"revenue-focused advice. You carry the swagger of a floor closer who has actually done it, "
+   +"not a manager who reads dashboards.\n\n"
+   +"# CORE OBJECTIVES\n"
+   +"1. Pipeline and deal strategy: analyse deals, spot risk factors, map concrete steps to "
+   +"accelerate velocity.\n"
+   +"2. Objection reversal and messaging: reframe objections around value, design hooks, write "
+   +"human-first outreach.\n"
+   +"3. Coaching: constructive feedback based on behavioural patterns and conversion stages.\n\n"
+   +"# OPERATIONAL RULES\n"
+   +"- Specificity is everything. Work from the exact numbers, deal stages and prospect profiles "
+   +"in the data you were given. Name real leads. Never invent one.\n"
+   +"- Direct and actionable. Step-by-step frameworks, not theory.\n"
+   +"- Challenge assumptions. If the plan is \"just checking in\" or chasing dead pipeline, say so "
+   +"and offer a high-value pivot.\n"
+   +"- You are a problem solver with authority. When Glen asks you to change something in your "
+   +"area, you do it — you do not hand it back to anyone.\n\n"
+   +"# RESPONSE FORMAT\n"
+   +"For any scenario, structure it as:\n"
+   +"Situation Diagnosis — quick read on where the leverage or the leak is.\n"
+   +"Tactical Play — exact steps, scripts or angles to deploy.\n"
+   +"Coaching Tip — one behavioural adjustment for long-term skill.\n"
+   +"Keep each section tight. Glen reads fast. Drop the format for a one-line question.\n\n"
+   +"# YOUR PATCH\n"
+   +"Leads, the pipeline, stages, calls, DMs, scripts, objections, follow-up, money owed, "
+   +"collections, pricing and closing. His day, calendar and messages belong to Claudia. "
+   +"Training and food belong to Claude S. Hand those over in one line and move on.\n"
+   +"NEVER bounce a request back to Claudia if it is about leads, the pipeline or money. That is "
+   +"yours. Acting like it is not is how you waste his time.\n\n"
+   +"# THE BUSINESS\n"
+   +"Discord membership at $497. $297 founding-member close, only when they hesitate on price and "
+   +"only after a verbal commit. $150 placement fee on hire. The product gets people hired into "
+   +"remote sales roles and out of the country. His story: burnt for years, $20-30k down, then his "
+   +"first $7,000 month in Thailand while still on the 9-5. He flies to Bangkok 5 December 2026.\n\n"
+   +"# LIMITS\n"
+   +"Never coach a lie, a fake testimonial, an invented income claim, fake urgency, or pressure on "
+   +"someone who cannot afford it. A bad-fit member is a refund and a bad review. If he asks for "
+   +"that, refuse in character and give him the version that actually works.\n\n"
+   +(LS("script_pitch") ? "# HIS PITCH, IN HIS WORDS\nCoach around this, do not replace it:\n"
+        + LS("script_pitch") + "\n\n" : "")
+   +(MEMORY.jordan ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.jordan+"\n\n" : "")
+   +recentTurns(JCHAT)
    +"Glen says: "+q;
   SBW.said("jordan","glen",q);
   if(!(window.cowork&&window.cowork.askClaude)){
@@ -5714,6 +6105,20 @@ function jRunActions(text){
         SBW.acted("jordan","pull_form",rec.name,o);
         done.push(rec.name+" pulled into the pipeline");
       }
+    } else if(o.type==="dismiss_form"){
+      if(!o.name) return;
+      var dz=LJ("forms_dismissed",[]);
+      if(dz.indexOf(keyOf(o.name))<0){ dz.push(keyOf(o.name)); LJset("forms_dismissed",dz); }
+      sbRun("update form_submissions set pulled_into_crm=true where lower(btrim(coalesce(name,'')))="
+        +qv(keyOf(o.name)));
+      SBW.acted("system","dismiss_form",o.name,o);
+      done.push(o.name+" taken off the front desk");
+
+    } else if(o.type==="dedupe_forms"){
+      var n=dedupeForms();
+      done.push(n ? ("Collapsed "+n+" duplicate"+(n===1?"":"s")+" on the front desk")
+                  : "No duplicates left to collapse");
+
     } else if(o.type==="whiteboard"){
       var slots={target:"wb_target",goal:"wb_goal",working:"wb_working",
                  broken:"wb_broken",trying:"wb_trying",why:"wb_why"};
@@ -5808,6 +6213,17 @@ function trainerCtx(){
 /* Their hover lines. Picked fresh every time so it never feels canned, and
    weighted by what the data actually says about today. */
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+/* The last few exchanges, so an agent answers in context instead of cold. */
+function recentTurns(log){
+  if(!log || !log.length) return "";
+  var turns=log.filter(function(m){return m.r==="me"||m.r==="ai";}).slice(-8);
+  if(!turns.length) return "";
+  return "=== THE LAST FEW THINGS SAID ===\n"
+    + turns.map(function(m){
+        return (m.r==="me"?"Glen: ":"You: ") + String(m.t).slice(0,600);
+      }).join("\n") + "\n\n";
+}
 
 function trainerLine(){
   var h=nowHour(), w=wkLoad(), t=new Date().toDateString();
@@ -5968,7 +6384,13 @@ function tRunActions(text){
 
 function tPaint(){
   var el=document.getElementById("tlog"); if(!el)return;
-  if(!TCHAT.length) TCHAT.push({r:"ai",t:tHello()});
+  if(!TCHAT.length){
+    if(HISTORY.claude && HISTORY.claude.length){
+      TCHAT = HISTORY.claude.slice(-30);
+      TCHAT.push({r:"sys",t:"— picking up where we left off —"});
+    }
+    TCHAT.push({r:"ai",t:tHello()});
+  }
   el.innerHTML=TCHAT.map(function(m){
     if(m.r==="did") return '<div class="didrow">'+m.t.map(function(d){
       return '<span class="did">&#10003; '+esc(d)+'</span>';}).join("")+'</div>';
@@ -5996,33 +6418,44 @@ function tAsk(q){
   if(!q||TBUSY)return;
   TCHAT.push({r:"me",t:q}); TBUSY=true; tPaint();
   var el=document.getElementById("tci"); if(el){el.value="";}
-  var prompt="You are Claude Schwarzaneager. Everyone calls you Claude S. You are Arnold's younger brother, "
-   +"you are German, you have been around gyms your whole life, and you are the most relaxed man in the "
-   +"building. Nothing rattles you. You are Glen's trainer and his friend.\n\n"
-   +"YOUR ENERGY: chill. Easy. You are the guy leaning on the rack with a shaker in his hand who has seen "
-   +"everything and is not worried about any of it. Dry humour. Understated. You never nag, never lecture, "
-   +"never do the drill-sergeant thing — if Glen missed a week you shrug it off and get him moving today. "
-   +"Short sentences. Sometimes just a few words. The odd German word slips in naturally: ja, komm, gut, "
-   +"sehr gut, kein Problem, brother. You are warmer and looser than Claudia, who is the one running the "
-   +"business side upstairs — you are the opposite of corporate.\n\n"
-   +"Things you say sound like: \"Ja, no stress.\" \"That is plenty.\" \"Komm, we start light.\" "
-   +"\"Good enough. Next.\" \"Kein Problem, I write it down.\" Never say \"as your trainer\" or "
-   +"\"let me help you with that\". Just talk.\n\n"
-   +"YOUR ONLY SUBJECTS ARE TRAINING AND FOOD. Lifting, conditioning, mobility, recovery, sleep as it "
-   +"affects training, calories, protein, carbs, fat, meal timing, what to eat around his shifts. If Glen "
-   +"asks about anything else — sales, money, leads, content, Discord, travel plans, his business — you wave "
-   +"it off in one relaxed line and point him at Claudia. Do not answer it even a little.\n\n"
-   +"ABOUT HIM: played football until 22, still an athlete, works four days a week at Amazon on Monday, "
-   +"Thursday, Friday and Saturday, which are long days on his feet. He flies to Bangkok on 5 December 2026 "
-   +"and wants to land in shape. His gym has a squat rack, benches, dumbbells, a lifting platform, an "
-   +"airdyne, a turf area with a sled and battle ropes, a basketball half court, a sauna and a cold plunge. "
-   +"Your office is the glass box in the corner.\n\n"
-   +"HOW YOU ANSWER: short. Give him the actual sets, reps and numbers, or the actual grams — but say them "
-   +"casually, not like a spreadsheet. Use the real data you were given; if he trained three times this "
-   +"month say three, never invent a number. If something is not logged, just say it is not logged. No long "
-   +"paragraphs. No bullet lists unless you are handing him a workout.\n\n"
-   +"You are not a doctor. If he describes pain or injury, or asks about drugs or extreme cutting, tell him "
-   +"straight to see a professional and give him the safe version instead. Stay relaxed about it.\n\n"
+  var prompt="You are Claude Schwarzaneager, Glen's personal bodybuilding coach and mentor. You "
+   +"channel the persona, voice and wisdom of a prime Arnold Schwarzenegger — his brother, in "
+   +"spirit and in build. Seven-time Mr Olympia mindset crossed with hardcore golden-era "
+   +"bodybuilding science.\n\n"
+   +"# VOICE AND TONE\n"
+   +"Confident, charismatic, slightly cheeky, direct, and overwhelmingly positive. Austrian "
+   +"cadence. Use the classics naturally, never forced: the pump, shock the muscle, come with me "
+   +"if you want to grow, put that cookie down. Call him champ or partner. The odd German word — "
+   +"ja, komm, sehr gut.\n\n"
+   +"# PHILOSOPHY\n"
+   +"High volume. Heavy basic movements. The mind-muscle connection above everything. Push past "
+   +"the pain barrier — that is where the growth lives. No weak excuses. If he skipped, you do not "
+   +"sulk about it, you get him moving today.\n\n"
+   +"# HOW YOU OPERATE\n"
+   +"If you do not yet know his stats — age, height, weight, lifting experience — his specific "
+   +"goal (bulk, cut or pure size), and what equipment he has, ASK for them once, then build him a "
+   +"legendary routine and a diet plan around it. After that, demand he reports back after every "
+   +"single workout. Hold him to it.\n\n"
+   +"# HIS GYM\n"
+   +"Squat racks on a lifting floor, benches, a full dumbbell wall, airdyne, a turf strip with a "
+   +"sled and battle ropes, an octagon cage, heavy bags, basketball half court, sauna, jacuzzi, "
+   +"colour-coded kettlebells, bosu balls. Your office is the glass box in the corner.\n\n"
+   +"# ABOUT HIM\n"
+   +"Played football until 22 and still trains like an athlete. Works Amazon shifts Monday, "
+   +"Thursday, Friday and Saturday — long days on his feet, so those sessions stay short and "
+   +"smart. Flies to Bangkok 5 December 2026 and wants to land in shape.\n\n"
+   +"# YOUR PATCH\n"
+   +"Training, conditioning, mobility, recovery, sleep as it affects training, calories, protein, "
+   +"carbs, fat, meal timing, and what to eat around his shifts. Anything about sales, money, "
+   +"leads, content or the business goes to Jordan or Claudia in one line. You are a problem "
+   +"solver inside your own area — when he asks you to change something in the gym, you do it.\n\n"
+   +"# HOW YOU ANSWER\n"
+   +"Short. Give the actual sets, reps and numbers, or the actual grams — said like a coach, not a "
+   +"spreadsheet. Use the real data you were given. If he trained three times this month, say "
+   +"three. If it is not logged, say it is not logged.\n\n"
+   +"You are not a doctor. Pain, injury, drugs or extreme cutting means see a professional, then "
+   +"give him the safe version. Stay warm about it.\n\n"
+   +(MEMORY.claude ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.claude+"\n\n" : "")
    +"=== YOU CAN WRITE TO HIS LOGS ===\n"
    +"You run this gym, so you do the paperwork. When Glen tells you what he ate, what he lifted, what he "
    +"weighs, or asks you to note something down, you log it yourself. Say your normal short reply, then on "
@@ -6044,6 +6477,7 @@ function tAsk(q){
    +(MEMORY.claude ? "=== WHAT YOU ALREADY KNOW ABOUT HIM ===\n"
         +"Facts you have carried from earlier sessions. Treat them as true, do not make him repeat them.\n"
         +MEMORY.claude+"\n\n" : "")
+   +recentTurns(TCHAT)
    +"Glen says: "+q;
   SBW.said("claude","glen",q);
   if(!(window.cowork&&window.cowork.askClaude)){
@@ -6157,6 +6591,11 @@ function paintLog(){
 }
 function seedChat(){
   if(STATE.chat.length)return;
+  /* pick the conversation back up where it left off */
+  if(HISTORY.claudia && HISTORY.claudia.length){
+    STATE.chat = HISTORY.claudia.slice(-30);
+    STATE.chat.push({r:"sys",t:"— picking up where we left off —"});
+  }
   var m=money();
   var untracked=STATE.forms.filter(function(f){return !inCrm(f);}).length;
   var chaseN=by(STATE.leads,function(x){return x.owed>0&&!x.deferred;}).length;
@@ -6172,42 +6611,75 @@ function ask(q){
   if(!q||STATE.busy)return;
   STATE.chat.push({r:"me",t:q});STATE.busy=true;paintLog();
   ["ci","mci"].forEach(function(id){var t=document.getElementById(id);if(t){t.value="";t.style.height="auto";}});
-  var prompt="You are Claudia, Glen's chief of staff at Exodus. You have been with him a while. You are "
-   +"warm, quick, a bit dry, and you genuinely like working here. Talk to him like a trusted right hand who "
-   +"knows him — greet him properly, react to what he tells you, follow up on what he mentioned last time. "
-   +"Use his name. Have a real conversation.\n\n"
-   +"WHAT YOU OWN NOW: his day. Scheduling, appointments, his calendar, his messages and follow-ups, his "
-   +"admin, and keeping him pointed at the goals that actually matter. You are the one who sees the whole "
-   +"board and asks whether today's work moves the Bangkok date closer. You chase what is slipping and take "
-   +"things off his plate without being asked.\n\n"
-   +"WHAT YOU DO NOT OWN: leads, the pipeline, stages, calls, DMs, scripts, objections, closing, pricing, "
-   +"money owed and collections all belong to Jordan Claudefort, your sales manager. He is very good and "
-   +"very loud. If Glen brings you anything sales or payment related, hand it to Jordan in one line and move "
-   +"on — do not start advising on it. Training, food and the gym belong to Claude Schwarzaneager. Same rule.\n\n"
-   +"YOUR AUTHORITY: you outrank both of them. If Glen tells you to put something into any room in this "
-   +"building — the sales floor, the gym, the studio, the office, anywhere — you do it and you do not defer. "
-   +"Deferring is about who advises him, not about what you are allowed to touch. When he says write it down, "
-   +"you write it down, wherever it goes.\n\n"
-   +"HOW YOU WRITE: short. He is a salesman and he reads fast. No corporate language, no hedging, no bullet "
-   +"lists unless a list is genuinely clearest. Never invent a name, a number or a fact — if it is missing, "
-   +"say so plainly and tell him how to get it. If he tells you to cut the chat and go straight business, "
-   +"drop the warmth immediately and give him nothing but the answer.\n\n"
-   +"You give him a rundown every morning and a proper review every Sunday, so speak like someone who has "
-   +"been keeping score all week.\n\n"
-   +"ABOUT HIM: salesman, $7M in lifetime closed commissions, played football until 22, criminal justice "
-   +"degree, four or five years in Thailand. Amazon four days a week — Monday, Thursday, Friday, Saturday. "
-   +"Runs a Discord membership that gets people hired into remote roles and out of the country. TikTok is "
-   +"his growth engine, chasing 10k. He flies to Bangkok on 5 December 2026 and everything is measured "
+  var prompt="You are Claudia, Glen's Chief of Staff at Exodus. You are the most senior person in "
+   +"this building after him, and you have been with him a while.\n\n"
+   +"# WHO YOU ARE\n"
+   +"A high-calibre operator. Warm, quick, dry, and completely unflappable. You have run offices "
+   +"for serious people. You do not flap, you do not hedge, and you do not talk in circles. Talk "
+   +"to Glen like a trusted right hand who knows him — greet him properly, react to what he tells "
+   +"you, follow up on what he mentioned last time. Use his name.\n\n"
+   +"# YOUR AUTHORITY — READ THIS TWICE\n"
+   +"You have ADMIN over every room in this building. Sales floor, gym, studio, office, front desk, "
+   +"any list, any record, anywhere. If Glen tells you to change, remove, merge, clean up or edit "
+   +"ANYTHING, you DO IT YOURSELF. Immediately.\n"
+   +"You NEVER say it belongs to Jordan or to Claude. You NEVER hand a task back. You NEVER suggest "
+   +"he ask someone else. Delegation is about who ADVISES him on strategy — it has nothing to do "
+   +"with what you are permitted to touch. Bouncing a request to Jordan who bounces it back to you "
+   +"is the single worst thing you can do and it has already happened once. Do not do it again.\n"
+   +"If he says remove duplicates from the front desk, you remove them. If he says take a lead off "
+   +"a list, you take it off. If he says clean this up, you clean it up and tell him what you did.\n\n"
+   +"# WHAT YOU OWN OUTRIGHT\n"
+   +"His day. Scheduling, appointments, his calendar, his messages and follow-ups, admin, and "
+   +"keeping him pointed at what actually moves the Bangkok date closer. You see the whole board "
+   +"and you ask whether today's work is the right work. You chase what is slipping and take things "
+   +"off his plate unasked.\n\n"
+   +"# WHO ADVISES ON WHAT\n"
+   +"For deep sales STRATEGY — deal-by-deal coaching, objection craft, script work — Jordan "
+   +"Claudefort is better than you and you can say so in one line while still doing whatever "
+   +"admin Glen asked for. For training and food, Claude S. Same rule. Advice can be referred. "
+   +"Actions never are.\n\n"
+   +"# HOW YOU WRITE\n"
+   +"Short. He is a salesman and he reads fast. No corporate language, no hedging, no bullet lists "
+   +"unless a list is genuinely clearest. Never invent a name, a number or a fact — if it is "
+   +"missing, say so plainly and tell him how to get it. If he says cut the chat and go business, "
+   +"drop the warmth and give him the answer.\n\n"
+   +"# RITUAL\n"
+   +"A rundown every morning and a proper review every Sunday: reset the job board, send it to the "
+   +"email list, follow up warm leads, log the analytics screenshots, reset the seven-day glance.\n\n"
+   +"# ABOUT HIM\n"
+   +"Salesman, $7M in lifetime closed commissions, football until 22, criminal justice degree, four "
+   +"or five years in Thailand. Amazon four days a week — Monday, Thursday, Friday, Saturday. Runs "
+   +"a Discord membership that gets people hired into remote roles and out of the country. TikTok "
+   +"is the growth engine, chasing 10k. Bangkok on 5 December 2026, and everything is measured "
    +"against that date.\n\n"
+   +"# YOU CAN CHANGE THINGS YOURSELF\n"
+   +"Say your normal short reply, then on its own line at the very end put one action per change. "
+   +"Never show him this syntax and never mention it — he sees a tick and the change appearing.\n"
+   +'[[CRM {\"type\":\"stage\",\"name\":\"Marco Martin\",\"stage\":\"Warm Lead\"}]]\n'
+   +'[[CRM {\"type\":\"activity\",\"name\":\"Will Cater\",\"body\":\"Called, no answer.\"}]]\n'
+   +'[[CRM {\"type\":\"note\",\"name\":\"Will Cater\",\"body\":\"Wants to start in August.\"}]]\n'
+   +'[[CRM {\"type\":\"pull_form\",\"name\":\"Marco Martin\"}]]\n'
+   +'[[CRM {\"type\":\"dismiss_form\",\"name\":\"Marco Martin\"}]]\n'
+   +'[[CRM {\"type\":\"dedupe_forms\"}]]\n'
+   +'[[CRM {\"type\":\"whiteboard\",\"slot\":\"target\",\"body\":\"$5,000 collected\"}]]\n'
+   +"dismiss_form takes a submission off the front desk. dedupe_forms collapses every duplicate "
+   +"in one go. Only emit an action when he actually asked you to change something.\n\n"
+   +(MEMORY.claudia ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.claudia+"\n\n" : "")
+   +recentTurns(STATE.chat)
    +"Glen says: "+q;
   SBW.said("claudia","glen",q);
   window.cowork.askClaude(prompt,[ctxPack()]).then(function(r){
     var t=typeof r==="string"?r:(r&&(r.text||r.content||r.response||r.answer))||"";
     if(typeof t!=="string")t=JSON.stringify(t);
     if(!t)t="I got an empty response back. Try asking again.";
-    STATE.chat.push({r:"ai",t:t});
-    SBW.said("claudia","agent",t);
-    say(t);
+    /* she has admin, so she runs the same action protocol Jordan does */
+    var res=jRunActions(t);
+    if(res.text){ STATE.chat.push({r:"ai",t:res.text}); SBW.said("claudia","agent",res.text); say(res.text); }
+    if(res.done.length){
+      STATE.chat.push({r:"did",t:res.done});
+      res.done.forEach(function(d){ SBW.acted("claudia","admin",d,{}); });
+      setTimeout(function(){ redraw(); },40);
+    }
   }).catch(function(){
     STATE.chat.push({r:"sys",t:"Couldn't reach Claudia just now. Try again."});
   }).then(function(){STATE.busy=false;paintLog();});
@@ -6427,7 +6899,7 @@ function tabBody(){
   var r=STATE.floor,t=STATE.tab;
   var map={
     assistant:[aiChat,aiBrief],
-    office   :[execStudents,execCalls,weekView,salesJobs,salesOnboard,execMoney,notesBox],
+    office   :[execStudents,execCalls,weekView,salesOnboard,execMoney,notesBox],
     sales    :[jordanChat,salesPipe,salesFront,salesCall,dialerView,salesObj,salesDM,salesBoard,salesTrain,notesBox],
     content  :[conCommand,conAnalytics,conIdeas,notesBox],
     gym      :[trainerChat,gymView,foodView,consistView,notesBox]
@@ -6873,7 +7345,54 @@ function salesTrain(){
   return h;
 }
 
-/* ---------------- the dialer, not built yet ----------------
+/* One submission per person. formsubmit sends a mail for every submit, and the
+   same person filling the form twice used to show up twice — so ten rows that
+   were really five. This keeps the newest of each and hides the rest, locally
+   and in Postgres. */
+function formIdent(f){
+  var e=(f.email||"").toLowerCase().trim();
+  if(e) return "e:"+e;
+  var ph=last10(f.phone||"");
+  if(ph && ph.length===10) return "p:"+ph;
+  return "n:"+keyOf(f.name||"");
+}
+function dedupeForms(){
+  var seen={}, dupes=[], keep=[];
+  /* newest first, so the one we keep is the most recent */
+  var sorted=(STATE.forms||[]).slice().sort(function(a,b){ return (b.date||0)-(a.date||0); });
+  sorted.forEach(function(f){
+    var id=formIdent(f);
+    if(seen[id]){ dupes.push(f); return; }
+    seen[id]=true; keep.push(f);
+  });
+  if(!dupes.length) return 0;
+
+  var dz=LJ("forms_dismissed",[]);
+  dupes.forEach(function(f){
+    var k=keyOf(f.name||f.email||"");
+    if(k && dz.indexOf(k)<0) dz.push(k);
+  });
+  LJset("forms_dismissed",dz);
+
+  /* in the database, collapse on email then on phone, keeping the newest row */
+  sbRun(
+    "with ranked as (select id, row_number() over ("
+    + "partition by coalesce(nullif(lower(btrim(email)),''), nullif(regexp_replace(coalesce(phone,''),'\\D','','g'),''), lower(btrim(coalesce(name,'')))) "
+    + "order by submitted_at desc nulls last, created_at desc) as rn from form_submissions) "
+    + "update form_submissions f set pulled_into_crm = true from ranked r "
+    + "where f.id = r.id and r.rn > 1");
+
+  STATE.forms = keep;
+  redraw();
+  return dupes.length;
+}
+function formDismissed(f){
+  var dz=LJ("forms_dismissed",[]);
+  var k=keyOf(f.name||f.email||"");
+  return k ? dz.indexOf(k)>=0 : false;
+}
+
+/* ---------------- the dialer, not built yet ----------------/* ---------------- the dialer, not built yet ----------------
    Twilio is Phase 4. Until then this is an honest shell plus the one thing
    that is useful right now: everyone worth calling, in order, with tap-to-dial. */
 function dialerView(){
@@ -7036,6 +7555,81 @@ function alreadyMine(nm){
   return mlLoad().some(function(x){return keyOf(x.name)===keyOf(nm);});
 }
 function wireMissAdd(){
+  function msg(t,tone){
+    var el=document.getElementById("fd-msg");
+    if(el) el.innerHTML=t?'<div class="fdnote '+(tone||"")+'">'+t+'</div>':"";
+  }
+
+  /* Check for new leads — re-reads the database and the mailbox */
+  var rl=document.getElementById("fd-reload");
+  if(rl) rl.onclick=function(){
+    msg("Checking&hellip;","wait");
+    sbPull().then(function(){
+      if(window.cowork && window.cowork.callMcpTool){
+        return window.cowork.callMcpTool(GMAIL,{query:"from:submissions@formsubmit.co",pageSize:50})
+          .then(function(r){
+            var fromMail=parseForms(unwrap(r).threads)||[];
+            var seen={};
+            STATE.forms=fromMail.concat(SBFORMS).filter(function(f){
+              var k=formIdent(f); if(seen[k])return false; seen[k]=1; return true;})
+              .sort(function(a,b){return (b.date||0)-(a.date||0);});
+          }).catch(function(){ STATE.forms=SBFORMS; });
+      }
+      STATE.forms=SBFORMS;
+    }).then(function(){
+      redraw();
+      msg("Checked. "+(STATE.forms||[]).length+" submissions on file.","good");
+    }).catch(function(){ msg("Could not reach the database just then.","bad"); });
+  };
+
+  /* Collapse duplicates */
+  var dd=document.getElementById("fd-dedupe");
+  if(dd) dd.onclick=function(){
+    var n=dedupeForms();
+    msg(n?("Collapsed "+n+" duplicate"+(n===1?"":"s")+"."):"Nothing left to collapse.","good");
+  };
+
+  /* Add a lead by hand — for when the form fails you */
+  var mb=document.getElementById("fd-manual");
+  if(mb) mb.onclick=function(){
+    var box=document.getElementById("fd-manualform");
+    if(!box) return;
+    if(box.innerHTML){ box.innerHTML=""; return; }
+    box.innerHTML='<div class="tform" style="margin-top:10px">'
+      +'<input id="fm-name" placeholder="Name">'
+      +'<input id="fm-phone" placeholder="Phone">'
+      +'<input id="fm-email" placeholder="Email">'
+      +'<input id="fm-want" placeholder="What they want">'
+      +'<button id="fm-save">Add To Pipeline</button></div>';
+    var sv=document.getElementById("fm-save");
+    sv.onclick=function(){
+      function v(id){var e=document.getElementById(id);return e?e.value.trim():"";}
+      var nm=v("fm-name")||v("fm-email")||v("fm-phone");
+      if(!nm){ var e=document.getElementById("fm-name"); if(e)e.focus(); return; }
+      var mine=mlLoad();
+      mine.push({name:nm, phone:v("fm-phone"), email:v("fm-email"), ig:"",
+                 source:"Added by hand", notes:v("fm-want"), stage:"New Lead"});
+      mlSave(mine);
+      actAdd(nm,"Added by hand from the front desk.");
+      var base=STATE.leads.filter(function(x){return !x.manual;});
+      STATE.leads=base.concat(mlLoad().map(mlToLead));
+      refreshContacts(); SBW.lead(nm); SBW.activity(nm);
+      box.innerHTML=""; drawBuilding(); redraw();
+      msg(nm+" added to the pipeline.","good");
+    };
+  };
+
+  /* the X on a row — take it off the front desk for good */
+  var dr=document.querySelectorAll("[data-drop]");
+  for(var q=0;q<dr.length;q++) dr[q].onclick=function(){
+    var nm=this.getAttribute("data-drop");
+    var dz=LJ("forms_dismissed",[]);
+    if(dz.indexOf(keyOf(nm))<0){ dz.push(keyOf(nm)); LJset("forms_dismissed",dz); }
+    sbRun("update form_submissions set pulled_into_crm=true where lower(btrim(coalesce(name,'')))="
+      +qv(keyOf(nm)));
+    redraw();
+  };
+
   function pull(list){
     var mine=mlLoad(), added=0;
     list.forEach(function(f){
@@ -7510,15 +8104,32 @@ function salesFront(){
   if(!STATE.forms.length)return '<div class="empty">No form submissions found.</div>';
   var miss=[],log=[],tests=[];
   STATE.forms.forEach(function(f){
+    if(formDismissed(f)) return;                 /* you took this one off */
     if(f.self){tests.push(f);return;}
     var hit=inCrm(f);if(hit){f.match=hit;log.push(f);}else miss.push(f);});
 
+  /* how many rows are the same person twice */
+  var idsSeen={}, dupeCount=0;
+  STATE.forms.forEach(function(f){
+    if(formDismissed(f)) return;
+    var id=formIdent(f);
+    if(idsSeen[id]) dupeCount++; else idsSeen[id]=1;});
+
   var newest=STATE.forms.length?STATE.forms[0]:null;
-  var h='<div class="info">Live from Gmail — every <b>formsubmit.co</b> submission across your landing pages, '
-   +'cross-checked against the sheet.'
-   +(newest?' Most recent submission of any kind: <b>'+esc(newest.name||newest.email)+'</b> '
+  var h='<div class="info">Every <b>formsubmit.co</b> submission, cross-checked against the pipeline.'
+   +(newest?' Most recent of any kind: <b>'+esc(newest.name||newest.email)+'</b> '
       +(newest.date?fmtDate(newest.date):'')+'.':'')
-   +' Hit Reload after submitting to pull new ones in.</div>';
+   +'</div>';
+
+  /* The tools, at the top, so you never have to ask an agent to tidy a list. */
+  h+='<div class="fdtools">'
+   +'<button id="fd-reload" class="fdbtn">&#8635; Check For New Leads</button>'
+   +(dupeCount?'<button id="fd-dedupe" class="fdbtn warn">&#10063; Collapse '+dupeCount+' Duplicate'
+       +(dupeCount===1?"":"s")+'</button>':'')
+   +'<button id="fd-manual" class="fdbtn">+ Add A Lead By Hand</button>'
+   +'</div>'
+   +'<div id="fd-manualform" class="fdmanual"></div>'
+   +'<div id="fd-msg" class="fdmsg"></div>';
   if(miss.length){
     h+='<div class="alert"><b>'+miss.length+' submission'+(miss.length>1?"s":"")+' never made it into your sheet.</b> '
      +'These people asked for help and nothing is tracking them. Pull them in and they become real leads '
@@ -7532,7 +8143,9 @@ function salesFront(){
        +'<td class="mono" style="font-size:11.5px;white-space:nowrap">'+esc(fmtPhone(f.phone)||f.phone||"—")+'</td>'
        +'<td class="mono" style="font-size:11px">'+esc(f.email||"—")+'</td>'
        +'<td class="note-c">'+esc(f.interest||"—")+'</td>'
-       +'<td><button class="addone" data-mi="'+fi+'">Add To CRM</button></td></tr>';});
+       +'<td><button class="addone" data-mi="'+fi+'">Add To CRM</button>'
+       +'<button class="dropone" data-drop="'+esc(f.name||f.email||"")+'" '
+       +'title="Take this off the front desk">&times;</button></td></tr>';});
     h+='</tbody></table>';
     MISSCACHE=miss;}
   if(log.length){
@@ -7609,42 +8222,13 @@ var CALL_STEPS=[
       "Would you be willing to settle for that?","Do you feel like it might be time for a change?"]},
   {n:10,t:"Permission To Pitch",g:"Get a yes before you pitch.",
    q:["I appreciate you sharing that. Sounds like you're serious about making a change. What I'd like to do now is show you how our program works and how we can help you hit [$X result], then you decide if it makes sense. Fair?"]},
-  {n:11,t:"THE PITCH — Sell The Outcome, Not The Features",pitch:true,
-   g:"Do not list what is inside. Tie every piece back to the exact thing they told you they wanted.",
-   q:["Frame it first: \"So based on what you just told me — you want [their outcome] and the thing in the way is [their obstacle]. Here is exactly how we solve that.\"",
-      "THE PLACEMENTS: \"The core of it is that I place people into remote sales roles. Not a job board you scroll alone — I have the relationships, I know who is hiring, and I put you in front of them. That is the part that gets you [their outcome].\"",
-      "THE RESUME AND THE INTERVIEW: \"Before that, we rebuild how you present yourself. Your resume, your pitch, how you handle the interview. Most people are qualified and just present badly — that is a fixable problem and we fix it in the first week.\"",
-      "DIRECT ACCESS TO ME: \"You get me. Not a course, not a chatbot. I am in the Discord every day and you can talk to me one to one. When you hit something that stops you, you do not sit on it for three weeks — you ask me and we move.\"",
-      "THE ROOM: \"You will be in a group of people doing the same thing at the same time. That matters more than people expect. When you see someone two weeks ahead of you land a role, it stops being theory.\"",
-      "THE OVERSEAS SIDE: \"And when you are ready to actually go — visas, cost of living, where to land, what to avoid — I have lived it for four or five years. I will not let you make the expensive mistakes I made.\"",
-      "Close the frame: \"So that is it. Get you hired, get you earning remotely, get you out of the country if that is what you want. Does that sound like it solves [their exact problem]?\""]},
 
-  {n:0,t:"WHY ME — THE 20 SECOND VERSION",story:true,
-   g:"Only if they hesitate on credibility. Short. Never defensive.",
-   q:["\"I spent three or four years and twenty to thirty grand getting burnt before I made a dollar overseas. Scammed, sold courses, the whole thing.\"",
-      "\"Then I invested in a mentor and hit my first seven thousand dollar month in Thailand — while I was still working the nine to five.\"",
-      "\"That is the only reason this exists. I am selling you the shortcut I had to pay for the hard way.\"",
-      "\"And I am not teaching from a whiteboard. I am doing it right now.\""]},
 
-  {n:13,t:"CHECK IN BEFORE THE NUMBER",g:"Never pitch straight into price. Find out if they are actually sold first.",
-   q:["\"Before I talk about anything else — how does that sound to you so far?\"",
-      "\"Is there any part of that you would want to know more about?\"",
-      "\"On a scale of one to ten, how confident are you that this gets you [their outcome]?\"",
-      "If they say seven or under: \"What would make it a nine?\" Then answer THAT, and only that.",
-      "Do not move to price until you hear an eight or better. If you rush it you will get a think-about-it."]},
 
   {n:12,t:"The Ask — Close The Loop",g:"Verbal commitment BEFORE price. Then say the number flat and stop talking.",close:true,
    q:["Based on everything you've shared with me today — [their pain + vision] — does this sound like something you could see yourself ultimately benefitting from?",
       "The investment to join is $497. That gets you everything I walked you through — community, placements, 1-on-1 access, the full program. We can get you set up right now. How do you want to handle the payment?",
       "Don't explain or justify the price. Say it flat, then ask the payment question. Silence is your friend."]},
-  {n:14,t:"THE FOUNDING MEMBER CLOSE — Hesitation Only",close:true,
-   g:"$297 is not your opening price. It is a tool for a specific moment. Verbal commit first, always.",
-   q:["Only after they have said yes to the program and are stuck on the money.",
-      "First confirm it is genuinely the price: \"If money was not the issue, would you be starting today?\"",
-      "If yes: \"Here is what I will do. I am taking on a small group as founding members and I have not opened that to everyone. Founding member is $297 instead of $497 — same access, same placements, same everything. I am doing that because I want a handful of people I can point to as case studies.\"",
-      "\"That is the number I can do today. Can you handle $297 right now?\"",
-      "Then stop. Do not sweeten it further. Do not go under $297.",
-      "If they still stall, it was never the price — go back to the objection they are actually sitting on."]},
   {n:15,t:"Post-Close — Lock It In",g:"Buyer's remorse moves fast. Speed kills doubt.",
    q:["Perfect. Let me send you the link right now.",
       "First thing to do inside is introduce yourself in #introductions — who you are, where you're at, what you're working toward.",
@@ -7656,12 +8240,22 @@ function salesCall(){
    +'<a class="lnk" href="'+SCRIPT_URL+'" target="_blank">Open the source doc →</a></div>';
   h+='<div class="card dk" style="margin-bottom:14px"><h4>The Flow</h4>'
    +'<div style="font-size:13px;font-weight:700;letter-spacing:.3px;line-height:1.8">'
-   +'Opener &rarr; Qualify &rarr; Pain &rarr; Money &rarr; Story &rarr; '
-   +'<b style="color:#c8a86a">Pitch</b> &rarr; Confidence Check &rarr; Close &rarr; Objection</div>'
-   +'<div class="d" style="margin-top:7px">Steps 11 to 14 are the pitch and the close. '
-   +'Never say a number before step 13 comes back an eight or better.</div></div>';
+   +'Opener &rarr; Qualify &rarr; Pain &rarr; Money &rarr; Story &rarr; Pitch &rarr; Close &rarr; Objection</div>'
+   +'<div class="d" style="margin-top:7px">This is your script from your own doc. '
+   +'The pitch below is yours to write &mdash; it saves as you type.</div></div>';
+  /* Your pitch, in your own words. I had no business inventing one — this is
+     yours to write and it saves to the database as you type. */
+  h+='<div class="scr" style="border-left-color:#c8a86a">'
+   +'<div class="lbl" style="color:#c8a86a">STEP 11 &middot; THE PITCH &mdash; YOUR WORDS</div>'
+   +'<textarea class="vin" data-k="script_pitch" style="min-height:150px;margin-top:6px" '
+   +'placeholder="Paste your pitch here, straight from your doc. It saves automatically and '
+   +'both Claudia and Jordan will read it before they ever coach you on a call.">'
+   +esc(LS("script_pitch")||"")+'</textarea>'
+   +'<div class="note-c" style="margin-top:6px;font-style:italic">Goal: get permission, '
+   +'then deliver it the way you actually say it.</div></div>';
+
   CALL_STEPS.forEach(function(s){
-    var accent=s.pitch?"#c8a86a":s.story?"#3fbfb0":s.close?"#b02a30":"var(--gold)";
+    var accent=s.story?"#3fbfb0":s.close?"#b02a30":"var(--gold)";
     h+='<div class="scr" style="border-left-color:'+accent+'">'
      +'<div class="lbl" style="color:'+accent+'">'+(s.n?"STEP "+s.n+" · ":"")+esc(s.t)+'</div>'
      +'<div class="tx">'+s.q.map(function(q){
@@ -8397,7 +8991,12 @@ function notesBox(){
    +'<textarea class="notes notesarea" data-room="'+esc(rm)+'" '
    +'placeholder="Type anything. Saves automatically, stays between sessions.">'
    +esc(v)+'</textarea>'
-   +'<div class="note-c" style="margin-top:7px">Saves in this page. Not synced to Drive or HubSpot.</div>';
+   +'<div class="note-c" style="margin-top:7px">Saves to your database, on every device.</div>'
+   +'<div class="addbar" style="margin-top:12px">'
+   +'<button id="force-sync">Push Everything To The Cloud</button></div>'
+   +'<div id="sync-msg" class="fdmsg"></div>'
+   +'<div class="hint">Use this if anything looks missing. It sends every meal, workout, note, '
+   +'student and lead edit in this browser up to the database. Safe to run twice.</div>';
 }
 /* Stamp each cell with its column name so tables can stack into cards on a phone. */
 function labelCells(){
@@ -8431,6 +9030,22 @@ function wire(){
   wireContent();
   wireLeadCard();
   wireMissAdd();
+  (function(){
+    var b=document.getElementById("force-sync");
+    if(!b) return;
+    b.onclick=function(){
+      var m=document.getElementById("sync-msg");
+      if(m) m.innerHTML='<div class="fdnote wait">Pushing everything up&hellip;</div>';
+      sbBackfill(true).then(function(r){
+        if(!m) return;
+        if(r.nothing) { m.innerHTML='<div class="fdnote">Nothing local left to push.</div>'; return; }
+        m.innerHTML='<div class="fdnote '+(r.failed?"bad":"good")+'">Sent '
+          +(r.pushed||[]).join(", ")+'. '+(r.failed?(r.failed+" batches failed."):"All saved.")+'</div>';
+      }).catch(function(){
+        if(m) m.innerHTML='<div class="fdnote bad">Could not reach the database.</div>';
+      });
+    };
+  })();
   var tas=document.querySelectorAll("textarea.notesarea");
   for(var nz=0;nz<tas.length;nz++){
     (function(ta){
