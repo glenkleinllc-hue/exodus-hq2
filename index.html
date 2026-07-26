@@ -115,47 +115,6 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
   color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
 .syncbar button:disabled{opacity:.6;cursor:default}
 
-/* ---- the player ---- */
-.spdock{display:flex;align-items:center;gap:6px;flex:1;min-width:0;margin-left:12px;
-  position:relative;justify-content:flex-end}
-.spcard{display:flex;align-items:center;gap:10px;flex:0 1 290px;min-width:0;max-width:290px;
-  height:50px;padding:0 12px 0 9px;border-radius:10px;
-  background:linear-gradient(150deg,#0c1710,#0a0f0c);border:1px solid rgba(29,185,84,.34)}
-.spcard.bad{border-color:rgba(248,113,113,.4);background:linear-gradient(150deg,#170d0d,#0f0a0a)}
-.spplay{flex:none;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;text-decoration:none;font-size:12px;padding-left:2px;
-  background:#1db954;color:#04150a;transition:.14s}
-.spplay:hover{filter:brightness(1.14);transform:scale(1.06)}
-.spplay.off{background:rgba(255,255,255,.07);color:#6b7686;font-size:15px;padding:0}
-.spmeta{flex:1;min-width:0;text-decoration:none;display:block}
-.spmeta b{display:block;font-size:11.5px;font-weight:800;color:#e8eef5;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.spmeta i{display:block;font-style:normal;font-size:9.5px;color:#6b7686;margin-top:2px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-a.spmeta:hover b{color:#1db954}
-.spframew{position:absolute;right:72px;top:50%;transform:translateY(-50%);width:290px;
-  border-radius:10px;overflow:hidden;background:#0a0a0a;opacity:0;pointer-events:none;
-  transition:opacity .2s}
-.spdock.splive .spframew{opacity:1;pointer-events:auto;box-shadow:0 4px 14px rgba(0,0,0,.45)}
-.spdock.splive .spcard{visibility:hidden}
-.spframew.big{top:calc(100% + 9px);transform:none;width:min(400px,calc(100vw - 32px));
-  border:1px solid #1db95455}
-.spframe{display:block;border:0;width:100%;background:#0a0a0a;color-scheme:dark}
-.spmini{flex:none;width:30px;height:30px;border-radius:8px;cursor:pointer;padding:0;
-  background:rgba(29,185,84,.14);border:1px solid rgba(29,185,84,.45);color:#1db954;
-  font-size:13px;line-height:1;font-family:inherit;transition:.16s;
-  display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
-.spmini:hover{background:rgba(29,185,84,.3);color:#fff}
-.spedit{position:absolute;right:0;top:calc(100% + 9px);z-index:82;
-  width:min(400px,calc(100vw - 32px));display:flex;flex-wrap:wrap;gap:7px;
-  background:linear-gradient(178deg,#0b0f16,#0e131c);border:1px solid #1db95455;
-  border-radius:12px;padding:11px;box-shadow:0 22px 54px rgba(0,0,0,.66)}
-.spedit input{flex:1;min-width:0;background:#0b1017;border:1px solid #232c3a;border-radius:7px;
-  padding:9px 11px;color:#e4e9f2;font-family:inherit;font-size:12.5px}
-.spedit input:focus{outline:none;border-color:#1db954}
-.spedit button{flex:none;background:#1db954;border:0;border-radius:7px;padding:9px 15px;
-  color:#06210f;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
-.spnote{flex:1 1 100%;font-size:10.5px;color:var(--mut);line-height:1.5}
 @keyframes sbp{0%,100%{opacity:1}50%{opacity:.35}}
 
 /* ============ PLAN ============ */
@@ -784,7 +743,6 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
   padding:0 14px;color:#8ff0b0;font-family:inherit;font-size:11px;font-weight:800;
   letter-spacing:.7px;cursor:pointer}
 .sprow button:hover{background:rgba(29,185,84,.36);color:#fff}
-.spnote{font-size:10px;color:var(--mut);line-height:1.5;margin-top:7px}
 
 .scrpart{margin:20px 0 10px;padding:9px 13px;border-radius:8px;
   background:linear-gradient(135deg,rgba(200,168,106,.16),rgba(200,168,106,.04));
@@ -1806,14 +1764,6 @@ a.lnk:hover{color:#bfdbfe}
   .mchat .log{max-height:44vh}
   .mchat .chat-f{padding:11px 13px calc(11px + env(safe-area-inset-bottom))}
 
-  /* the player gets its own full-width line under the banner */
-  .spdock{flex:1 1 100%;margin:8px 0 0;justify-content:stretch;order:9}
-  .spcard{flex:1 1 auto;max-width:none;height:56px}
-  .spplay{width:38px;height:38px;font-size:14px}
-  .spframew{position:absolute;left:0;right:76px;top:0;width:auto;transform:none}
-  .spframew.big{position:static;left:auto;right:auto;width:auto;margin-top:8px}
-  .spmini{width:40px;height:40px;font-size:15px}
-  .spedit{position:static;width:auto;margin-top:8px}
 }
 
 @media (max-width:430px){
@@ -1839,7 +1789,6 @@ a.lnk:hover{color:#bfdbfe}
       </div>
       <div class="tb-cd"><b id="cd-n">—</b><i>days to Bangkok</i></div>
       <span class="syncdot idle" id="syncdot" title="Cloud sync"></span>
-      <div class="spdock" id="spdock"></div>
     </div>
     <div class="tower">
       <div class="mtopstats" id="mtopstats"></div>
@@ -2269,109 +2218,10 @@ function tickSalesClocks(){
   });
 }
 
-/* ==================== THE PLAYER IN THE BANNER ====================
-   Rebuilt card-first, which is the lesson from last time. An <iframe> that
-   cannot load does not error — it just paints a white rectangle. So a card we
-   draw ourselves goes in first and always renders; the Spotify frame sits on
-   top at zero opacity and is only revealed once it has actually fired load.
-   No load, no swap, no white box. In the Cowork preview you get the card; on
-   the live site you get the real player.
-
-   Two Spotify facts worth keeping in the code: theme=0 is their LIGHT theme
-   (sending it is what made the player white), and personalised playlists —
-   On Repeat, Daily Mix, Discover Weekly — cannot be embedded by anyone. */
-var SP_DEFAULT="https://open.spotify.com/playlist/37i9dQZF1CKP6BedYNZqyO";
-var spEditOpen=false, spEditNote="";
-
-function spParts(url){
-  var m=String(url||"").trim().match(
-    /(?:spotify\.com\/(?:intl-[a-z]{2}\/)?|spotify:)(playlist|album|track|artist|show|episode)[:\/]([A-Za-z0-9]+)/i);
-  if(!m) return null;
-  var kind=m[1].toLowerCase();
-  return {kind:kind, id:m[2],
-    web:"https://open.spotify.com/"+kind+"/"+m[2],
-    app:"spotify:"+kind+":"+m[2],
-    /* no theme parameter — theme=0 is the light one */
-    embed:"https://open.spotify.com/embed/"+kind+"/"+m[2]+"?utm_source=generator"};
-}
-function spBlocked(url){
-  var m=String(url||"").match(/playlist[:\/]([A-Za-z0-9]+)/i);
-  if(!m) return null;
-  if(/^37i9dQZF1E/.test(m[1])) return "a Daily Mix, Discover Weekly or Radio playlist";
-  if(/^37i9dQZF1F/.test(m[1])) return "a personal playlist like On Repeat";
-  return null;
-}
-function spSave(url){
-  LS("spotify_url",url);
-  sbRun("insert into settings (key,value) values ('spotify_url',"+qv(url)+
-    ") on conflict (key) do update set value=excluded.value");
-}
-function spBig(){ return LS("spotify_big")==="1"; }
-
-function spPaint(){
-  var dock=document.getElementById("spdock"); if(!dock) return;
-  var url=LS("spotify_url")||SP_DEFAULT;
-  var P=spParts(url), blocked=P?spBlocked(url):null, big=spBig();
-  dock.classList.remove("splive");
-
-  var h='<div class="spcard'+(blocked?" bad":"")+'">';
-  if(P&&!blocked){
-    h+='<a class="spplay" href="'+esc(P.app)+'" title="Play in Spotify">&#9654;</a>'
-      +'<a class="spmeta" href="'+esc(P.web)+'" target="_blank" rel="noopener">'
-      +'<b>Your playlist</b><i>Tap to play in Spotify</i></a>';
-  } else {
-    h+='<span class="spplay off">&#9835;</span><span class="spmeta">'
-      +'<b>'+(blocked?"Spotify blocks this one":"No playlist set")+'</b>'
-      +'<i>'+(blocked?"Copy it to a playlist of your own":"Tap the pencil and paste a link")+'</i></span>';
-  }
-  h+='</div>';
-
-  if(P&&!blocked){
-    h+='<div class="spframew'+(big?" big":"")+'">'
-      +'<iframe class="spframe" id="spframe" src="'+esc(P.embed)+'" height="'+(big?352:80)+'" '
-      +'frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; '
-      +'picture-in-picture" title="Spotify"></iframe></div>'
-      +'<button class="spmini" id="sp-big" title="'+(big?"Collapse":"Show the track list")+'">'
-      +(big?"&#9652;":"&#9662;")+'</button>';
-  }
-  h+='<button class="spmini" id="sp-edit" title="Change the playlist">&#9998;</button>';
-
-  if(blocked){ spEditNote="That is "+blocked+". Spotify blocks those from embedding anywhere. "
-    +"Open it in Spotify, three dots, Add to playlist, New playlist, then paste that link.";
-    spEditOpen=true; }
-
-  if(spEditOpen){
-    h+='<div class="spedit"><input id="sp-url" placeholder="Paste a Spotify link" value="'
-      +esc(LS("spotify_url")||"")+'"><button id="sp-set">Set</button>'
-      +'<div class="spnote">'+(spEditNote?esc(spEditNote)
-        :"The play button opens Spotify and starts it there, which works everywhere. On the "
-        +"live site the full player loads right here.")+'</div></div>';
-  }
-  dock.innerHTML=h;
-
-  /* only reveal the frame if it genuinely loaded */
-  var fr=document.getElementById("spframe");
-  if(fr) fr.onload=function(){ dock.classList.add("splive"); };
-
-  var eb=document.getElementById("sp-edit");
-  if(eb) eb.onclick=function(){ spEditOpen=!spEditOpen; if(!blocked) spEditNote=""; spPaint(); };
-  var bb=document.getElementById("sp-big");
-  if(bb) bb.onclick=function(){ LS("spotify_big", spBig()?"0":"1"); spPaint(); };
-  var set=document.getElementById("sp-set"), inp=document.getElementById("sp-url");
-  function apply(){
-    var v=inp?inp.value.trim():""; if(!v) return;
-    if(!spParts(v)){ inp.style.borderColor="#f87171";
-      spEditNote="That does not look like a Spotify link."; spPaint(); return; }
-    var bl=spBlocked(v);
-    if(bl){ inp.style.borderColor="#f87171";
-      spEditNote="That is "+bl+" — Spotify will not embed it. Copy it into a playlist of your own.";
-      spPaint(); return; }
-    spEditNote=""; spSave(v); spEditOpen=false; spPaint();
-  }
-  if(set) set.onclick=apply;
-  if(inp){ inp.onkeydown=function(e){ if(e.key==="Enter"){e.preventDefault();apply();} }; inp.focus(); }
-}
-(function(){ spPaint(); })();
+/* There is no music player in the banner. An embed cannot be controlled from
+   the page around it — no skip, no shuffle — and it paints a white rectangle
+   anywhere the frame cannot load. The record player in the office opens Spotify
+   properly, which is the honest version of the same thing. */
 
 /* The banner used to carry a Spotify player. It is gone. An embed cannot be
    controlled from the page around it — no skip, no shuffle — and it renders a
@@ -3139,7 +2989,6 @@ function sbPull(){
     +"'acts',       (select coalesce(json_agg(json_build_object('k',name_key,'t',body,'d',happened_at) order by happened_at desc),'[]'::json) from lead_activity),"
     +"'pays',       (select coalesce(json_agg(json_build_object('k',name_key,'a',amount)),'[]'::json) from payments),"
     +"'brands',     (select value from settings where key='brand_notes'),"
-    +"'spotify',    (select value from settings where key='spotify_url'),"
     +"'cash',       (select value from settings where key='cash_collected'),"
     +"'memory',     (select coalesce(json_agg(json_build_object('a',agent_id,'r',remembered)),'[]'::json) from agent_context),"
     +"'history',    (select coalesce(json_agg(json_build_object('a',agent_id,'r',role,'b',body,'at',said_at) order by said_at),'[]'::json) "
@@ -3197,7 +3046,6 @@ function sbPull(){
       var k={tiktok:"tiktok",instagram:"ig",youtube:"yt"}[pp.p]||pp.p;
       LS("post_"+k+"_"+String(pp.d).slice(0,10), String(pp.c||0)); });
     if(d.brands) LS("con_brands", d.brands);
-    if(d.spotify) { LS("spotify_url", d.spotify); try{ spPaint(); }catch(e){} }
     /* The database is the truth for this. Anything already on the device is
        replaced, including an empty string, so a phone and a laptop can never
        disagree about how much has come in. */
