@@ -181,6 +181,28 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
 .src-a:hover{text-decoration:underline;color:#c2d8f7}
 .src-n{flex:1 1 100%;font-size:11px;color:var(--mut);line-height:1.5}
 
+/* ---- the four headline numbers, editable ---- */
+.ovrbox{margin-bottom:18px;padding:16px;border-radius:12px;background:var(--paper2);
+  border:1px solid var(--line)}
+.ovr-h{font-size:9px;font-weight:800;letter-spacing:1.7px;text-transform:uppercase;
+  color:var(--mut);margin-bottom:10px}
+.ovr{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 0;
+  border-top:1px solid var(--line)}
+.ovr-l{flex:1;min-width:0}
+.ovr-l b{display:block;font-size:13.5px;font-weight:700;color:var(--ink)}
+.ovr-l i{display:block;font-style:normal;font-size:11px;color:var(--mut);margin-top:3px}
+.ovr-f{flex:none;display:flex;align-items:center;gap:6px}
+.ovr-f span{font-size:14px;font-weight:700;color:var(--mut)}
+.ovr-i{width:120px;background:var(--raise);border:1px solid var(--line);border-radius:8px;
+  padding:10px 11px;color:var(--ink);font-family:inherit;font-size:15px;font-weight:700;
+  font-variant-numeric:tabular-nums}
+.ovr-i:focus{outline:none;border-color:var(--blu)}
+.ovr-x{flex:none;background:transparent;border:1px solid var(--line);border-radius:8px;
+  padding:9px 12px;color:var(--mut);font-family:inherit;font-size:11.5px;font-weight:700;
+  cursor:pointer}
+.ovr-x:hover:not(:disabled){color:var(--ink);border-color:#3d4552}
+.ovr-x:disabled{opacity:.35;cursor:default}
+
 /* ---- the came-in cell ---- */
 .camecell input.cin-came{width:100%;background:var(--paper2);border:1px solid transparent;
   border-radius:6px;padding:5px 7px;color:var(--ink);font-family:inherit;font-size:12px}
@@ -2275,7 +2297,7 @@ var DISCORD="https://discord.gg/vHdWTqzktZ";
 var DISCORD_ROOM="https://discord.com/channels/1490719120143024188/15286341007164089";
 var SPOTIFY="https://open.spotify.com";
 var TALENTFLX="https://talentflx.com/";
-var MEET="https://meet.google.com/landing";
+var MEET="https://meet.google.com/landing?authuser=1&pageId=none&pli=1";
 
 /* Overrides Glen has told me directly, applied on top of whatever the sheet says.
    Anyone not listed in OWED is settled up — the sheet's old balances are ignored. */
@@ -2840,8 +2862,31 @@ function sbBadge(){
            : SYNC.lastAt ? ("Saved "+SYNC.lastAt.toLocaleTimeString()) : "Connected";
 }
 
+/* Supabase runs pg-safeupdate, which refuses a DELETE or UPDATE with no WHERE
+   clause. That has now bitten twice — first the gym logs, then the students —
+   and both times it failed silently for days. So it is checked here, before
+   anything leaves the browser, and a mistake is loud instead of quiet. */
+function unsafeSql(q){
+  var t=String(q||"").replace(/\s+/g," ");
+  var bad=[];
+  t.split(";").forEach(function(part){
+    var p2=part.trim(); if(!p2) return;
+    if(/^delete\s+from\s+[a-z_.]+\s*$/i.test(p2)) bad.push(p2);
+    else if(/^delete\s+from\s/i.test(p2) && !/\swhere\s/i.test(p2)) bad.push(p2);
+    else if(/^update\s/i.test(p2) && !/\swhere\s/i.test(p2)) bad.push(p2);
+  });
+  return bad.length ? bad[0].slice(0,90) : null;
+}
+
 /* Run SQL. Resolves with rows, or rejects. Never throws into the UI. */
 function sbSql(query){
+  var unsafe=unsafeSql(query);
+  if(unsafe){
+    /* refuse to send it — a bare DELETE would wipe a table if the guard were
+       ever switched off, and a bare UPDATE would touch every row */
+    return Promise.reject(new Error(
+      "Refused to send SQL with no WHERE clause: "+unsafe+". This is a bug — tell Glen."));
+  }
   if(!(window.cowork&&window.cowork.callMcpTool))
     return Promise.reject(new Error("no connector"));
   SYNC.state="saving"; SYNC.queued++; sbBadge();
@@ -2991,12 +3036,12 @@ var SBW = {
 
   students: function(){
     var list=stuList();
-    if(!list.length) return sbRun("update students set active=false;");
+    if(!list.length) return sbRun("update students set active=false where true;");
     var vals=list.map(function(pp){
       return "("+qv(pp.name)+","+qv(stuGet(pp.name,"phone",pp.contact))+","+qv(stuGet(pp.name,"email",""))+","
         +qv(stuGet(pp.name,"journey","Just Joined"))+","+qv(stuGet(pp.name,"goal",""))+","
         +qv(stuGet(pp.name,"situation",pp.notes))+","+qv(stuGet(pp.name,"updates",""))+",true)";});
-    return sbRun("update students set active=false;"
+    return sbRun("update students set active=false where true;"
       +" insert into students (name,phone,email,journey,goal,situation,updates,active) values "+vals.join(",")
       +" on conflict (name_key) do update set phone=excluded.phone, email=excluded.email,"
       +" journey=excluded.journey, goal=excluded.goal, situation=excluded.situation,"
@@ -3043,6 +3088,15 @@ var SBW = {
   priority: function(name){
     return sbRun("update leads set priority="+(prGet(name)?"true":"false")
       +" where name_key="+qv(keyOf(name))+";");
+  },
+
+  overrides: function(){
+    var keys=["chase","conting","members"];
+    var vals=keys.map(function(k){
+      var v=LS("ov_"+k);
+      return "("+qv("ov_"+k)+","+qv((v===null||v==="")?"":String(v))+")";});
+    return sbRun("insert into settings (key,value) values "+vals.join(",")
+      +" on conflict (key) do update set value=excluded.value;");
   },
 
   cash: function(){
@@ -3348,6 +3402,7 @@ function sbPull(){
     +"'pays',       (select coalesce(json_agg(json_build_object('k',name_key,'a',amount)),'[]'::json) from payments),"
     +"'brands',     (select value from settings where key='brand_notes'),"
     +"'cash',       (select value from settings where key='cash_collected'),"
+    +"'ovs',        (select coalesce(json_object_agg(key,value),'{}'::json) from settings where key like 'ov!_%' escape '!'),"
     +"'memory',     (select coalesce(json_agg(json_build_object('a',agent_id,'r',remembered)),'[]'::json) from agent_context),"
     +"'history',    (select coalesce(json_agg(json_build_object('a',agent_id,'r',role,'b',body,'at',said_at) order by said_at),'[]'::json) "
     +"                from (select * from conversations order by said_at desc limit 120) h)"
@@ -3408,6 +3463,11 @@ function sbPull(){
        replaced, including an empty string, so a phone and a laptop can never
        disagree about how much has come in. */
     LS("cash_collected", (d.cash===null||d.cash===undefined) ? "" : String(d.cash));
+    /* the other three headline numbers */
+    ["chase","conting","members"].forEach(function(k){
+      var ov=(d.ovs&&d.ovs["ov_"+k]!==undefined&&d.ovs["ov_"+k]!==null)?String(d.ovs["ov_"+k]):"";
+      LS("ov_"+k, ov);
+    });
 
     /* leads: stage, notes, contact and activity overrides */
     (d.stages||[]).forEach(function(x){
@@ -3596,11 +3656,39 @@ function cashOverride(){
   var n=parseFloat(v); return isNaN(n)?null:n;
 }
 function collected(){var o=cashOverride();return o===null?collectedRaw():o;}
-function money(){var L=STATE.leads;return{
+/* The four headline numbers. Each is worked out from the pipeline, but Glen can
+   type over any of them — the sheet was never complete and he knows the real
+   figures. An override is remembered; clear the box and it goes back to the sum. */
+function numOv(key){
+  var v=LS("ov_"+key);
+  if(v===null||v==="") return null;
+  var n=parseFloat(String(v).replace(/[^0-9.\-]/g,""));
+  return isNaN(n)?null:n;
+}
+function setNumOv(key,val){
+  LS("ov_"+key, (val===null||val==="")?"":String(val));
+  SBSAVE("overrides");
+}
+function moneyRaw(){var L=STATE.leads;return{
   chase:sum(by(L,function(x){return x.owed>0&&!x.deferred;}),function(x){return x.owed;}),
   defer:sum(by(L,function(x){return x.owed>0&&x.deferred;}),function(x){return x.owed;}),
   conting:sum(by(L,function(x){return x.contingent>0;}),function(x){return x.contingent;}),
-  collected:collected()};}
+  collected:collectedRaw()};}
+function money(){
+  var r=moneyRaw();
+  var c=numOv("chase"), g=numOv("conting"), k=cashOverride();
+  return {
+    chase:  c===null?r.chase:c,
+    defer:  r.defer,
+    conting:g===null?r.conting:g,
+    collected: k===null?r.collected:k
+  };
+}
+/* how many members he actually has */
+function memberCount(){
+  var m=numOv("members");
+  return m===null ? paidMembers().length : m;
+}
 function fmtDate(d){if(!d)return "—";
   var n=Math.floor((new Date()-d)/86400000);
   return (d.getMonth()+1)+"/"+d.getDate()+' <span style="color:var(--mut)">· '
@@ -3867,7 +3955,53 @@ function drawTower(){
   s+=art(OF.x+142,OF.y+10,44,36,"#3a2b46");
   s+=shelf(OF.x+218,OF.y+8,86,44);
   s+=shelf(OF.x+316,OF.y+8,86,44);
-  s+=shelf(OF.x+414,OF.y+8,86,44);
+  /* ---- the wall calendar, top right of the boardroom ----
+     A real month, this month, with today ringed and a dot on any day that has
+     something on the Google Calendar. Tapping it opens Calls & Calendar. */
+  (function(){
+    /* six rows have to fit — a month can start on a Saturday and run 31 days */
+    var CX=OF.x+406, CY=OF.y+5, CW=100, CH=58;
+    /* frame */
+    s+='<rect x="'+(CX+2)+'" y="'+(CY+3)+'" width="'+CW+'" height="'+CH+'" rx="3" fill="#000" opacity=".34"/>';
+    s+='<rect x="'+CX+'" y="'+CY+'" width="'+CW+'" height="'+CH+'" rx="3" fill="#2a2118"/>';
+    s+='<rect x="'+(CX+3)+'" y="'+(CY+3)+'" width="'+(CW-6)+'" height="'+(CH-6)+'" rx="2" fill="#f2efe6"/>';
+    var now=new Date(), yr=now.getFullYear(), mo=now.getMonth(), tod=now.getDate();
+    /* header band */
+    s+='<rect x="'+(CX+3)+'" y="'+(CY+3)+'" width="'+(CW-6)+'" height="11" rx="2" fill="#8d2f2f"/>';
+    s+='<text x="'+(CX+CW/2)+'" y="'+(CY+11.4)+'" text-anchor="middle" font-size="6.6" '
+      +'font-weight="800" letter-spacing="1.5" fill="#fdf6ee">'
+      +MON[mo].slice(0,3).toUpperCase()+' '+yr+'</text>';
+    /* which days have something on */
+    var busy={};
+    (STATE.events||[]).forEach(function(e){
+      var st=(e.start&&(e.start.dateTime||e.start.date))||null; if(!st) return;
+      var d=new Date(st);
+      if(d.getFullYear()===yr && d.getMonth()===mo) busy[d.getDate()]=true;
+    });
+    /* the grid */
+    var first=new Date(yr,mo,1).getDay(), days=new Date(yr,mo+1,0).getDate();
+    var cw=(CW-12)/7, ch=5.9, gx=CX+6, gy=CY+16;
+    for(var dw=0;dw<7;dw++)
+      s+='<text x="'+(gx+dw*cw+cw/2)+'" y="'+(gy+3.4)+'" text-anchor="middle" font-size="3.6" '
+        +'font-weight="800" fill="#9a9284">'+"SMTWTFS".charAt(dw)+'</text>';
+    for(var dn=1;dn<=days;dn++){
+      var idx=first+dn-1, row=Math.floor(idx/7), col=idx%7;
+      var x=gx+col*cw+cw/2, y=gy+8+row*ch;
+      if(dn===tod){
+        s+='<circle cx="'+x+'" cy="'+(y-1.5)+'" r="3.5" fill="#8d2f2f"/>';
+        s+='<text x="'+x+'" y="'+(y+0.6)+'" text-anchor="middle" font-size="4.1" '
+          +'font-weight="800" fill="#fdf6ee">'+dn+'</text>';
+      } else {
+        s+='<text x="'+x+'" y="'+(y+0.6)+'" text-anchor="middle" font-size="4.1" '
+          +'fill="'+(busy[dn]?"#2f6fed":"#5a5348")+'" '
+          +'font-weight="'+(busy[dn]?"800":"500")+'">'+dn+'</text>';
+      }
+      if(busy[dn]&&dn!==tod)
+        s+='<circle cx="'+x+'" cy="'+(y+2.4)+'" r="0.85" fill="#2f6fed"/>';
+    }
+    /* a nail, so it reads as hung on the wall */
+    s+='<circle cx="'+(CX+CW/2)+'" cy="'+(CY-2)+'" r="1.3" fill="#6b6357"/>';
+  })();
   /* credenza */
   s+=box(OF.x+40,OF.y+58,150,26,7,"#43301d","#291d11",3);
   s+='<rect x="'+(OF.x+52)+'" y="'+(OF.y+64)+'" width="30" height="12" rx="1.5" fill="#0e131b"/>';
@@ -4657,71 +4791,46 @@ function drawTower(){
   s+='<ellipse cx="'+(CP.x+CP.w/2)+'" cy="'+(CP.y+CP.h/2)+'" rx="'+(CP.w*0.7)+'" ry="'+(CP.h*0.5)+'" fill="#dff4fb" opacity=".05"/>';
   s+='<text x="'+(CP.x+CP.w/2)+'" y="'+(CP.y+CP.h+13)+'" text-anchor="middle" font-size="7" font-weight="800" letter-spacing="1.4" fill="#f0a35c">JACUZZI</text>';
 
-  /* ================= LOADING DOCK + THE CARS (right wall) ================= */
+  /* The cars moved downstairs to the basement, so this strip along the right
+     wall is gym floor again — a scale and a bit of clear space. */
   var GA={x:GY.x+GY.w-92,y:GY.y+198,w:80,h:342};
-  /* poured garage floor, lighter than the gym matting */
-  s+='<rect x="'+GA.x+'" y="'+GA.y+'" width="'+GA.w+'" height="'+GA.h+'" rx="3" fill="#1b1f26"/>';
-  for(var gp=0;gp<Math.ceil(GA.h/34);gp++)
-    s+='<line x1="'+GA.x+'" y1="'+(GA.y+gp*34)+'" x2="'+(GA.x+GA.w)+'" y2="'+(GA.y+gp*34)+'" stroke="#12161c" stroke-width="1.2"/>';
-  /* hazard border */
-  s+='<rect x="'+GA.x+'" y="'+GA.y+'" width="'+GA.w+'" height="'+GA.h+'" rx="3" fill="none" stroke="#d4a017" stroke-width="2" opacity=".45" stroke-dasharray="9 7"/>';
+  s+='<rect x="'+GA.x+'" y="'+GA.y+'" width="'+GA.w+'" height="'+GA.h+'" rx="3" fill="#1e2229"/>';
+  s+='<rect x="'+GA.x+'" y="'+GA.y+'" width="'+GA.w+'" height="'+GA.h+'" rx="3" fill="none" stroke="#2f3540" stroke-width="1.4"/>';
 
-  /* --- roller doors on the outer wall, one behind each car --- */
-  [GA.y+10,GA.y+124,GA.y+238].forEach(function(dy2,di){
-    s+='<rect x="'+(GA.x+GA.w+2)+'" y="'+dy2+'" width="12" height="98" rx="2" fill="#1a222c"/>';
-    for(var sl2=0;sl2<10;sl2++)
-      s+='<rect x="'+(GA.x+GA.w+2)+'" y="'+(dy2+3+sl2*9.4)+'" width="12" height="5" fill="#2b3644" opacity=".85"/>';
-    /* dock light above each door */
-    s+='<circle cx="'+(GA.x+GA.w+8)+'" cy="'+(dy2-5)+'" r="3.2" fill="'+(di===1?"#4ade80":"#ef4444")+'" opacity=".85"/>';});
+  /* ---- the scale, with whatever he last weighed on the readout ---- */
+  (function(){
+    var ws=wtLoad();
+    var last=ws.length?ws[ws.length-1]:null;
+    var lbs=last?String(parseFloat(last.w).toFixed(1)):"--.-";
+    var prev=ws.length>1?parseFloat(ws[ws.length-2].w):null;
+    var diff=(last&&prev!==null)?(parseFloat(last.w)-prev):null;
+    var SX=GA.x+10, SY=GA.y+26, SW=60, SH=64;
+    /* platform */
+    s+='<rect x="'+(SX+3)+'" y="'+(SY+5)+'" width="'+SW+'" height="'+SH+'" rx="7" fill="#000" opacity=".38"/>';
+    s+='<rect x="'+SX+'" y="'+SY+'" width="'+SW+'" height="'+SH+'" rx="7" fill="#1a1e25"/>';
+    s+='<rect x="'+SX+'" y="'+SY+'" width="'+SW+'" height="'+SH+'" rx="7" fill="none" stroke="#3a4250" stroke-width="1.4"/>';
+    /* brushed glass top */
+    s+='<rect x="'+(SX+5)+'" y="'+(SY+5)+'" width="'+(SW-10)+'" height="'+(SH-24)+'" rx="4" fill="#232935"/>';
+    s+='<rect x="'+(SX+5)+'" y="'+(SY+5)+'" width="'+(SW-10)+'" height="7" rx="4" fill="#fff" opacity=".05"/>';
+    /* the two foot pads */
+    s+='<rect x="'+(SX+11)+'" y="'+(SY+13)+'" width="16" height="22" rx="3" fill="#2b323e"/>';
+    s+='<rect x="'+(SX+33)+'" y="'+(SY+13)+'" width="16" height="22" rx="3" fill="#2b323e"/>';
+    /* readout */
+    s+='<rect x="'+(SX+9)+'" y="'+(SY+SH-19)+'" width="'+(SW-18)+'" height="14" rx="3" fill="#0c1218"/>';
+    s+='<text x="'+(SX+SW/2)+'" y="'+(SY+SH-8.5)+'" text-anchor="middle" font-size="9.5" '
+      +'font-weight="800" letter-spacing=".6" fill="'+(last?"#7fe3a3":"#4b5563")+'" '
+      +'font-family="ui-monospace,Menlo,monospace">'+lbs+'</text>';
+    /* the direction of travel, if there is one */
+    if(diff!==null && Math.abs(diff)>=0.1){
+      var up=diff>0;
+      s+='<text x="'+(SX+SW+7)+'" y="'+(SY+SH-9)+'" font-size="7" font-weight="800" '
+        +'fill="'+(up?"#c9a25c":"#7fe3a3")+'">'+(up?"\u25B2":"\u25BC")
+        +Math.abs(diff).toFixed(1)+'</text>';
+    }
+    s+='<text x="'+(SX+SW/2)+'" y="'+(SY-6)+'" text-anchor="middle" font-size="6" font-weight="800" '
+      +'letter-spacing="1.3" fill="#8b95a6">WEIGH IN &middot; LBS</text>';
+  })();
 
-  /* --- wedge supercars, nose out, seen from above --- */
-  function lambo(cx,cy,body,dark,accent){
-    var g='<g transform="translate('+cx+','+cy+')">';
-    g+='<ellipse cx="0" cy="6" rx="34" ry="56" fill="#000" opacity=".45"/>';
-    /* low wide wedge silhouette */
-    g+='<path d="M0 -58 L18 -44 L26 -14 L28 22 L22 48 L10 56 L-10 56 L-22 48 L-28 22 L-26 -14 L-18 -44 Z" fill="'+body+'"/>';
-    /* sharp nose vents */
-    g+='<path d="M-13 -50 L-4 -55 L-4 -46 Z" fill="'+dark+'"/>';
-    g+='<path d="M13 -50 L4 -55 L4 -46 Z" fill="'+dark+'"/>';
-    /* headlights: angular Y */
-    g+='<path d="M-19 -41 l10 4 l-2 4 l-9 -4 z" fill="#eaf4ff" opacity=".95"/>';
-    g+='<path d="M19 -41 l-10 4 l2 4 l9 -4 z" fill="#eaf4ff" opacity=".95"/>';
-    /* windscreen + cabin glass, hexagon roof */
-    g+='<path d="M-16 -22 L16 -22 L19 2 L14 20 L-14 20 L-19 2 Z" fill="'+dark+'"/>';
-    g+='<path d="M-13 -18 L13 -18 L15 -1 L-15 -1 Z" fill="#8fc4e8" opacity=".3"/>';
-    g+='<path d="M-13 4 L13 4 L11 16 L-11 16 Z" fill="#8fc4e8" opacity=".2"/>';
-    /* roof scoop + engine cover slats */
-    g+='<rect x="-4" y="-24" width="8" height="8" rx="2" fill="'+dark+'"/>';
-    for(var sl=0;sl<4;sl++)
-      g+='<rect x="-13" y="'+(22+sl*5)+'" width="26" height="2.6" rx="1.3" fill="'+dark+'" opacity=".85"/>';
-    /* side blades / air intakes */
-    g+='<path d="M-27 -6 l-6 10 l6 8 z" fill="'+dark+'"/>';
-    g+='<path d="M27 -6 l6 10 l-6 8 z" fill="'+dark+'"/>';
-    /* mirrors on thin stalks */
-    g+='<rect x="-33" y="-20" width="8" height="4" rx="2" fill="'+body+'"/>';
-    g+='<rect x="25" y="-20" width="8" height="4" rx="2" fill="'+body+'"/>';
-    /* rear wing + quad exhaust + tail bar */
-    g+='<rect x="-22" y="44" width="44" height="4" rx="2" fill="'+dark+'"/>';
-    g+='<rect x="-20" y="49" width="40" height="4" rx="2" fill="'+accent+'" opacity=".95"/>';
-    [-11,-4,4,11].forEach(function(ex){
-      g+='<rect x="'+(ex-2)+'" y="53" width="4" height="4" rx="1.5" fill="#0d1116"/>';});
-    /* gloss highlight down the spine */
-    g+='<path d="M0 -52 L6 -20 L6 30 L0 46 L-6 30 L-6 -20 Z" fill="#fff" opacity=".07"/>';
-    /* wheels tucked into the arches */
-    [[-29,-32],[29,-32],[-30,30],[30,30]].forEach(function(w2){
-      g+='<rect x="'+(w2[0]-5)+'" y="'+(w2[1]-11)+'" width="10" height="22" rx="4" fill="#0d1116"/>'
-       +'<rect x="'+(w2[0]-2.4)+'" y="'+(w2[1]-6)+'" width="4.8" height="12" rx="2" fill="#3a4658"/>';});
-    return g+'</g>';}
-  /* three of them, nose to the doors, single file against the wall */
-  s+=lambo(GA.x+40,GA.y+58, "#d8a318","#12161c","#ef4444");   /* giallo */
-  s+=lambo(GA.x+40,GA.y+172,"#1e2f52","#0e141b","#f87171");   /* blu */
-  s+=lambo(GA.x+40,GA.y+286,"#7c1d2b","#12161c","#fca5a5");   /* rosso */
-  /* charge posts between the bays */
-  [GA.y+112,GA.y+226].forEach(function(cy4){
-    s+='<rect x="'+(GA.x+4)+'" y="'+cy4+'" width="8" height="22" rx="2" fill="#232c38"/>'
-     +'<circle cx="'+(GA.x+8)+'" cy="'+(cy4+5)+'" r="2.4" fill="#4ade80"/>';});
-  s+='<text x="'+(GA.x+GA.w/2)+'" y="'+(GA.y+GA.h+11)+'" text-anchor="middle" font-size="6" font-weight="800" '
-   +'letter-spacing="1.4" fill="#8b95a6">CAR BAYS</text>';
 
   /* ================= THE CAGE + BAG STATION =================
      An aisle of clear floor separates this from the court, then the octagon,
@@ -5497,6 +5606,14 @@ function buildZones(){
      the record player opens Spotify */
   HOT.push({x:70,y:264,w:200,h:96,  key:"office", label:"YOUR DESK",       sub:"open the office"});
   HOT.push({x:372,y:130,w:146,h:92, key:"discord",label:"BOARDROOM TABLE", sub:"open Discord",link:1});
+  /* the wall calendar — OF.x+408 = 442, OF.y+6 = 40 */
+  HOT.push({x:440,y:37,w:100,h:60,  key:"office",  label:"WALL CALENDAR",
+    sub:"this month &middot; opens Calls & Calendar",tab:2});
+  /* the two seats at the head of the board table — a one-to-one */
+  HOT.push({x:352,y:112,w:44,h:40,  key:"meet",    label:"ONE-TO-ONE SEAT",
+    sub:"start a Google Meet",link:1});
+  HOT.push({x:494,y:112,w:44,h:40,  key:"meet",    label:"ONE-TO-ONE SEAT",
+    sub:"start a Google Meet",link:1});
   HOT.push({x:182,y:138,w:94,h:52,  key:"spotify",label:"RECORD PLAYER",   sub:"open Spotify",link:1});
 
   /* sales: the board — monitors, whiteboard chart and the live numbers */
@@ -5515,6 +5632,9 @@ function buildZones(){
   HOT.push({x:764,y:594,w:200,h:180,key:"gym",    label:"BASKETBALL COURT",sub:"open the gym",tab:1});
   HOT.push({x:764,y:792,w:114,h:154,key:"gym",    label:"SAUNA",           sub:"open the gym",tab:1});
   HOT.push({x:890,y:804,w:76,h:100, key:"gym",    label:"JACUZZI",         sub:"open the gym",tab:1});
+  /* the scale — GA sits at GY.x+GY.w-92 = 1186, GA.y+198 = 602 */
+  HOT.push({x:1194,y:624,w:64,h:70,  key:"gym",    label:"THE SCALE",
+    sub:"log a weigh-in",tab:1});
 }
 
 function hotAt(px,py){
@@ -5603,7 +5723,8 @@ function placeHotLinks(){
     if(!z.link) return;
     var url = z.key==="discord"   ? DISCORD_ROOM
             : z.key==="spotify"   ? SPOTIFY
-            : z.key==="talentflx" ? TALENTFLX : null;
+            : z.key==="talentflx" ? TALENTFLX
+            : z.key==="meet"      ? MEET : null;
     if(!url) return;
     out+='<a class="hotlink" data-hi="'+i+'" href="'+url+'" target="_blank" rel="noopener" '
       +'title="'+esc(z.label+" — "+(z.sub||""))+'" style="left:'+(dx+z.x*sx)+'px;top:'+(dy+z.y*sy)+'px;'
@@ -5679,6 +5800,7 @@ function wireHover(){
       if(z.key==="discord") window.open(DISCORD_ROOM,"_blank");
       if(z.key==="spotify")   window.open(SPOTIFY,"_blank");
       if(z.key==="talentflx") window.open(TALENTFLX,"_blank");
+      if(z.key==="meet")      window.open(MEET,"_blank");
       return;
     }
     if(z.nav){
@@ -6645,13 +6767,89 @@ function drawBasement(){
     s+='<rect x="'+(LG.x+256)+'" y="'+(LG.y+132)+'" width="46" height="30" rx="5" fill="#15181e"/>';
     s+='<rect x="'+(LG.x+256)+'" y="'+(LG.y+132)+'" width="46" height="8" rx="4" fill="#22262f"/>';
 
-    var OF={x:LG.x+40,y:LG.y+250,w:LG.w-80,h:LG.h-300};
-    s+='<rect x="'+OF.x+'" y="'+OF.y+'" width="'+OF.w+'" height="'+OF.h+'" rx="5" fill="none" stroke="#3b82f6" stroke-width="2" opacity=".16" stroke-dasharray="18 15"/>';
-    s+='<text x="'+(OF.x+OF.w/2)+'" y="'+(OF.y+OF.h/2+2)+'" text-anchor="middle" font-size="24" font-weight="800" letter-spacing="10" fill="#3b82f6" opacity=".2">OPEN FLOOR</text>';
-    s+='<text x="'+(OF.x+OF.w/2)+'" y="'+(OF.y+OF.h/2+26)+'" text-anchor="middle" font-size="8.5" font-weight="800" letter-spacing="4" fill="#7dd3fc" opacity=".28">ROOM FOR WHATEVER IS NEXT</text>';
+    /* ---- the garage: the cars came down from the gym, all black now,
+           plus a pair of superbikes ---- */
+    var GB={x:LG.x+34,y:LG.y+236,w:LG.w-68,h:410};
+    s+='<rect x="'+GB.x+'" y="'+GB.y+'" width="'+GB.w+'" height="'+GB.h+'" rx="7" fill="#16191f"/>';
+    /* poured floor with expansion lines */
+    for(var gl=1;gl*46<GB.h;gl++)
+      s+='<line x1="'+GB.x+'" y1="'+(GB.y+gl*46)+'" x2="'+(GB.x+GB.w)+'" y2="'+(GB.y+gl*46)+'" stroke="#1e232b" stroke-width="1.3"/>';
+    s+='<rect x="'+GB.x+'" y="'+GB.y+'" width="'+GB.w+'" height="'+GB.h+'" rx="7" fill="none" stroke="#2f3540" stroke-width="1.6"/>';
+    /* bay markings */
+    [0,1,2].forEach(function(bi){
+      var bx=GB.x+22+bi*152;
+      s+='<rect x="'+bx+'" y="'+(GB.y+16)+'" width="128" height="196" rx="4" fill="none" '
+        +'stroke="#c9a25c" stroke-width="1.6" opacity=".3" stroke-dasharray="10 8"/>';});
+
+  function lambo(cx,cy,body,dark,accent){
+    var g='<g transform="translate('+cx+','+cy+')">';
+    g+='<ellipse cx="0" cy="6" rx="34" ry="56" fill="#000" opacity=".45"/>';
+    /* low wide wedge silhouette */
+    g+='<path d="M0 -58 L18 -44 L26 -14 L28 22 L22 48 L10 56 L-10 56 L-22 48 L-28 22 L-26 -14 L-18 -44 Z" fill="'+body+'"/>';
+    /* sharp nose vents */
+    g+='<path d="M-13 -50 L-4 -55 L-4 -46 Z" fill="'+dark+'"/>';
+    g+='<path d="M13 -50 L4 -55 L4 -46 Z" fill="'+dark+'"/>';
+    /* headlights: angular Y */
+    g+='<path d="M-19 -41 l10 4 l-2 4 l-9 -4 z" fill="#eaf4ff" opacity=".95"/>';
+    g+='<path d="M19 -41 l-10 4 l2 4 l9 -4 z" fill="#eaf4ff" opacity=".95"/>';
+    /* windscreen + cabin glass, hexagon roof */
+    g+='<path d="M-16 -22 L16 -22 L19 2 L14 20 L-14 20 L-19 2 Z" fill="'+dark+'"/>';
+    g+='<path d="M-13 -18 L13 -18 L15 -1 L-15 -1 Z" fill="#8fc4e8" opacity=".3"/>';
+    g+='<path d="M-13 4 L13 4 L11 16 L-11 16 Z" fill="#8fc4e8" opacity=".2"/>';
+    /* roof scoop + engine cover slats */
+    g+='<rect x="-4" y="-24" width="8" height="8" rx="2" fill="'+dark+'"/>';
+    for(var sl=0;sl<4;sl++)
+      g+='<rect x="-13" y="'+(22+sl*5)+'" width="26" height="2.6" rx="1.3" fill="'+dark+'" opacity=".85"/>';
+    /* side blades / air intakes */
+    g+='<path d="M-27 -6 l-6 10 l6 8 z" fill="'+dark+'"/>';
+    g+='<path d="M27 -6 l6 10 l-6 8 z" fill="'+dark+'"/>';
+    /* mirrors on thin stalks */
+    g+='<rect x="-33" y="-20" width="8" height="4" rx="2" fill="'+body+'"/>';
+    g+='<rect x="25" y="-20" width="8" height="4" rx="2" fill="'+body+'"/>';
+    /* rear wing + quad exhaust + tail bar */
+    g+='<rect x="-22" y="44" width="44" height="4" rx="2" fill="'+dark+'"/>';
+    g+='<rect x="-20" y="49" width="40" height="4" rx="2" fill="'+accent+'" opacity=".95"/>';
+    [-11,-4,4,11].forEach(function(ex){
+      g+='<rect x="'+(ex-2)+'" y="53" width="4" height="4" rx="1.5" fill="#0d1116"/>';});
+    /* gloss highlight down the spine */
+    g+='<path d="M0 -52 L6 -20 L6 30 L0 46 L-6 30 L-6 -20 Z" fill="#fff" opacity=".07"/>';
+    /* wheels tucked into the arches */
+    [[-29,-32],[29,-32],[-30,30],[30,30]].forEach(function(w2){
+      g+='<rect x="'+(w2[0]-5)+'" y="'+(w2[1]-11)+'" width="10" height="22" rx="4" fill="#0d1116"/>'
+       +'<rect x="'+(w2[0]-2.4)+'" y="'+(w2[1]-6)+'" width="4.8" height="12" rx="2" fill="#3a4658"/>';});
+    return g+'</g>';}
+    /* three of them, all black, noses out */
+    s+=lambo(GB.x+86, GB.y+112, "#101318","#05070a","#d4736f");
+    s+=lambo(GB.x+238,GB.y+112, "#15181e","#05070a","#d4736f");
+    s+=lambo(GB.x+390,GB.y+112, "#0c0f13","#05070a","#d4736f");
+
+    /* ---- two superbikes along the back ---- */
+    function bike(cx,cy,body,accent){
+      return '<g transform="translate('+cx+','+cy+')">'
+        +'<ellipse cx="0" cy="13" rx="30" ry="6.5" fill="#000" opacity=".5"/>'
+        /* wheels */
+        +'<circle cx="-22" cy="7" r="11.5" fill="#0a0d11"/>'
+        +'<circle cx="-22" cy="7" r="4.6" fill="#3a4250"/>'
+        +'<circle cx="22" cy="7" r="11.5" fill="#0a0d11"/>'
+        +'<circle cx="22" cy="7" r="4.6" fill="#3a4250"/>'
+        /* fairing and tank */
+        +'<path d="M-26 4 q6 -13 15 -14 l16 0 q11 1 17 12 l-6 5 q-14 -5 -26 -3 q-9 1 -16 0 z" fill="'+body+'"/>'
+        +'<path d="M-8 -9 q9 -4 19 -1 l-3 5 q-9 -2 -17 0 z" fill="'+accent+'" opacity=".9"/>'
+        /* screen and seat hump */
+        +'<path d="M24 -8 q7 2 8 8 l-7 1 z" fill="#2b323e"/>'
+        +'<path d="M-26 -3 q-6 -1 -7 4 l7 2 z" fill="#1b2028"/>'
+        /* exhaust */
+        +'<rect x="4" y="9" width="16" height="4" rx="2" fill="#4a5462"/>'
+        +'<path d="M-13 -11 q10 -5 22 -2" stroke="#5b6472" stroke-width="1.4" fill="none" opacity=".7"/>'
+        +'</g>';}
+    s+=bike(GB.x+96,  GB.y+300, "#101318","#d4736f");
+    s+=bike(GB.x+200, GB.y+300, "#14181e","#4b7bd4");
+    s+=bike(GB.x+304, GB.y+300, "#0d1015","#c9a25c");
+    s+='<text x="'+(GB.x+GB.w/2)+'" y="'+(GB.y+GB.h-12)+'" text-anchor="middle" font-size="8" '
+      +'font-weight="800" letter-spacing="4.5" fill="#5b6472">THE GARAGE</text>';
   })();
 
-  s+='<text x="650" y="992" text-anchor="middle" font-size="9.5" font-weight="800" letter-spacing="4" fill="#4b5563">BASEMENT &middot; THE THEATRE &middot; OPEN FLOOR</text>';
+  s+='<text x="650" y="992" text-anchor="middle" font-size="9.5" font-weight="800" letter-spacing="4" fill="#4b5563">BASEMENT &middot; THE THEATRE &middot; THE GARAGE</text>';
 
   document.getElementById("bld").innerHTML=d+s;
   var su=[];
@@ -9663,7 +9861,7 @@ function salesPipe(){
    +'<div class="d">'+chaseN+' people, already sold</div></div>'
    +'<div class="card"><h4>Contingent</h4><div class="v" style="color:var(--mut)">$'+mm.conting.toLocaleString()+'</div>'
    +'<div class="d">'+contN+', only once placed</div></div>'
-   +'<div class="card"><h4>Members</h4><div class="v g">'+paidMembers().length+'</div>'
+   +'<div class="card"><h4>Members</h4><div class="v g">'+memberCount()+'</div>'
    +'<div class="d">Paid or signed up</div></div></div>';
 
   /* colour key */
@@ -10840,7 +11038,35 @@ function musicView(){
 /* ============================ NOTES + WIRING ============================ */
 function notesBox(){
   var rm=STATE.floor, k="notes_"+rm, v=LS(k)||"";
-  return '<div class="notes-h"><h4>'+esc(FLOORS[rm].nm)+' Notes</h4>'
+  var head="";
+  /* the four headline numbers, editable, on the sales floor only */
+  if(rm==="sales"){
+    var r=moneyRaw();
+    function row(key,label,derived,prefix){
+      var ov=key==="collected"?cashOverride():numOv(key);
+      return '<div class="ovr">'
+        +'<div class="ovr-l"><b>'+label+'</b>'
+        +'<i>'+(ov===null
+            ? 'adding up to '+prefix+derived.toLocaleString()+' from the pipeline'
+            : 'set by you &middot; the pipeline says '+prefix+derived.toLocaleString())+'</i></div>'
+        +'<div class="ovr-f"><span>'+prefix+'</span>'
+        +'<input class="ovr-i" data-ov="'+key+'" inputmode="decimal" '
+        +'value="'+(ov===null?"":ov)+'" placeholder="'+derived+'"></div>'
+        +'<button class="ovr-x" data-ovclear="'+key+'"'+(ov===null?' disabled':'')+'>Use the sum</button>'
+        +'</div>';
+    }
+    head='<div class="ovrbox">'
+      +'<div class="ovr-h">The Four Numbers</div>'
+      +'<div class="note-c" style="margin-bottom:11px">These show on the Pipeline and the '
+      +'building itself. Type over any of them and yours wins. Empty the box and it goes back '
+      +'to adding up the pipeline.</div>'
+      +row("collected","Cash Collected", r.collected, "$")
+      +row("chase","Chase Now", r.chase, "$")
+      +row("conting","Contingent", r.conting, "$")
+      +row("members","Members", paidMembers().length, "")
+      +'</div>';
+  }
+  return head+'<div class="notes-h"><h4>'+esc(FLOORS[rm].nm)+' Notes</h4>'
    +'<span class="saved sflag">Saved</span></div>'
    +'<textarea class="notes notesarea" data-room="'+esc(rm)+'" '
    +'placeholder="Type anything. Saves automatically, stays between sessions.">'
