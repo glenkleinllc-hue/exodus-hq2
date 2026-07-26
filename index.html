@@ -115,6 +115,68 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
   color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
 .syncbar button:disabled{opacity:.6;cursor:default}
 
+/* ---- pipeline: stage bands ---- */
+.pgrp{display:flex;align-items:center;gap:9px;margin:18px 0 8px;padding:0 2px}
+.pgrp:first-child{margin-top:4px}
+.pgrp-d{width:9px;height:9px;border-radius:50%;background:var(--gc);flex:none;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--gc) 22%,transparent)}
+.pgrp b{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#e6ecf4}
+.pgrp i{font-style:normal;font-size:10px;font-weight:800;color:var(--gc);
+  background:color-mix(in srgb,var(--gc) 15%,transparent);border-radius:20px;padding:3px 9px;
+  font-variant-numeric:tabular-nums}
+.pgrp:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,
+  color-mix(in srgb,var(--gc) 34%,transparent),transparent)}
+
+/* ---- the dialer console ---- */
+.console{margin:13px 0 15px;border-radius:13px;overflow:hidden;
+  background:linear-gradient(168deg,#07100c,#0a1512 55%,#070d0b);
+  border:1px solid rgba(34,197,94,.26);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.con-t{display:flex;align-items:center;gap:10px;padding:11px 15px;
+  border-bottom:1px solid rgba(34,197,94,.16);background:rgba(34,197,94,.05)}
+.con-t b{font-size:10.5px;font-weight:800;letter-spacing:2.6px;color:#4ade80}
+.con-t i{font-style:normal;font-size:9px;font-weight:800;letter-spacing:1.4px;
+  text-transform:uppercase;color:#5b6472;margin-left:auto}
+.con-live{width:8px;height:8px;border-radius:50%;background:#374151;flex:none}
+.con-live.on{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.2);
+  animation:conBlink 2.4s infinite}
+@keyframes conBlink{0%,100%{opacity:1}50%{opacity:.45}}
+.con-g{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(34,197,94,.12)}
+.con-n{padding:13px 8px;text-align:center;background:#080f0d}
+.con-n b{display:block;font-size:23px;font-weight:800;color:#e8f5ee;letter-spacing:-1px;
+  font-variant-numeric:tabular-nums;line-height:1}
+.con-n i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:1.1px;
+  text-transform:uppercase;color:#5b6472;margin-top:5px}
+.con-n.p b{color:#c084fc} .con-n.n b{color:#e2e8f0}
+.con-n.w b{color:#fbbf24} .con-n.r b{color:#f87171}
+.cl-h{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;margin:0 0 9px;padding:0 2px}
+.cl-h b{font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#4ade80}
+.cl-h span{font-size:11px;color:var(--mut)}
+.dlr.nodial{opacity:.62}
+.dlbad{display:block;font-style:normal;font-size:10px;color:#fca5a5;margin-top:3px}
+
+/* the directory is a phone book, so the number is the point */
+.dirnum a{font-size:14px;font-weight:700;letter-spacing:.3px}
+
+/* ---- the microphone ---- */
+.micbtn.rec{border-color:#f87171 !important;color:#fff !important;
+  background:rgba(248,113,113,.22) !important}
+.micbar{position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(16px + env(safe-area-inset-bottom));z-index:210;
+  display:flex;align-items:center;gap:11px;max-width:min(560px,calc(100vw - 24px));
+  padding:12px 14px;border-radius:14px;
+  background:rgba(12,17,24,.97);backdrop-filter:blur(12px);
+  border:1px solid rgba(248,113,113,.45);box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.mb-dot{width:10px;height:10px;border-radius:50%;background:#f87171;flex:none;
+  animation:mbPulse 1.1s infinite}
+@keyframes mbPulse{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.55)}
+  50%{box-shadow:0 0 0 8px rgba(248,113,113,0)}}
+.mb-t{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  color:#fca5a5;flex:none}
+.mb-w{flex:1;min-width:0;font-size:13px;color:#e8eef5;line-height:1.4;
+  max-height:44px;overflow:hidden}
+.mb-x{flex:none;background:#dc4c4c;border:0;border-radius:9px;padding:9px 15px;
+  color:#fff;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;min-height:40px}
+
 /* the last-resort play button */
 .voicechip{position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(18px + env(safe-area-inset-bottom));z-index:200;
@@ -1637,6 +1699,8 @@ a.lnk:hover{color:#bfdbfe}
   .wbody .tabs::-webkit-scrollbar{display:none}
   .wbody .tab{flex:none;padding:0 16px;font-size:13.5px;min-height:46px;
     display:flex;align-items:center}
+  /* anything scrolled to must clear the sticky header and tabs */
+  .wbody > *, .wbody table tr{scroll-margin-top:124px}
 
   .tbox{position:static;left:auto;top:auto;transform:none;width:auto;margin-top:9px}
   .tbox.show{transform:none}
@@ -1729,6 +1793,11 @@ a.lnk:hover{color:#bfdbfe}
   .openlead{font-size:16px;font-weight:800}
   .diract{display:flex;gap:7px}
   .dbtn{width:46px;height:46px;font-size:17px;margin:0}
+  .con-g{grid-template-columns:repeat(3,1fr)}
+  .con-n b{font-size:20px}
+  .pgrp{margin:16px 0 7px}
+  .micbar{left:8px;right:8px;transform:none;max-width:none;flex-wrap:wrap}
+  .mb-w{flex:1 1 100%;order:3;max-height:60px}
   .dlr{flex-wrap:wrap}
   .dlm{flex:1 1 100%;margin-bottom:6px}
   .dlr .cbtn{flex:1 1 46%;justify-content:center}
@@ -3318,7 +3387,7 @@ var FLOORS={
   office:{ic:"🏛",nm:"Office & Boardroom",no:"NORTH WEST",
     tabs:["The Week","Students","Calls & Calendar","Payment & Links","Money","Notes"]},
   sales :{ic:"📈",nm:"Sales Floor · Jordan Claudefort",no:"NORTH EAST",
-    tabs:["Jordan","Pipeline","Directory","Front Desk","Call Script","Dialer","Objections","DMs & Pitch","Whiteboard","Training","Notes"]},
+    tabs:["Jordan","Pipeline","Directory","Front Desk","Call Script","Dialer","Objections","Training & Resources","Notes"]},
   content:{ic:"🎬",nm:"Content Studio",no:"WEST WING",tabs:["Command Center","Analytics","Ideas","Notes"]},
   gym  :{ic:"💪",nm:"The Gym · Claude Schwarzaneager",no:"WAREHOUSE · SOUTH",
     tabs:["Claude S.","Workout Log","Food Log","Consistency","Notes"]}
@@ -5174,9 +5243,6 @@ function buildZones(){
     /* the theatre screen — TH={56,206,612,754}, screen 516 wide, centred, y=252 */
     HOT.push({x:104,y:246,w:516,h:112,
       key:"talentflx",label:"THE SCREEN",sub:"log in to TalentFlx",link:1});
-    /* the reef — TK={752,264,452,250}. Nothing to open, it is just nice to have. */
-    HOT.push({x:752,y:240,w:452,h:274,
-      key:"reef",label:"THE REEF",sub:"400 gallons of nothing to do",noop:1});
     return;
   }
 
@@ -6151,13 +6217,6 @@ function drawBasement(){
    +'<radialGradient id="stepG" cx=".5" cy=".5" r=".5">'
    +'<stop offset="0" stop-color="#7dd3fc" stop-opacity=".42"/>'
    +'<stop offset="1" stop-color="#7dd3fc" stop-opacity="0"/></radialGradient>'
-   /* the tank */
-   +'<linearGradient id="tankW" x1="0" y1="0" x2="0" y2="1">'
-   +'<stop offset="0" stop-color="#0e5c78"/><stop offset=".55" stop-color="#0a4460"/>'
-   +'<stop offset="1" stop-color="#062a3d"/></linearGradient>'
-   +'<radialGradient id="tankG" cx=".5" cy=".5" r=".5">'
-   +'<stop offset="0" stop-color="#22d3ee" stop-opacity=".24"/>'
-   +'<stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>'
    +'</defs>';
 
   var s='<rect x="0" y="0" width="1300" height="1000" fill="#07080b"/>';
@@ -6328,98 +6387,14 @@ function drawBasement(){
     s+='<text x="'+PX+'" y="'+(TH.y+TH.h-7)+'" text-anchor="middle" font-size="8.5" font-weight="800" letter-spacing="6" fill="#4b5563">THE THEATRE &middot; SEATS 20</text>';
   })();
 
-  /* ---------------- THE TANK AND THE LOUNGE ----------------
-     The whole east side, well clear of the theatre. A big reef tank built into
-     the wall, two low chairs facing it, and open floor beyond. */
+  /* ---------------- THE EAST SIDE ----------------
+     The reef tank lived here. Glen wanted it gone, so the whole east side is
+     open floor again — two chairs and space for whatever comes next. */
   (function(){
     var LG={x:700,y:206,w:556,h:754};
     s+='<rect x="'+LG.x+'" y="'+LG.y+'" width="'+LG.w+'" height="'+LG.h+'" rx="9" fill="#0c0e12"/>';
     s+='<rect x="'+LG.x+'" y="'+LG.y+'" width="'+LG.w+'" height="'+LG.h+'" rx="9" fill="none" stroke="#1b2028" stroke-width="2"/>';
 
-    /* ---- the tank ---- */
-    var TK={x:LG.x+52,y:LG.y+58,w:452,h:250};
-    /* cabinet it stands on */
-    s+='<rect x="'+(TK.x-10)+'" y="'+(TK.y+TK.h)+'" width="'+(TK.w+20)+'" height="54" rx="5" fill="#14171d"/>';
-    s+='<rect x="'+(TK.x-10)+'" y="'+(TK.y+TK.h)+'" width="'+(TK.w+20)+'" height="7" rx="3" fill="#22262f"/>';
-    for(var cd=0;cd<3;cd++)
-      s+='<rect x="'+(TK.x+10+cd*((TK.w-20)/3))+'" y="'+(TK.y+TK.h+16)+'" width="'+((TK.w-20)/3-14)+'" height="28" rx="3" fill="#0e1116" stroke="#252a33" stroke-width="1"/>';
-
-    /* glow on the floor and wall around it */
-    s+='<ellipse cx="'+(TK.x+TK.w/2)+'" cy="'+(TK.y+TK.h+96)+'" rx="'+(TK.w*0.6)+'" ry="46" fill="url(#tankG)"/>';
-
-    /* the water */
-    s+='<rect x="'+(TK.x-5)+'" y="'+(TK.y-5)+'" width="'+(TK.w+10)+'" height="'+(TK.h+10)+'" rx="6" fill="#05070a"/>';
-    s+='<rect x="'+TK.x+'" y="'+TK.y+'" width="'+TK.w+'" height="'+TK.h+'" rx="3" fill="url(#tankW)"/>';
-
-    /* sand bed */
-    s+='<path d="M'+TK.x+' '+(TK.y+TK.h)+' L'+TK.x+' '+(TK.y+TK.h-26)
-      +' q'+(TK.w*0.25)+' -12 '+(TK.w*0.5)+' 2 q'+(TK.w*0.25)+' 14 '+(TK.w*0.5)+' -4 L'+(TK.x+TK.w)+' '+(TK.y+TK.h)+' Z" fill="#c8b48a" opacity=".82"/>';
-
-    /* rock and coral */
-    [[70,0.5,"#6b7280"],[150,0.72,"#5b6472"],[300,0.62,"#6b7280"],[380,0.44,"#575f6b"]].forEach(function(r){
-      var rx=TK.x+r[0], ry=TK.y+TK.h-24, rw=54*r[1], rh=46*r[1];
-      s+='<path d="M'+(rx-rw)+' '+ry+' q'+(rw*0.4)+' -'+rh+' '+rw+' -'+(rh*0.55)+' q'+(rw*0.7)+' '+(rh*0.5)+' '+(rw*0.9)+' '+(rh*0.55)+' Z" fill="'+r[2]+'" opacity=".9"/>';
-    });
-    /* soft corals — little fans and polyps */
-    [[96,"#f472b6",13],[132,"#a855f7",10],[266,"#fb923c",12],[344,"#22d3ee",9],[410,"#f472b6",11]].forEach(function(c){
-      var cx2=TK.x+c[0], cy2=TK.y+TK.h-30;
-      s+='<path d="M'+cx2+' '+cy2+' q-'+c[2]+' -'+(c[2]*1.5)+' -'+(c[2]*0.3)+' -'+(c[2]*2.2)
-        +' M'+cx2+' '+cy2+' q0 -'+(c[2]*1.8)+' '+(c[2]*0.5)+' -'+(c[2]*2.4)
-        +' M'+cx2+' '+cy2+' q'+c[2]+' -'+(c[2]*1.4)+' '+(c[2]*1.1)+' -'+(c[2]*2)
-        +'" stroke="'+c[1]+'" stroke-width="3.4" fill="none" stroke-linecap="round" opacity=".78"/>';
-    });
-    /* anemone */
-    s+='<g opacity=".85">';
-    for(var an=0;an<11;an++){
-      var aa=Math.PI*(0.15+an*0.07);
-      s+='<line x1="'+(TK.x+208)+'" y1="'+(TK.y+TK.h-32)+'" x2="'+(TK.x+208+Math.cos(aa)*16-8)+'" y2="'+(TK.y+TK.h-32-Math.sin(aa)*17)+'" stroke="#c084fc" stroke-width="3" stroke-linecap="round"/>';
-    }
-    s+='</g>';
-
-    /* plants swaying at the back corners */
-    [40,432].forEach(function(px2){
-      for(var pv=0;pv<4;pv++)
-        s+='<path d="M'+(TK.x+px2+pv*7)+' '+(TK.y+TK.h-26)+' q-6 -'+(46+pv*9)+' '+(4+pv*2)+' -'+(74+pv*11)+'" stroke="#4ade80" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6"/>';
-    });
-
-    /* fish */
-    function fish(fx,fy,sc,col,flip){
-      return '<g transform="translate('+fx+','+fy+') scale('+(flip?-sc:sc)+','+sc+')">'
-        +'<path d="M0 0 q10 -7 22 0 q-10 7 -22 0 Z" fill="'+col+'"/>'
-        +'<path d="M0 0 l-7 -5 l0 10 Z" fill="'+col+'" opacity=".85"/>'
-        +'<circle cx="17" cy="-1.4" r="1.5" fill="#06080b"/>'
-        +'</g>';}
-    s+=fish(TK.x+90, TK.y+64, 1.25,"#fb923c");
-    s+=fish(TK.x+188,TK.y+42, 0.95,"#fbbf24",true);
-    s+=fish(TK.x+268,TK.y+92, 1.4, "#22d3ee");
-    s+=fish(TK.x+352,TK.y+58, 1.05,"#f472b6",true);
-    s+=fish(TK.x+140,TK.y+128,1.15,"#60a5fa");
-    s+=fish(TK.x+320,TK.y+150,0.9, "#fbbf24");
-    s+=fish(TK.x+218,TK.y+176,1.1, "#fb923c",true);
-    /* a tang, bigger, mid water */
-    s+='<g transform="translate('+(TK.x+250)+','+(TK.y+120)+')">'
-      +'<path d="M0 0 q16 -13 34 0 q-16 13 -34 0 Z" fill="#3b82f6"/>'
-      +'<path d="M0 0 l-11 -8 l0 16 Z" fill="#1d4ed8"/>'
-      +'<path d="M14 -9 q6 -6 12 -2" stroke="#fbbf24" stroke-width="2.6" fill="none"/>'
-      +'<circle cx="27" cy="-2.2" r="1.9" fill="#06080b"/></g>';
-
-    /* bubble columns */
-    [64,236,404].forEach(function(bx3){
-      [10,34,62,94,130,170,206].forEach(function(by3,bi){
-        s+='<circle cx="'+(TK.x+bx3+(bi%2?3:-2))+'" cy="'+(TK.y+TK.h-by3)+'" r="'+(1.6+bi*0.22)+'" fill="#dff6ff" opacity=".42"/>';
-      });
-    });
-
-    /* the glass: a sheen down the left and a bright top edge */
-    s+='<path d="M'+(TK.x+6)+' '+(TK.y+6)+' L'+(TK.x+58)+' '+(TK.y+6)+' L'+(TK.x+22)+' '+(TK.y+TK.h-8)+' L'+(TK.x+6)+' '+(TK.y+TK.h-8)+' Z" fill="#fff" opacity=".05"/>';
-    s+='<rect x="'+TK.x+'" y="'+TK.y+'" width="'+TK.w+'" height="'+TK.h+'" rx="3" fill="none" stroke="#5eead4" stroke-width="1.4" opacity=".3"/>';
-    /* the hood with its light strip */
-    s+='<rect x="'+(TK.x-10)+'" y="'+(TK.y-24)+'" width="'+(TK.w+20)+'" height="22" rx="5" fill="#14171d"/>';
-    s+='<rect x="'+(TK.x+14)+'" y="'+(TK.y-8)+'" width="'+(TK.w-28)+'" height="4" rx="2" fill="#a5f3fc" opacity=".72"/>';
-
-    s+='<text x="'+(TK.x+TK.w/2)+'" y="'+(TK.y+TK.h+80)+'" text-anchor="middle" font-size="8" font-weight="800" letter-spacing="4.5" fill="#4b5563">THE REEF &middot; 400 GALLON</text>';
-
-    /* ---- two low chairs facing the tank ---- */
     function lounger(cx,cy){
       return '<g transform="translate('+cx+','+cy+')">'
         +'<ellipse cx="0" cy="17" rx="30" ry="8" fill="#000" opacity=".45"/>'
@@ -6430,20 +6405,18 @@ function drawBasement(){
         +'<rect x="-33" y="-11" width="9" height="25" rx="4.5" fill="#22262e"/>'
         +'<rect x="24" y="-11" width="9" height="25" rx="4.5" fill="#22262e"/>'
         +'</g>';}
-    s+=lounger(LG.x+168, TK.y+TK.h+150);
-    s+=lounger(LG.x+380, TK.y+TK.h+150);
-    /* a low table between them */
-    s+='<rect x="'+(LG.x+252)+'" y="'+(TK.y+TK.h+132)+'" width="46" height="30" rx="5" fill="#15181e"/>';
-    s+='<rect x="'+(LG.x+252)+'" y="'+(TK.y+TK.h+132)+'" width="46" height="8" rx="4" fill="#22262f"/>';
+    s+=lounger(LG.x+200, LG.y+150);
+    s+=lounger(LG.x+356, LG.y+150);
+    s+='<rect x="'+(LG.x+256)+'" y="'+(LG.y+132)+'" width="46" height="30" rx="5" fill="#15181e"/>';
+    s+='<rect x="'+(LG.x+256)+'" y="'+(LG.y+132)+'" width="46" height="8" rx="4" fill="#22262f"/>';
 
-    /* ---- open floor below, for whatever comes next ---- */
-    var OF={x:LG.x+40,y:TK.y+TK.h+230,w:LG.w-80,h:LG.y+LG.h-(TK.y+TK.h+230)-34};
+    var OF={x:LG.x+40,y:LG.y+250,w:LG.w-80,h:LG.h-300};
     s+='<rect x="'+OF.x+'" y="'+OF.y+'" width="'+OF.w+'" height="'+OF.h+'" rx="5" fill="none" stroke="#3b82f6" stroke-width="2" opacity=".16" stroke-dasharray="18 15"/>';
-    s+='<text x="'+(OF.x+OF.w/2)+'" y="'+(OF.y+OF.h/2+2)+'" text-anchor="middle" font-size="22" font-weight="800" letter-spacing="9" fill="#3b82f6" opacity=".2">OPEN FLOOR</text>';
-    s+='<text x="'+(OF.x+OF.w/2)+'" y="'+(OF.y+OF.h/2+24)+'" text-anchor="middle" font-size="8.5" font-weight="800" letter-spacing="4" fill="#7dd3fc" opacity=".28">ROOM FOR WHATEVER IS NEXT</text>';
+    s+='<text x="'+(OF.x+OF.w/2)+'" y="'+(OF.y+OF.h/2+2)+'" text-anchor="middle" font-size="24" font-weight="800" letter-spacing="10" fill="#3b82f6" opacity=".2">OPEN FLOOR</text>';
+    s+='<text x="'+(OF.x+OF.w/2)+'" y="'+(OF.y+OF.h/2+26)+'" text-anchor="middle" font-size="8.5" font-weight="800" letter-spacing="4" fill="#7dd3fc" opacity=".28">ROOM FOR WHATEVER IS NEXT</text>';
   })();
 
-  s+='<text x="650" y="992" text-anchor="middle" font-size="9.5" font-weight="800" letter-spacing="4" fill="#4b5563">BASEMENT &middot; THE THEATRE &middot; THE REEF &middot; OPEN FLOOR</text>';
+  s+='<text x="650" y="992" text-anchor="middle" font-size="9.5" font-weight="800" letter-spacing="4" fill="#4b5563">BASEMENT &middot; THE THEATRE &middot; OPEN FLOOR</text>';
 
   document.getElementById("bld").innerHTML=d+s;
   var su=[];
@@ -6691,47 +6664,194 @@ function micT(){ return MICTARGET[MICWHO]||MICTARGET.claudia; }
 function startMic(who){
   if(who) MICWHO=who;
   var T=micT(), C=srCtor();
-  if(!C){ T.note("This browser has no speech recognition built in. Chrome and Edge have it; Safari and Firefox do not."); return; }
-  if(RECON){ try{REC.stop();}catch(e){} return; }
+  if(!C){ T.note("This browser has no speech recognition. On iPhone use Safari, "
+    +"or use the keyboard's own microphone key next to the space bar — that types "
+    +"straight into the box and works everywhere."); return; }
+  if(RECON){ if(REC&&REC.__stop) REC.__stop(); else { try{REC.stop();}catch(e){} } return; }
   try{ REC=new C(); }
   catch(e){ T.note("Could not start the recogniser: "+e.message); return; }
-  REC.lang="en-US"; REC.interimResults=true; REC.continuous=false; REC.maxAlternatives=1;
-  var heard="", got=false;
+  /* continuous, or it stops dead at your first natural pause and you lose the
+     rest of the sentence. You decide when it ends by tapping the mic again. */
+  REC.lang="en-US"; REC.interimResults=true; REC.continuous=true; REC.maxAlternatives=3;
+  var heard="", got=false, stopping=false;
   RECON=true; micPaint(true);
+
   REC.onresult=function(ev){
-    heard=""; got=true;
-    for(var i=0;i<ev.results.length;i++) heard+=ev.results[i][0].transcript;
-    T.inputs.forEach(function(id){var t=document.getElementById(id); if(t)t.value=heard;});
+    got=true;
+    var interim="";
+    /* Only FINAL results go into heard. The old code concatenated finals AND
+       interims together on every event, so half-recognised words were being
+       glued on next to their own corrected versions. */
+    for(var i=ev.resultIndex;i<ev.results.length;i++){
+      var r=ev.results[i];
+      if(r.isFinal){
+        /* the recogniser offers several guesses — take the one it is surest of */
+        var best=r[0], bc=(r[0].confidence||0);
+        for(var a=1;a<r.length;a++) if((r[a].confidence||0)>bc){ best=r[a]; bc=r[a].confidence||0; }
+        heard += (heard?" ":"") + String(best.transcript).trim();
+      } else interim += r[0].transcript;
+    }
+    var shown=(heard+(interim?" "+interim:"")).trim();
+    T.inputs.forEach(function(id){var t=document.getElementById(id); if(t)t.value=shown;});
+    micBar(shown?"Heard so far":"Listening… speak now", shown||null);
   };
   REC.onerror=function(ev){
-    RECON=false; micPaint(false);
     var code=(ev&&ev.error)||"unknown";
+    /* a silent moment is not a failure — keep listening */
+    if(code==="no-speech" && !stopping && RECON) return;
+    RECON=false; micPaint(false);
     T.note({
       "not-allowed":"Microphone blocked. This page runs in a sandboxed frame, which usually cannot request mic access — that is the most likely cause. It will work once we are on Vercel.",
       "service-not-allowed":"The browser refused mic access for this frame. Sandboxed pages are normally blocked from using the microphone.",
-      "no-speech":"Did not catch anything. Try again and speak a little sooner.",
+      "no-speech":"Did not catch anything. Tap the mic and speak a little sooner.",
       "audio-capture":"No microphone found on this machine.",
       "network":"Speech recognition needs a network connection and could not reach the service.",
       "aborted":"Listening stopped."
     }[code]||("Speech recognition error: "+code));
   };
   REC.onend=function(){
+    /* A pause can end the session even in continuous mode. If he has not tapped
+       stop, start it again so a breath does not cut him off mid-sentence. */
+    if(!stopping && RECON){
+      try{ REC.start(); return; }catch(e){}
+    }
     RECON=false; micPaint(false);
-    var q=heard.trim();
-    if(q) T.send(q);
+    var q=micFix(heard.trim());
+    if(q){
+      T.inputs.forEach(function(id){var t=document.getElementById(id); if(t)t.value=q;});
+      T.send(q);
+    }
     else if(got) T.note("Nothing came through. Try again.");
   };
+  REC.__stop=function(){ stopping=true; try{REC.stop();}catch(e){} };
   try{ REC.start(); }
   catch(e){
     RECON=false; micPaint(false);
-    T.note("Could not open the microphone: "+e.message); }
+    T.note("Could not open the microphone: "+e.message
+      +". If your phone never asked permission, check Settings, Safari, Microphone."); }
 }
+/* ================= MAKING SENSE OF WHAT IT HEARD =================
+   No general recogniser has ever seen "Jadon", "Claudefort", "Schwarzaneager"
+   or "TalentFlx". It returns whatever ordinary English sounds closest, so
+   "call Jadon" comes back as "call Jaden" or "call Jade on".
+
+   This runs over the transcript afterwards and snaps near-misses back onto the
+   words that actually exist in your world — every lead name in the CRM, the
+   three agents, and the handful of business terms. It only replaces a word when
+   the match is close, so ordinary speech is left alone. */
+function micVocab(){
+  var out=[];
+  (STATE.leads||[]).forEach(function(x){
+    String(x.name||"").split(/\s+/).forEach(function(w){
+      if(w.length>=4) out.push(w);
+    });
+    if(String(x.name||"").indexOf(" ")>0) out.push(x.name);
+  });
+  ["Claudia","Jordan","Claudefort","Schwarzaneager","Exodus","TalentFlx",
+   "Discord","Bangkok","Calendly","Stripe","Amazon","TikTok","Instagram",
+   "founding","member","pipeline","objection","placement","onboarding",
+   "warm","demo","dead","collected","commission"].forEach(function(w){out.push(w);});
+  var seen={}, uniq=[];
+  out.forEach(function(w){ var k=w.toLowerCase(); if(!seen[k]){seen[k]=1;uniq.push(w);} });
+  return uniq;
+}
+
+/* how many single-character edits apart two words are */
+function editDist(a,b){
+  a=a.toLowerCase(); b=b.toLowerCase();
+  if(a===b) return 0;
+  if(Math.abs(a.length-b.length)>3) return 99;
+  var prev=[], cur=[], i, j;
+  for(j=0;j<=b.length;j++) prev[j]=j;
+  for(i=1;i<=a.length;i++){
+    cur[0]=i;
+    for(j=1;j<=b.length;j++){
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1,
+        prev[j-1] + (a.charAt(i-1)===b.charAt(j-1)?0:1));
+    }
+    prev=cur.slice();
+  }
+  return prev[b.length];
+}
+
+function micFix(text){
+  if(!text) return text;
+  var vocab=micVocab();
+  if(!vocab.length) return text;
+
+  /* two-word names first, so "Jade on" can become "Jadon" */
+  var words=text.split(/\s+/);
+  for(var i=0;i<words.length-1;i++){
+    var pair=words[i]+words[i+1];
+    for(var v=0;v<vocab.length;v++){
+      var t=vocab[v];
+      if(t.indexOf(" ")>=0) continue;
+      if(t.length<5) continue;
+      if(editDist(pair.replace(/[^a-z]/gi,""), t)<=1){
+        words.splice(i,2,t); break;
+      }
+    }
+  }
+
+  /* then single words */
+  return words.map(function(w){
+    var bare=w.replace(/[^a-zA-Z']/g,"");
+    if(bare.length<4) return w;
+    /* already a word we know — but adopt its proper capitalisation, since these
+       are names and "kyle" should come back as "Kyle" */
+    for(var k=0;k<vocab.length;k++)
+      if(vocab[k].toLowerCase()===bare.toLowerCase())
+        return (vocab[k]===bare) ? w : w.replace(bare, vocab[k]);
+    var best=null, bd=99;
+    for(var v=0;v<vocab.length;v++){
+      var t=vocab[v];
+      if(t.indexOf(" ")>=0) continue;
+      var d=editDist(bare,t);
+      /* the longer the word, the more slack — but never more than a third of it */
+      var allow = bare.length>=8 ? 2 : 1;
+      if(d<=allow && d<bd){ bd=d; best=t; }
+    }
+    if(!best) return w;
+    /* keep whatever punctuation was attached */
+    return w.replace(bare, best);
+  }).join(" ");
+}
+
+/* You said they could not hear you. Part of that was the recogniser cutting off
+   at a pause, which is fixed — but the other part was that nothing on screen
+   ever told you whether it was listening, so there was no way to tell the
+   difference between "not hearing me" and "not even on".
+
+   The button now turns red and pulses, the label says LISTENING, and a bar
+   appears above the composer showing your words appearing as you speak. */
 function micPaint(on){
   ["mic","mmic","jmic","tmic"].forEach(function(id){
     var b=document.getElementById(id); if(!b)return;
     b.classList.toggle("rec",on);
-    b.title=on?"Listening — click to stop":"Hold a thought, then speak";
+    b.innerHTML = on ? "&#9632;" : "&#127908;";
+    b.title = on ? "Listening — tap to stop and send"
+                 : "Tap, speak, tap again when you are done";
   });
+  micBar(on ? "Listening… speak now, then tap the square to send" : null);
+}
+
+/* the live strip above whichever composer is in use */
+function micBar(msg, words){
+  var host=document.getElementById("micbar");
+  if(!host){
+    if(!msg || !document.body) return;
+    host=document.createElement("div"); host.id="micbar"; host.className="micbar";
+    document.body.appendChild(host);
+  }
+  if(!msg){ if(host.parentNode) host.parentNode.removeChild(host); return; }
+  host.innerHTML='<span class="mb-dot"></span>'
+    +'<span class="mb-t">'+esc(msg)+'</span>'
+    +(words?'<span class="mb-w">'+esc(words)+'</span>':'')
+    +'<button class="mb-x" id="mb-stop">Done</button>';
+  var st=document.getElementById("mb-stop");
+  if(st) st.onclick=function(){
+    if(REC&&REC.__stop) REC.__stop(); else { try{REC.stop();}catch(e){} }
+  };
 }
 
 /* ============================ ASSISTANT ============================ */
@@ -6765,7 +6885,7 @@ function aiChat(){
    +'<div class="st"><span class="dot"></span>On duty · sees your full pipeline</div></div></div>'
    +'<div class="log" id="log"></div>'
    +'<div class="chat-f">'
-   +'<button class="iconbtn" id="mic" title="Speak to her">&#127908;</button>'
+   +'<button class="iconbtn micbtn" id="mic" title="Tap, speak, tap again">&#127908;</button>'
    +'<textarea id="ci" rows="1" placeholder="Type, or tap the mic…"></textarea>'
    +'<button class="iconbtn'+(SPEAK?" on":"")+'" id="spk" title="'+esc(voiceLabel())+'">'+(SPEAK?"🔊":"🔇")+'</button>'
    +'<button class="send" id="cs">Send</button></div></div>';
@@ -7057,7 +7177,7 @@ function jordanChat(){
   h+='<div class="chat">'
    +'<div class="log" id="jlog"></div>'
    +'<div class="chat-f">'
-   +'<button class="iconbtn" id="jmic" title="Speak to Jordan">&#127908;</button>'
+   +'<button class="iconbtn micbtn" id="jmic" title="Tap, speak, tap again">&#127908;</button>'
    +'<textarea id="jci" rows="1" placeholder="Who are we closing?"></textarea>'
    +'<button class="iconbtn'+(SPEAK?" on":"")+'" id="jspk" title="Jordan &middot; '+esc(voiceLabel())+'">'
    +(SPEAK?"&#128266;":"&#128263;")+'</button>'
@@ -7428,7 +7548,7 @@ function trainerChat(){
   h+='<div class="chat">'
    +'<div class="log" id="tlog"></div>'
    +'<div class="chat-f">'
-   +'<button class="iconbtn" id="tmic" title="Speak to Claude">&#127908;</button>'
+   +'<button class="iconbtn micbtn" id="tmic" title="Tap, speak, tap again">&#127908;</button>'
    +'<textarea id="tci" rows="1" placeholder="Talk to Claude&hellip;"></textarea>'
    +'<button class="iconbtn'+(SPEAK?" on":"")+'" id="tspk" title="Claude &middot; '+esc(voiceLabel())+'">'
    +(SPEAK?"&#128266;":"&#128263;")+'</button>'
@@ -7803,7 +7923,7 @@ function tabBody(){
   var map={
     assistant:[aiChat,aiBrief],
     office   :[weekView,execStudents,execCalls,salesOnboard,execMoney,notesBox],
-    sales    :[jordanChat,salesPipe,salesDir,salesFront,salesCall,dialerView,salesObj,salesDM,salesBoard,salesTrain,notesBox],
+    sales    :[jordanChat,salesPipe,salesDir,salesFront,salesCall,dialerView,salesObj,salesTrain,notesBox],
     content  :[conCommand,conAnalytics,conIdeas,notesBox],
     gym      :[trainerChat,gymView,foodView,consistView,notesBox]
   };
@@ -8486,7 +8606,10 @@ function placeCall(name, number){
 
 function dialerView(){
   var L=STATE.leads.slice();
-  var order={"Warm Lead":0,"Demo No Sale":1,"Joining in Future":2,"New Lead":3,"Signed Up":4,"Dead Lead":5};
+  /* a new lead going cold is the most expensive thing here, so they come first
+     after the purple list */
+  var order={"New Lead":0,"Warm Lead":1,"Demo No Sale":2,"Joining in Future":3,
+             "Signed Up":4,"Dead Lead":5};
   var callable=L.filter(function(x){
       return x.stage!=="Dead Lead" && (dialable(x.phone).ok || findPhone(x.phone));})
     .sort(function(a,b){
@@ -8525,20 +8648,25 @@ function dialerView(){
   }
 
   var np=callable.filter(function(x){return prGet(x.name);}).length;
-  h+='<div class="grid3" style="margin:13px 0">'
-   +'<div class="card dk"><h4>Ready To Call</h4><div class="v">'+callable.length+'</div>'
-   +'<div class="d">have a number</div></div>'
-   +'<div class="card"><h4>On The Purple List</h4><div class="v" style="color:#c084fc">'+np+'</div>'
-   +'<div class="d">these first, always</div></div>'
-   +'<div class="card"><h4>Warm</h4><div class="v" style="color:#fbbf24">'
-   +callable.filter(function(x){return x.stage==="Warm Lead";}).length+'</div>'
-   +'<div class="d">call these today</div></div>'
-   +'<div class="card"><h4>No Number</h4><div class="v" style="color:#f87171">'+noNum+'</div>'
-   +'<div class="d">DM them instead</div></div></div>';
+  var nn=callable.filter(function(x){return x.stage==="New Lead";}).length;
+  var nw=callable.filter(function(x){return x.stage==="Warm Lead";}).length;
+  /* a console readout rather than another row of cards */
+  h+='<div class="console">'
+   +'<div class="con-t"><span class="con-live'+(ready?" on":"")+'"></span>'
+   +'<b>DIALER</b><i>'+(ready?"line ready":"offline")+'</i></div>'
+   +'<div class="con-g">'
+   +'<div class="con-n"><b>'+callable.length+'</b><i>reachable</i></div>'
+   +'<div class="con-n p"><b>'+np+'</b><i>purple</i></div>'
+   +'<div class="con-n n"><b>'+nn+'</b><i>new</i></div>'
+   +'<div class="con-n w"><b>'+nw+'</b><i>warm</i></div>'
+   +'<div class="con-n r"><b>'+noNum+'</b><i>no number</i></div>'
+   +'</div></div>';
 
   if(!callable.length) return h+'<div class="empty">Nobody in the pipeline has a phone number yet.</div>';
 
-  h+='<h4 class="sh">Call List &mdash; Purple First, Then Warm</h4><div class="dl">';
+  h+='<div class="cl-h"><b>Call List</b>'
+   +'<span>'+callable.length+' reachable &middot; purple first, then new, then warm</span></div>'
+   +'<div class="dl">';
   callable.forEach(function(x){
     var c=scol(x.stage), v=dialable(x.phone);
     var tel=v.ok?v.e164:String(x.phone||"").replace(/[^0-9+]/g,"");
@@ -9244,12 +9372,30 @@ function salesPipe(){
    +'<button class="lsx" id="lsclear" title="Clear">&times;</button>'
    +'<span class="lscount" id="lscount"></span></div>';
 
-  h+='<div class="scroll big"><table><thead><tr>'
-   +'<th style="width:30px" title="Priority">&#9679;</th>'
-   +'<th>Name</th><th style="width:140px">Status</th>'
-   +'<th style="width:112px">Phone</th><th style="width:158px">Email</th><th style="width:104px">Handle</th>'
-   +'<th style="width:62px">Owed</th><th>Notes</th></tr></thead><tbody>';
-  rows.forEach(function(x){
+  /* Grouped by stage, New Leads first, because a new lead going cold is the most
+     expensive thing that happens here. Purple-flagged people are lifted into
+     their own band above everything. */
+  var groups=[];
+  var pri=rows.filter(function(x){return prGet(x.name);});
+  if(pri.length && FILTER!=="priority")
+    groups.push({label:"Chasing Right Now", n:pri.length, hex:"#a855f7", rows:pri});
+  ORD.forEach(function(st){
+    var g=rows.filter(function(x){
+      return x.stage===st && !(prGet(x.name) && FILTER!=="priority"); });
+    if(g.length) groups.push({label:st, n:g.length, hex:scol(st).hex, rows:g});
+  });
+  if(!groups.length) groups=[{label:"Leads", n:rows.length, hex:"#3b82f6", rows:rows}];
+
+  h+='<div class="scroll big">';
+  groups.forEach(function(g){
+    h+='<div class="pgrp" style="--gc:'+g.hex+'">'
+      +'<span class="pgrp-d"></span><b>'+esc(g.label)+'</b><i>'+g.n+'</i></div>';
+    h+='<table><thead><tr>'
+     +'<th style="width:30px" title="Priority">&#9679;</th>'
+     +'<th>Name</th><th style="width:140px">Status</th>'
+     +'<th style="width:112px">Phone</th><th style="width:158px">Email</th><th style="width:104px">Handle</th>'
+     +'<th style="width:62px">Owed</th><th>Notes</th></tr></thead><tbody>';
+    g.rows.forEach(function(x){
     function fld(field,val,ph){
       return '<input class="cn" data-n="'+esc(x.name)+'" data-k="'+field+'" value="'+esc(val||"")
         +'" placeholder="'+ph+'">';}
@@ -9275,7 +9421,9 @@ function salesPipe(){
      +'<td><textarea class="ntbox" data-n="'+esc(x.name)+'" rows="2" '
      +'placeholder="Notes — type anything">'+esc(x.notes||"")+'</textarea>'
      +(x.notesSet?'<div class="editedflag">edited</div>':'')+'</td></tr>';});
-  return h+'</tbody></table></div>';
+    h+='</tbody></table>';
+  });
+  return h+'</div>';
 }
 /* ============================ DIRECTORY ============================
    One flat list of every human in the CRM with a way to reach them. This is the
@@ -9310,7 +9458,10 @@ function salesDir(){
   var withPhone=L.filter(function(x){return !!findPhone(x.phone);});
   var missing  =L.filter(function(x){return !x.email && !findPhone(x.phone);});
 
-  var rows=DTAB==="email"?withEmail:DTAB==="phone"?withPhone:DTAB==="missing"?missing:L;
+  /* it is a phone book now, so the useful cuts are by number, not by email */
+  var rows=DTAB==="phone"?withPhone:DTAB==="missing"
+            ?L.filter(function(x){return !findPhone(x.phone);})
+            :DTAB==="email"?withEmail:L;
 
   var h='<div class="dirhead">'
    +'<div class="card dk"><h4>In the directory</h4><div class="v">'+L.length+'</div>'
@@ -9333,25 +9484,27 @@ function salesDir(){
    +'<span class="note-c">Bcc, so nobody sees anyone else\'s address.</span></div>';
 
   h+='<div class="pills">'
-   +['all','email','phone','missing'].map(function(k){
-      var lab={all:"Everyone "+L.length,email:"Has email "+withEmail.length,
-               phone:"Has phone "+withPhone.length,missing:"Missing both "+missing.length}[k];
+   +['all','phone','missing','email'].map(function(k){
+      var noNum=L.filter(function(x){return !findPhone(x.phone);}).length;
+      var lab={all:"Everyone "+L.length,
+               phone:"Callable "+withPhone.length,
+               missing:"No number "+noNum,
+               email:"Has email "+withEmail.length}[k];
       return '<button class="pill'+(DTAB===k?" on":"")+'" data-dt="'+k+'">'+lab+'</button>';}).join("")
    +'</div>';
 
   if(!rows.length) return h+'<div class="empty">Nobody in this view.</div>';
 
   h+='<div class="lsrch"><span class="lsi">&#128269;</span>'
-   +'<input id="dsearch" placeholder="Search '+rows.length+' people by name, email or number" '
+   +'<input id="dsearch" placeholder="Search '+rows.length+' people by name or number" '
    +'autocomplete="off" value="'+esc(DSEARCH)+'">'
    +'<button class="lsx" id="dsclear" title="Clear">&times;</button>'
    +'<span class="lscount" id="dscount"></span></div>';
 
   h+='<div class="scroll big"><table class="dirt"><thead><tr>'
    +'<th style="width:30px" title="Priority">&#9679;</th><th>Name</th>'
-   +'<th style="width:210px">Email</th><th style="width:140px">Phone</th>'
-   +'<th style="width:118px">Handle</th><th style="width:132px">Stage</th>'
-   +'<th style="width:150px">Reach out</th></tr></thead><tbody>';
+   +'<th style="width:150px">Phone</th><th style="width:130px">Stage</th>'
+   +'<th style="width:130px">Call or text</th></tr></thead><tbody>';
 
   rows.forEach(function(x){
     var pri=prGet(x.name), c=scol(x.stage), tel=findPhone(x.phone);
@@ -9362,18 +9515,14 @@ function salesDir(){
      +'<td data-l="Priority"><button class="prdot'+(pri?" on":"")+'" data-pr="'+esc(x.name)+'"'
      +' title="'+(pri?"Actively pursuing — tap to unflag":"Flag as one you are chasing")+'"></button></td>'
      +'<td class="nm-c"><button class="openlead" data-n="'+esc(x.name)+'">'+esc(x.name)+'</button></td>'
-     +'<td data-l="Email" class="mono dirv">'
-       +(x.email?'<a href="mailto:'+esc(x.email)+'">'+esc(x.email)+'</a>'
-                :'<span class="dirno">—</span>')+'</td>'
-     +'<td data-l="Phone" class="mono dirv">'
-       +(tel?'<a href="tel:'+esc(digits)+'">'+esc(tel)+'</a>':'<span class="dirno">—</span>')+'</td>'
-     +'<td data-l="Handle" class="mono dirv">'+(x.ig?esc(x.ig):'<span class="dirno">—</span>')+'</td>'
+     +'<td data-l="Phone" class="mono dirv dirnum">'
+       +(tel?'<a href="tel:'+esc(digits)+'">'+esc(tel)+'</a>'
+            :'<span class="dirno">no number</span>')+'</td>'
      +'<td data-l="Stage">'+badge(x.stage)+'</td>'
-     +'<td data-l="Reach out" class="diract">'
+     +'<td data-l="Call or text" class="diract">'
        +(tel?'<a class="dbtn" href="tel:'+esc(digits)+'" title="Call">&#128222;</a>'
-            +'<a class="dbtn" href="sms:'+esc(digits)+'" title="Text">&#128172;</a>':"")
-       +(x.email?'<a class="dbtn" href="mailto:'+esc(x.email)+'" title="Email">&#9993;</a>':"")
-       +(!tel&&!x.email?'<span class="dirno">no contact</span>':"")
+            +'<a class="dbtn" href="sms:'+esc(digits)+'" title="Text">&#128172;</a>'
+            :'<span class="dirno">&mdash;</span>')
      +'</td></tr>';});
 
   return h+'</tbody></table></div>';
@@ -9407,7 +9556,7 @@ function salesFront(){
    +'<button id="fd-reload" class="fdbtn">&#8635; Check For New Leads</button>'
    +(dupeCount?'<button id="fd-dedupe" class="fdbtn warn">&#10063; Collapse '+dupeCount+' Duplicate'
        +(dupeCount===1?"":"s")+'</button>':'')
-   +'<button id="fd-manual" class="fdbtn">+ Add A Lead By Hand</button>'
+   +'<button id="fd-manual" class="fdbtn">+ New Lead By Hand</button>'
    +'</div>'
    +'<div id="fd-manualform" class="fdmanual"></div>'
    +'<div id="fd-msg" class="fdmsg"></div>';
@@ -9415,7 +9564,7 @@ function salesFront(){
     h+='<div class="alert"><b>'+miss.length+' submission'+(miss.length>1?"s":"")+' never made it into your sheet.</b> '
      +'These people asked for help and nothing is tracking them. Pull them in and they become real leads '
      +'on the Pipeline at New Lead.'
-     +'<div style="margin-top:9px"><button class="addall" id="miss-all">Add All '+miss.length+' To The Pipeline</button></div></div>';
+     +'<div style="margin-top:9px"><button class="addall" id="miss-all">Make All '+miss.length+' New Leads</button></div></div>';
     h+='<table><thead><tr><th>Name</th><th>Submitted</th><th>Phone</th><th>Email</th><th>Wants</th><th></th></tr></thead><tbody>';
     miss.forEach(function(f,fi){
       h+='<tr style="background:rgba(248,113,113,.07)"><td class="nm-c">'+esc(f.name)
@@ -9424,7 +9573,7 @@ function salesFront(){
        +'<td class="mono" style="font-size:11.5px;white-space:nowrap">'+esc(fmtPhone(f.phone)||f.phone||"—")+'</td>'
        +'<td class="mono" style="font-size:11px">'+esc(f.email||"—")+'</td>'
        +'<td class="note-c">'+esc(f.interest||"—")+'</td>'
-       +'<td><button class="addone" data-mi="'+fi+'">Add To CRM</button>'
+       +'<td><button class="addone" data-mi="'+fi+'">+ New Lead</button>'
        +'<button class="dropone" data-drop="'+esc(f.name||f.email||"")+'" '
        +'title="Take this off the front desk">&times;</button></td></tr>';});
     h+='</tbody></table>';
