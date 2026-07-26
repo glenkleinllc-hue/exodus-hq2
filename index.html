@@ -115,6 +115,14 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
   color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
 .syncbar button:disabled{opacity:.6;cursor:default}
 
+/* the last-resort play button */
+.voicechip{position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(18px + env(safe-area-inset-bottom));z-index:200;
+  background:linear-gradient(150deg,#22d3ee,#0e7490);border:0;border-radius:999px;
+  padding:14px 24px;color:#04222a;font-family:inherit;font-size:14px;font-weight:800;
+  box-shadow:0 10px 34px rgba(0,0,0,.5);cursor:pointer;animation:vcIn .18s ease-out}
+@keyframes vcIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+
 @keyframes sbp{0%,100%{opacity:1}50%{opacity:.35}}
 
 /* ============ PLAN ============ */
@@ -6440,8 +6448,29 @@ var VOICE_NOTE = "";          /* why it fell back, for the toggle's tooltip */
    unlocked, so it plays.
 
    playsinline matters too, or iOS takes the audio fullscreen. */
-var VOICE_EL = null, VOICE_UNLOCKED = false;
-var SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQAAAAA=";
+var VOICE_EL = null, VOICE_UNLOCKED = false, VOICE_PENDING = null;
+
+/* The last resort. A floating button that plays audio already sitting in the
+   element — tapping it is a gesture, so no browser can refuse. */
+function voiceChip(){
+  var old=document.getElementById("voicechip");
+  if(old&&old.parentNode) old.parentNode.removeChild(old);
+  if(!VOICE_PENDING||!document.body) return;
+  var b=document.createElement("button");
+  b.id="voicechip"; b.className="voicechip";
+  b.innerHTML="&#128266; Tap to hear it";
+  b.onclick=function(){
+    var a=VOICE_PENDING; VOICE_PENDING=null;
+    if(a){ try{ a.play(); VOICE_UNLOCKED=true; VOICE_NOTE=""; }catch(e){} }
+    if(b.parentNode) b.parentNode.removeChild(b);
+  };
+  document.body.appendChild(b);
+  setTimeout(function(){ if(b.parentNode&&VOICE_PENDING) b.parentNode.removeChild(b); }, 20000);
+}
+/* A real 0.03s of silence. The one that shipped before had a zero-length data
+   chunk — a broken file — so Safari refused to play it and the unlock never
+   happened. It has to be a file the browser can actually decode. */
+var SILENT_WAV = "data:audio/wav;base64,UklGRiQCAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
 
 function voiceEl(){
   if(!VOICE_EL && typeof Audio!=="undefined"){
@@ -6557,11 +6586,14 @@ function say(text){
     a.src=url;
     var pl=a.play();
     if(pl && pl.catch) pl.catch(function(err){
+      /* Still refused. Rather than fall back to the robot voice and leave you
+         wondering, keep the audio loaded and offer a button — a tap on that IS
+         a gesture, so it is guaranteed to play. Belt and braces. */
+      VOICE_PENDING = a;
       VOICE_NOTE = (err && err.name==="NotAllowedError")
-        ? "your phone blocked the audio — tap the screen once, then try again"
-        : "audio would not start";
-      sayLocal(text);
-      try{ redraw(); }catch(e){}
+        ? "your phone wants a tap before it will play sound"
+        : "audio would not start on its own";
+      try{ voiceChip(); }catch(e){ sayLocal(text); }
     });
   }).catch(function(){
     sayLocal(text);
