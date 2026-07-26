@@ -1,20 +1,65 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/api/health",   "destination": "/api/hq?route=health" },
-    { "source": "/api/login",    "destination": "/api/hq?route=login" },
-    { "source": "/api/db",       "destination": "/api/hq?route=db" },
-    { "source": "/api/chat",     "destination": "/api/hq?route=chat" },
-    { "source": "/api/form",     "destination": "/api/hq?route=form" },
-    { "source": "/api/calendar", "destination": "/api/hq?route=calendar" }
+    {
+      "source": "/api/health",
+      "destination": "/api/hq?route=health"
+    },
+    {
+      "source": "/api/login",
+      "destination": "/api/hq?route=login"
+    },
+    {
+      "source": "/api/db",
+      "destination": "/api/hq?route=db"
+    },
+    {
+      "source": "/api/chat",
+      "destination": "/api/hq?route=chat"
+    },
+    {
+      "source": "/api/form",
+      "destination": "/api/hq?route=form"
+    },
+    {
+      "source": "/api/calendar",
+      "destination": "/api/hq?route=calendar"
+    }
   ],
   "headers": [
     {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "microphone=(self)" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "microphone=(self)"
+        }
       ]
     }
   ]
