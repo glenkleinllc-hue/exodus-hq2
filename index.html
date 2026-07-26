@@ -762,39 +762,36 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .did{white-space:normal}
 
 /* ==================== PHONE ====================
-   Desktop is untouched — every rule here is inside a max-width query.
-   On a phone the floor plan is hidden by default (it is 1300px wide and turns
-   to mush at 390px) and the rooms become a vertical stack instead. The plan is
-   still one tap away if you want to look at it. */
-.mstack{display:none}
+   Everything here is inside a max-width query, so the desktop layout is
+   untouched. The building is NOT hidden on a phone — it is the point of the
+   app. It is shown small, and tapping a room zooms the drawing into that room
+   so every desk, door and screen inside is big enough to hit with a thumb. */
+.mstack, .mtopstats, .mzoom{display:none}
 
 @media (max-width: 820px){
 
-  /* The markup puts the windows before the phone stack, which is right for a
-     desktop. On a phone the room header and its drawing have to come first, so
-     the column is reordered rather than the HTML being moved. */
+  /* The markup order suits a desktop. On a phone the column is reordered so it
+     reads: numbers, building, zoom strip, then whatever is open. */
   .tower{padding:0;border:0;background:none;box-shadow:none;
     display:flex;flex-direction:column}
-  .tower > svg.bld{order:0}
-  #mstack{order:1}
-  #wins{order:2}
-  #taskbar{order:3}
-  #roomsm{order:4}
+  #mtopstats{order:0}
+  .tower > svg.bld{order:1}
+  #mzoom{order:2}
+  #mstack{order:3}
+  #wins{order:4}
+  #taskbar{order:5}
+  #roomsm{order:6}
 
-  /* the plan is opt-in on a phone */
-  .tower > svg.bld{display:none}
-  body.mroom .tower > svg.bld{display:none !important}
-  body.showplan .tower > svg.bld{display:block;max-height:64vh;
-    border-radius:10px;touch-action:pan-x pan-y pinch-zoom}
+  /* ---- the building, always visible ---- */
+  .tower > svg.bld{display:block;width:100%;height:auto;max-height:38vh;
+    border-radius:12px;background:#080b11;border:1px solid #1b2230;
+    touch-action:pan-x pan-y pinch-zoom}
+  body.mroom .tower > svg.bld{max-height:32vh}
+
   .navb, .rtip, .wgrip, .scrim, .rooms-m, .taskbar{display:none !important}
-  body.showplan .navb{display:flex !important;position:static;inset:auto;
-    justify-content:center;gap:6px;margin:8px 0 0;flex-wrap:wrap}
-  body.showplan .navb .here{display:none}
-  body.showplan .navb button{flex:1;justify-content:center;padding:11px 8px;font-size:11px}
 
-  /* ---- the stack ---- */
-  .mstack{display:block;margin-top:10px}
-  .mtop{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+  /* ---- the numbers ---- */
+  .mtopstats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:9px}
   .mstat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
     border-radius:9px;padding:9px 6px;text-align:center;min-width:0}
   .mstat b{display:block;font-size:16px;font-weight:800;color:#fff;letter-spacing:-.6px;
@@ -802,31 +799,56 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
   .mstat i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.7px;
     text-transform:uppercase;color:var(--mut);margin-top:4px;line-height:1.2}
 
-  /* ---- room cards: each one shows its own corner of the building ---- */
-  .mrooms{display:flex;flex-direction:column;gap:9px}
+  /* ---- the zoom strip ---- */
+  .mzoom{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;margin:9px 0 4px;padding-bottom:2px}
+  .mzoom::-webkit-scrollbar{display:none}
+  .mzb{flex:none;display:flex;align-items:center;gap:6px;min-height:42px;padding:0 13px;
+    border-radius:10px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#a9b3c2;
+    white-space:nowrap;-webkit-tap-highlight-color:transparent}
+  .mzb i{font-style:normal;font-size:15px;line-height:1}
+  .mzb.on{background:color-mix(in srgb,var(--ac,#3b82f6) 20%,transparent);
+    border-color:var(--ac,#3b82f6);color:#fff}
+  .mzb.wide{flex:1;justify-content:center}
+
+  /* ---- the stack ---- */
+  .mstack{display:block}
+
+  .mquick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
+  .mquick button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    min-height:68px;padding:9px 4px;border-radius:11px;cursor:pointer;font-family:inherit;
+    background:linear-gradient(160deg,#0e1621,#111a26);border:1px solid #232c3a;
+    color:#c9d2df;font-size:10.5px;font-weight:800;line-height:1.2;text-align:center;
+    -webkit-tap-highlight-color:transparent}
+  .mquick button i{font-style:normal;font-size:20px;line-height:1}
+  .mquick button:active{border-color:#3b82f6;color:#fff}
+
+  .mrooms{display:flex;flex-direction:column;gap:8px}
   .mroom{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
     background:linear-gradient(160deg,#0c1119,#0f151f);
     border:1px solid #232c3a;border-left:3px solid var(--ac);
-    border-radius:12px;padding:10px 12px 10px 10px;cursor:pointer;font-family:inherit;
-    min-height:76px;-webkit-tap-highlight-color:transparent}
+    border-radius:12px;padding:13px 14px;cursor:pointer;font-family:inherit;
+    min-height:66px;-webkit-tap-highlight-color:transparent}
   .mroom:active{background:linear-gradient(160deg,#111a26,#141e2c);border-color:var(--ac)}
-  .mrart{flex:none;width:86px;height:60px;border-radius:8px;overflow:hidden;
-    background:#0a0e14;border:1px solid rgba(255,255,255,.07);
-    display:flex;align-items:center;justify-content:center}
-  .mrart svg.mart{width:100%;height:100%;display:block}
-  .mri{font-size:24px;line-height:1}
+  .mri{font-size:23px;line-height:1;flex:none;width:28px;text-align:center}
   .mrt{flex:1;min-width:0}
   .mrt b{display:block;font-size:15.5px;font-weight:800;color:#fff;letter-spacing:-.2px}
-  .mrt i{display:block;font-style:normal;font-size:11px;color:var(--mut);margin-top:3px;
-    line-height:1.35}
+  .mrt i{display:block;font-style:normal;font-size:11px;color:var(--mut);margin-top:3px;line-height:1.35}
   .mrc{flex:none;font-size:15px;color:var(--ac)}
 
-  /* ---- inside a room ---- */
+  .mgo{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}
+  .mgo button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;padding:14px 8px;color:#a9b3c2;font-family:inherit;font-size:12px;
+    font-weight:800;cursor:pointer}
+  .mgo button:active{background:rgba(255,255,255,.1);color:#fff}
+
+  /* ---- the room header ---- */
   .mrhd{display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:8;
-    margin:0 -2px 9px;padding:9px 11px;border-radius:12px;
-    background:rgba(9,13,19,.94);backdrop-filter:blur(9px);
+    margin:6px 0 9px;padding:9px 11px;border-radius:12px;
+    background:rgba(9,13,19,.95);backdrop-filter:blur(9px);
     border:1px solid #232c3a;border-left:3px solid var(--ac)}
-  .mrbk{flex:none;width:40px;height:40px;border-radius:10px;font-size:24px;line-height:1;
+  .mrbk{flex:none;width:42px;height:42px;border-radius:10px;font-size:25px;line-height:1;
     background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);
     color:#dbe3ee;font-family:inherit;cursor:pointer;padding:0 0 3px}
   .mrbk:active{background:rgba(255,255,255,.14)}
@@ -837,108 +859,60 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
     text-transform:uppercase;color:var(--mut);margin-top:3px}
   .mrhi{flex:none;font-size:21px}
 
-  .martw{border-radius:12px;overflow:hidden;background:#0a0e14;
-    border:1px solid rgba(255,255,255,.08);margin-bottom:9px}
-  .martw svg.mart{width:100%;height:auto;max-height:26vh;display:block}
-  .mreye{flex:none;width:40px;height:40px;border-radius:10px;font-size:19px;line-height:1;padding:0;
-    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
-    font-family:inherit;cursor:pointer;opacity:.5}
-  .mreye.on{opacity:1;background:color-mix(in srgb,var(--ac) 18%,transparent);border-color:var(--ac)}
-
-  /* ---- the six things he actually does on a phone ---- */
-  .mquick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
-  .mquick button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-    min-height:68px;padding:9px 4px;border-radius:11px;cursor:pointer;font-family:inherit;
-    background:linear-gradient(160deg,#0e1621,#111a26);border:1px solid #232c3a;
-    color:#c9d2df;font-size:10.5px;font-weight:800;letter-spacing:.2px;line-height:1.2;
-    text-align:center;-webkit-tap-highlight-color:transparent}
-  .mquick button i{font-style:normal;font-size:20px;line-height:1}
-  .mquick button:active{border-color:#3b82f6;color:#fff}
-
-  /* ---- talking to an agent should feel like a messaging app ----
-     The log takes the space that is left and the composer stays put at the
-     bottom. 100dvh shrinks when the keyboard comes up, which is the fix. */
-  body.mroom .chat{display:flex;flex-direction:column;
-    height:calc(100dvh - 190px);min-height:340px;border-radius:12px}
-  body.mroom .chat .log{flex:1 1 auto;max-height:none;overflow-y:auto;
-    -webkit-overflow-scrolling:touch}
-  body.mroom .chat .chat-h{flex:none}
-  body.mroom .chat-f{flex:none;position:sticky;bottom:0;z-index:4;
-    background:rgba(9,13,19,.97);backdrop-filter:blur(9px)}
-  body.mroom .chat-f textarea{min-height:48px;font-size:16px}
-  body.mroom .chat-f .send{padding:13px 17px;min-height:48px}
-  body.mroom .chat-f .iconbtn{min-height:48px;min-width:48px}
-  /* when the drawing is hidden the chat gets the room back */
-  body.mroom.noart .chat{height:calc(100dvh - 150px)}
-
-  /* ---- logging food and workouts: the box you type in comes first ---- */
-  .qrow input, .addbar input{min-height:50px;font-size:16px}
-  .qrow button, .addbar button{min-height:50px;font-size:14px;font-weight:800}
-
-  /* ---- the CRM on a phone ---- */
-  .lsrch{position:sticky;top:104px;z-index:5;margin:10px -2px 9px;padding:8px 2px;
-    background:rgba(9,13,19,.97);backdrop-filter:blur(9px);border-radius:10px}
-  body.mroom.noart .lsrch{top:60px}
-  .wbody table tr{padding:14px 13px}
-  .wbody table td:before{flex:0 0 30%;font-size:8px}
-  select.stsel{min-height:48px;font-size:15px;font-weight:700}
-  .cn{min-height:46px;font-size:16px}
-  textarea.ntbox{min-height:64px;font-size:16px}
-  .openlead{font-size:16px;font-weight:800}
-  .pills{gap:6px}
-  .pill{min-height:40px;font-size:12px;padding:0 13px}
-
-  .mswitch{display:flex;gap:6px;margin-bottom:2px}
-  .msw{flex:1;min-height:44px;font-size:19px;border-radius:10px;cursor:pointer;
-    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
-    font-family:inherit;padding:0;-webkit-tap-highlight-color:transparent}
-  .msw.on{background:color-mix(in srgb,var(--ac) 20%,transparent);border-color:var(--ac)}
-
-  /* in a room the window is the page — no title bar, no card inside a card */
-  body.mroom .mtop, body.mroom .mgo{display:none}
-  body.mroom .win{margin:0;border:0;background:none;box-shadow:none}
-  body.mroom .wtitle{display:none}
-  body.mroom .wbody{padding:0 0 22px}
-
-  .mgo{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}
-  .mgo button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
-    border-radius:9px;padding:13px 8px;color:#a9b3c2;font-family:inherit;font-size:11.5px;
-    font-weight:800;letter-spacing:.5px;cursor:pointer}
-  .mgo button:active{background:rgba(255,255,255,.1);color:#fff}
-
-  /* ---- windows: full width, stacked, no floating ---- */
+  /* ---- windows become the page ---- */
   .wins{position:static;inset:auto;pointer-events:auto}
   .win{position:static !important;left:auto !important;top:auto !important;
     width:auto !important;height:auto !important;min-width:0;
-    margin:10px 0 0;border-radius:11px;box-shadow:0 8px 26px rgba(0,0,0,.5);
-    z-index:auto !important}
-  .wtitle{cursor:default;padding:13px 12px 13px 14px}
-  .wtitle b{font-size:14.5px}
-  .wno{display:none}
-  .wbtn{width:34px;height:34px;font-size:17px}
-  .wbody{overflow:visible;max-height:none;padding:0 12px 16px}
-  .wbody .tabs{position:sticky;top:0;z-index:2;padding:10px 0;
-    display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .wbody .tabs::-webkit-scrollbar{display:none}
-  .wbody .tab{flex:none;padding:11px 15px;font-size:13px;min-height:44px}
-  body.mroom .wbody .tabs{top:60px;background:rgba(9,13,19,.96);
-    backdrop-filter:blur(9px);margin:0 -2px;padding:9px 2px;border-radius:10px}
+    margin:0;border:0;background:none;box-shadow:none;z-index:auto !important}
+  .wtitle{display:none}
+  .wbody{overflow:visible;max-height:none;padding:0 0 26px}
 
-  /* the NPC popup goes inline */
+  .wbody .tabs{position:sticky;top:60px;z-index:6;display:flex;gap:6px;overflow-x:auto;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:9px 2px;
+    background:rgba(9,13,19,.96);backdrop-filter:blur(9px);border-radius:10px}
+  .wbody .tabs::-webkit-scrollbar{display:none}
+  .wbody .tab{flex:none;padding:0 16px;font-size:13.5px;min-height:46px;
+    display:flex;align-items:center}
+
   .tbox{position:static;left:auto;top:auto;transform:none;width:auto;margin-top:9px}
   .tbox.show{transform:none}
   .tb-face{width:58px;height:58px}
   .tb-line{font-size:13px}
 
-  /* ---- typing: 16px or iOS zooms the page ---- */
-  input, textarea, select{font-size:16px !important}
-  textarea, .sin.ta{min-height:96px}
-  select, .jsel, .stsel{min-height:46px;padding:11px 12px}
-  button, .cbtn, .fdbtn, .tbi{min-height:44px}
-  .mnav{min-height:44px;min-width:48px;font-size:15px}
-  .mnav.today{min-width:0;font-size:11.5px}
+  /* ================= TYPING =================
+     16px is the threshold below which iOS zooms the whole page on focus, which
+     is what made every field feel like a fight. Everything that takes text is
+     at least that, and at least 48px tall so a thumb can find it. */
+  input, textarea, select{font-size:16px !important;line-height:1.45}
+  input, select{min-height:48px}
+  textarea{min-height:88px}
+  select, .jsel, .stsel{min-height:48px;padding:11px 12px}
+  button, .cbtn, .fdbtn, .tbi{min-height:46px}
   .chk, .mc, .qd, .xbtn{min-height:0}
-  .xbtn{width:34px;height:34px;font-size:17px}
+  .xbtn{width:36px;height:36px;font-size:18px}
+  .mnav{min-height:46px;min-width:50px;font-size:16px}
+  .mnav.today{min-width:0;font-size:12px}
+  .sin,.vin,.cin,.lin{padding:12px 13px}
+  .cn{min-height:48px;padding:11px 12px}
+  .qrow input,.addbar input{min-height:50px}
+  .qrow button,.addbar button{min-height:50px;font-size:14px}
+  .bkrow{flex-wrap:wrap}
+  .bkrow i{flex:1 1 100%;min-width:0;margin-bottom:3px}
+  .bkrow input{flex:1 1 100%;min-height:48px;padding:11px 12px}
+
+  /* talking to an agent should feel like a messaging app: the log takes what is
+     left, the composer stays put. 100dvh shrinks when the keyboard opens. */
+  body.mroom .chat{display:flex;flex-direction:column;
+    height:calc(100dvh - 300px);min-height:320px;border-radius:12px}
+  body.mroom .chat .chat-h{flex:none}
+  body.mroom .chat .log{flex:1 1 auto;max-height:none;overflow-y:auto;
+    -webkit-overflow-scrolling:touch}
+  body.mroom .chat-f{flex:none;position:sticky;bottom:0;z-index:4;
+    background:rgba(9,13,19,.97);backdrop-filter:blur(9px);
+    padding:11px 12px calc(11px + env(safe-area-inset-bottom))}
+  body.mroom .chat-f textarea{min-height:50px;max-height:132px}
+  body.mroom .chat-f .send{min-height:50px;padding:0 18px}
+  body.mroom .chat-f .iconbtn{min-height:50px;min-width:50px}
 
   /* ---- one column everywhere ---- */
   .grid2, .grid3, .stu-g, .stu-g2, .lc-g, .ccp, .wbcols,
@@ -951,46 +925,56 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
   .lc-act .cbtn{flex:1 1 46%;justify-content:center;text-align:center}
   .tlab{display:none}
 
-  /* week and calendar stay grids, just chunkier */
   .wk{grid-template-columns:1fr 1fr;gap:8px}
-  .wplan{min-height:70px}
+  .wplan{min-height:78px}
   .mgrid,.calday{gap:4px}
   .mc{font-size:13px}
   .t7{grid-template-columns:repeat(4,1fr)}
   .lib{grid-template-columns:1fr 1fr}
   .dirhead{grid-template-columns:1fr 1fr}
   .dircopy .btn{flex:1 1 100%;text-align:center}
-  .lsrch{flex-wrap:wrap}
-  .lsrch input{flex:1 1 auto;min-height:46px}
-  .lscount{flex:1 1 100%;order:3}
-  .scroll.big{max-height:none;overflow:visible;border:0;background:none}
-  .prdot{width:22px;height:22px}
-  .diract{display:flex;gap:7px}
-  .dbtn{width:44px;height:44px;font-size:17px;margin:0}
+  .wkp-h{flex-wrap:wrap}
+  .wkp-go{flex:1 1 100%;min-height:48px}
 
-  /* tables become cards */
+  /* ---- search sticks under the tabs ---- */
+  .lsrch{position:sticky;top:112px;z-index:5;flex-wrap:wrap;margin:10px -2px 9px;
+    padding:8px 2px;background:rgba(9,13,19,.97);backdrop-filter:blur(9px);border-radius:10px}
+  .lsrch input{flex:1 1 auto;min-height:48px}
+  .lscount{flex:1 1 100%;order:3}
+  .scroll{max-height:none;overflow:visible;border:0;background:none}
+  .scroll.big{max-height:none;overflow:visible;border:0;background:none}
+  .prdot{width:24px;height:24px}
+  .pills{gap:6px}
+  .pill{min-height:42px;font-size:12.5px;padding:0 14px;display:inline-flex;align-items:center}
+  .openlead{font-size:16px;font-weight:800}
+  .diract{display:flex;gap:7px}
+  .dbtn{width:46px;height:46px;font-size:17px;margin:0}
+  .dlr{flex-wrap:wrap}
+  .dlm{flex:1 1 100%;margin-bottom:6px}
+  .dlr .cbtn{flex:1 1 46%;justify-content:center}
+
+  /* ---- tables become cards ---- */
   .wbody table{display:block;border:0}
   .wbody table thead{display:none}
   .wbody table tbody,.wbody table tr,.wbody table td{display:block;width:auto !important}
-  .wbody table tr{margin-bottom:9px;padding:12px;border:1px solid rgba(255,255,255,.09);
-    border-radius:10px;background:rgba(255,255,255,.03)}
-  .wbody table td{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border:0}
-  .wbody table td:before{content:attr(data-l);flex:0 0 36%;
+  .wbody table tr{margin-bottom:10px;padding:14px 13px;border:1px solid rgba(255,255,255,.09);
+    border-radius:11px;background:rgba(255,255,255,.03)}
+  .wbody table td{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border:0}
+  .wbody table td:before{content:attr(data-l);flex:0 0 30%;
     font-size:8.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
-    color:var(--mut);padding-top:3px}
+    color:var(--mut);padding-top:12px}
   .wbody table td > *{flex:1;min-width:0}
 
-  .chat .log{max-height:50vh}
-  .chat-f{gap:7px;padding:11px 12px calc(11px + env(safe-area-inset-bottom))}
-  .msg{max-width:92%;font-size:14px}
+  .chat .log{max-height:52vh}
+  .msg{max-width:92%;font-size:14.5px}
   .lc-nm{font-size:17px}
   .cchero > div:first-child b{font-size:28px}
-
   .mtoggle{right:10px;bottom:calc(10px + env(safe-area-inset-bottom))}
   .mchat{position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;
     max-height:84vh;border-radius:15px 15px 0 0;z-index:60}
   .scrpart{font-size:9px;letter-spacing:1.6px;padding:9px 11px}
 }
+
 
 @media (max-width: 430px){
   .mtop{grid-template-columns:1fr 1fr}
@@ -1791,7 +1775,9 @@ a.lnk:hover{color:#bfdbfe}
       <span class="syncdot idle" id="syncdot" title="Cloud sync"></span>
     </div>
     <div class="tower">
+      <div class="mtopstats" id="mtopstats"></div>
       <svg class="bld" viewBox="0 0 1300 1000" xmlns="http://www.w3.org/2000/svg" id="bld"></svg>
+      <div class="mzoom" id="mzoom"></div>
       <div class="navb" id="navb"></div>
       <div class="hotlinks" id="hotlinks"></div>
       <div class="rtip" id="rtip"></div>
@@ -5078,12 +5064,32 @@ function zoneAt(px,py){
 /* Turn a mouse position into floor-plan coordinates. The svg is width:100%
    height:auto, so it keeps the viewBox aspect ratio and there is no letterbox
    to correct for — one clean scale factor. */
-function planPoint(ev,svg){
+/* How the viewBox lands on the screen. Two things this has to get right:
+
+   1. A zoomed viewBox does not start at 0,0 any more, so its x/y offset has to
+      be added back. Without that every tap while zoomed lands in the wrong room.
+   2. An SVG keeps its aspect ratio. If the element is wider than the viewBox
+      shape — which happens on a phone the moment max-height clamps it — the
+      drawing is letterboxed and centred, so screen pixels and plan units are
+      not a straight ratio. Scale by the SHORT side and offset by the bars.
+
+   Everything that maps between screen and plan goes through this, so hit-testing
+   and the overlaid link anchors can never disagree. */
+function planMap(svg){
   var r=svg.getBoundingClientRect();
   var vb=(svg.getAttribute("viewBox")||"0 0 1300 1000").split(/\s+/).map(Number);
-  if(!r.width||!r.height) return null;
-  return {x:(ev.clientX-r.left)*(vb[2]/r.width),
-          y:(ev.clientY-r.top )*(vb[3]/r.height)};
+  if(!r.width||!r.height||!vb[2]||!vb[3]) return null;
+  var scale=Math.min(r.width/vb[2], r.height/vb[3]);   /* xMidYMid meet */
+  return {
+    rect:r, vb:vb, scale:scale,
+    ox:r.left+(r.width  - vb[2]*scale)/2,
+    oy:r.top +(r.height - vb[3]*scale)/2
+  };
+}
+function planPoint(ev,svg){
+  var m=planMap(svg); if(!m) return null;
+  return {x: m.vb[0] + (ev.clientX-m.ox)/m.scale,
+          y: m.vb[1] + (ev.clientY-m.oy)/m.scale};
 }
 
 /* The lit overlay. Drawn as the very last thing in the svg so it is on top of
@@ -5113,13 +5119,13 @@ function paintHover(z,isHot){
 function placeHotLinks(){
   var host=document.getElementById("hotlinks"), svg=document.getElementById("bld");
   if(!host||!svg) return;
-  var r=svg.getBoundingClientRect();
-  var vb=(svg.getAttribute("viewBox")||"0 0 1300 1000").split(/\s+/).map(Number);
-  if(!r.width||!vb[2]){ host.innerHTML=""; return; }
-  var sx=r.width/vb[2], sy=r.height/vb[3];
+  var m=planMap(svg);
+  if(!m){ host.innerHTML=""; return; }
   var par=host.parentNode;
   var pr=(par&&par.getBoundingClientRect)?par.getBoundingClientRect():{left:0,top:0};
-  var dx=r.left-pr.left, dy=r.top-pr.top;
+  /* same scale and same letterbox offset the hit-test uses */
+  var sx=m.scale, sy=m.scale;
+  var dx=m.ox-pr.left-m.vb[0]*m.scale, dy=m.oy-pr.top-m.vb[1]*m.scale;
 
   var out="";
   HOT.forEach(function(z,i){
@@ -5188,10 +5194,16 @@ function wireHover(){
     var gs=svg.querySelectorAll(".flr");
     for(var i=0;i<gs.length;i++) gs[i].classList.remove("hov");
   };
-  /* Only the objects do anything. Clicking bare floor is just clicking floor. */
+  /* Only the objects do anything. Clicking bare floor is just clicking floor —
+     except on a phone zoomed out, where tapping a room zooms into it. */
   svg.onclick=function(ev){
     var pt=planPoint(ev,svg); if(!pt)return;
-    var z=hotAt(pt.x,pt.y); if(!z)return;
+    var z=hotAt(pt.x,pt.y);
+    if(isPhone() && !MZOOM && !STATE.roof && !STATE.base && !z){
+      var rm=zoneAt(pt.x,pt.y);
+      if(rm && mRoomOf(rm.key)){ mOpen(rm.key); return; }
+    }
+    if(!z)return;
     if(z.link){
       if(z.key==="discord") window.open(DISCORD_ROOM,"_blank");
       if(z.key==="spotify")   window.open(SPOTIFY,"_blank");
@@ -5249,9 +5261,34 @@ function drawNav(){
 }
 
 /* One entry point so the roof toggle just works everywhere. */
-function setFrame(w,h){
+/* The whole floor is 1300 wide. On a phone that is about 3px per foot, so the
+   answer is not to hide it — it is to zoom into one room at a time. The viewBox
+   does the zooming, and because hit-testing reads the viewBox back out of the
+   SVG, every desk and door stays tappable at whatever zoom you are at. One
+   drawing, fully interactive, legible on a 390px screen. */
+var FRAME=[1300,1000];
+var MZOOM=null;                 /* phone: which room the plan is zoomed into */
+function isPhone(){ return (window.innerWidth||1400)<=820; }
+
+function frameBox(){
+  if(isPhone() && MZOOM && !STATE.roof && !STATE.base){
+    var r=mRoomOf(MZOOM);
+    if(r) return r.box.join(" ");
+  }
+  return "0 0 "+FRAME[0]+" "+FRAME[1];
+}
+function applyFrame(){
   var el=document.getElementById("bld");
-  if(el) el.setAttribute("viewBox","0 0 "+w+" "+h);
+  if(el) el.setAttribute("viewBox", frameBox());
+}
+function setFrame(w,h){ FRAME=[w,h]; applyFrame(); }
+
+/* zoom the plan into a room, or back out to the whole floor */
+function mZoomTo(k){
+  MZOOM = (k && k!==MZOOM) ? k : null;
+  applyFrame();
+  placeHotLinks();
+  drawMobileStack();
 }
 function drawBuilding(){
   var rp=document.getElementById("roomsm");
@@ -5296,91 +5333,91 @@ var MVIEW=null;       /* phone: null = the room list, otherwise the open room */
 
 function mRoomOf(k){ for(var i=0;i<MROOMS.length;i++) if(MROOMS[i].k===k) return MROOMS[i]; return null; }
 
-/* One room, cut out of the full plan. The viewBox does the cropping, so it is
-   the real drawing — the desk, the people, the lights — just framed tight. */
-function mArt(k){
-  var r=mRoomOf(k); if(!r||!PLAN_ART) return "";
-  return '<svg class="mart" viewBox="'+r.box.join(" ")+'" '
-    +'xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+PLAN_ART+'</svg>';
-}
 
 /* Going into a room on a phone: one room fills the screen. No stack of windows
    to scroll past, no plan the width of a bus. */
-function mArtOn(){ return LS("m_art")!=="0"; }
 
 function mOpen(k,tab){
   tab=tab||0;
   MVIEW=k; STATE.floor=k; STATE.tab=tab;
+  /* the real plan zooms to the room — no second copy of the drawing */
+  MZOOM=k; STATE.roof=false; STATE.base=false;
   WINS.slice().forEach(function(w){ if(w.room!==k) winClose(w.id); });
   var ex=WINS.filter(function(w){return w.room===k;})[0];
   if(ex){ ex.min=false; ex.tab=tab; renderWins(); }
   else { var wn=winOpen(k); wn.tab=tab; renderWins(); }
   document.body.classList.add("mroom");
+  applyFrame();
+  drawTower(); drawNav(); wireHover();
   drawMobileStack();
-  window.scrollTo(0,0);
 }
 function mBack(){
-  MVIEW=null;
-  document.body.classList.remove("noart");
+  MVIEW=null; MZOOM=null;
   WINS.slice().forEach(function(w){ winClose(w.id); });
   document.body.classList.remove("mroom");
+  applyFrame();
   drawMobileStack();
   window.scrollTo(0,0);
 }
 
 function drawMobileStack(){
-  var el=document.getElementById("mstack"); if(!el) return;
+  var el=document.getElementById("mstack");
+  var top=document.getElementById("mtopstats");
+  var zm=document.getElementById("mzoom");
+  if(!el) return;
 
-  /* ---------- inside a room: that room, big, and nothing else ---------- */
+  /* ---------- the numbers, above the building ---------- */
+  if(top){
+    var m=money();
+    var untracked=(STATE.forms||[]).filter(function(f){
+      return !inCrm(f) && !formDismissed(f) && !f.self; }).length;
+    var warm=by(STATE.leads,function(x){return x.stage==="Warm Lead";}).length;
+    top.innerHTML='<div class="mstat"><b>$'+m.chase.toLocaleString()+'</b><i>to collect</i></div>'
+     +'<div class="mstat"><b>'+warm+'</b><i>warm</i></div>'
+     +'<div class="mstat"><b>'+untracked+'</b><i>untracked</i></div>'
+     +'<div class="mstat"><b>'+Math.max(0,Math.ceil((BANGKOK-new Date())/86400000))+'</b><i>days left</i></div>';
+  }
+
+  /* ---------- the zoom strip, right under the building ---------- */
+  if(zm){
+    if(STATE.roof||STATE.base){
+      zm.innerHTML='<button class="mzb wide" data-mgo="in">&#8679; Back Inside</button>';
+    } else {
+      zm.innerHTML='<button class="mzb'+(MZOOM?"":" on")+'" data-mz="">'
+        +(MZOOM?"&#8676; Whole Floor":"Whole Floor")+'</button>'
+        +MROOMS.map(function(r){
+          return '<button class="mzb'+(MZOOM===r.k?" on":"")+'" data-mz="'+r.k+'" '
+            +'style="--ac:'+r.ac+'"><i>'+r.ic+'</i>'+esc(r.nm.split(" ")[0])+'</button>';}).join("");
+    }
+    var zb=zm.querySelectorAll("[data-mz]");
+    for(var z=0;z<zb.length;z++) zb[z].onclick=function(){
+      var k=this.getAttribute("data-mz");
+      if(!k){ mBack(); return; }
+      mOpen(k);
+    };
+    var gb=zm.querySelectorAll("[data-mgo]");
+    for(var g2=0;g2<gb.length;g2++) gb[g2].onclick=function(){
+      STATE.roof=false; STATE.base=false; closePanel(); drawBuilding();
+    };
+  }
+
+  /* ---------- inside a room: a header and the panel. The plan above is zoomed. ---------- */
   if(MVIEW){
-    var r=mRoomOf(MVIEW);
-    if(!r){ MVIEW=null; document.body.classList.remove("mroom"); }
+    var r2=mRoomOf(MVIEW);
+    if(!r2){ MVIEW=null; MZOOM=null; document.body.classList.remove("mroom"); }
     else {
       var R=FLOORS[MVIEW];
-      var artOn=mArtOn();
-      el.innerHTML='<div class="mrhd" style="--ac:'+r.ac+'">'
-        +'<button class="mrbk" id="mbk" title="Back">&#8249;</button>'
+      el.innerHTML='<div class="mrhd" style="--ac:'+r2.ac+'">'
+        +'<button class="mrbk" id="mbk" title="Back to the whole floor">&#8249;</button>'
         +'<span class="mrhn"><b>'+esc(R.nm)+'</b><i>'+esc(R.no)+'</i></span>'
-        +'<button class="mreye'+(artOn?" on":"")+'" id="mart" '
-        +'title="'+(artOn?"Hide the room":"Show the room")+'">'+r.ic+'</button></div>'
-        +(artOn?'<div class="martw">'+mArt(MVIEW)+'</div>':"")
-        +'<div class="mswitch" id="mswitch"></div>';
-
-      /* jump straight to another room without going back first */
-      var sw=el.querySelector("#mswitch");
-      sw.innerHTML=MROOMS.map(function(o){
-        return '<button class="msw'+(o.k===MVIEW?" on":"")+'" data-msw="'+o.k+'" '
-          +'style="--ac:'+o.ac+'" title="'+esc(o.nm)+'">'+o.ic+'</button>';}).join("");
-      var sb=sw.querySelectorAll("[data-msw]");
-      for(var q=0;q<sb.length;q++) sb[q].onclick=function(){
-        var k=this.getAttribute("data-msw");
-        if(k!==MVIEW) mOpen(k);
-      };
+        +'<span class="mrhi">'+r2.ic+'</span></div>';
       var bk=el.querySelector("#mbk"); if(bk) bk.onclick=mBack;
-      /* the drawing is lovely but it is also 34% of a phone screen — one tap off */
-      document.body.classList.toggle("noart", !artOn);
-      var ae=el.querySelector("#mart");
-      if(ae) ae.onclick=function(){ LS("m_art", mArtOn()?"0":"1"); drawMobileStack(); };
       return;
     }
   }
 
   /* ---------- the room list ---------- */
-  var m=money();
-  var untracked=(STATE.forms||[]).filter(function(f){
-    return !inCrm(f) && !formDismissed(f) && !f.self; }).length;
-  var warm=by(STATE.leads,function(x){return x.stage==="Warm Lead";}).length;
-
-  /* the numbers that matter, before anything else */
-  var h='<div class="mtop">'
-   +'<div class="mstat"><b>$'+m.chase.toLocaleString()+'</b><i>to collect</i></div>'
-   +'<div class="mstat"><b>'+warm+'</b><i>warm</i></div>'
-   +'<div class="mstat"><b>'+untracked+'</b><i>untracked</i></div>'
-   +'<div class="mstat"><b>'+Math.max(0,Math.ceil((BANGKOK-new Date())/86400000))+'</b><i>days left</i></div>'
-   +'</div>';
-
-  /* The four things he does on a phone, straight to the right tab. No hunting. */
-  h+='<div class="mquick">'
+  var h='<div class="mquick">'
    +'<button data-q="assistant:0"><i>'+"\u{1F469}"+'</i>Ask Claudia</button>'
    +'<button data-q="sales:0"><i>'+"\u{1F4C8}"+'</i>Ask Jordan</button>'
    +'<button data-q="gym:2"><i>'+"\u{1F374}"+'</i>Log Food</button>'
@@ -5389,23 +5426,18 @@ function drawMobileStack(){
    +'<button data-q="content:0"><i>'+"\u{1F4CA}"+'</i>Analytics</button>'
    +'</div>';
 
-  /* Every room shows its own patch of the building, so you are still walking
-     around Exodus HQ — just one room at a time instead of all five squashed. */
   h+='<div class="mrooms">';
   MROOMS.forEach(function(r){
     h+='<button class="mroom" data-mr="'+r.k+'" style="--ac:'+r.ac+'">'
-      +'<span class="mrart">'+(mArt(r.k)||'<span class="mri">'+r.ic+'</span>')+'</span>'
+      +'<span class="mri">'+r.ic+'</span>'
       +'<span class="mrt"><b>'+esc(r.nm)+'</b><i>'+esc(r.sub)+'</i></span>'
       +'<span class="mrc">&#9656;</span></button>';
   });
   h+='</div>';
 
-  /* getting downstairs and outside still needs to be possible */
   h+='<div class="mgo">'
    +'<button data-mgo="base">&#8681; Basement</button>'
    +'<button data-mgo="out">&#127968; Outside</button>'
-   +'<button data-mgo="in">&#8679; Main Floor</button>'
-   +'<button data-mgo="plan">&#128506; Whole Building</button>'
    +'</div>';
 
   el.innerHTML=h;
@@ -5422,17 +5454,12 @@ function drawMobileStack(){
   var gs=el.querySelectorAll("[data-mgo]");
   for(var g=0;g<gs.length;g++) gs[g].onclick=function(){
     var w=this.getAttribute("data-mgo");
-    if(w==="plan"){
-      document.body.classList.toggle("showplan");
-      this.innerHTML = document.body.classList.contains("showplan")
-        ? "&#128506; Hide Building" : "&#128506; Whole Building";
-      return;
-    }
-    closePanel();
+    closePanel(); MZOOM=null; MVIEW=null;
+    document.body.classList.remove("mroom");
     if(w==="in"  ){STATE.roof=false;STATE.base=false;}
     if(w==="out" ){STATE.roof=true; STATE.base=false;}
     if(w==="base"){STATE.base=true; STATE.roof=false;}
-    drawBuilding(); drawMobileStack();
+    drawBuilding();
   };
 }
 
