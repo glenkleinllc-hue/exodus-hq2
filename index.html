@@ -777,282 +777,7 @@ textarea.ntbox.big:focus{outline:none;border-color:#3b82f6}
 .dropone:hover{background:rgba(248,113,113,.16)}
 .did{white-space:normal}
 
-/* ==================== PHONE ====================
-   Everything here is inside a max-width query, so the desktop layout is
-   untouched. The building is NOT hidden on a phone — it is the point of the
-   app. It is shown small, and tapping a room zooms the drawing into that room
-   so every desk, door and screen inside is big enough to hit with a thumb. */
-.mstack, .mtopstats, .mzoom{display:none}
 
-@media (max-width: 820px){
-
-  /* The markup order suits a desktop. On a phone the column is reordered so it
-     reads: numbers, building, zoom strip, then whatever is open. */
-  .tower{padding:0;border:0;background:none;box-shadow:none;
-    display:flex;flex-direction:column}
-  #mtopstats{order:0}
-  .tower > svg.bld{order:1}
-  #mzoom{order:2}
-  #mstack{order:3}
-  #wins{order:4}
-  #taskbar{order:5}
-  #roomsm{order:6}
-
-  /* ---- the building, always visible ---- */
-  /* THE BLACK BARS.
-     An SVG always keeps the shape of its viewBox. Set width:100% and the height
-     follows exactly, and there is no spare room — no bars. Put ANY max-height on
-     it and the box becomes wider than the drawing wants, so the drawing centres
-     itself and pads both sides with background. That was the black space.
-
-     So: no max-height, ever. Width drives, height follows, the drawing fills the
-     frame edge to edge at every zoom level. A room crop that happens to be tall
-     is simply tall — which is right, because it is legible. */
-  .tower > svg.bld{display:block;width:100%;height:auto;max-width:100%;max-height:none;
-    border-radius:12px;background:#080b11;border:1px solid #1b2230;
-    touch-action:pan-x pan-y pinch-zoom}
-  body.mroom .tower > svg.bld{max-height:none}
-  /* the frame around it must not add its own margin either */
-  .tower{padding:0;border:0;background:none;box-shadow:none}
-  .hotlinks{overflow:hidden}
-
-  .navb, .rtip, .wgrip, .scrim, .rooms-m, .taskbar{display:none !important}
-
-  /* ---- the numbers ---- */
-  .mtopstats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:9px}
-  .mstat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
-    border-radius:9px;padding:9px 6px;text-align:center;min-width:0}
-  .mstat b{display:block;font-size:16px;font-weight:800;color:#fff;letter-spacing:-.6px;
-    font-variant-numeric:tabular-nums;line-height:1}
-  .mstat i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.7px;
-    text-transform:uppercase;color:var(--mut);margin-top:4px;line-height:1.2}
-
-  /* ---- the zoom strip ---- */
-  .mzoom{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
-    -webkit-overflow-scrolling:touch;margin:9px 0 4px;padding-bottom:2px}
-  .mzoom::-webkit-scrollbar{display:none}
-  .mzb{flex:none;display:flex;align-items:center;gap:6px;min-height:42px;padding:0 13px;
-    border-radius:10px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;
-    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#a9b3c2;
-    white-space:nowrap;-webkit-tap-highlight-color:transparent}
-  .mzb i{font-style:normal;font-size:15px;line-height:1}
-  .mzb.on{background:color-mix(in srgb,var(--ac,#3b82f6) 20%,transparent);
-    border-color:var(--ac,#3b82f6);color:#fff}
-  .mzb.wide{flex:1;justify-content:center}
-
-  /* ---- the stack ---- */
-  .mstack{display:block}
-
-  .mquick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
-  .mquick button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-    min-height:68px;padding:9px 4px;border-radius:11px;cursor:pointer;font-family:inherit;
-    background:linear-gradient(160deg,#0e1621,#111a26);border:1px solid #232c3a;
-    color:#c9d2df;font-size:10.5px;font-weight:800;line-height:1.2;text-align:center;
-    -webkit-tap-highlight-color:transparent}
-  .mquick button i{font-style:normal;font-size:20px;line-height:1}
-  .mquick button:active{border-color:#3b82f6;color:#fff}
-
-  .mrooms{display:flex;flex-direction:column;gap:8px}
-  .mroom{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
-    background:linear-gradient(160deg,#0c1119,#0f151f);
-    border:1px solid #232c3a;border-left:3px solid var(--ac);
-    border-radius:12px;padding:13px 14px;cursor:pointer;font-family:inherit;
-    min-height:66px;-webkit-tap-highlight-color:transparent}
-  .mroom:active{background:linear-gradient(160deg,#111a26,#141e2c);border-color:var(--ac)}
-  .mri{font-size:23px;line-height:1;flex:none;width:28px;text-align:center}
-  .mrt{flex:1;min-width:0}
-  .mrt b{display:block;font-size:15.5px;font-weight:800;color:#fff;letter-spacing:-.2px}
-  .mrt i{display:block;font-style:normal;font-size:11px;color:var(--mut);margin-top:3px;line-height:1.35}
-  .mrc{flex:none;font-size:15px;color:var(--ac)}
-
-  .mgo{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}
-  .mgo button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
-    border-radius:10px;padding:14px 8px;color:#a9b3c2;font-family:inherit;font-size:12px;
-    font-weight:800;cursor:pointer}
-  .mgo button:active{background:rgba(255,255,255,.1);color:#fff}
-
-  /* ---- the room header ---- */
-  .mrhd{display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:8;
-    margin:6px 0 9px;padding:9px 11px;border-radius:12px;
-    background:rgba(9,13,19,.95);backdrop-filter:blur(9px);
-    border:1px solid #232c3a;border-left:3px solid var(--ac)}
-  .mrbk{flex:none;width:42px;height:42px;border-radius:10px;font-size:25px;line-height:1;
-    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);
-    color:#dbe3ee;font-family:inherit;cursor:pointer;padding:0 0 3px}
-  .mrbk:active{background:rgba(255,255,255,.14)}
-  .mrhn{flex:1;min-width:0}
-  .mrhn b{display:block;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.2px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .mrhn i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:1.1px;
-    text-transform:uppercase;color:var(--mut);margin-top:3px}
-  .mrhi{flex:none;font-size:21px}
-
-  /* ---- windows become the page ----
-     Everything in here is belt and braces against a single wide child pushing
-     the whole panel off the screen. min-width:0 is the important one: a flex or
-     grid child defaults to min-width:auto, which refuses to shrink below its
-     content, and one long email address or unbroken URL then drags the entire
-     row wider than the phone. */
-  .wins{position:static;inset:auto;pointer-events:auto;max-width:100%;overflow-x:hidden}
-  .win, .wbody, .wbody > *{max-width:100%;min-width:0}
-  .wbody{overflow-x:hidden}
-  .wbody div, .wbody section, .wbody label, .wbody p, .wbody span{min-width:0}
-  .wbody table{table-layout:fixed;width:100%}
-  .wbody pre, .wbody code{white-space:pre-wrap;word-break:break-word}
-  .wbody a, .wbody b, .wbody i, .wbody td, .wbody th{overflow-wrap:anywhere}
-  .mono{overflow-wrap:anywhere}
-  .grid2 > *, .grid3 > *, .lc-g > *, .af-grid > *, .dirhead > *{min-width:0}
-  .card, .kpi, .cardv{min-width:0;max-width:100%}
-  .card .v, .cchero b{overflow-wrap:anywhere}
-  .win{position:static !important;left:auto !important;top:auto !important;
-    width:auto !important;height:auto !important;min-width:0;
-    margin:0;border:0;background:none;box-shadow:none;z-index:auto !important}
-  .wtitle{display:none}
-  .wbody{overflow:visible;max-height:none;padding:0 0 26px}
-
-  .wbody .tabs{position:sticky;top:60px;z-index:6;display:flex;gap:6px;overflow-x:auto;
-    scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:9px 2px;
-    background:rgba(9,13,19,.96);backdrop-filter:blur(9px);border-radius:10px}
-  .wbody .tabs::-webkit-scrollbar{display:none}
-  .wbody .tab{flex:none;padding:0 16px;font-size:13.5px;min-height:46px;
-    display:flex;align-items:center}
-
-  .tbox{position:static;left:auto;top:auto;transform:none;width:auto;margin-top:9px}
-  .tbox.show{transform:none}
-  .tb-face{width:58px;height:58px}
-  .tb-line{font-size:13px}
-
-  /* ================= TYPING =================
-     16px is the threshold below which iOS zooms the whole page on focus, which
-     is what made every field feel like a fight. Everything that takes text is
-     at least that, and at least 48px tall so a thumb can find it. */
-  input, textarea, select{font-size:16px !important;line-height:1.45}
-  input, select{min-height:48px}
-  textarea{min-height:88px}
-  select, .jsel, .stsel{min-height:48px;padding:11px 12px}
-  button, .cbtn, .fdbtn, .tbi{min-height:46px}
-  .chk, .mc, .qd, .xbtn{min-height:0}
-  .xbtn{width:36px;height:36px;font-size:18px}
-  .mnav{min-height:46px;min-width:50px;font-size:16px}
-  .mnav.today{min-width:0;font-size:12px}
-  .sin,.vin,.cin,.lin{padding:12px 13px}
-  .cn{min-height:48px;padding:11px 12px}
-  .qrow input,.addbar input{min-height:50px}
-  .qrow button,.addbar button{min-height:50px;font-size:14px}
-  .bkrow{flex-wrap:wrap}
-  .bkrow i{flex:1 1 100%;min-width:0;margin-bottom:3px}
-  .bkrow input{flex:1 1 100%;min-height:48px;padding:11px 12px}
-
-  /* talking to an agent should feel like a messaging app: the log takes what is
-     left, the composer stays put. 100dvh shrinks when the keyboard opens.
-
-     The plan above is hidden the moment a chat is open, because a keyboard plus
-     a floor plan plus a conversation does not fit on a phone and the chat is
-     what you came for. The zoom strip still gets you out. */
-  body.mchatopen .tower > svg.bld{display:none}
-  body.mchatopen .mtopstats{display:none}
-
-  body.mroom .chat{display:flex;flex-direction:column;
-    height:calc(100dvh - 260px);min-height:300px;border-radius:12px}
-  body.mroom.mchatopen .chat{height:calc(100dvh - 150px)}
-  .chat, .chat *{max-width:100%}
-  .chat .log{overflow-x:hidden}
-  .msg{word-break:break-word;overflow-wrap:anywhere}
-  .chat-f{flex-wrap:nowrap}
-  .chat-f textarea{min-width:0}
-  body.mroom .chat .chat-h{flex:none}
-  body.mroom .chat .log{flex:1 1 auto;max-height:none;overflow-y:auto;
-    -webkit-overflow-scrolling:touch}
-  body.mroom .chat-f{flex:none;position:sticky;bottom:0;z-index:4;
-    background:rgba(9,13,19,.97);backdrop-filter:blur(9px);
-    padding:11px 12px calc(11px + env(safe-area-inset-bottom))}
-  body.mroom .chat-f textarea{min-height:50px;max-height:132px}
-  body.mroom .chat-f .send{min-height:50px;padding:0 18px}
-  body.mroom .chat-f .iconbtn{min-height:50px;min-width:50px}
-
-  /* ---- one column everywhere ---- */
-  .grid2, .grid3, .stu-g, .stu-g2, .lc-g, .ccp, .wbcols,
-  .macs, .mrow, .mrow5, .tform, .wtrow, .af-grid{
-    display:grid !important;grid-template-columns:1fr !important;gap:9px}
-  .qrow, .addbar, .fdtools, .lc-act{display:flex !important;flex-wrap:wrap;gap:8px}
-  .qrow input, .addbar input{flex:1 1 100%}
-  .qrow button, .addbar button, .mrow button, .mrow5 button{flex:1 1 100%;padding:14px;height:auto}
-  .fdbtn{flex:1 1 100%;text-align:center}
-  .lc-act .cbtn{flex:1 1 46%;justify-content:center;text-align:center}
-  .tlab{display:none}
-
-  .wk{grid-template-columns:1fr 1fr;gap:8px}
-  .wplan{min-height:78px}
-  .mgrid,.calday{gap:4px}
-  .mc{font-size:13px}
-  .t7{grid-template-columns:repeat(4,1fr)}
-  .lib{grid-template-columns:1fr 1fr}
-  .dirhead{grid-template-columns:1fr 1fr}
-  .dircopy .btn{flex:1 1 100%;text-align:center}
-  .wkp-h{flex-wrap:wrap}
-  .wkp-go{flex:1 1 100%;min-height:48px}
-
-  /* ---- search sticks under the tabs ---- */
-  .lsrch{position:sticky;top:112px;z-index:5;flex-wrap:wrap;margin:10px -2px 9px;
-    padding:8px 2px;background:rgba(9,13,19,.97);backdrop-filter:blur(9px);border-radius:10px}
-  .lsrch input{flex:1 1 auto;min-height:48px}
-  .lscount{flex:1 1 100%;order:3}
-  .scroll{max-height:none;overflow:visible;border:0;background:none}
-  .scroll.big{max-height:none;overflow:visible;border:0;background:none}
-  .prdot{width:24px;height:24px}
-  .pills{gap:6px}
-  .pill{min-height:42px;font-size:12.5px;padding:0 14px;display:inline-flex;align-items:center}
-  .openlead{font-size:16px;font-weight:800}
-  .diract{display:flex;gap:7px}
-  .dbtn{width:46px;height:46px;font-size:17px;margin:0}
-  .dlr{flex-wrap:wrap}
-  .dlm{flex:1 1 100%;margin-bottom:6px}
-  .dlr .cbtn{flex:1 1 46%;justify-content:center}
-
-  /* ---- tables become cards ----
-     The label used to sit in a 30% column beside the value, which left the value
-     about 200px wide and squashed every name, email and note into a thin ribbon.
-     The label now goes ABOVE its value on its own line, so the value gets the
-     full width of the card. Taller, but readable, and everything lines up. */
-  .wbody table{display:block;border:0;table-layout:auto}
-  .wbody table thead{display:none}
-  .wbody table tbody,.wbody table tr,.wbody table td{display:block;width:auto !important}
-  .wbody table tr{margin-bottom:12px;padding:15px 14px;border:1px solid rgba(255,255,255,.1);
-    border-radius:13px;background:rgba(255,255,255,.035)}
-  .wbody table td{display:block;padding:0 0 13px;border:0}
-  .wbody table td:last-child{padding-bottom:0}
-  .wbody table td:before{content:attr(data-l);display:block;margin-bottom:6px;
-    font-size:8.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
-    color:var(--mut)}
-  .wbody table td > *{width:100%;min-width:0;max-width:100%}
-  .wbody table td.nm-c{padding-bottom:11px;border-bottom:1px solid rgba(255,255,255,.07);
-    margin-bottom:12px}
-  .wbody table td.nm-c:before{display:none}
-  .wbody table td.nm-c .openlead{font-size:17px;font-weight:800;text-align:left}
-  /* the priority dot belongs beside the name, not on a line of its own */
-  .wbody table td[data-l="Priority"]{display:inline-block;width:auto !important;
-    padding:0 10px 0 0;vertical-align:middle}
-  .wbody table td[data-l="Priority"]:before{display:none}
-  .wbody table tr{position:relative}
-
-  /* room to breathe everywhere else */
-  .wbody h4.sh{margin-top:20px;font-size:9.5px;letter-spacing:1.6px}
-  .wbody .card{padding:14px 15px}
-  .wbody .info,.wbody .hint,.wbody .alert{font-size:12.5px;line-height:1.6;padding:13px 14px}
-  .wbody label{display:block;margin-bottom:11px}
-  .wbody .note-c{font-size:11.5px;line-height:1.55}
-  .lg{font-size:11px}
-  .legend{gap:9px;line-height:1.8}
-
-  .chat .log{max-height:52vh}
-  .msg{max-width:92%;font-size:14.5px}
-  .lc-nm{font-size:17px}
-  .cchero > div:first-child b{font-size:28px}
-  .mtoggle{right:10px;bottom:calc(10px + env(safe-area-inset-bottom))}
-  .mchat{position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;
-    max-height:84vh;border-radius:15px 15px 0 0;z-index:60}
-  .scrpart{font-size:9px;letter-spacing:1.6px;padding:9px 11px}
-}
 
 
 @media (max-width: 430px){
@@ -1742,6 +1467,337 @@ a.lnk:hover{color:#bfdbfe}
 /* =========================================================
    MOBILE  —  phone-first layout
    ========================================================= */
+/* ---------------------------------------------------------------
+   EVERYTHING BELOW IS THE PHONE.
+   It has to be the LAST thing in this stylesheet. It used to sit near the
+   top, which meant several hundred desktop rules came after it and quietly
+   won on source order. A later rule setting .wtitle back to display flex beat
+   the phone rule hiding it, so the window title bar reappeared on phones, and
+   a later wrapping rule beat the single scrolling row of tabs. Same
+   specificity, later wins. Keeping the phone rules last is the whole fix.
+   --------------------------------------------------------------- */
+
+/* ==================== PHONE ====================
+   Everything here is inside a max-width query, so the desktop layout is
+   untouched. The building is NOT hidden on a phone — it is the point of the
+   app. It is shown small, and tapping a room zooms the drawing into that room
+   so every desk, door and screen inside is big enough to hit with a thumb. */
+.mstack, .mtopstats, .mzoom{display:none}
+
+@media (max-width: 820px){
+
+  /* The markup order suits a desktop. On a phone the column is reordered so it
+     reads: numbers, building, zoom strip, then whatever is open. */
+  /* THE ONE THAT BROKE EVERYTHING.
+     .tower is a flex column, and a flex child defaults to min-width:auto —
+     "never shrink below your own content". The zoom strip's content is ~718px
+     wide, so it refused to be 390 and dragged .tower, .sect and .wrap out to
+     718 with it. Every panel then inherited that width and ran off the screen.
+     overflow-x:auto on the strip did nothing, because the element itself was
+     the thing refusing to be narrow.
+
+     min-width:0 on every child is the fix. Then the strip scrolls inside 390px
+     instead of making the page 718px. */
+  .tower{padding:0;border:0;background:none;box-shadow:none;
+    display:flex;flex-direction:column;min-width:0;max-width:100%}
+  .tower > *{min-width:0;max-width:100%}
+  .wrap, .sect{min-width:0;max-width:100%;overflow-x:clip}
+  #mtopstats{order:0}
+  .tower > svg.bld{order:1}
+  #mzoom{order:2}
+  #mstack{order:3}
+  #wins{order:4}
+  #taskbar{order:5}
+  #roomsm{order:6}
+
+  /* ---- the building, always visible ---- */
+  /* THE BLACK BARS.
+     An SVG always keeps the shape of its viewBox. Set width:100% and the height
+     follows exactly, and there is no spare room — no bars. Put ANY max-height on
+     it and the box becomes wider than the drawing wants, so the drawing centres
+     itself and pads both sides with background. That was the black space.
+
+     So: no max-height, ever. Width drives, height follows, the drawing fills the
+     frame edge to edge at every zoom level. A room crop that happens to be tall
+     is simply tall — which is right, because it is legible. */
+  .tower > svg.bld{display:block;width:100%;height:auto;max-width:100%;max-height:none;
+    border-radius:12px;background:#080b11;border:1px solid #1b2230;
+    touch-action:pan-x pan-y pinch-zoom}
+  body.mroom .tower > svg.bld{max-height:none}
+  /* the frame around it must not add its own margin either */
+  .tower{padding:0;border:0;background:none;box-shadow:none}
+  .hotlinks{overflow:hidden}
+
+  .navb, .rtip, .wgrip, .scrim, .rooms-m, .taskbar{display:none !important}
+
+  /* ---- the numbers ---- */
+  .mtopstats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:9px}
+  .mstat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+    border-radius:9px;padding:9px 6px;text-align:center;min-width:0}
+  .mstat b{display:block;font-size:16px;font-weight:800;color:#fff;letter-spacing:-.6px;
+    font-variant-numeric:tabular-nums;line-height:1}
+  .mstat i{display:block;font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.7px;
+    text-transform:uppercase;color:var(--mut);margin-top:4px;line-height:1.2}
+
+  /* ---- the zoom strip ---- */
+  .mzoom{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;margin:9px 0 4px;padding-bottom:2px;
+    min-width:0;max-width:100%}
+  .mzoom::-webkit-scrollbar{display:none}
+  .mzb{flex:none;display:flex;align-items:center;gap:6px;min-height:42px;padding:0 13px;
+    border-radius:10px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#a9b3c2;
+    white-space:nowrap;-webkit-tap-highlight-color:transparent}
+  .mzb i{font-style:normal;font-size:15px;line-height:1}
+  .mzb.on{background:color-mix(in srgb,var(--ac,#3b82f6) 20%,transparent);
+    border-color:var(--ac,#3b82f6);color:#fff}
+  .mzb.wide{flex:1;justify-content:center}
+
+  /* ---- the stack ---- */
+  .mstack{display:block}
+
+  .mquick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
+  .mquick button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    min-height:68px;padding:9px 4px;border-radius:11px;cursor:pointer;font-family:inherit;
+    background:linear-gradient(160deg,#0e1621,#111a26);border:1px solid #232c3a;
+    color:#c9d2df;font-size:10.5px;font-weight:800;line-height:1.2;text-align:center;
+    -webkit-tap-highlight-color:transparent}
+  .mquick button i{font-style:normal;font-size:20px;line-height:1}
+  .mquick button:active{border-color:#3b82f6;color:#fff}
+
+  .mrooms{display:flex;flex-direction:column;gap:8px}
+  .mroom{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    background:linear-gradient(160deg,#0c1119,#0f151f);
+    border:1px solid #232c3a;border-left:3px solid var(--ac);
+    border-radius:12px;padding:13px 14px;cursor:pointer;font-family:inherit;
+    min-height:66px;-webkit-tap-highlight-color:transparent}
+  .mroom:active{background:linear-gradient(160deg,#111a26,#141e2c);border-color:var(--ac)}
+  .mri{font-size:23px;line-height:1;flex:none;width:28px;text-align:center}
+  .mrt{flex:1;min-width:0}
+  .mrt b{display:block;font-size:15.5px;font-weight:800;color:#fff;letter-spacing:-.2px}
+  .mrt i{display:block;font-style:normal;font-size:11px;color:var(--mut);margin-top:3px;line-height:1.35}
+  .mrc{flex:none;font-size:15px;color:var(--ac)}
+
+  .mgo{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}
+  .mgo button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;padding:14px 8px;color:#a9b3c2;font-family:inherit;font-size:12px;
+    font-weight:800;cursor:pointer}
+  .mgo button:active{background:rgba(255,255,255,.1);color:#fff}
+
+  /* ---- the room header ---- */
+  .mrhd{display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:8;
+    margin:6px 0 9px;padding:9px 11px;border-radius:12px;
+    background:rgba(9,13,19,.95);backdrop-filter:blur(9px);
+    border:1px solid #232c3a;border-left:3px solid var(--ac)}
+  .mrbk{flex:none;width:42px;height:42px;border-radius:10px;font-size:25px;line-height:1;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);
+    color:#dbe3ee;font-family:inherit;cursor:pointer;padding:0 0 3px}
+  .mrbk:active{background:rgba(255,255,255,.14)}
+  .mrhn{flex:1;min-width:0}
+  .mrhn b{display:block;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mrhn i{display:block;font-style:normal;font-size:8px;font-weight:800;letter-spacing:1.1px;
+    text-transform:uppercase;color:var(--mut);margin-top:3px}
+  .mrhi{flex:none;font-size:21px}
+
+  /* ---- windows become the page ----
+     Everything in here is belt and braces against a single wide child pushing
+     the whole panel off the screen. min-width:0 is the important one: a flex or
+     grid child defaults to min-width:auto, which refuses to shrink below its
+     content, and one long email address or unbroken URL then drags the entire
+     row wider than the phone. */
+  .wins{position:static;inset:auto;pointer-events:auto;max-width:100%;overflow-x:hidden}
+  .win, .wbody, .wbody > *{max-width:100%;min-width:0}
+  .wbody{overflow-x:hidden}
+  .wbody div, .wbody section, .wbody label, .wbody p, .wbody span{min-width:0}
+  .wbody table{table-layout:fixed;width:100%}
+  .wbody pre, .wbody code{white-space:pre-wrap;word-break:break-word}
+  .wbody a, .wbody b, .wbody i, .wbody td, .wbody th{overflow-wrap:anywhere}
+  .mono{overflow-wrap:anywhere}
+  .grid2 > *, .grid3 > *, .lc-g > *, .af-grid > *, .dirhead > *{min-width:0}
+  .card, .kpi, .cardv{min-width:0;max-width:100%}
+  .card .v, .cchero b{overflow-wrap:anywhere}
+  .win{position:static !important;left:auto !important;top:auto !important;
+    width:auto !important;height:auto !important;min-width:0;
+    margin:0;border:0;background:none;box-shadow:none;z-index:auto !important}
+  .wtitle{display:none}
+  .wbody{overflow:visible;max-height:none;padding:0 0 26px}
+
+  /* one scrolling row, never four stacked ones. The base .tabs rule sets
+     flex-wrap:wrap and display:flex alone does not undo it. */
+  .wbody .tabs{position:sticky;top:56px;z-index:6;display:flex;flex-wrap:nowrap;
+    gap:6px;overflow-x:auto;overflow-y:hidden;min-width:0;max-width:100%;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px 12px;
+    padding:9px 2px;border-bottom:0;
+    background:rgba(9,13,19,.96);backdrop-filter:blur(9px);border-radius:10px}
+  .wbody .tabs::-webkit-scrollbar{display:none}
+  /* the dead space where the hidden title bar used to be */
+  .win{gap:0}
+  .wbody{padding-top:0}
+  .wbody .tabs::-webkit-scrollbar{display:none}
+  .wbody .tab{flex:none;padding:0 16px;font-size:13.5px;min-height:46px;
+    display:flex;align-items:center}
+
+  .tbox{position:static;left:auto;top:auto;transform:none;width:auto;margin-top:9px}
+  .tbox.show{transform:none}
+  .tb-face{width:58px;height:58px}
+  .tb-line{font-size:13px}
+
+  /* ================= TYPING =================
+     16px is the threshold below which iOS zooms the whole page on focus, which
+     is what made every field feel like a fight. Everything that takes text is
+     at least that, and at least 48px tall so a thumb can find it. */
+  input, textarea, select{font-size:16px !important;line-height:1.45}
+  input, select{min-height:48px}
+  textarea{min-height:88px}
+  select, .jsel, .stsel{min-height:48px;padding:11px 12px}
+  button, .cbtn, .fdbtn, .tbi{min-height:46px}
+  /* the day tick on The Week was 19px — too small to hit reliably */
+  .chk{min-height:0;width:34px;height:34px;font-size:17px}
+  .mc, .qd{min-height:0}
+  .xbtn{min-height:0}
+  .xbtn{width:36px;height:36px;font-size:18px}
+  .mnav{min-height:46px;min-width:50px;font-size:16px}
+  .mnav.today{min-width:0;font-size:12px}
+  .sin,.vin,.cin,.lin{padding:12px 13px}
+  .cn{min-height:48px;padding:11px 12px}
+  .qrow input,.addbar input{min-height:50px}
+  .qrow button,.addbar button{min-height:50px;font-size:14px}
+  .bkrow{flex-wrap:wrap}
+  .bkrow i{flex:1 1 100%;min-width:0;margin-bottom:3px}
+  .bkrow input{flex:1 1 100%;min-height:48px;padding:11px 12px}
+
+  /* talking to an agent should feel like a messaging app: the log takes what is
+     left, the composer stays put. 100dvh shrinks when the keyboard opens.
+
+     The plan above is hidden the moment a chat is open, because a keyboard plus
+     a floor plan plus a conversation does not fit on a phone and the chat is
+     what you came for. The zoom strip still gets you out. */
+  body.mchatopen .tower > svg.bld{display:none}
+  body.mchatopen .mtopstats{display:none}
+
+  body.mroom .chat{display:flex;flex-direction:column;
+    height:calc(100dvh - 260px);min-height:300px;border-radius:12px}
+  body.mroom.mchatopen .chat{height:calc(100dvh - 150px)}
+  .chat, .chat *{max-width:100%}
+  .chat .log{overflow-x:hidden}
+  .msg{word-break:break-word;overflow-wrap:anywhere}
+  .chat-f{flex-wrap:nowrap}
+  .chat-f textarea{min-width:0}
+  body.mroom .chat .chat-h{flex:none}
+  body.mroom .chat .log{flex:1 1 auto;max-height:none;overflow-y:auto;
+    -webkit-overflow-scrolling:touch}
+  body.mroom .chat-f{flex:none;position:sticky;bottom:0;z-index:4;
+    background:rgba(9,13,19,.97);backdrop-filter:blur(9px);
+    padding:11px 12px calc(11px + env(safe-area-inset-bottom))}
+  body.mroom .chat-f textarea{min-height:50px;max-height:132px}
+  body.mroom .chat-f .send{min-height:50px;padding:0 18px}
+  body.mroom .chat-f .iconbtn{min-height:50px;min-width:50px}
+
+  /* ---- one column everywhere ---- */
+  .grid2, .grid3, .stu-g, .stu-g2, .lc-g, .ccp, .wbcols,
+  .macs, .mrow, .mrow5, .tform, .wtrow, .af-grid{
+    display:grid !important;grid-template-columns:1fr !important;gap:9px}
+  .qrow, .addbar, .fdtools, .lc-act{display:flex !important;flex-wrap:wrap;gap:8px}
+  .qrow input, .addbar input{flex:1 1 100%}
+  .qrow button, .addbar button, .mrow button, .mrow5 button{flex:1 1 100%;padding:14px;height:auto}
+  .fdbtn{flex:1 1 100%;text-align:center}
+  .lc-act .cbtn{flex:1 1 46%;justify-content:center;text-align:center}
+  .tlab{display:none}
+
+  .wk{grid-template-columns:1fr 1fr;gap:8px}
+  .wplan{min-height:78px}
+  .mgrid,.calday{gap:4px}
+  .mc{font-size:13px}
+  .t7{grid-template-columns:repeat(4,1fr)}
+  .lib{grid-template-columns:1fr 1fr}
+  .dirhead{grid-template-columns:1fr 1fr}
+  .dircopy .btn{flex:1 1 100%;text-align:center}
+  .wkp-h{flex-wrap:wrap}
+  .wkp-go{flex:1 1 100%;min-height:48px}
+
+  /* ---- search sticks under the tabs ---- */
+  .lsrch{position:sticky;top:112px;z-index:5;flex-wrap:wrap;margin:10px -2px 9px;
+    padding:8px 2px;background:rgba(9,13,19,.97);backdrop-filter:blur(9px);border-radius:10px}
+  .lsrch input{flex:1 1 auto;min-height:48px}
+  .lscount{flex:1 1 100%;order:3}
+  .scroll{max-height:none;overflow:visible;border:0;background:none}
+  .scroll.big{max-height:none;overflow:visible;border:0;background:none}
+
+  .pills{gap:6px}
+  .pill{min-height:42px;font-size:12.5px;padding:0 14px;display:inline-flex;align-items:center}
+  .openlead{font-size:16px;font-weight:800}
+  .diract{display:flex;gap:7px}
+  .dbtn{width:46px;height:46px;font-size:17px;margin:0}
+  .dlr{flex-wrap:wrap}
+  .dlm{flex:1 1 100%;margin-bottom:6px}
+  .dlr .cbtn{flex:1 1 46%;justify-content:center}
+
+  /* ---- tables become cards ----
+     The label used to sit in a 30% column beside the value, which left the value
+     about 200px wide and squashed every name, email and note into a thin ribbon.
+     The label now goes ABOVE its value on its own line, so the value gets the
+     full width of the card. Taller, but readable, and everything lines up. */
+  .wbody table{display:block;border:0;table-layout:auto}
+  .wbody table thead{display:none}
+  .wbody table tbody,.wbody table tr,.wbody table td{display:block;width:auto !important}
+  .wbody table tr{margin-bottom:12px;padding:15px 14px;border:1px solid rgba(255,255,255,.1);
+    border-radius:13px;background:rgba(255,255,255,.035)}
+  .wbody table td{display:block;padding:0 0 13px;border:0}
+  .wbody table td:last-child{padding-bottom:0}
+  .wbody table td:before{content:attr(data-l);display:block;margin-bottom:6px;
+    font-size:8.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+    color:var(--mut)}
+  /* Only the things you type into should stretch. The blanket width:100% was
+     also hitting the priority dot and turning it into a full-width ellipse. */
+  .wbody table td > input,
+  .wbody table td > textarea,
+  .wbody table td > select{width:100%}
+  .wbody table td > *{min-width:0;max-width:100%}
+  /* the blanket 46px minimum for buttons was stretching it into a pill */
+  /* Looks like a 26px dot, but the tappable box is 40px. background-clip keeps
+     the colour inside the content box so the padding is invisible. */
+  .prdot{width:40px;height:40px;min-height:0 !important;flex:none;border-radius:50%;
+    padding:7px;background-clip:content-box;box-sizing:border-box}
+  .wbody table td:has(> .prdot){top:8px;right:8px}
+  .wbody table td[data-l="Priority"]{top:8px;right:8px}
+  .wbody table td.nm-c{padding-bottom:11px;border-bottom:1px solid rgba(255,255,255,.07);
+    margin-bottom:12px}
+  .wbody table td.nm-c:before{display:none}
+  .wbody table td.nm-c .openlead{font-size:17px;font-weight:800;text-align:left}
+  /* the priority dot belongs beside the name, not on a line of its own */
+  /* the dot belongs in the top-right corner of the card, beside the name */
+  .wbody table tr{position:relative}
+  /* The data-l value is written from the column header at render time, so it is
+     the bullet glyph rather than the word. Match on the cell that actually
+     contains the dot instead of trusting the label. */
+  .wbody table td:has(> .prdot){position:absolute;top:13px;right:13px;
+    width:auto !important;padding:0;margin:0;z-index:2}
+  .wbody table td:has(> .prdot):before{display:none}
+  .wbody table td[data-l="Priority"]{position:absolute;top:13px;right:13px;
+    width:auto !important;padding:0;margin:0;z-index:2}
+  .wbody table td[data-l="Priority"]:before{display:none}
+  .wbody table td.nm-c{padding-right:44px}
+
+  /* room to breathe everywhere else */
+  .wbody h4.sh{margin-top:20px;font-size:9.5px;letter-spacing:1.6px}
+  .wbody .card{padding:14px 15px}
+  .wbody .info,.wbody .hint,.wbody .alert{font-size:12.5px;line-height:1.6;padding:13px 14px}
+  .wbody label{display:block;margin-bottom:11px}
+  .wbody .note-c{font-size:11.5px;line-height:1.55}
+  .lg{font-size:11px}
+  .legend{gap:9px;line-height:1.8}
+
+  .chat .log{max-height:52vh}
+  .msg{max-width:92%;font-size:14.5px}
+  .lc-nm{font-size:17px}
+  .cchero > div:first-child b{font-size:28px}
+  .mtoggle{right:10px;bottom:calc(10px + env(safe-area-inset-bottom))}
+  .mchat{position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;
+    max-height:84vh;border-radius:15px 15px 0 0;z-index:60}
+  .scrpart{font-size:9px;letter-spacing:1.6px;padding:9px 11px}
+}
+
 /* ---- what is left of the old phone stylesheet ----
    This block predates the rewrite. Most of it styled a UI that no longer
    exists — .panel, .kpis, .tbar, .p-h, .reopen all have zero usages now — and
