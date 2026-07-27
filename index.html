@@ -1628,6 +1628,39 @@ a.lnk:hover{color:#bfdbfe}
   text-transform:uppercase;white-space:nowrap;padding-top:2px}
 .wkrow .bd{flex:1;font-size:12.5px;line-height:1.55;white-space:pre-wrap}
 
+/* ---------- the wall safe ---------- */
+.vlock{max-width:460px;margin:26px auto;text-align:center}
+.vlock-i{width:70px;height:70px;margin:0 auto 14px;border-radius:14px;display:flex;
+  align-items:center;justify-content:center;background:linear-gradient(160deg,#2a2f38,#191d24);
+  border:1px solid #3a4150;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.vlock-t b{display:block;font-size:15px;color:var(--ink);letter-spacing:.2px}
+.vlock-t i{display:block;font-style:normal;font-size:12.5px;color:var(--mut);margin-top:4px}
+.vpin{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.vpin input{width:130px;text-align:center;letter-spacing:8px;font-size:19px;padding:11px 10px;
+  background:var(--paper2);border:1px solid var(--line);border-radius:9px;color:var(--ink)}
+.vpin input:focus{outline:none;border-color:var(--blu)}
+.vbar{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:14px;
+  padding:9px 12px;border:1px solid rgba(74,222,128,.28);border-radius:10px;
+  background:rgba(74,222,128,.06)}
+.vbar-o{font-size:10.5px;font-weight:700;letter-spacing:1.4px;color:#4ade80}
+.vbar-n{flex:1;min-width:0;font-size:11.5px;color:var(--mut)}
+.vcard td{background:rgba(168,85,247,.05)}
+.voff{opacity:.45}
+.vuse{font-size:10px;color:var(--mut);margin-top:3px;letter-spacing:.3px}
+.vuse.hot{color:var(--amber)}
+.vsec{display:flex;gap:4px;align-items:center}
+.vsec input{flex:1;min-width:0}
+.veye{background:none;border:1px solid var(--line);border-radius:6px;color:var(--mut);
+  cursor:pointer;font-size:11px;padding:0 6px;height:28px;flex:none}
+.veye:hover{border-color:var(--blu);color:var(--ink)}
+.vdel{background:none;border:0;color:#4a5462;cursor:pointer;font-size:17px;line-height:1;padding:2px 5px}
+.vdel:hover{color:var(--red)}
+.vsel{width:100%;background:var(--paper2);border:1px solid var(--line);border-radius:7px;
+  color:var(--ink);font-size:12px;padding:6px 7px;font-family:inherit}
+.vtog{background:none;border:1px solid var(--line);border-radius:20px;color:var(--mut);
+  cursor:pointer;font-size:10px;letter-spacing:.5px;padding:3px 9px;text-transform:uppercase}
+.vtog.on{border-color:rgba(74,222,128,.5);color:#4ade80;background:rgba(74,222,128,.09)}
+
 /* the room picker is phone-only */
 .rooms-m{display:none}
 
@@ -2011,6 +2044,22 @@ a.lnk:hover{color:#bfdbfe}
   .mtopstats{grid-template-columns:repeat(2,1fr)}
   .mquick{grid-template-columns:repeat(2,1fr)}
   .wbody table td:before{flex-basis:74px}
+}
+
+/* ---- the safe, on a phone ---- */
+@media (max-width:760px){
+  .vlock{margin:14px auto;max-width:100%}
+  .vpin{flex-direction:column;align-items:stretch}
+  .vpin input{width:100%;letter-spacing:6px}
+  .vpin .btn{min-height:46px}
+  .vbar{flex-direction:column;align-items:flex-start;gap:7px}
+  .vbar .btn{width:100%;min-height:46px}
+  .vsel{min-height:44px;font-size:16px}
+  .vsec{flex-wrap:nowrap}
+  .veye{height:40px;min-width:38px}
+  .vdel{font-size:22px;padding:6px 10px;min-height:38px}
+  .vtog{min-height:38px;padding:0 14px;display:inline-flex;align-items:center}
+  .vuse{font-size:11px}
 }
 </style>
 </head>
@@ -2615,14 +2664,22 @@ function clockFace(cx,cy,r,face,rim,hands,tz){
 /* ============================ ROUTINES ============================ */
 /* Who is in the building right now, driven by the real local hour. */
 function shift(){
-  var h=nowHour(), wd=new Date().getDay();
+  var h=nowHour(), wd=new Date().getDay(), mn=new Date().getMinutes();
   return {
-    hour:h,
-    night:   h<6 || h>=21,
-    cleaning:h>=6.5 && h<8.5,          /* crew in around seven */
+    hour:h, minute:mn,
+    /* ---- THE RULES OF THE BUILDING ----
+       Doors close at ten. After that the only people in here are Glen, the
+       three agents, the night cleaner and the guard on patrol. Everyone else
+       has a life and goes home. The gym is the one exception — it stays open
+       later than the desks, because that is the point of a gym. */
+    closed:  h>=22 || h<5.5,           /* building locked to staff and guests */
+    night:   h>=22 || h<5.5,
+    guard:   h>=21.5 || h<6,           /* security overlaps the close */
+    cleaning:(h>=6.5&&h<8.5) || (h>=22&&h<23.5),   /* morning crew, night crew */
     core:    h>=9 && h<18,             /* full floor */
     early:   h>=8.5 && h<9,
-    evening: h>=18 && h<21,
+    evening: h>=18 && h<21.5,
+    gymOpen: h>=5.5 && h<22.5,         /* open before the desks, shuts after */
     weekend: wd===0||wd===6,
     /* Where Glen is. He was only ever at the desk or by the drinks cabinet, on a
        flat half-hour switch, which read as a man twitching between two spots.
@@ -2952,6 +3009,30 @@ function sbRun(query){
   });
 }
 
+/* One writer for all three drawers of the safe. */
+function vaultPush(kind){
+  var rows=vxLoad(kind), tbl="vault_"+kind;
+  var cols={
+    accounts:["label","kind","institution","last4","balance","limit_amt","note","sort"],
+    expenses:["label","amount","cadence","due_day","category","paid_with","active","note","sort"],
+    logins  :["label","username","secret","url","note","sort"]
+  }[kind];
+  var nums={balance:1,limit_amt:1,amount:1,due_day:1};
+  var sql="delete from "+tbl+" where true;";
+  if(rows.length){
+    var vals=rows.map(function(r,i){
+      return "("+cols.map(function(c){
+        if(c==="sort") return i;
+        if(c==="active") return (r.active===false?"false":"true");
+        if(nums[c]){ var v=r[c];
+          return (v===""||v===undefined||v===null||isNaN(parseFloat(v))) ? "null" : qn(v); }
+        return qv(r[c]==null?"":String(r[c]));
+      }).join(",")+")"; });
+    sql+=" insert into "+tbl+" ("+cols.join(",")+") values "+vals.join(",")+";";
+  }
+  return sbRun(sql);
+}
+
 /* Push everything up again. Used by the retry button. */
 function sbRetryAll(){
   SYNCFAIL={n:0, why:"", at:null};
@@ -3107,6 +3188,11 @@ var SBW = {
     return sbRun("update leads set priority="+(prGet(name)?"true":"false")
       +" where name_key="+qv(keyOf(name))+";");
   },
+
+  /* the safe. Three small lists, replaced wholesale so the order sticks. */
+  vault_accounts: function(){ return vaultPush("accounts"); },
+  vault_expenses: function(){ return vaultPush("expenses"); },
+  vault_logins:   function(){ return vaultPush("logins"); },
 
   overrides: function(){
     var keys=["chase","conting","members"];
@@ -3426,6 +3512,9 @@ function sbPull(){
     +"'pays',       (select coalesce(json_agg(json_build_object('k',name_key,'a',amount)),'[]'::json) from payments),"
     +"'brands',     (select value from settings where key='brand_notes'),"
     +"'cash',       (select value from settings where key='cash_collected'),"
+    +"'vacct',      (select coalesce(json_agg(json_build_object('label',label,'kind',kind,'institution',institution,'last4',last4,'balance',balance,'limit_amt',limit_amt,'note',note) order by sort),'[]'::json) from vault_accounts),"
+    +"'vexp',       (select coalesce(json_agg(json_build_object('label',label,'amount',amount,'cadence',cadence,'due_day',due_day,'category',category,'paid_with',paid_with,'active',active,'note',note) order by sort),'[]'::json) from vault_expenses),"
+    +"'vlog',       (select coalesce(json_agg(json_build_object('label',label,'username',username,'secret',secret,'url',url,'note',note) order by sort),'[]'::json) from vault_logins),"
     +"'ovs',        (select coalesce(json_object_agg(key,value),'{}'::json) from settings where key like 'ov!_%' escape '!'),"
     +"'memory',     (select coalesce(json_agg(json_build_object('a',agent_id,'r',remembered)),'[]'::json) from agent_context),"
     +"'history',    (select coalesce(json_agg(json_build_object('a',agent_id,'r',role,'b',body,'at',said_at) order by said_at),'[]'::json) "
@@ -3483,6 +3572,10 @@ function sbPull(){
       var k={tiktok:"tiktok",instagram:"ig",youtube:"yt"}[pp.p]||pp.p;
       LS("post_"+k+"_"+String(pp.d).slice(0,10), String(pp.c||0)); });
     if(d.brands) LS("con_brands", d.brands);
+    /* the safe */
+    if(d.vacct) LS("vault_accounts", JSON.stringify(d.vacct));
+    if(d.vexp)  LS("vault_expenses", JSON.stringify(d.vexp));
+    if(d.vlog)  LS("vault_logins",   JSON.stringify(d.vlog));
     /* The database is the truth for this. Anything already on the device is
        replaced, including an empty string, so a phone and a laptop can never
        disagree about how much has come in. */
@@ -3732,7 +3825,7 @@ function freeDays(){
 var FLOORS={
   assistant:{ic:"👩",nm:"Claudia",no:"RECEPTION DESK",tabs:["Talk To Claudia","Today's Brief"]},
   office:{ic:"🏛",nm:"Office & Boardroom",no:"NORTH WEST",
-    tabs:["The Week","Students","Calls & Calendar","Payment & Links","Money","Notes"]},
+    tabs:["The Week","Students","Calls & Calendar","Payment & Links","Money","The Safe","Notes"]},
   sales :{ic:"📈",nm:"Sales Floor · Jordan Claudefort",no:"NORTH EAST",
     tabs:["Jordan","Pipeline","Directory","Front Desk","Call Script","Dialer","Objections","Training & Resources","Notes"]},
   content:{ic:"🎬",nm:"Content Studio",no:"WEST WING",tabs:["Command Center","Analytics","Ideas","Notes"]},
@@ -3754,12 +3847,15 @@ function drawTower(){
      numbers decide who gets drawn AND which rooms have their lights on, so the
      two can never disagree. Glen is in his office round the clock — cigar man
      does not clock out. Sales works the floor until eight, then goes home. */
+  /* Who is actually in the building. Glen is always 1 — he never leaves, and
+     the agents do not either. Everybody else clocks out: reps go home at six,
+     the studio at seven, the front desk at half nine. The gym runs later. */
   var HEAD={
     office:    1 + (SHnow.core?1:0),                       /* Glen, plus a visitor in core hours */
-    sales:     (SHnow.hour>=8.5 && SHnow.hour<20) ? 3 : 0,
-    gym:       (SHnow.hour>=6 && SHnow.hour<22)   ? 2 : 0,
-    content:   (SHnow.hour>=9 && SHnow.hour<19)   ? 1 : 0,
-    assistant: (SHnow.hour>=6.5&& SHnow.hour<21.5)? 1 : 0
+    sales:     (SHnow.hour>=8.5 && SHnow.hour<18)  ? 3 : 0,
+    gym:       SHnow.gymOpen                       ? 2 : 0,
+    content:   (SHnow.hour>=9   && SHnow.hour<19)  ? 1 : 0,
+    assistant: (SHnow.hour>=6.5 && SHnow.hour<21.5)? 1 : 0
   };
   var BUSY={};
   for(var hk in HEAD) BUSY[hk]=HEAD[hk]>0;
@@ -3976,7 +4072,56 @@ function drawTower(){
   s+='<rect x="'+(OF.x+43)+'" y="'+(OF.y+11)+'" width="80" height="34" fill="#2a4763"/>';
   for(var sk=0;sk<9;sk++) s+='<rect x="'+(OF.x+46+sk*8.6)+'" y="'+(OF.y+24+((sk%3)*5))+'" width="5" height="'+(18-((sk%3)*4))+'" fill="#0f1a26" opacity=".85"/>';
   s+='<circle cx="'+(OF.x+112)+'" cy="'+(OF.y+20)+'" r="5" fill="#e8a33d" opacity=".8"/>';
-  s+=art(OF.x+142,OF.y+10,44,36,"#3a2b46");
+  /* ---- the wall safe, where the small purple canvas used to hang ---- */
+  (function(){
+    var SFx=OF.x+140, SFy=OF.y+8, SFw=50, SFh=42;
+    var open=!!VAULT_OPEN;
+    /* recessed into the wall */
+    s+='<rect x="'+(SFx-3)+'" y="'+(SFy-3)+'" width="'+(SFw+6)+'" height="'+(SFh+6)+'" rx="3" fill="#15181e"/>';
+    s+='<rect x="'+SFx+'" y="'+SFy+'" width="'+SFw+'" height="'+SFh+'" rx="2" fill="#20242c"/>';
+    s+='<rect x="'+SFx+'" y="'+SFy+'" width="'+SFw+'" height="'+SFh+'" rx="2" fill="none" stroke="#39414d" stroke-width="1.4"/>';
+    if(open){
+      /* the door swung to the left, contents lit */
+      s+='<rect x="'+(SFx+5)+'" y="'+(SFy+5)+'" width="'+(SFw-10)+'" height="'+(SFh-10)+'" rx="1.5" fill="#0b0e13"/>';
+      s+='<rect x="'+(SFx+5)+'" y="'+(SFy+5)+'" width="'+(SFw-10)+'" height="'+(SFh-10)+'" rx="1.5" fill="url(#lampG)" opacity=".5"/>';
+      /* a shelf, some banded cash and a card */
+      s+='<rect x="'+(SFx+7)+'" y="'+(SFy+22)+'" width="'+(SFw-14)+'" height="1.6" fill="#39414d"/>';
+      s+='<rect x="'+(SFx+9)+'" y="'+(SFy+11)+'" width="13" height="8" rx="1" fill="#3f7d5a"/>';
+      s+='<rect x="'+(SFx+9)+'" y="'+(SFy+13)+'" width="13" height="1.6" fill="#c9a25c"/>';
+      s+='<rect x="'+(SFx+25)+'" y="'+(SFy+11)+'" width="13" height="8" rx="1" fill="#3f7d5a"/>';
+      s+='<rect x="'+(SFx+9)+'" y="'+(SFy+26)+'" width="16" height="10" rx="1.4" fill="#2b3446"/>';
+      s+='<rect x="'+(SFx+9)+'" y="'+(SFy+29)+'" width="16" height="2" fill="#c9a25c" opacity=".8"/>';
+      /* the open door, hinged left */
+      s+='<rect x="'+(SFx-19)+'" y="'+(SFy+2)+'" width="18" height="'+(SFh-4)+'" rx="2" fill="#272c35"/>';
+      s+='<circle cx="'+(SFx-10)+'" cy="'+(SFy+SFh/2)+'" r="4.4" fill="none" stroke="#8b95a6" stroke-width="1.4"/>';
+      s+='<circle cx="'+(SFx+SFw-9)+'" cy="'+(SFy+6)+'" r="2" fill="#5fb37c"/>';
+    } else {
+      /* shut: brushed door, dial, three-spoke handle, keypad */
+      s+='<rect x="'+(SFx+3)+'" y="'+(SFy+3)+'" width="'+(SFw-6)+'" height="'+(SFh-6)+'" rx="2" fill="#2a2f38"/>';
+      s+='<rect x="'+(SFx+3)+'" y="'+(SFy+3)+'" width="'+(SFw-6)+'" height="5" rx="2" fill="#fff" opacity=".05"/>';
+      /* the dial */
+      var DX=SFx+18, DY=SFy+SFh/2;
+      s+='<circle cx="'+DX+'" cy="'+DY+'" r="9.5" fill="#1b1f26"/>';
+      s+='<circle cx="'+DX+'" cy="'+DY+'" r="7" fill="#333a45"/>';
+      s+='<circle cx="'+DX+'" cy="'+DY+'" r="2.2" fill="#c9a25c"/>';
+      for(var tk=0;tk<8;tk++){
+        var ta=(tk/8)*Math.PI*2;
+        s+='<line x1="'+(DX+Math.cos(ta)*8.4)+'" y1="'+(DY+Math.sin(ta)*8.4)+'" x2="'+(DX+Math.cos(ta)*9.6)+'" y2="'+(DY+Math.sin(ta)*9.6)+'" stroke="#8b95a6" stroke-width="1"/>';}
+      /* three-spoke handle */
+      s+='<circle cx="'+(SFx+36)+'" cy="'+DY+'" r="3" fill="#4a5462"/>';
+      [0,120,240].forEach(function(sa){
+        var r3=sa*Math.PI/180;
+        s+='<line x1="'+(SFx+36)+'" y1="'+DY+'" x2="'+(SFx+36+Math.cos(r3)*8)+'" y2="'+(DY+Math.sin(r3)*8)+'" stroke="#4a5462" stroke-width="2.6" stroke-linecap="round"/>';});
+      /* keypad and a red locked light */
+      s+='<rect x="'+(SFx+30)+'" y="'+(SFy+6)+'" width="14" height="9" rx="1.6" fill="#161a20"/>';
+      for(var kr=0;kr<3;kr++)for(var kc=0;kc<3;kc++)
+        s+='<rect x="'+(SFx+31.4+kc*4.2)+'" y="'+(SFy+7.2+kr*2.6)+'" width="2.8" height="1.7" fill="#39414d"/>';
+      s+='<circle cx="'+(SFx+SFw-8)+'" cy="'+(SFy+SFh-7)+'" r="2" fill="#d4736f">'
+        +'<animate attributeName="opacity" values="1;.3;1" dur="3.2s" repeatCount="indefinite"/></circle>';
+    }
+    s+='<text x="'+(SFx+SFw/2)+'" y="'+(SFy+SFh+9)+'" text-anchor="middle" font-size="5.4" '
+      +'font-weight="800" letter-spacing="1.5" fill="#8b95a6">'+(open?"OPEN":"SAFE")+'</text>';
+  })();
   s+=shelf(OF.x+218,OF.y+8,86,44);
   s+=shelf(OF.x+316,OF.y+8,86,44);
   /* ---- the wall calendar, top right of the boardroom ----
@@ -4077,10 +4222,13 @@ function drawTower(){
   s+=box(OF.x+46,OF.y+266,156,52,12,"#4d3720","#2a1d10",4);
   /* desk return */
   s+=box(OF.x+178,OF.y+300,52,40,10,"#432f1c","#251a0f",3);
-  s+=monitor(OF.x+64,OF.y+240,44);
-  s+=monitor(OF.x+120,OF.y+240,44);
-  s+=keyboard(OF.x+92,OF.y+282,52);
-  s+='<rect x="'+(OF.x+56)+'" y="'+(OF.y+276)+'" width="20" height="14" rx="1.5" fill="#e8e3d6" opacity=".75"/>';
+  /* The screens sit ON the desk. They used to be drawn 26px above its top
+     edge, which put them under the little drinks table belonging to the guest
+     chairs — that was the brown block sitting across the monitors. */
+  s+=monitor(OF.x+70,OF.y+272,42);
+  s+=monitor(OF.x+124,OF.y+272,42);
+  s+=keyboard(OF.x+98,OF.y+302,50);
+  s+='<rect x="'+(OF.x+52)+'" y="'+(OF.y+300)+'" width="18" height="12" rx="1.5" fill="#e8e3d6" opacity=".75"/>';
   s+='<circle cx="'+(OF.x+188)+'" cy="'+(OF.y+276)+'" r="4.4" fill="#dfe6ef"/>';
   /* banker lamp */
   s+='<rect x="'+(OF.x+172)+'" y="'+(OF.y+258)+'" width="24" height="7" rx="3.5" fill="#1f5c3a"/>';
@@ -4133,12 +4281,15 @@ function drawTower(){
   /* Where he is drawn depends on the rotation. When he is out doing the rounds
      the office shows an empty chair, and the walking figure on the building
      lap is him — so he is never in two places at once. */
+  /* He is never nowhere. Every slice of the rotation has a place for him, and
+     if a spot ever gets renamed the desk catches it, so the man cannot vanish
+     from his own building again. */
   (function(){
     var spot=SHnow.glenSpot;
-    if(spot==="desk")          s+=glen(OF.x+124,OF.y+324,1.12);
-    else if(spot==="cabinet")  s+=glen(OF.x+150,OF.y+178,1.1);
-    else if(spot==="boardroom")s+=glen(OF.x+410,OF.y+206,1.06);
-    /* sales, gym and studio are handled by the walking figure below */
+    if(spot==="cabinet")        s+=glen(OF.x+150,OF.y+178,1.1);
+    else if(spot==="boardroom") s+=glen(OF.x+410,OF.y+206,1.06);
+    else if(spot==="sales"||spot==="gym"||spot==="studio"){ /* the walker below */ }
+    else                        s+=glen(OF.x+124,OF.y+324,1.12);
   })();
   /* ashtray + whisky on the desk */
   s+='<ellipse cx="'+(OF.x+70)+'" cy="'+(OF.y+300)+'" rx="7.5" ry="5" fill="#1b222e"/>';
@@ -4146,13 +4297,15 @@ function drawTower(){
   s+='<rect x="'+(OF.x+180)+'" y="'+(OF.y+292)+'" width="9" height="12" rx="1.6" fill="#8a5a1e" opacity=".8"/>';
   /* two guest leather chairs facing the desk — this is the one-to-one spot, so
      it gets a rug of its own and a small light to say so */
-  s+='<ellipse cx="'+(OF.x+119)+'" cy="'+(OF.y+238)+'" rx="86" ry="34" fill="#3b6ea8" opacity=".07"/>';
-  s+=chair(OF.x+62,OF.y+228,0,1.05);
-  s+=chair(OF.x+176,OF.y+228,0,1.05);
-  /* a low table between them with two glasses */
-  s+=box(OF.x+104,OF.y+232,30,18,5,"#3a2a1c","#231a10",3);
-  s+='<circle cx="'+(OF.x+112)+'" cy="'+(OF.y+238)+'" r="2.6" fill="#dfe6ef" opacity=".85"/>';
-  s+='<circle cx="'+(OF.x+126)+'" cy="'+(OF.y+238)+'" r="2.6" fill="#dfe6ef" opacity=".85"/>';
+  /* They sit tight against the far edge of the desk, turned to face him. The
+     little drinks table that used to sit between them is gone — it was the
+     brown block landing across the monitors, and two chairs facing a desk read
+     better without furniture wedged in the gap anyway. Glasses go on the desk. */
+  s+='<ellipse cx="'+(OF.x+119)+'" cy="'+(OF.y+250)+'" rx="82" ry="26" fill="#3b6ea8" opacity=".07"/>';
+  s+=chair(OF.x+70,OF.y+246,180,1.05);
+  s+=chair(OF.x+168,OF.y+246,180,1.05);
+  s+='<circle cx="'+(OF.x+112)+'" cy="'+(OF.y+270)+'" r="2.6" fill="#dfe6ef" opacity=".8"/>';
+  s+='<circle cx="'+(OF.x+126)+'" cy="'+(OF.y+270)+'" r="2.6" fill="#dfe6ef" opacity=".8"/>';
   /* Sofa, turned to face into the room along the south wall. It used to sit
      across the doorway in the east wall, which read as blocking the door. */
   s+=box(OF.x+256,OF.y+346,126,32,10,"#27324a","#151d2c",6);
@@ -4960,37 +5113,76 @@ function drawTower(){
     s+='<text x="'+CXo+'" y="'+(CYo+R+22)+'" text-anchor="middle" font-size="7" font-weight="800" '
       +'letter-spacing="1.9" fill="#8b96a6">THE CAGE</text>';
 
-    /* ---- two of them rolling in the cage ----
-       They circle each other rather than standing still, and the pair swaps out
-       on the hour so it is not always the same two in there. */
-    if(HEAD.gym>0){
+    /* ---- two of them actually going at it in the cage ----
+       They used to orbit the centre on a flat 360 rotation, which read as two
+       men walking in circles. Now the pair circles through a short arc, closes
+       distance, throws, and resets — and they only do it in rounds. Five
+       minutes on, five minutes off. When the round is over the cage is empty
+       and they are out on the bags, which is where CAGE_ROUND below sends
+       them. The pair also swaps on the hour so it is not the same two all day. */
+    var CAGE_ROUND = SHnow.gymOpen && (Math.floor(SHnow.minute/5) % 3) < 2;
+    if(HEAD.gym>0 && CAGE_ROUND){
       var pair=Math.floor(SHnow.hour)%2;
-      function fighter(ang,rad,shirt,skin,dur,rev){
-        var fx=CXo+Math.cos(ang)*rad, fy=CYo+Math.sin(ang)*rad;
+      /* side: +1 is the fighter on the right, -1 the one on the left */
+      function fighter(side,shirt,skin){
+        var rad=R*0.40, fx=CXo+side*rad, fy=CYo;
+        var gin=side>0?-1:1;                   /* which way is "forward" for him */
         return '<g>'
+          /* the pair circles each other through an arc, both on the same clock
+             so they stay squared up */
           +'<animateTransform attributeName="transform" type="rotate" '
-          +'values="'+(rev?"360":"0")+' '+CXo+' '+CYo+'; '+(rev?"0":"360")+' '+CXo+' '+CYo+'" '
-          +'dur="'+dur+'s" repeatCount="indefinite"/>'
+          +'values="-26 '+CXo+' '+CYo+'; 22 '+CXo+' '+CYo+'; -6 '+CXo+' '+CYo+'; '
+          +'34 '+CXo+' '+CYo+'; -26 '+CXo+' '+CYo+'" dur="11s" repeatCount="indefinite"/>'
+          +'<g>'
+          /* closing the distance and getting back out of range */
+          +'<animateTransform attributeName="transform" type="translate" '
+          +'values="0 0; '+(gin*13)+' 0; '+(gin*11)+' 2; 0 0; '+(gin*4)+' -3; 0 0" '
+          +'dur="'+(2.6+side*0.3)+'s" repeatCount="indefinite"/>'
           +'<ellipse cx="'+fx+'" cy="'+(fy+6)+'" rx="9" ry="4" fill="#000" opacity=".4"/>'
+          /* torso, bladed slightly toward the man in front of him */
           +'<path d="M'+(fx-8)+' '+(fy+5)+' q0 -11 8 -11 q8 0 8 11 z" fill="'+shirt+'"/>'
           +'<circle cx="'+fx+'" cy="'+(fy-4)+'" r="6" fill="'+skin+'"/>'
+          /* head snaps back when he eats one */
+          +'<animateTransform attributeName="transform" type="translate" additive="sum" '
+          +'values="0 0; 0 0; '+(-gin*2.4)+' 0; 0 0" dur="'+(2.6+side*0.3)+'s" '
+          +'begin="'+(side>0?0.9:1.5)+'s" repeatCount="indefinite"/>'
           +'<path d="M'+(fx-6)+' '+(fy-5)+' a6 6 0 0 1 12 0 q-2.6 -3.4 -6 -3.4 q-3.4 0 -6 3.4 z" fill="#241a12"/>'
-          /* gloves up, guard high */
-          +'<circle cx="'+(fx-5)+'" cy="'+(fy-10)+'" r="3" fill="#a33"/>'
-          +'<circle cx="'+(fx+5)+'" cy="'+(fy-10)+'" r="3" fill="#a33"/>'
-          +'</g>';
+          /* lead glove — the jab, straight out and straight back */
+          +'<circle cx="'+(fx+gin*7)+'" cy="'+(fy-7)+'" r="3.2" fill="#b33">'
+          +'<animate attributeName="cx" values="'+(fx+gin*7)+';'+(fx+gin*17)+';'+(fx+gin*7)+'" '
+          +'dur="0.62s" begin="'+(side>0?0:0.31)+'s" repeatCount="indefinite"/></circle>'
+          /* rear glove — the cross, slower, bigger reach */
+          +'<circle cx="'+(fx-gin*3)+'" cy="'+(fy-11)+'" r="3.4" fill="#8f2626">'
+          +'<animate attributeName="cx" values="'+(fx-gin*3)+';'+(fx-gin*3)+';'+(fx+gin*19)+';'+(fx-gin*3)+'" '
+          +'dur="1.86s" begin="'+(side>0?0.5:1.4)+'s" repeatCount="indefinite"/>'
+          +'<animate attributeName="cy" values="'+(fy-11)+';'+(fy-11)+';'+(fy-7)+';'+(fy-11)+'" '
+          +'dur="1.86s" begin="'+(side>0?0.5:1.4)+'s" repeatCount="indefinite"/></circle>'
+          +'</g></g>';
       }
       var shirts=[["#2f4a5e","#f0c9a6"],["#5e3a3a","#e0b88c"],
                   ["#3f4d68","#f4d3b2"],["#1f7a4d","#d9b28c"]];
       var A=shirts[pair*2], B=shirts[pair*2+1];
-      s+=fighter(0,        R*0.44, A[0], A[1], 9, false);
-      s+=fighter(Math.PI,  R*0.44, B[0], B[1], 9, false);
-      /* Claude S. on the fence, watching */
+      s+=fighter( 1, A[0], A[1]);
+      s+=fighter(-1, B[0], B[1]);
+      /* the shot landing — a small flash at the middle, on the cross timing */
+      s+='<circle cx="'+CXo+'" cy="'+(CYo-6)+'" r="4" fill="#fff" opacity="0">'
+        +'<animate attributeName="opacity" values="0;0;.5;0" dur="1.86s" begin="1.0s" '
+        +'repeatCount="indefinite"/></circle>';
+      /* Claude S. on the fence, watching the round */
       s+='<g><ellipse cx="'+(CXo+R+6)+'" cy="'+(CYo+4)+'" rx="8" ry="3.6" fill="#000" opacity=".35"/>'
         +'<path d="M'+(CXo+R-1)+' '+(CYo+3)+' q0 -12 7 -12 q7 0 7 12 z" fill="#e8eef2"/>'
         +'<circle cx="'+(CXo+R+6)+'" cy="'+(CYo-7)+'" r="5.6" fill="#f4d3b2"/>'
         +'<path d="M'+(CXo+R+0.4)+' '+(CYo-8)+' a5.6 5.6 0 0 1 11.2 0 q-2.4 -3.2 -5.6 -3.2 q-3.2 0 -5.6 3.2 z" fill="#c9a227"/>'
         +'</g>';
+      /* inside the fence, not above it — above it lands on the trainer's label */
+      s+='<text x="'+CXo+'" y="'+(CYo-R+22)+'" text-anchor="middle" font-size="6" font-weight="800" '
+        +'letter-spacing="1.6" fill="#c0392b" opacity=".9">ROUND ON</text>';
+    } else if(HEAD.gym>0){
+      /* between rounds. Cage empty, water bottles left on the stools. */
+      s+='<circle cx="'+(CXo-R+22)+'" cy="'+(CYo-R+24)+'" r="2.4" fill="#4ade80" opacity=".8"/>';
+      s+='<circle cx="'+(CXo+R-22)+'" cy="'+(CYo+R-36)+'" r="2.4" fill="#4ade80" opacity=".8"/>';
+      s+='<text x="'+CXo+'" y="'+(CYo-R+22)+'" text-anchor="middle" font-size="6" font-weight="800" '
+        +'letter-spacing="1.6" fill="#5f6b7d" opacity=".8">BETWEEN ROUNDS</text>';
     }
 
     /* --- turf strip under the bags --- */
@@ -5055,11 +5247,29 @@ function drawTower(){
           +'<path d="M'+(bx-6)+' '+(by-5)+' a6 6 0 0 1 12 0 q-2.6 -3.4 -6 -3.4 q-3.4 0 -6 3.4 z" fill="#241a12"/>'
           +'</g>';
       }
-      /* two of the three bags are being worked */
+      /* One man on the bags all through gym hours. The other two come and go —
+         when the cage round ends they walk out and put a bag on, and when the
+         next round starts they leave the bags again. Same two men, two places,
+         so the floor is never static and never crowded with clones. */
       s+=boxer(TF.x+34, BR+62, "#2f4a5e", "#f0c9a6", 1.1, 0);
-      s+=boxer(TF.x+142,BR+62, "#5e3a3a", "#e0b88c", 1.3, 0.35);
+      var bagsWorked=[0,2];
+      if(!CAGE_ROUND){
+        /* between rounds: both fighters are out here */
+        s+=boxer(TF.x+88, BR+62, "#3f4d68", "#f4d3b2", 1.25, 0.2);
+        s+=boxer(TF.x+142,BR+62, "#5e3a3a", "#e0b88c", 1.4,  0.55);
+        bagsWorked=[0,1,2];
+        /* one of them takes the sprint line instead of a bag */
+        s+='<g><animateTransform attributeName="transform" type="translate" '
+          +'values="0 0; '+(TF.w-58)+' 0; 0 0" dur="7s" repeatCount="indefinite"/>'
+          +'<ellipse cx="'+(TF.x+24)+'" cy="'+(TF.y+TF.h/2+5)+'" rx="8" ry="3.6" fill="#000" opacity=".34"/>'
+          +'<path d="M'+(TF.x+17)+' '+(TF.y+TF.h/2+3)+' q0 -11 7 -11 q7 0 7 11 z" fill="#1f7a4d"/>'
+          +'<circle cx="'+(TF.x+24)+'" cy="'+(TF.y+TF.h/2-6)+'" r="5.4" fill="#d9b28c"/>'
+          +'</g>';
+      } else {
+        s+=boxer(TF.x+142,BR+62, "#5e3a3a", "#e0b88c", 1.3, 0.35);
+      }
       /* and the bags they are hitting actually swing */
-      [0,2].forEach(function(bg2,ix){
+      bagsWorked.forEach(function(bg2,ix){
         var bx2=TF.x+34+bg2*54;
         s+='<g><animateTransform attributeName="transform" type="rotate" '
           +'values="0 '+bx2+' '+(BR+4)+'; '+(ix?4:-5)+' '+bx2+' '+(BR+4)+'; 0 '+bx2+' '+(BR+4)+'" '
@@ -5482,11 +5692,65 @@ function drawTower(){
 
   /* =================== STAFF ON THE MOVE =================== */
   var SH=shift();
-  function walker(path,dur,sc,shirt,hair){
-    var id="wp"+Math.abs(path.length*dur*100|0)+Math.round(sc*100)+shirt.replace(/[^0-9a-f]/gi,"");
+  /* Something in their hands, so they read as people doing a job rather than
+     shapes sliding along a line. */
+  function prop(kind,sc){
+    sc=sc||1;
+    var g='<g transform="scale('+sc+')">';
+    if(kind==="coffee")
+      g+='<rect x="7" y="-3" width="5.4" height="7" rx="1.4" fill="#e8e3d6"/>'
+        +'<rect x="7" y="-3" width="5.4" height="2" rx="1" fill="#8a5a2c"/>'
+        +'<path d="M6 -1 q-2 -6 2 -8" stroke="#dfe6ef" stroke-width="1" fill="none" opacity=".22">'
+        +'<animate attributeName="opacity" values=".06;.28;.06" dur="3.4s" repeatCount="indefinite"/></path>';
+    else if(kind==="folder")
+      g+='<rect x="-13" y="-2" width="12" height="9" rx="1.2" fill="#c9a227"/>'
+        +'<rect x="-13" y="-2" width="12" height="2.2" rx="1.1" fill="#e6c96a"/>';
+    else if(kind==="phone")
+      g+='<rect x="6.4" y="-9" width="4" height="7" rx="1.2" fill="#101820"/>'
+        +'<rect x="6.9" y="-8.4" width="3" height="5" rx=".8" fill="#3b82f6" opacity=".8">'
+        +'<animate attributeName="opacity" values=".35;.9;.35" dur="2.1s" repeatCount="indefinite"/></rect>';
+    else if(kind==="laptop")
+      g+='<rect x="-7" y="1" width="14" height="4" rx="1" fill="#2a3546"/>'
+        +'<rect x="-7" y="-2" width="14" height="3" rx="1" fill="#101820"/>';
+    else if(kind==="bag")
+      g+='<rect x="8" y="0" width="10" height="7" rx="3" fill="#243044"/>'
+        +'<path d="M10 0 q3 -4 6 0" stroke="#3a4658" stroke-width="1.2" fill="none"/>';
+    else if(kind==="mop")
+      g+='<rect x="9" y="-14" width="2" height="20" rx="1" fill="#8b95a6"/>'
+        +'<path d="M6 6 h8 l-1.6 6 h-4.8 z" fill="#d9d2c2"/>';
+    else if(kind==="torch")
+      g+='<rect x="7" y="-1" width="7" height="3.4" rx="1.4" fill="#1f2733"/>'
+        +'<path d="M14 0.7 l16 -8 v17 z" fill="#fbbf24" opacity=".16">'
+        +'<animate attributeName="opacity" values=".08;.22;.08" dur="4.6s" repeatCount="indefinite"/></path>';
+    else if(kind==="headset")
+      g+='<path d="M-7 -8 a7 5 0 0 1 14 0" stroke="#101820" stroke-width="1.6" fill="none"/>'
+        +'<circle cx="-7" cy="-7" r="2" fill="#101820"/><circle cx="7" cy="-7" r="2" fill="#101820"/>'
+        +'<path d="M7 -6 q3 4 -1 6" stroke="#101820" stroke-width="1.1" fill="none"/>';
+    return g+'</g>';
+  }
+  /* Glen walking his own building. This used to reuse the generic person()
+     figure, so the moment the rotation sent him to the sales floor or the
+     studio the cigar man simply was not on screen anywhere — which is exactly
+     what he meant by "where did I go". It is his own drawing on the path now,
+     cigar, smoke and all. */
+  function glenWalk(path,dur){
+    var id="gw"+Math.abs(path.length*dur*100|0);
     return '<path id="'+id+'" d="'+path+'" fill="none" stroke="none"/>'
-      +'<g>'+person(0,0,sc,shirt,hair)
-      +'<animateMotion dur="'+dur+'s" repeatCount="indefinite" rotate="0"><mpath href="#'+id+'"/></animateMotion>'
+      +'<g><ellipse rx="34" ry="24" fill="url(#lampG)" opacity=".18"/>'+glen(0,0,1.06)
+      +'<animateMotion dur="'+dur+'s" repeatCount="indefinite" rotate="0" calcMode="linear" '
+      +'keyPoints="0;0.24;0.24;0.58;0.58;1" keyTimes="0;0.18;0.34;0.62;0.78;1">'
+      +'<mpath href="#'+id+'"/></animateMotion></g>';}
+
+  /* dur is the whole loop. Two stops built into every route so they pause,
+     do the thing, and carry on — nobody in here glides. */
+  function walker(path,dur,sc,shirt,hair,carry){
+    var id="wp"+Math.abs(path.length*dur*100|0)+Math.round(sc*100)
+      +shirt.replace(/[^0-9a-f]/gi,"")+(carry||"");
+    return '<path id="'+id+'" d="'+path+'" fill="none" stroke="none"/>'
+      +'<g>'+person(0,0,sc,shirt,hair)+(carry?prop(carry,sc):'')
+      +'<animateMotion dur="'+dur+'s" repeatCount="indefinite" rotate="0" calcMode="linear" '
+      +'keyPoints="0;0.24;0.24;0.58;0.58;1" keyTimes="0;0.18;0.34;0.62;0.78;1">'
+      +'<mpath href="#'+id+'"/></animateMotion>'
       +'</g>';}
   /* --- routes that use the actual doors and openings --- */
   var HX=CM.x+CM.w/2;               /* centre line of the hallway */
@@ -5580,39 +5844,42 @@ function drawTower(){
 
   /* Everyone on the floor comes from the headcount, so the people you see are
      exactly the people the room lighting is counting. */
-  if(HEAD.office>0){
-    /* he only walks the building when the rotation says he has left his office */
+  /* Glen roams whatever the hour. Locked building, empty desks, three in the
+     morning — he is still in here somewhere, cigar going. */
+  (function(){
     var out=["sales","gym","studio"].indexOf(SHnow.glenSpot)>=0;
     if(out){
       var lap = SHnow.glenSpot==="sales" ? SALES_LAP
               : SHnow.glenSpot==="gym"   ? GYM_LAP
               : HALL_LAP;
-      s+=walker(lap,52,1.06,"#6b2f2f","#241a12");                /* Glen, doing the rounds */
+      s+=glenWalk(lap,52);                                       /* Glen, doing the rounds */
     }
-    if(HEAD.office>1) s+=walker(OFFICE_LAP,64,.88,"#7a3f3f","#2b2118");
-  }
+  })();
+  if(HEAD.office>1) s+=walker(OFFICE_LAP,64,.88,"#7a3f3f","#2b2118","folder");
   if(HEAD.sales>0){
-    s+=walker(SALES_A,31,.9,"#2f6fed","#1f1a14");
-    s+=walker(SALES_B,37,.9,"#1e4fa8","#2b2118");
-    s+=walker(SALES_C,43,.88,"#3f4d68","#241a12");
-    s+=walker(SALES_LAP,58,.9,"#2f6fed","#2b2118");              /* one runs the hall */
+    s+=walker(SALES_A,31,.9,"#2f6fed","#1f1a14","headset");     /* on a call, pacing */
+    s+=walker(SALES_B,37,.9,"#1e4fa8","#2b2118","phone");        /* dialling from the floor */
+    s+=walker(SALES_C,43,.88,"#3f4d68","#241a12","laptop");      /* moving to a huddle */
+    s+=walker(SALES_LAP,58,.9,"#2f6fed","#2b2118","coffee");     /* one runs the hall */
   }
   if(HEAD.gym>0){
-    s+=walker(GYM_LAP,36,.9,"#16a34a","#2b2118");
-    if(HEAD.gym>1) s+=walker(WAREHOUSE_LAP,70,.9,"#1f7a4d","#241a12");
+    s+=walker(GYM_LAP,36,.9,"#16a34a","#2b2118","bag");
+    if(HEAD.gym>1) s+=walker(WAREHOUSE_LAP,70,.9,"#1f7a4d","#241a12","bag");
   }
-  if(HEAD.content>0) s+=walker(HALL_LAP,46,.92,"#3f4d68","#2b2118");
-  if(SHnow.evening||SHnow.night) s+=walker(LOUNGE_LAP,74,.88,"#8a5a2c","#241a12");
+  if(HEAD.content>0) s+=walker(HALL_LAP,46,.92,"#3f4d68","#2b2118","laptop");
+  /* the lounge is for people still in the building in the evening — once the
+     doors lock at ten there is nobody left down there to sit in it */
+  if(SHnow.evening) s+=walker(LOUNGE_LAP,74,.88,"#8a5a2c","#241a12","coffee");
 
   if(SH.cleaning){
     /* cleaning crew, high-vis, hallway then the sales end */
-    s+=walker(HALL_LAP,28,.92,"#d9a017","#241a12");
+    s+=walker(HALL_LAP,28,.92,"#d9a017","#241a12","mop");
     s+=box(CM.x+22,CM.y+430,34,24,7,"#3f4a55","#232a33",3);
     s+='<rect x="'+(CM.x+26)+'" y="'+(CM.y+420)+'" width="10" height="12" rx="2" fill="#d9a017"/>';
     s+='<rect x="'+(CM.x+40)+'" y="'+(CM.y+418)+'" width="4" height="16" rx="2" fill="#8b95a6"/>';
   }
-  if(SH.night){
-    /* one guard: hallway, through the colonnade, round the warehouse, back */
+  if(SH.guard){
+    /* one guard from half nine, so he is on the floor before the doors lock */
     s+='<path id="patrol" d="M'+HX+' '+(CM.y+180)
       +' L'+HX+' '+(CM.y+700)
       +' L'+HX+' '+COL_Y3
@@ -5786,15 +6053,18 @@ function buildZones(){
   /* office: the desk opens the office, the board table opens Discord,
      the record player opens Spotify */
   HOT.push({x:70,y:264,w:200,h:96,  key:"office", label:"YOUR DESK",       sub:"open the office"});
+  /* the wall safe — OF.x+140 = 174, OF.y+8 = 42 */
+  HOT.push({x:172,y:40,w:54,h:48,   key:"office", label:"THE WALL SAFE",
+    sub:"logins, accounts, expenses",tab:5});
   HOT.push({x:372,y:130,w:146,h:92, key:"discord",label:"BOARDROOM TABLE", sub:"open Discord",link:1});
   /* the wall calendar — OF.x+408 = 442, OF.y+6 = 40 */
   HOT.push({x:440,y:37,w:100,h:60,  key:"gcal",    label:"WALL CALENDAR",
     sub:"open Google Calendar",link:1});
   /* the two guest chairs across from his own desk — where a one-to-one actually
-     happens. OF.x+62 = 96 and OF.x+176 = 210, OF.y+228 = 262. */
-  HOT.push({x:78,y:244,w:40,h:38,   key:"meet",    label:"ONE-TO-ONE SEAT",
+     happens. OF.x+70 = 104 and OF.x+168 = 202, OF.y+246 = 280. */
+  HOT.push({x:86,y:262,w:38,h:36,   key:"meet",    label:"ONE-TO-ONE SEAT",
     sub:"start a Google Meet",link:1});
-  HOT.push({x:192,y:244,w:40,h:38,  key:"meet",    label:"ONE-TO-ONE SEAT",
+  HOT.push({x:184,y:262,w:38,h:36,  key:"meet",    label:"ONE-TO-ONE SEAT",
     sub:"start a Google Meet",link:1});
   HOT.push({x:182,y:138,w:94,h:52,  key:"spotify",label:"RECORD PLAYER",   sub:"open Spotify",link:1});
 
@@ -7794,6 +8064,22 @@ function theOffice(){
    +"You are not an adviser who suggests. In your own area you do the work: edit the lists, log "
    +"the entries, move the stages, write the notes. When Glen asks for a change, make it and tell "
    +"him it is done in one line. Never reply with instructions for how he could do it himself.\n\n"
+   +"# THE RULES OF THE BUILDING\n"
+   +"This is a real place with real hours, and people have lives outside it.\n"
+   +"  - Reps are on the sales floor 8:30 to 6. After six their desks are empty.\n"
+   +"  - The content studio runs 9 to 7. Reception is on 6:30 to 9:30.\n"
+   +"  - The gym is open 5:30 in the morning to 10:30 at night, later than the desks.\n"
+   +"  - The morning cleaning crew is in around seven. A night crew comes through after ten.\n"
+   +"  - Security walks the floor from 9:30 and stays through the night.\n"
+   +"  - The doors lock at 10pm. After that the only people in the building are Glen, the three "
+   +"of you, the night cleaner and the guard.\n"
+   +"Glen never leaves. He is in here at three in the morning if that is when he is working. If he "
+   +"asks who is around, answer from the clock — do not pretend the floor is full at midnight.\n\n"
+   +"# THE WALL SAFE\n"
+   +"There is a safe in Glen's office behind a PIN. It holds his accounts, his card balances, his "
+   +"logins and every payment that goes out each month. It is his private ledger, entered by hand. "
+   +"Do not read numbers out of it unless he brings it up first, and never repeat a password back "
+   +"to him out loud — you have a voice, and voices carry.\n\n"
    +"# WHAT HE IS ACTUALLY DOING\n"
    +"Building income online before he flies to Bangkok on 5 December 2026. Amazon four days a "
    +"week until then. Everything you suggest is measured against that date and against whether it "
@@ -8680,7 +8966,7 @@ function tabBody(){
   var r=STATE.floor,t=STATE.tab;
   var map={
     assistant:[aiChat,aiBrief],
-    office   :[weekView,execStudents,execCalls,salesOnboard,execMoney,notesBox],
+    office   :[weekView,execStudents,execCalls,salesOnboard,execMoney,vaultView,notesBox],
     sales    :[jordanChat,salesPipe,salesDir,salesFront,salesCall,dialerView,salesObj,salesTrain,notesBox],
     content  :[conCommand,conAnalytics,conIdeas,notesBox],
     gym      :[trainerChat,gymView,foodView,consistView,notesBox]
@@ -11324,6 +11610,190 @@ function musicView(){
 }
 
 /* ============================ NOTES + WIRING ============================ */
+/* ================= THE WALL SAFE =================
+   Logins, accounts and what goes out every month, behind a PIN. Closing it
+   locks it again, so it is shut by default every time the app loads.
+
+   Being straight about what this is: a PIN on a web page is a privacy screen,
+   not encryption. It stops someone glancing at your laptop. It is not a
+   password manager and anything stored here sits in your database as plain
+   text. Fine for a Netflix login or a card's last four. Do not put your bank
+   or email password in it. */
+var VAULT_OPEN=false, VAULT_TRY="", VAULT_MSG="", VAULT_TAB="money";
+var VAULT_PIN="1919";
+
+function vxLoad(k){ try{ return JSON.parse(LS("vault_"+k)||"[]")||[]; }catch(e){ return []; } }
+function vxSave(k,rows){ LS("vault_"+k, JSON.stringify(rows)); SBSAVE("vault_"+k); }
+function vxAdd(k,row){ var a=vxLoad(k); a.push(row); vxSave(k,a); }
+function vxSet(k,i,field,val){ var a=vxLoad(k); if(!a[i])return; a[i][field]=val; vxSave(k,a); }
+function vxDel(k,i){ var a=vxLoad(k); a.splice(i,1); vxSave(k,a); }
+function vaultLock(){ VAULT_OPEN=false; VAULT_TRY=""; VAULT_MSG=""; }
+
+function money2(n){
+  var v=parseFloat(n); if(isNaN(v)) v=0;
+  return "$"+v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+/* everything that leaves the account in a month, whatever its cadence */
+function monthlyOut(){
+  return vxLoad("expenses").filter(function(x){return x.active!==false;})
+    .reduce(function(t,x){
+      var a=parseFloat(x.amount)||0;
+      if(x.cadence==="yearly") a=a/12;
+      else if(x.cadence==="weekly") a=a*52/12;
+      else if(x.cadence==="one-off") a=0;
+      return t+a;},0);
+}
+
+function vaultView(){
+  /* ---------- shut ---------- */
+  if(!VAULT_OPEN){
+    return '<div class="vlock">'
+      +'<div class="vlock-i">'
+        +'<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="18" fill="none" '
+        +'stroke="#4a5462" stroke-width="2"/><circle cx="20" cy="20" r="11" fill="none" stroke="#39414d" '
+        +'stroke-width="1.4"/><circle cx="20" cy="20" r="3.4" fill="#c9a25c"/></svg>'
+      +'</div>'
+      +'<div class="vlock-t"><b>The safe is locked</b>'
+      +'<i>Logins, accounts, and everything that goes out each month.</i></div>'
+      +'<div class="vpin">'
+        +'<input id="v-pin" type="password" inputmode="numeric" maxlength="8" '
+        +'placeholder="PIN" value="'+esc(VAULT_TRY)+'" autocomplete="off">'
+        +'<button class="btn" id="v-open">Open</button>'
+      +'</div>'
+      +(VAULT_MSG?'<div class="bkmsg bad">'+esc(VAULT_MSG)+'</div>':'')
+      +'<div class="note-c" style="margin-top:12px;max-width:430px">A PIN on a web page keeps a '
+      +'passing glance out. It is not encryption, and what you store here sits in your database as '
+      +'plain text. Good for a streaming login or a card&rsquo;s last four. Keep your bank and email '
+      +'passwords in a real password manager.</div>'
+      +'</div>';
+  }
+
+  /* ---------- open ---------- */
+  var accts=vxLoad("accounts"), exps=vxLoad("expenses"), logins=vxLoad("logins");
+  var cash=accts.filter(function(a){return a.kind!=="credit";})
+    .reduce(function(t,a){return t+(parseFloat(a.balance)||0);},0);
+  var owed=accts.filter(function(a){return a.kind==="credit";})
+    .reduce(function(t,a){return t+(parseFloat(a.balance)||0);},0);
+  var out=monthlyOut();
+
+  var h='<div class="vbar"><span class="vbar-o">&#9679; OPEN</span>'
+   +'<span class="vbar-n">Locks itself when you close it, and on every reload.</span>'
+   +'<button class="btn gh" id="v-close">Close the safe</button></div>';
+
+  /* the four numbers that matter */
+  h+='<div class="grid3" style="margin-bottom:14px">'
+   +'<div class="card dk"><h4>In The Accounts</h4><div class="v">'+money2(cash)+'</div>'
+   +'<div class="d">'+accts.filter(function(a){return a.kind!=="credit";}).length+' account'
+   +(accts.filter(function(a){return a.kind!=="credit";}).length===1?"":"s")+'</div></div>'
+   +'<div class="card"><h4>On The Cards</h4><div class="v'+(owed>0?" r":"")+'">'+money2(owed)+'</div>'
+   +'<div class="d">what you owe right now</div></div>'
+   +'<div class="card"><h4>Out Every Month</h4><div class="v" style="color:var(--amber)">'+money2(out)+'</div>'
+   +'<div class="d">'+exps.filter(function(x){return x.active!==false;}).length+' running</div></div>'
+   +'<div class="card"><h4>Left Over</h4><div class="v'+((cash-owed-out)<0?" r":" g")+'">'
+   +money2(cash-owed-out)+'</div><div class="d">after the cards and the bills</div></div></div>';
+
+  /* which drawer */
+  h+='<div class="pills">'
+   +[["money","Accounts &amp; Cards"],["bills","Monthly Out"],["logins","Logins"]]
+      .map(function(t){
+        return '<button class="pill'+(VAULT_TAB===t[0]?" on":"")+'" data-vt="'+t[0]+'">'+t[1]+'</button>';
+      }).join("")
+   +'</div>';
+
+  function fld(kind,i,field,val,ph,type){
+    return '<input class="vin" data-vk="'+kind+'" data-vi="'+i+'" data-vf="'+field+'" '
+      +(type?'type="'+type+'" ':'')+'value="'+esc(val==null?"":val)+'" placeholder="'+ph+'">';
+  }
+
+  if(VAULT_TAB==="money"){
+    h+='<div class="addbar"><button class="btn" id="v-add-acct">+ Add An Account Or Card</button>'
+      +'<span class="note-c">Type the balance in yourself whenever you check it.</span></div>';
+    if(!accts.length) h+='<div class="empty">Nothing in here yet. Add your checking account first.</div>';
+    else {
+      h+='<div class="scroll big"><table><thead><tr><th>What</th><th style="width:118px">Kind</th>'
+       +'<th style="width:130px">Where</th><th style="width:74px">Last 4</th>'
+       +'<th style="width:120px">Balance</th><th style="width:120px">Limit</th>'
+       +'<th>Note</th><th style="width:40px"></th></tr></thead><tbody>';
+      accts.forEach(function(a,i){
+        var isCard=a.kind==="credit";
+        var used=isCard&&a.limit_amt ? Math.round((parseFloat(a.balance)||0)/parseFloat(a.limit_amt)*100) : null;
+        h+='<tr'+(isCard?' class="vcard"':'')+'>'
+         +'<td data-l="What" class="nm-c">'+fld("accounts",i,"label",a.label,"Chase checking")+'</td>'
+         +'<td data-l="Kind"><select class="vsel" data-vk="accounts" data-vi="'+i+'" data-vf="kind">'
+         +["checking","savings","credit","cash","other"].map(function(k){
+             return '<option'+(a.kind===k?" selected":"")+'>'+k+'</option>';}).join("")
+         +'</select></td>'
+         +'<td data-l="Where">'+fld("accounts",i,"institution",a.institution,"Chase")+'</td>'
+         +'<td data-l="Last 4">'+fld("accounts",i,"last4",a.last4,"1234")+'</td>'
+         +'<td data-l="Balance">'+fld("accounts",i,"balance",a.balance,"0.00")+'</td>'
+         +'<td data-l="Limit">'+(isCard?fld("accounts",i,"limit_amt",a.limit_amt,"5000")
+              +(used!==null?'<div class="vuse'+(used>=70?" hot":"")+'">'+used+'% used</div>':''):'<span class="dirno">&mdash;</span>')+'</td>'
+         +'<td data-l="Note">'+fld("accounts",i,"note",a.note,"anything worth remembering")+'</td>'
+         +'<td data-l="Remove"><button class="vdel" data-vk="accounts" data-vi="'+i+'" title="Remove">&times;</button></td>'
+         +'</tr>';});
+      h+='</tbody></table></div>';
+    }
+  }
+
+  if(VAULT_TAB==="bills"){
+    h+='<div class="addbar"><button class="btn" id="v-add-exp">+ Add A Payment</button>'
+      +'<span class="note-c">Yearly and weekly bills are converted to a monthly figure in the total above.</span></div>';
+    if(!exps.length) h+='<div class="empty">Nothing yet. Add your rent, your subscriptions, anything that leaves every month.</div>';
+    else {
+      var byDay=exps.slice().sort(function(a,b){return (a.due_day||99)-(b.due_day||99);});
+      h+='<div class="scroll big"><table><thead><tr><th>What</th><th style="width:110px">Amount</th>'
+       +'<th style="width:112px">How often</th><th style="width:74px">Due</th>'
+       +'<th style="width:120px">Category</th><th style="width:128px">Paid with</th>'
+       +'<th style="width:70px">On</th><th style="width:40px"></th></tr></thead><tbody>';
+      byDay.forEach(function(x){
+        var i=exps.indexOf(x);
+        var off=x.active===false;
+        h+='<tr'+(off?' class="voff"':'')+'>'
+         +'<td data-l="What" class="nm-c">'+fld("expenses",i,"label",x.label,"Rent")+'</td>'
+         +'<td data-l="Amount">'+fld("expenses",i,"amount",x.amount,"0.00")+'</td>'
+         +'<td data-l="How often"><select class="vsel" data-vk="expenses" data-vi="'+i+'" data-vf="cadence">'
+         +["monthly","yearly","weekly","one-off"].map(function(c){
+             return '<option'+(x.cadence===c?" selected":"")+'>'+c+'</option>';}).join("")
+         +'</select></td>'
+         +'<td data-l="Due">'+fld("expenses",i,"due_day",x.due_day,"1")+'</td>'
+         +'<td data-l="Category">'+fld("expenses",i,"category",x.category,"software")+'</td>'
+         +'<td data-l="Paid with">'+fld("expenses",i,"paid_with",x.paid_with,"Amex")+'</td>'
+         +'<td data-l="On"><button class="vtog'+(off?"":" on")+'" data-vtog="'+i+'">'
+         +(off?"paused":"live")+'</button></td>'
+         +'<td data-l="Remove"><button class="vdel" data-vk="expenses" data-vi="'+i+'" title="Remove">&times;</button></td>'
+         +'</tr>';});
+      h+='</tbody></table></div>';
+    }
+  }
+
+  if(VAULT_TAB==="logins"){
+    h+='<div class="addbar"><button class="btn" id="v-add-login">+ Add A Login</button>'
+      +'<span class="note-c">Streaming, tools, portals. Not your bank or your email.</span></div>';
+    if(!logins.length) h+='<div class="empty">Nothing saved yet.</div>';
+    else {
+      h+='<div class="scroll big"><table><thead><tr><th>What</th><th style="width:170px">Username</th>'
+       +'<th style="width:170px">Password</th><th style="width:150px">Link</th>'
+       +'<th>Note</th><th style="width:40px"></th></tr></thead><tbody>';
+      logins.forEach(function(l,i){
+        h+='<tr>'
+         +'<td data-l="What" class="nm-c">'+fld("logins",i,"label",l.label,"Netflix")+'</td>'
+         +'<td data-l="Username">'+fld("logins",i,"username",l.username,"email or handle")+'</td>'
+         +'<td data-l="Password"><div class="vsec">'
+           +'<input class="vin vpw" data-vk="logins" data-vi="'+i+'" data-vf="secret" '
+           +'type="password" value="'+esc(l.secret||"")+'" placeholder="secret">'
+           +'<button class="veye" data-veye="'+i+'" title="Show">&#128065;</button>'
+           +'<button class="veye" data-vcopy="'+esc(l.secret||"")+'" title="Copy">&#128203;</button>'
+         +'</div></td>'
+         +'<td data-l="Link">'+fld("logins",i,"url",l.url,"site.com")+'</td>'
+         +'<td data-l="Note">'+fld("logins",i,"note",l.note,"which card pays for it")+'</td>'
+         +'<td data-l="Remove"><button class="vdel" data-vk="logins" data-vi="'+i+'" title="Remove">&times;</button></td>'
+         +'</tr>';});
+      h+='</tbody></table></div>';
+    }
+  }
+  return h;
+}
+
 function notesBox(){
   var rm=STATE.floor, k="notes_"+rm, v=LS(k)||"";
   var head="";
@@ -11509,12 +11979,70 @@ function wire(){
   var db3=document.getElementById("l-due");
   if(db3) db3.onclick=function(){ LSORT="follow"; LGROUP=false; redraw(); };
 
-  var so=document.getElementById("l-sort");
-  if(so) so.onchange=function(){ LSORT=this.value; redraw(); };
-  var gb2=document.getElementById("l-group");
-  if(gb2) gb2.onclick=function(){ LGROUP=!LGROUP; redraw(); };
-  var db3=document.getElementById("l-due");
-  if(db3) db3.onclick=function(){ LSORT="follow"; LGROUP=false; redraw(); };
+  /* ---- the wall safe ---- */
+  var vo=document.getElementById("v-open"), vp=document.getElementById("v-pin");
+  function tryPin(){
+    var el=document.getElementById("v-pin");
+    var v=(el?el.value:"").trim();
+    if(v===VAULT_PIN){ VAULT_OPEN=true; VAULT_MSG=""; }
+    else VAULT_MSG = v ? "That is not the PIN." : "Enter the PIN.";
+    VAULT_TRY="";
+    try{ drawTower(); }catch(e){}
+    redraw();
+  }
+  if(vo) vo.onclick=tryPin;
+  if(vp) vp.onkeydown=function(e){ if(e.key==="Enter"){ e.preventDefault(); tryPin(); } };
+  var vc=document.getElementById("v-close");
+  if(vc) vc.onclick=function(){ vaultLock(); try{ drawTower(); }catch(e){} redraw(); };
+
+  var vts=document.querySelectorAll("[data-vt]");
+  for(var t3=0;t3<vts.length;t3++) vts[t3].onclick=function(){
+    VAULT_TAB=this.getAttribute("data-vt"); redraw(); };
+
+  var vins=document.querySelectorAll("input.vin[data-vk], select.vsel[data-vk]");
+  for(var i3=0;i3<vins.length;i3++){
+    (function(el){
+      var ev = el.tagName==="SELECT" ? "onchange" : "oninput";
+      el[ev]=function(){
+        var f=el.getAttribute("data-vf");
+        vxSet(el.getAttribute("data-vk"), parseInt(el.getAttribute("data-vi"),10), f, el.value);
+        el.style.borderColor="var(--green)";
+        setTimeout(function(){ el.style.borderColor=""; },600);
+        if(f==="balance"||f==="amount"||f==="limit_amt"||f==="cadence")
+          setTimeout(function(){ redraw(); },500);
+      };
+    })(vins[i3]);
+  }
+  var vda=document.getElementById("v-add-acct");
+  if(vda) vda.onclick=function(){
+    vxAdd("accounts",{label:"",kind:"checking",institution:"",last4:"",balance:"",limit_amt:"",note:""}); redraw(); };
+  var vde=document.getElementById("v-add-exp");
+  if(vde) vde.onclick=function(){
+    vxAdd("expenses",{label:"",amount:"",cadence:"monthly",due_day:"",category:"",paid_with:"",active:true,note:""}); redraw(); };
+  var vdl=document.getElementById("v-add-login");
+  if(vdl) vdl.onclick=function(){
+    vxAdd("logins",{label:"",username:"",secret:"",url:"",note:""}); redraw(); };
+
+  var vdel=document.querySelectorAll("button.vdel");
+  for(var d4=0;d4<vdel.length;d4++) vdel[d4].onclick=function(){
+    vxDel(this.getAttribute("data-vk"), parseInt(this.getAttribute("data-vi"),10)); redraw(); };
+
+  var vtog=document.querySelectorAll("[data-vtog]");
+  for(var g3=0;g3<vtog.length;g3++) vtog[g3].onclick=function(){
+    var i=parseInt(this.getAttribute("data-vtog"),10);
+    var a=vxLoad("expenses"); if(!a[i]) return;
+    a[i].active = (a[i].active===false); vxSave("expenses",a); redraw(); };
+
+  var veye=document.querySelectorAll("[data-veye]");
+  for(var e3=0;e3<veye.length;e3++) veye[e3].onclick=function(){
+    var f=document.querySelector('input.vpw[data-vi="'+this.getAttribute("data-veye")+'"]');
+    if(f) f.type = (f.type==="password") ? "text" : "password"; };
+
+  var vcp=document.querySelectorAll("[data-vcopy]");
+  for(var c5=0;c5<vcp.length;c5++) vcp[c5].onclick=function(){
+    var t=this.getAttribute("data-vcopy"), self=this;
+    try{ if(navigator.clipboard) navigator.clipboard.writeText(t); }catch(e){}
+    self.textContent="\u2713"; setTimeout(function(){ self.innerHTML="&#128203;"; },900); };
 
   var sr=document.getElementById("sync-retry");
   if(sr) sr.onclick=function(){ this.textContent="Pushing…"; this.disabled=true; sbRetryAll(); };
