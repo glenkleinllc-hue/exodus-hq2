@@ -2187,9 +2187,15 @@ a.lnk:hover{color:#bfdbfe}
       /* Drive sheet: Supabase is the source of truth on this host. */
       if (String(name).indexOf("read_file_content") >= 0)
         return Promise.resolve({ content: [{ text: JSON.stringify({ fileContent: "" }) }] });
-      /* Calendar: wired in phase 3. Until then, empty rather than broken. */
+      /* Reading the calendar. This used to hand back an empty list, which is why
+         nothing ever showed on the live site even with a Google token set. */
       if (String(name).indexOf("list_events") >= 0)
-        return Promise.resolve({ content: [{ text: JSON.stringify({ events: [] }) }] });
+        return post("/api/voice?route=events", args).then(function(j){
+          return { content: [{ text: JSON.stringify({ events: (j && j.events) || [] }) }] };
+        }).catch(function(){
+          /* not connected, or Google said no — an empty week, not a broken page */
+          return { content: [{ text: JSON.stringify({ events: [] }) }] };
+        });
       if (String(name).indexOf("create_event") >= 0)
         return post("/api/calendar", args).then(function(j){
           return { content: [{ text: JSON.stringify(j) }] };
@@ -2298,6 +2304,7 @@ var DISCORD_ROOM="https://discord.com/channels/1490719120143024188/1528634100716
 var SPOTIFY="https://open.spotify.com";
 var TALENTFLX="https://talentflx.com/";
 var MEET="https://meet.google.com/landing?authuser=1&pageId=none&pli=1";
+var CALLINK="https://calendar.google.com/calendar/u/1/r?mode=day";
 
 /* Overrides Glen has told me directly, applied on top of whatever the sheet says.
    Anyone not listed in OWED is settled up — the sheet's old balances are ignored. */
@@ -3148,14 +3155,20 @@ var SBW = {
     return sbRun("insert into conversations (agent_id,role,body) values ("
       +qv(agent)+","+qv(role)+","+qv(body)+");");
   },
+  /* An audit entry is the least important thing in the app, so it must never be
+     able to break a real save. Unknown agent ids were being rejected by the
+     foreign key and silently binned — "system" was not in the allowed list. */
   acted: function(agent,action,target,payload){
+    var who=String(agent||"system").toLowerCase();
+    if(["claudia","jordan","claude","system"].indexOf(who)<0) who="system";
     return sbRun("insert into agent_actions (agent_id,action,target,payload) values ("
-      +qv(agent)+","+qv(action)+","+qv(target)+","+qv(JSON.stringify(payload||{}))+"::jsonb);");
+      +qv(who)+","+qv(action)+","+qv(target)+","+qv(JSON.stringify(payload||{}))+"::jsonb);");
   },
   remember: function(agent,fact,weight,scope){
     if(!fact) return Promise.resolve();
+    var w=parseInt(weight,10); if(!(w>=2&&w<=5)) w=3;   /* the column is checked 2..5 */
     return sbRun("insert into agent_memory (agent_id,scope,fact,weight,source) values ("
-      +qv(agent)+","+qv(scope||"general")+","+qv(fact)+","+(weight||3)+",'chat');");
+      +qv(agent)+","+qv(scope||"general")+","+qv(fact)+","+w+",'chat');");
   }
 };
 
@@ -5607,8 +5620,8 @@ function buildZones(){
   HOT.push({x:70,y:264,w:200,h:96,  key:"office", label:"YOUR DESK",       sub:"open the office"});
   HOT.push({x:372,y:130,w:146,h:92, key:"discord",label:"BOARDROOM TABLE", sub:"open Discord",link:1});
   /* the wall calendar — OF.x+408 = 442, OF.y+6 = 40 */
-  HOT.push({x:440,y:37,w:100,h:60,  key:"office",  label:"WALL CALENDAR",
-    sub:"this month &middot; opens Calls & Calendar",tab:2});
+  HOT.push({x:440,y:37,w:100,h:60,  key:"gcal",    label:"WALL CALENDAR",
+    sub:"open Google Calendar",link:1});
   /* the two seats at the head of the board table — a one-to-one */
   HOT.push({x:352,y:112,w:44,h:40,  key:"meet",    label:"ONE-TO-ONE SEAT",
     sub:"start a Google Meet",link:1});
@@ -5724,7 +5737,8 @@ function placeHotLinks(){
     var url = z.key==="discord"   ? DISCORD_ROOM
             : z.key==="spotify"   ? SPOTIFY
             : z.key==="talentflx" ? TALENTFLX
-            : z.key==="meet"      ? MEET : null;
+            : z.key==="meet"      ? MEET
+            : z.key==="gcal"      ? CALLINK : null;
     if(!url) return;
     out+='<a class="hotlink" data-hi="'+i+'" href="'+url+'" target="_blank" rel="noopener" '
       +'title="'+esc(z.label+" — "+(z.sub||""))+'" style="left:'+(dx+z.x*sx)+'px;top:'+(dy+z.y*sy)+'px;'
@@ -5801,6 +5815,7 @@ function wireHover(){
       if(z.key==="spotify")   window.open(SPOTIFY,"_blank");
       if(z.key==="talentflx") window.open(TALENTFLX,"_blank");
       if(z.key==="meet")      window.open(MEET,"_blank");
+      if(z.key==="gcal")      window.open(CALLINK,"_blank");
       return;
     }
     if(z.nav){
