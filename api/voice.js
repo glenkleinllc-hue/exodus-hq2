@@ -1,10 +1,11 @@
 /* ============================================================
    Exodus HQ — voices and the dialer.
 
-   A separate file on purpose. Editing api/hq.js in place kept failing, and
-   there is no reason these routes have to live in that function.
+   This is a NEW file, deliberately. Editing api/hq.js in place kept failing,
+   and there is no reason these two features have to live in the same function.
+   Creating a file has always worked, so that is the route taken.
 
-   api/hq.js is untouched and keeps doing everything it already did.
+   api/hq.js is not touched by this and keeps doing everything it already did.
 
      /api/voice?route=speak     ElevenLabs text to speech
      /api/voice?route=call      Twilio click to call
@@ -24,7 +25,7 @@ function expectedToken() {
 }
 function authed(req) {
   const want = expectedToken();
-  if (!want) return true;
+  if (!want) return true;                       /* no password set = open site */
   const got = req.headers["x-hq-token"] ||
     (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!got || got.length !== want.length) return false;
@@ -40,6 +41,7 @@ async function readBody(req) {
   const raw = Buffer.concat(chunks).toString("utf8");
   try { return JSON.parse(raw); }
   catch {
+    /* Twilio posts form-encoded, not JSON */
     const out = {};
     for (const [k, v] of new URLSearchParams(raw)) out[k] = v;
     return out;
@@ -64,7 +66,7 @@ async function runSql(q) {
 /* ---------- what a voice should not read out loud ---------- */
 function speakable(text) {
   return String(text || "")
-    .replace(/\[\[[\s\S]*?\]\]/g, " ")
+    .replace(/\[\[[\s\S]*?\]\]/g, " ")                    /* never read an action block */
     .replace(/https?:\/\/\S+/g, " link ")
     .replace(/[*_`#>|]/g, " ")
     .replace(/\$\s?(\d[\d,]*(?:\.\d+)?)/g, "$1 dollars")
@@ -75,13 +77,17 @@ function speakable(text) {
 
 /* ---------- one voice each ---------- */
 const VOICES = {
+  /* Rachel — calm, warm, measured. A chief of staff. */
   claudia: { id: "21m00Tcm4TlvDq8ikWAM", stability: 0.42, similarity: 0.78, style: 0.22, speed: 1.04 },
+  /* Adam — deep and fast. Floor closer. */
   jordan:  { id: "pNInz6obpgDQGcFmaJgB", stability: 0.28, similarity: 0.72, style: 0.55, speed: 1.12 },
+  /* Antoni — heavier, slower. Stands in until Glen picks an Austrian. */
   claude:  { id: "ErXwobaYiN019PkySvjV", stability: 0.55, similarity: 0.82, style: 0.30, speed: 0.92 }
 };
 function voiceFor(agent) {
   const key = String(agent || "claudia").toLowerCase();
   const base = VOICES[key] || VOICES.claudia;
+  /* an override in Vercel wins, so a voice can be swapped without touching code */
   const envId = process.env["VOICE_" + key.toUpperCase()];
   return envId ? { ...base, id: envId.trim() } : base;
 }
@@ -126,14 +132,50 @@ async function speak(req, res) {
   }
 }
 
-/* ---------- the dialer ---------- */
-function digits(n) { return String(n || "").replace(/[^0-9+]/g, ""); }
+/* ---------- the dialer ----------
+   Twilio rings Glen first. He answers, Twilio fetches the twiml route, and that
+   tells it to dial the lead and bridge them. The lead sees the Twilio number. */
+/* A number is either provably dialable or it is not dialed.
+
+   The old version assumed any ten digits was American and prefixed +1. A lead
+   stored as 9996426347 — a valid Indian mobile — became +19996426347, which is
+   not a real number anywhere, because 999 was never assigned as a US area code.
+   Twilio routed it into the junk network and the call connected to a spam line.
+
+   Now North American numbers are checked against the real NANP rules and
+   anything else must carry its own country code. Never a guess. */
+function nanpWhy(d) {
+  if (d.length !== 10) return "wrong length for a US number";
+  const area = d.slice(0, 3), exch = d.slice(3, 6);
+  if (area[0] === "0" || area[0] === "1") return "no US area code starts with " + area[0];
+  if (exch[0] === "0" || exch[0] === "1") return "no US exchange starts with " + exch[0];
+  if (area[1] === "1" && area[2] === "1") return area + " is a service code";
+  if (area === "999") return "999 was never assigned as a US area code";
+  if (area === "555") return "555 is a fictional area code";
+  return null;
+}
+function nanpOk(d) { return nanpWhy(d) === null; }
+function dialable(raw) {
+  const t = String(raw || "").trim();
+  if (!t) return { ok: false, why: "no number given" };
+  if (t.includes("@")) return { ok: false, why: "that is an email, not a number" };
+  const plus = /^\s*\+/.test(t);
+  const d = t.replace(/[^0-9]/g, "");
+  if (!d) return { ok: false, why: "no digits in it" };
+  if (plus) {
+    if (d.length < 8 || d.length > 15) return { ok: false, why: "not a valid length" };
+    return { ok: true, e164: "+" + d };
+  }
+  if (d.length === 11 && d[0] === "1" && nanpOk(d.slice(1))) return { ok: true, e164: "+" + d };
+  if (d.length === 10 && nanpOk(d)) return { ok: true, e164: "+1" + d };
+  if (d.length === 10) return { ok: false,
+    why: nanpWhy(d) + ". If it is not American, it needs a country code." };
+  return { ok: false, why: "needs a country code with a + in front" };
+}
+/* only for numbers that are already known-good, e.g. from the environment */
 function e164(n) {
-  const d = digits(n);
-  if (d.startsWith("+")) return d;
-  if (d.length === 10) return "+1" + d;
-  if (d.length === 11 && d.startsWith("1")) return "+" + d;
-  return d ? "+" + d : "";
+  const v = dialable(n);
+  return v.ok ? v.e164 : "";
 }
 function twilioCfg() {
   return {
@@ -163,13 +205,15 @@ async function call(req, res) {
   if (!c.base) return res.status(503).json({ error: "PUBLIC_BASE_URL is not set." });
 
   const { to, name } = await readBody(req);
-  const lead = e164(to);
-  if (!lead || lead.length < 8) return res.status(400).json({ error: "That is not a dialable number." });
+  const v = dialable(to);
+  /* the page checks this too, but a stale page must never be able to dial junk */
+  if (!v.ok) return res.status(400).json({ error: "Not dialable: " + v.why, refused: String(to || "") });
+  const lead = v.e164;
   if (lead === c.glen) return res.status(400).json({ error: "That is your own number." });
 
   const b = c.base.replace(/\/$/, "");
   const body = new URLSearchParams({
-    To: c.glen,
+    To: c.glen,                                    /* ring Glen first */
     From: c.from,
     Url: b + "/api/voice?route=twiml&to=" + encodeURIComponent(lead)
        + "&name=" + encodeURIComponent(String(name || "")),
@@ -195,8 +239,12 @@ async function call(req, res) {
   }
 }
 
+/* Twilio fetches this. No auth is possible on a Twilio callback, so it holds no
+   secrets and will only ever dial the number handed to it in the query string. */
 async function twiml(req, res) {
-  const to = e164((req.query && req.query.to) || "");
+  /* last gate. Twilio dials whatever this returns, so it is checked again. */
+  const v = dialable((req.query && req.query.to) || "");
+  const to = v.ok ? v.e164 : "";
   const name = (req.query && req.query.name) || "";
   const c = twilioCfg();
   res.setHeader("Content-Type", "text/xml; charset=utf-8");
@@ -212,6 +260,7 @@ async function twiml(req, res) {
     + '<Say voice="Polly.Matthew">They did not pick up. Goodbye.</Say></Response>');
 }
 
+/* How the call went, straight onto the lead's activity log. */
 async function callback(req, res) {
   const p = await readBody(req).catch(() => ({}));
   const q = req.query || {};
@@ -220,25 +269,88 @@ async function callback(req, res) {
   const secs = parseInt(p.CallDuration || "0", 10) || 0;
   if (name) {
     const said = status === "completed"
-      ? (secs > 25 ? "Called - spoke for " + Math.floor(secs / 60) + "m " + (secs % 60) + "s."
-                   : "Called - connected but only " + secs + "s.")
-      : "Called - " + status + ".";
+      ? (secs > 25 ? "Called — spoke for " + Math.floor(secs / 60) + "m " + (secs % 60) + "s."
+                   : "Called — connected but only " + secs + "s.")
+      : "Called — " + status + ".";
     try {
       await runSql("insert into lead_activity (lead_id, name_key, body) values ("
         + "(select id from leads where name_key=" + sqlLit(name.toLowerCase()) + "),"
         + sqlLit(name.toLowerCase()) + "," + sqlLit(said) + ");");
-    } catch { }
+    } catch { /* a failed log must never fail the call */ }
   }
   res.status(204).end();
 }
 
-/* ---------- is any of this on? Open on purpose so it can be checked in a browser. ---------- */
+/* ================= READING THE CALENDAR =================
+   The page could always CREATE an event on the live site, but READING was left
+   as a stub that returned an empty list. So the week view, the new boardroom
+   wall calendar and Claudia's sense of the day all saw zero appointments no
+   matter what was actually in the calendar. This is the missing half. */
+async function googleToken() {
+  const id = process.env.GOOGLE_CLIENT_ID,
+        secret = process.env.GOOGLE_CLIENT_SECRET,
+        refresh = process.env.GOOGLE_REFRESH_TOKEN;
+  if (!id || !secret || !refresh) return null;
+  const r = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: id, client_secret: secret,
+      refresh_token: refresh, grant_type: "refresh_token"
+    })
+  });
+  const j = await r.json().catch(() => ({}));
+  return r.ok ? j.access_token : null;
+}
+
+async function events(req, res) {
+  if (!authed(req)) return res.status(401).json({ error: "Not signed in.", events: [] });
+  const token = await googleToken();
+  if (!token) return res.status(503).json({
+    error: "Google Calendar is not connected.",
+    missing: ["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","GOOGLE_REFRESH_TOKEN"]
+      .filter(k => !process.env[k]),
+    events: []
+  });
+
+  const b = await readBody(req).catch(() => ({}));
+  const cal = encodeURIComponent(b.calendarId || process.env.GLEN_EMAIL || "primary");
+  /* a week back for context, six weeks forward for planning */
+  const q = new URLSearchParams({
+    timeMin: b.timeMin || new Date(Date.now() - 7 * 864e5).toISOString(),
+    timeMax: b.timeMax || new Date(Date.now() + 42 * 864e5).toISOString(),
+    singleEvents: "true",
+    orderBy: "startTime",
+    maxResults: String(Math.min(parseInt(b.maxResults, 10) || 250, 500))
+  });
+  try {
+    const r = await fetch(
+      "https://www.googleapis.com/calendar/v3/calendars/" + cal + "/events?" + q,
+      { headers: { Authorization: "Bearer " + token } });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return res.status(502).json({
+      error: (j.error && j.error.message) || "Google refused that.", events: [] });
+    const out = (j.items || []).map(e => ({
+      id: e.id, summary: e.summary || "", location: e.location || "",
+      description: (e.description || "").slice(0, 400),
+      start: e.start, end: e.end,
+      hangoutLink: e.hangoutLink || null, htmlLink: e.htmlLink || null,
+      attendees: (e.attendees || []).map(a => ({ email: a.email, name: a.displayName || "" }))
+    }));
+    return res.status(200).json({ events: out, count: out.length });
+  } catch (e) {
+    return res.status(502).json({ error: String(e.message || e), events: [] });
+  }
+}
+
+/* ---------- is any of this on? Open on purpose, so it can be checked in a browser. ---------- */
 async function check(req, res) {
   const has = k => Boolean(process.env[k] && process.env[k].length > 6);
   const c = twilioCfg();
   const out = {
     fileDeployed: true,
     voices: has("ELEVENLABS_API_KEY"),
+    calendar: has("GOOGLE_CLIENT_ID") && has("GOOGLE_CLIENT_SECRET") && has("GOOGLE_REFRESH_TOKEN"),
     dialer: Boolean(c.sid && c.token && c.from && c.glen),
     baseUrl: c.base || null,
     voiceOverrides: {
@@ -247,7 +359,9 @@ async function check(req, res) {
     notes: []
   };
   if (!out.voices) out.notes.push("Add ELEVENLABS_API_KEY in Vercel, then redeploy.");
-  if (!out.dialer) out.notes.push("Dialer needs TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER and GLEN_PHONE.");
+  if (!out.calendar) out.notes.push("Calendar needs GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and GOOGLE_REFRESH_TOKEN.");
+  if (!out.dialer) out.notes.push("Dialer needs TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, "
+    + "TWILIO_FROM_NUMBER and GLEN_PHONE.");
   if (out.dialer && !out.baseUrl) out.notes.push("Set PUBLIC_BASE_URL to your site address.");
   if (!out.notes.length) out.notes.push("Voices and the dialer are both live.");
   res.status(200).json(out);
@@ -264,6 +378,8 @@ export default async function handler(req, res) {
                        return await call(req, res);
       case "twiml":    return await twiml(req, res);
       case "callback": return await callback(req, res);
+      case "events":   if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
+                       return await events(req, res);
       case "check":    return await check(req, res);
       default:         return res.status(404).json({ error: "Unknown route: " + route });
     }
@@ -271,4 +387,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: "Server error", detail: String(e.message || e) });
   }
 }
-
