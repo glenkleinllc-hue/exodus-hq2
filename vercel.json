@@ -18,12 +18,14 @@
       "destination": "/api/hq?route=chat"
     },
     {
-      "source": "/api/form",
-      "destination": "/api/hq?route=form"
-    },
-    {
       "source": "/api/calendar",
       "destination": "/api/hq?route=calendar"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/social?refresh=1",
+      "schedule": "0 13 * * *"
     }
   ],
   "headers": [
