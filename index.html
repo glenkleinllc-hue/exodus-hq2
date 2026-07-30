@@ -80,8 +80,12 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
 .kpi.warn .v{color:#ff8f8f} .kpi.good .v{color:#5ee3a4} .kpi.blue .v{color:var(--blu2)}
 
 /* ============ TOP BAR ============ */
+/* The banner was a fixed 52px. The Spotify player needs 80px for its own play
+   button to render — at 38px the controls were clipped, which is why the play
+   button could not be found. min-height instead of height so the banner grows
+   around it rather than the player hanging out over the page. */
 .topbar{display:flex;align-items:center;gap:0;flex-wrap:nowrap;margin-bottom:9px;
-  padding:0 14px;height:52px;border-radius:11px;
+  padding:8px 14px;min-height:96px;border-radius:11px;
   background:linear-gradient(160deg,#090d14,#0f1622);
   border:1px solid #1e2634;box-shadow:0 6px 20px rgba(0,0,0,.38)}
 .tb-brand{display:flex;align-items:center;gap:8px;flex:none;padding-right:15px}
@@ -1564,6 +1568,27 @@ textarea.ntbox::placeholder{color:#5a6474;font-style:italic}
 .af-grid label,.addform label{font-size:8.5px;letter-spacing:1.3px;text-transform:uppercase;
   color:var(--mut);font-weight:800}
 .af-grid input,.af-grid select,.addform input{margin-top:4px}
+/* removing a lead — small until you need it, then loud */
+.delone{display:inline-block;margin-top:4px;background:none;border:0;padding:0;
+  color:#4a5462;font-family:inherit;font-size:8.5px;font-weight:800;letter-spacing:.9px;
+  text-transform:uppercase;cursor:pointer;transition:color .14s}
+.delone:hover{color:var(--red)}
+.delask{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px;
+  padding:5px 8px;border:1px solid rgba(212,115,111,.5);border-radius:8px;
+  background:rgba(212,115,111,.1);font-size:10.5px;color:#f0b8b6;font-weight:600}
+.delask.lc{margin:0 0 0 auto}
+.delask button{background:none;border:1px solid var(--line);border-radius:6px;
+  padding:3px 9px;font-family:inherit;font-size:10px;font-weight:800;cursor:pointer;
+  letter-spacing:.5px}
+.delask .dy{border-color:var(--red);color:var(--red)}
+.delask .dy:hover{background:var(--red);color:#160a0a}
+.delask .dn{color:var(--mut)}
+.delask .dn:hover{color:var(--ink);border-color:var(--blu)}
+.lc-del{margin-left:auto;background:none;border:1px solid var(--line);border-radius:7px;
+  padding:5px 11px;color:var(--mut);font-family:inherit;font-size:10.5px;font-weight:700;
+  cursor:pointer;letter-spacing:.4px;transition:.14s;flex:none}
+.lc-del:hover{border-color:var(--red);color:var(--red)}
+
 .manualflag{display:inline-block;font-size:8.5px;letter-spacing:.9px;text-transform:uppercase;
   font-weight:800;color:#93c5fd;background:rgba(59,130,246,.14);padding:1.5px 6px;border-radius:3px;
   margin-top:4px;cursor:pointer}
@@ -1690,20 +1715,25 @@ a.lnk:hover{color:#bfdbfe}
    Spotify's `theme=0` is the LIGHT theme, not the dark one, and any iframe is
    blank where there is no network. So: no theme parameter at all, and the card
    is what renders — the frame is swapped in only after its load event fires. */
-.tb-mus{flex:none;position:relative;width:200px;height:38px;margin-right:10px}
-.mus-card{position:absolute;inset:0;display:flex;align-items:center;gap:9px;
-  width:100%;padding:0 12px;border-radius:9px;cursor:pointer;font-family:inherit;
+/* The frame was 200x38. Spotify's compact player needs 80px of height for its
+   own play button to render at all — at 38px the controls were clipped off the
+   bottom, which is why he could not find it. 152px is Spotify's documented
+   compact height and the whole control row fits. It drops out of the banner into
+   its own row so it is not fighting four clocks for width. */
+.tb-mus{flex:none;position:relative;width:280px;height:80px;margin-right:10px}
+.mus-card{position:absolute;inset:0;display:flex;align-items:center;gap:11px;
+  width:100%;padding:0 14px;border-radius:11px;cursor:pointer;font-family:inherit;
   background:linear-gradient(150deg,#18211b,#121a15);border:1px solid #24402e;
   transition:.14s;text-align:left}
 .mus-card:hover{border-color:#1db954;background:linear-gradient(150deg,#1b271f,#141d17)}
-.mus-ic{width:18px;height:18px;flex:none}
+.mus-ic{width:28px;height:28px;flex:none}
 .mus-ic svg{display:block;width:100%;height:100%}
 .mus-t{min-width:0;line-height:1.15}
-.mus-t b{display:block;font-size:10.5px;font-weight:800;color:#e8f3ec;letter-spacing:.3px}
+.mus-t b{display:block;font-size:13px;font-weight:800;color:#e8f3ec;letter-spacing:.2px}
 .mus-t i{display:block;font-style:normal;font-size:8px;font-weight:700;color:#7f9a88;
   letter-spacing:1.1px;text-transform:uppercase;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis}
-.mus-frame{position:absolute;inset:0;border-radius:9px;overflow:hidden;
+.mus-frame{position:absolute;inset:0;border-radius:11px;overflow:hidden;
   opacity:0;pointer-events:none;transition:opacity .25s}
 /* only ever revealed by the load handler */
 .tb-mus.live .mus-frame{opacity:1;pointer-events:auto}
@@ -2008,89 +2038,264 @@ body.dsheeting{overflow:hidden}
 .dsheet-b{flex:1;min-height:0;overflow-y:auto;padding:0}
 .dsheet-b .wbody{padding:14px 16px 18px;min-width:0}
 
-/* ============ THE OPERATOR BAR ============ */
-/* Docked to the bottom of the SCREEN, not the bottom of the page — he asked for
-   an operator console, and a console does not scroll away. Sticky with a negative
-   margin got clipped by the footer, so this is properly fixed and the page
-   reserves room for it. */
-.opbar{position:fixed;left:0;right:0;bottom:0;z-index:60;
-  padding:14px 16px 12px;pointer-events:none;
-  background:linear-gradient(180deg,rgba(20,23,29,0),rgba(20,23,29,.92) 34%,var(--paper))}
-.opbar-in{pointer-events:auto;max-width:1700px;margin:0 auto}
-/* out of the way while a module is open — the sheet owns the screen then */
-body.dsheeting .opbar{display:none}
-.opbar-in{display:flex;align-items:center;gap:14px;
-  background:linear-gradient(160deg,#1c212a,#161a21);
-  border:1px solid #2b313b;border-radius:14px;padding:11px 14px;
-  box-shadow:0 -6px 26px rgba(0,0,0,.42)}
-.op-lab{flex:none;min-width:0}
-.op-lab b{display:block;font-size:11px;font-weight:800;letter-spacing:1.6px;
-  text-transform:uppercase;color:#aeb6c4}
-.op-lab i{display:block;font-style:normal;font-size:10px;color:var(--mut);margin-top:2px}
-.op-row{display:flex;gap:9px;flex:1;min-width:0;justify-content:center;flex-wrap:wrap}
-.op{display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer;
-  background:#20252e;border:1px solid #2f3540;border-radius:12px;padding:7px 14px 7px 8px;
-  font-family:inherit;transition:.14s;text-align:left}
-.op:hover{border-color:var(--oc);background:#252b35;transform:translateY(-1px)}
-.op-f{position:relative;width:38px;height:38px;flex:none;border-radius:10px;
-  overflow:hidden;background:#12151b;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
-.op-f svg{display:block;width:100%;height:100%}
-.op-dot{position:absolute;right:1px;bottom:1px;width:9px;height:9px;border-radius:50%;
-  background:#4a5462;box-shadow:0 0 0 2px #20252e}
-.op-dot.on{background:var(--green)}
-.op-x{min-width:0;line-height:1.2}
-.op-x b{display:block;font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
-.op-x i{display:block;font-style:normal;font-size:9.5px;color:var(--mut);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-.op-mic{flex:none;display:flex;align-items:center;gap:7px;cursor:pointer;
-  background:rgba(75,123,212,.16);border:1px solid rgba(75,123,212,.5);border-radius:11px;
-  padding:9px 15px;color:var(--blu2);font-family:inherit;font-size:11.5px;font-weight:800;
-  letter-spacing:.6px;transition:.14s}
-.op-mic:hover{background:rgba(75,123,212,.3);color:#fff}
-.op-mic{min-height:40px}
-.op-mic svg{width:14px;height:14px;display:block;flex:none}
-/* the bar is fixed to the bottom, so the page needs room under the last panel */
-body.homeview .wrap{padding-bottom:96px}
+/* ============ THE OPERATOR DOCK ============
+   Bottom-left corner, out of the way of everything, always there. The talking
+   window is small on purpose: he wants to read his numbers while he talks. */
+.opdock{position:fixed;left:16px;bottom:16px;z-index:800;display:flex;
+  flex-direction:column;align-items:flex-start;gap:9px;pointer-events:none}
+.opdock > *{pointer-events:auto}
+body.dsheeting .opdock{display:none}
 
-/* ============ THE IDEA BANK ============ */
-.ideabar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
-  background:var(--paper2);border:1px solid var(--line);border-radius:12px;padding:11px 15px}
-.ib-n{min-width:0}
-.ib-n b{display:block;font-size:20px;font-weight:800;letter-spacing:-.7px;
-  font-variant-numeric:tabular-nums;line-height:1}
-.ib-n i{display:block;font-style:normal;font-size:9px;font-weight:800;letter-spacing:1.4px;
-  text-transform:uppercase;color:var(--mut);margin-top:3px}
-.ib-sp{flex:1;min-width:0}
-.ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(276px,1fr));gap:10px;
-  margin-top:4px}
-.idea{background:var(--paper2);border:1px solid var(--line);border-radius:12px;
-  padding:11px 12px;min-width:0;border-left:3px solid #3a4150}
-.idea.st-filming{border-left-color:var(--amber)}
-.idea.st-posted{border-left-color:var(--green)}
-.idea.st-dead{opacity:.42}
-.i-top{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:8px}
-.i-st{background:none;border:1px solid var(--line);border-radius:20px;padding:2px 10px;
-  color:var(--mut);font-family:inherit;font-size:9px;font-weight:800;letter-spacing:1.1px;
-  text-transform:uppercase;cursor:pointer;transition:.14s}
-.i-st:hover{border-color:var(--blu);color:var(--ink)}
-.idea.st-filming .i-st{color:var(--amber);border-color:rgba(201,162,92,.45)}
-.idea.st-posted .i-st{color:var(--green);border-color:rgba(95,179,124,.45)}
-.i-tag{font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
-  color:var(--blu2);background:rgba(75,123,212,.12);border-radius:20px;padding:2px 8px}
-.i-tag.dim{color:var(--mut);background:var(--raise)}
-.i-x{margin-left:auto;background:none;border:0;color:#4a5462;cursor:pointer;
-  font-size:16px;line-height:1;padding:0 3px}
-.i-x:hover{color:var(--red)}
-textarea.i-hook{width:100%;background:var(--raise);border:1px solid transparent;
-  border-radius:8px;padding:8px 9px;color:var(--ink);font-family:inherit;font-size:12.5px;
-  line-height:1.5;resize:vertical;min-height:52px;transition:border-color .2s}
-textarea.i-hook:focus{outline:none;border-color:var(--blu)}
-.i-why{font-size:10.5px;color:var(--mut);line-height:1.5;margin-top:7px;
-  padding-left:8px;border-left:2px solid #2b3038}
+.opfaces{display:flex;gap:8px}
+.opf{position:relative;width:52px;height:52px;flex:none;border-radius:14px;
+  overflow:hidden;cursor:pointer;padding:0;
+  background:#12151b;border:1px solid #2f3540;transition:.16s;
+  box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.opf:hover{border-color:var(--oc);transform:translateY(-2px)}
+.opf.on{border-color:var(--oc);box-shadow:0 0 0 2px color-mix(in srgb,var(--oc) 40%,transparent),
+  0 6px 18px rgba(0,0,0,.5)}
+.opf svg{display:block;width:100%;height:100%}
+.opf-dot{position:absolute;right:3px;top:3px;width:8px;height:8px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 0 2px #12151b}
+.opf-nm{position:absolute;left:0;right:0;bottom:0;padding:2px 0 3px;
+  background:linear-gradient(180deg,transparent,rgba(6,8,12,.92));
+  font-size:7.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  color:#cfd6e1;text-align:center}
 
-.bstamp{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:20px;
-  border:1px solid var(--line);font-size:9px;font-weight:800;letter-spacing:1px;
-  color:#5f6875;font-style:normal;text-transform:uppercase;cursor:help}
+/* the conversation */
+.dk{width:min(380px,calc(100vw - 32px));display:flex;flex-direction:column;
+  background:linear-gradient(170deg,#1b212a,#151a21);
+  border:1px solid #2f3540;border-left:3px solid var(--oc);border-radius:14px;
+  box-shadow:0 22px 54px rgba(0,0,0,.6);overflow:hidden;
+  animation:dkIn .16s ease-out}
+@keyframes dkIn{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.dk-h{display:flex;align-items:center;gap:9px;padding:9px 11px;
+  border-bottom:1px solid #23282f;background:rgba(255,255,255,.02)}
+.dk-f{width:30px;height:30px;flex:none;border-radius:9px;overflow:hidden;background:#12151b}
+.dk-f svg{display:block;width:100%;height:100%}
+.dk-who{flex:1;min-width:0;line-height:1.15}
+.dk-who b{display:block;font-size:12.5px;font-weight:700}
+.dk-who i{display:block;font-style:normal;font-size:9px;color:var(--mut);
+  letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-top:1px}
+.dk-b{flex:none;background:none;border:1px solid var(--line);border-radius:6px;
+  padding:4px 9px;color:var(--mut);font-family:inherit;font-size:9.5px;font-weight:800;
+  letter-spacing:.6px;cursor:pointer}
+.dk-b:hover{border-color:var(--blu);color:var(--ink)}
+.dk-x{flex:none;background:none;border:0;color:var(--mut);font-size:18px;line-height:1;
+  cursor:pointer;padding:0 3px}
+.dk-x:hover{color:var(--red)}
+.dk-log{max-height:210px;overflow-y:auto;padding:10px 11px;display:flex;
+  flex-direction:column;gap:7px}
+.dk-hi{font-size:11.5px;color:var(--mut);font-style:italic;line-height:1.5}
+.dk-m{font-size:12.5px;line-height:1.5;padding:7px 10px;border-radius:10px;max-width:88%;
+  word-wrap:break-word}
+.dk-m.me{align-self:flex-end;background:rgba(75,123,212,.2);
+  border:1px solid rgba(75,123,212,.34);color:#e9eff8}
+.dk-m.them{align-self:flex-start;background:var(--raise);border:1px solid #2b3038}
+.dk-m.did{align-self:flex-start;background:rgba(95,179,124,.12);
+  border:1px solid rgba(95,179,124,.34);color:#bfe6cd;font-size:11px}
+.dk-m.think{opacity:.6;font-style:italic}
+.dk-f2{display:flex;align-items:center;gap:6px;padding:9px 10px;
+  border-top:1px solid #23282f}
+.dk-mic,.dk-spk{flex:none;width:34px;height:34px;border-radius:9px;cursor:pointer;
+  background:var(--raise);border:1px solid var(--line);color:var(--ink);font-size:14px;
+  padding:0;transition:.14s}
+.dk-mic:hover,.dk-spk:hover{border-color:var(--blu)}
+.dk-mic.on{background:var(--red);border-color:var(--red);color:#fff}
+.dk-spk.on{border-color:rgba(95,179,124,.5)}
+#dk-in{flex:1;min-width:0;background:var(--paper2);border:1px solid var(--line);
+  border-radius:9px;padding:8px 10px;color:var(--ink);font-family:inherit;font-size:13px}
+#dk-in:focus{outline:none;border-color:var(--blu)}
+.dk-go{flex:none;background:rgba(75,123,212,.2);border:1px solid rgba(75,123,212,.5);
+  border-radius:9px;padding:8px 13px;color:var(--blu2);font-family:inherit;font-size:11.5px;
+  font-weight:800;cursor:pointer;letter-spacing:.4px}
+.dk-go:hover{background:rgba(75,123,212,.34);color:#fff}
+
+/* the page needs room for the faces */
+body.homeview .wrap{padding-bottom:86px}
+
+/* ============ DASHBOARD SECTIONS ============
+   Each block is a titled section rather than a wall of equal cards, so the eye
+   knows what it is looking at and in what order. */
+.sec{margin-bottom:22px}
+.sec-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px;
+  padding-bottom:9px;border-bottom:1px solid #23282f}
+.sec-h h2{font-size:15px;font-weight:800;letter-spacing:-.3px;flex:none}
+.sec-s{flex:1;min-width:0;font-size:11px;color:var(--mut)}
+.sec-b{flex:none;background:none;border:1px solid var(--line);border-radius:8px;
+  padding:6px 12px;color:var(--mut);font-family:inherit;font-size:10.5px;font-weight:700;
+  cursor:pointer;letter-spacing:.4px;transition:.14s;white-space:nowrap;text-decoration:none}
+.sec-b:hover{border-color:var(--blu);color:var(--ink)}
+.sec-b.hot{border-color:rgba(75,123,212,.55);color:var(--blu2);background:rgba(75,123,212,.12)}
+.sec-b.script{border-color:rgba(201,162,92,.5);color:var(--amber);background:rgba(201,162,92,.1)}
+.sec-b.script:hover{background:rgba(201,162,92,.22);color:#f0d9a8}
+
+/* ---- analytics ---- */
+.anrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.an-big{background:var(--paper2);border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;min-width:0}
+.an-k{display:block;font-size:9px;font-weight:800;letter-spacing:1.7px;
+  text-transform:uppercase;color:var(--mut)}
+.an-big b{display:block;font-size:27px;font-weight:800;letter-spacing:-1.2px;margin-top:4px;
+  font-variant-numeric:tabular-nums;line-height:1.05}
+.an-big b.g{color:var(--green)} .an-big b.r{color:var(--red)}
+.an-big b.a{color:var(--amber)} .an-big b.b{color:var(--blu2)}
+.an-big i{display:block;font-style:normal;font-size:10.5px;color:var(--mut);margin-top:4px}
+.an-hint{margin-top:11px;padding:10px 13px;border:1px dashed #333b47;border-radius:10px;
+  font-size:11.5px;color:var(--mut);line-height:1.5}
+.an-hint b{color:var(--ink)}
+
+.plats{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:11px}
+.plat{background:var(--paper2);border:1px solid var(--line);border-radius:13px;
+  padding:14px 15px 12px;min-width:0;border-top:3px solid var(--pc)}
+.plat.third{opacity:.94}
+.plat-h{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.plat-nm{flex:1;min-width:0;font-size:12.5px;font-weight:800;letter-spacing:.3px;
+  text-transform:uppercase}
+.conn{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:800;
+  letter-spacing:1.1px;text-transform:uppercase;border:1px solid var(--line);
+  border-radius:20px;padding:2px 9px;color:var(--mut);cursor:help}
+.conn.live{color:var(--green);border-color:rgba(95,179,124,.45);background:rgba(95,179,124,.1)}
+.cdot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.plat-n{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+input.folbig{width:auto;max-width:160px;min-width:0;background:transparent;
+  border:1px solid transparent;border-radius:8px;padding:2px 6px;
+  color:var(--ink);font-family:inherit;font-size:30px;font-weight:800;letter-spacing:-1.3px;
+  font-variant-numeric:tabular-nums;transition:border-color .18s}
+input.folbig:hover{border-color:#333b47}
+input.folbig:focus{outline:none;border-color:var(--blu);background:var(--raise)}
+.plat-goal{font-size:11px;color:var(--mut);font-weight:600;flex:none;line-height:1.3}
+.plat-goal em{display:block;font-style:normal;font-size:9.5px;color:var(--amber);
+  font-weight:700;letter-spacing:.3px}
+
+/* accelerating / holding / slowing / falling — the honest verdict on reach */
+.mom{flex:none;font-size:8.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:2px 8px;border:1px solid;cursor:help;white-space:nowrap}
+.mom.up{color:var(--green);border-color:rgba(95,179,124,.5);background:rgba(95,179,124,.12)}
+.mom.flat{color:var(--blu2);border-color:rgba(75,123,212,.45);background:rgba(75,123,212,.1)}
+.mom.down{color:var(--amber);border-color:rgba(201,162,92,.5);background:rgba(201,162,92,.12)}
+.mom.bad{color:var(--red);border-color:rgba(212,115,111,.55);background:rgba(212,115,111,.14)}
+
+/* the reach block inside each platform card */
+.reach{margin-top:11px;padding-top:10px;border-top:1px solid #23282f}
+.reach-h{font-size:8.5px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--mut);margin-bottom:7px}
+.reach-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;
+  font-size:8.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--mut)}
+.reach-g span{min-width:0;text-align:center;display:block}
+.reach-g b{display:block;font-size:14px;font-weight:800;letter-spacing:-.5px;
+  color:var(--ink);text-transform:none;font-variant-numeric:tabular-nums}
+
+/* the period-by-period table */
+.rtab{margin-top:14px}
+.rtab-h{font-size:11.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  color:#aeb6c4;margin-bottom:9px}
+.rtab-h em{display:block;font-style:normal;font-size:10px;font-weight:600;
+  letter-spacing:0;text-transform:none;color:var(--mut);margin-top:3px}
+.pdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;
+  vertical-align:1px}
+.gu{color:var(--green);font-weight:700}
+.gd{color:var(--red);font-weight:700}
+.chartbox{position:relative;height:58px;margin:2px 0 8px}
+.chart{display:block;width:100%;height:58px}
+.chart-n{position:absolute;right:2px;top:0;font-size:8.5px;font-weight:700;
+  letter-spacing:.8px;text-transform:uppercase;color:#4e5763}
+/* which metric the line is showing — followers, or views a day */
+.chart-t{position:absolute;left:2px;top:0;font-size:8.5px;font-weight:800;
+  letter-spacing:.8px;text-transform:uppercase;color:#5f6875}
+.chart-none{height:58px;display:flex;align-items:center;justify-content:center;
+  border:1px dashed #2f3540;border-radius:9px;font-size:10.5px;color:#5f6875;
+  text-align:center;padding:0 10px;margin:2px 0 8px;line-height:1.4}
+.plat-bar{height:5px;border-radius:3px;background:#23282f;overflow:hidden}
+.plat-bar span{display:block;height:100%;border-radius:3px;background:var(--pc)}
+.plat-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px;
+  font-size:8.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--mut)}
+.plat-stats span{min-width:0;text-align:center;display:block}
+.plat-stats b{display:block;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;
+  letter-spacing:-.4px;color:var(--ink);text-transform:none;letter-spacing:-.4px}
+.plat-stats b.g{color:var(--green)} .plat-stats b.r{color:var(--red)}
+.plat-stats b.a{color:var(--amber)}
+.plat-eta{margin-top:9px;font-size:10.5px;font-weight:700;padding:6px 9px;border-radius:8px}
+.plat-eta.good{color:var(--green);background:rgba(95,179,124,.1)}
+.plat-eta.late{color:var(--amber);background:rgba(201,162,92,.1)}
+
+/* ---- the CRM money strip ---- */
+/* The CRM uses the analytics card exactly — he liked that style, and one card
+   style across the page is what makes it read as one product rather than two. */
+.crmmoney{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.cm{background:var(--paper2);border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;min-width:0}
+.cm span{display:block;font-size:9px;font-weight:800;letter-spacing:1.7px;
+  text-transform:uppercase;color:var(--mut)}
+.cm b{display:block;font-size:27px;font-weight:800;letter-spacing:-1.2px;margin-top:4px;
+  font-variant-numeric:tabular-nums;line-height:1.05}
+.cm b.g{color:var(--green)} .cm b.a{color:var(--amber)} .cm b.b{color:var(--blu2)}
+.cm i{display:block;font-style:normal;font-size:10.5px;color:var(--mut);margin-top:4px}
+
+/* the stage strip borrows the platform card's top-accent treatment */
+.stgstrip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.sg{background:var(--paper2);border:1px solid var(--line);border-radius:12px;
+  padding:12px 10px;min-width:0;cursor:pointer;font-family:inherit;text-align:left;
+  transition:.14s;border-top:3px solid var(--sc)}
+.sg:hover{border-color:var(--blu);border-top-color:var(--sc);transform:translateY(-1px)}
+.sg b{display:block;font-size:26px;font-weight:800;letter-spacing:-1.1px;
+  font-variant-numeric:tabular-nums;line-height:1.05}
+.sg i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:1.3px;
+  text-transform:uppercase;color:var(--mut);margin-top:4px}
+
+/* ---- today ---- */
+.todayrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-bottom:12px}
+.tcard{background:var(--paper2);border:1px solid var(--line);border-radius:13px;
+  padding:13px 15px;min-width:0;display:flex;flex-direction:column;
+  border-left:3px solid var(--blu)}
+.tcard.amz{border-left-color:#5b78a8}
+.tcard.tick{border-left-color:var(--green)}
+.tcard.list{border-left-color:var(--ice)}
+.tcard.alerts{border-left-color:var(--amber)}
+.tc-h{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:9px}
+.tc-h b{font-size:12px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase}
+.tc-n{flex:1;min-width:0;font-size:10.5px;color:var(--mut)}
+.tc-tick{flex:none;background:none;border:1px solid var(--line);border-radius:7px;
+  padding:5px 11px;color:var(--mut);font-family:inherit;font-size:10px;font-weight:700;
+  cursor:pointer;letter-spacing:.4px;transition:.14s}
+.tc-tick:hover{border-color:var(--blu);color:var(--ink)}
+.tc-tick.on{border-color:rgba(95,179,124,.5);color:var(--green);background:rgba(95,179,124,.1)}
+.tc-seed{flex:none;background:none;border:1px solid rgba(95,168,184,.45);border-radius:7px;
+  padding:4px 10px;color:var(--ice);font-family:inherit;font-size:10px;font-weight:700;
+  cursor:pointer}
+.tc-plan{flex:1;font-size:13.5px;line-height:1.6;white-space:pre-wrap;min-height:56px}
+.tc-plan.none{color:var(--mut);font-style:italic}
+.tc-empty{flex:1;font-size:11.5px;color:var(--mut);line-height:1.5;padding:6px 0 10px}
+.tc-act{margin-top:11px}
+
+/* Named .tsk, not .chk. ".chk" was already taken by the week's 19px day
+   checkbox, and that rule's width:19px was collapsing every checklist row to
+   nineteen pixels wide — which pushed the delete button clean outside its own
+   card and under the panel next to it, where it could not be clicked. */
+.checks{display:flex;flex-direction:column;gap:5px;margin-bottom:9px}
+.tsk{display:flex;align-items:center;gap:8px;min-width:0;width:100%}
+.tsk-b{flex:none;width:20px;height:20px;border-radius:6px;cursor:pointer;padding:0;
+  background:transparent;border:1.6px solid #454e5c;color:#08120c;font-size:12px;
+  line-height:1;transition:.14s}
+.tsk-b:hover{border-color:var(--green)}
+.tsk-b.on{background:var(--green);border-color:var(--green)}
+input.tsk-i{flex:1;min-width:0;background:transparent;border:1px solid transparent;
+  border-radius:6px;padding:4px 6px;color:var(--ink);font-family:inherit;font-size:12.5px;
+  transition:border-color .16s}
+input.tsk-i:hover{border-color:#2f3540}
+input.tsk-i:focus{outline:none;border-color:var(--blu);background:var(--raise)}
+.tsk.done input.tsk-i{color:#6b7480;text-decoration:line-through}
+.tsk-x{flex:none;background:none;border:0;color:#3f4753;cursor:pointer;font-size:15px;
+  line-height:1;padding:0 4px}
+.tsk-x:hover{color:var(--red)}
+.addbar.tight{margin:0}
+
+/* the week, read-only by default */
+.dw-lab{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+  margin-top:5px;color:#7f8b9c}
+.dw-d.amz .dw-lab{color:#a8bde0}
+textarea.dw-pi.big{min-height:92px}
 
 /* the room picker is phone-only */
 .rooms-m{display:none}
@@ -2552,7 +2757,7 @@ textarea.i-hook:focus{outline:none;border-color:var(--blu)}
      past the viewport, which is exactly the shape of the overflow bug this app
      has been chased around for weeks. Two by two instead: nothing to swipe,
      nothing hanging off the edge. */
-  .tb-zones{order:9;display:grid;grid-template-columns:1fr 1fr;gap:4px;
+  .tb-zones{order:9;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;
     flex:1 1 100%;width:100%;min-width:0;border-left:0;border-top:1px solid #1e2634;
     padding:8px 0 0;overflow:hidden}
   .tbz{padding:0 9px;min-height:40px;min-width:0;flex:auto}
@@ -2560,8 +2765,8 @@ textarea.i-hook:focus{outline:none;border-color:var(--blu)}
   .tbz-x{overflow:hidden}
   .tbz-k{overflow:hidden;text-overflow:ellipsis}
 
-  .tb-mus{order:8;flex:1 1 auto;width:auto;min-width:150px;max-width:100%;
-    height:40px;margin-right:0}
+  .tb-mus{order:8;flex:1 1 100%;width:100%;min-width:0;max-width:100%;
+    height:80px;margin-right:0}
   .mus-card{padding:0 11px}
   .vswitch{order:7}
 }
@@ -2639,10 +2844,77 @@ textarea.i-hook:focus{outline:none;border-color:var(--blu)}
   .dsheet-wrap.wide{padding:0}
   .dsheet-wrap.wide .dsheet{height:100vh;max-height:100vh}
 }
+
+/* ---- the operator dock on a phone ----
+   It is fixed, so it can sit over whatever happens to scroll underneath it. On a
+   small screen that is a real nuisance, so the faces are smaller, they tuck into
+   the corner, and a tap on the page's own content still lands. The page also
+   reserves room for them at the bottom. */
+@media (max-width:760px){
+  .opdock{left:10px;bottom:10px;gap:7px}
+  .opf{width:42px;height:42px;border-radius:11px}
+  .opf-nm{font-size:6.5px;padding:1px 0 2px}
+  .opf-dot{width:7px;height:7px;right:2px;top:2px}
+  .dk{width:calc(100vw - 20px)}
+  .dk-log{max-height:170px}
+  #dk-in{font-size:16px}
+  .dk-mic,.dk-spk{width:40px;height:40px}
+  body.homeview .wrap{padding-bottom:74px}
+}
+
+/* ---- analytics on a phone ---- */
+@media (max-width:760px){
+  .anrow{grid-template-columns:1fr 1fr;gap:8px}
+  .an-big{padding:11px 12px}
+  .an-big b{font-size:22px}
+  .plats{grid-template-columns:1fr}
+  .plat-h{flex-wrap:wrap;gap:6px}
+  .reach-g{grid-template-columns:1fr 1fr;gap:8px 6px}
+  .reach-g b{font-size:15px}
+  .rtab-h{font-size:11px}
+  input.folbig{font-size:26px}
+}
+
+/* ---- the drill-down under a platform card ---- */
+.chart-hit{display:block;width:100%;padding:0;margin:0;background:none;border:0;
+  cursor:pointer;text-align:left;border-radius:9px;transition:.14s}
+.chart-hit:hover{background:rgba(255,255,255,.02)}
+.pdet{margin-top:12px;padding-top:11px;border-top:1px solid #23282f}
+.pd-h{font-size:8.5px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--mut);margin:0 0 7px}
+.pd-line{height:110px;margin-bottom:8px}
+.pd-line .chartbox,.pd-line .chart{height:110px}
+.pd-row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--mut);
+  margin-bottom:12px;flex-wrap:wrap}
+.pd-row b{font-size:14px;font-weight:800;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.pd-tab{display:flex;flex-direction:column;gap:6px}
+.pd-t{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(auto-fit,minmax(64px,1fr));
+  gap:8px;align-items:center;padding:8px 10px;background:var(--raise);
+  border:1px solid #2b3038;border-radius:9px}
+.pd-when{font-size:11px;font-weight:700;color:var(--ink);min-width:0}
+.pd-when em{display:block;font-style:normal;font-size:9px;font-weight:600;color:var(--mut);
+  margin-top:1px}
+.pd-v{font-size:8px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--mut);text-align:center;min-width:0}
+.pd-v b{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.4px;
+  color:var(--ink);text-transform:none;font-variant-numeric:tabular-nums}
+.pd-v b.g{color:var(--green)} .pd-v b.r{color:var(--red)}
+.pd-src{margin-top:9px;font-size:10px;color:#5f6875;line-height:1.45}
+.pd-none{margin-top:11px;padding-top:11px;border-top:1px solid #23282f;
+  font-size:11.5px;color:var(--mut)}
+@media (max-width:760px){
+  .crmmoney{grid-template-columns:1fr 1fr;gap:8px}
+  .cm b{font-size:22px}
+  .stgstrip{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .sg b{font-size:21px}
+  .pd-t{grid-template-columns:1fr 1fr}
+  .pd-line,.pd-line .chartbox,.pd-line .chart{height:90px}
+}
 </style>
 </head>
-<body data-build="2026-07-30-b">
-<!-- EXODUS HQ BUILD 2026-07-30-b — if this line is missing from the deployed page,
+<body data-build="2026-07-30-h">
+<!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
 
@@ -2735,7 +3007,7 @@ textarea.i-hook:focus{outline:none;border-color:var(--blu)}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-30-b</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-30-h</span></div>
 </div>
 
 <script>
@@ -3012,19 +3284,29 @@ function owedFor(n){return OWED[keyOf(n)]||null;}
 /* ---- the stages, colour-coded everywhere ----
    "Call Completed" is retired. It described an event, not a position in the
    pipeline — everyone it applied to had taken the call and not bought, so they
-   are Demo No Sale. "Joining in Future" is the one worth chasing later. */
-var STATUSES=["New Lead","Warm Lead","Demo No Sale","Signed Up","Joining in Future","Dead Lead"];
+   are Demo No Sale. "Contact in the Future" is the one worth chasing later. */
+/* The order Glen reads them in: fresh first, dead last. Priority is not a stage —
+   it is the purple dot, and it cuts across all of these.
+   "Joining in Future" was renamed to "Contact in the Future" because the old
+   name read like they had already said yes. Demo No Sale stayed: three real
+   leads live in it. */
+var STATUSES=["New Lead","Warm Lead","Demo No Sale","Contact in the Future",
+              "Signed Up","Dead Lead"];
 var SCOL={
   "New Lead"         :{hex:"#cbd5e1",cls:"b-new",  dot:"#e2e8f0"},
   "Warm Lead"        :{hex:"#fbbf24",cls:"b-warm", dot:"#fcd34d"},
   "Demo No Sale"     :{hex:"#60a5fa",cls:"b-call", dot:"#93c5fd"},
   "Signed Up"        :{hex:"#4ade80",cls:"b-paid", dot:"#86efac"},
-  "Joining in Future":{hex:"#22d3ee",cls:"b-soon", dot:"#7dd3fc"},
+  "Contact in the Future":{hex:"#22d3ee",cls:"b-soon", dot:"#7dd3fc"},
   "Dead Lead"        :{hex:"#f87171",cls:"b-owe",  dot:"#fca5a5"}
 };
 /* Anything saved under the old name still reads correctly. */
+/* Anything saved under an older name still reads correctly. */
 var STAGE_ALIAS={"Call Completed":"Demo No Sale","Call completed":"Demo No Sale",
-                 "Demo no sale":"Demo No Sale","Joining In Future":"Joining in Future"};
+                 "Demo no sale":"Demo No Sale",
+                 "Joining in Future":"Contact in the Future",
+                 "Joining In Future":"Contact in the Future",
+                 "Joining in future":"Contact in the Future"};
 function stageFix(st){ st=String(st||""); return STAGE_ALIAS[st]||st; }
 function scol(st){return SCOL[stageFix(st)]||SCOL["New Lead"];}
 
@@ -3229,7 +3511,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-07-30-b";
+var BUILD="2026-07-30-h";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -3264,6 +3546,7 @@ function tickSalesClocks(){
    with. His own zone is highlighted, and if a place is on a different calendar
    day to him it gets a +1 or -1 so a call never gets booked on the wrong date. */
 var BANNER_ZONES=[
+  {k:"East Cst", tz:"America/New_York",    f:"us"},
   {k:"Bangkok",  tz:"Asia/Bangkok",        f:"th"},
   {k:"GMT",      tz:"Europe/London",       f:"gb"},
   {k:"Dubai",    tz:"Asia/Dubai",          f:"ae"},
@@ -3342,7 +3625,8 @@ function spotifyReachable(cb){
 
 function musicUri(){ return "spotify:playlist:"+MUSIC_PLAYLIST; }
 function musicEmbedSrc(){
-  /* compact player. No `theme` parameter — see above. */
+  /* No `theme` parameter — see above. The frame is 80px tall, which is the size
+     Spotify's compact player needs for its play button to be visible at all. */
   return "https://open.spotify.com/embed/playlist/"+MUSIC_PLAYLIST+"?utm_source=exodushq";
 }
 function musicOpen(){ return "https://open.spotify.com/playlist/"+MUSIC_PLAYLIST; }
@@ -3977,6 +4261,30 @@ var SBW = {
     return sbRun(sql);
   },
 
+  /* today's checklist. One row per item so the agents can tick a single one. */
+  daytasks: function(){
+    var d=dkey(new Date());
+    var rows=dtLoad();
+    var sql="delete from day_tasks where on_date="+qv(d)+";";
+    if(rows.length){
+      var vals=rows.map(function(r,i){
+        return "("+qv(d)+","+qv(r.b||"")+","+(r.done?"true":"false")+","+i+")";});
+      sql+=" insert into day_tasks (on_date,body,done,sort) values "+vals.join(",")+";";
+    }
+    return sbRun(sql);
+  },
+
+  /* the follower readings the charts are drawn from */
+  folhist: function(){
+    var rows=folHist();
+    if(!rows.length) return Promise.resolve();
+    var vals=rows.map(function(r){
+      return "("+qv(r.p)+","+qv(String(r.d).slice(0,10))+","+qn(r.n)+",'manual')";});
+    return sbRun("insert into social_history (platform,on_date,followers,source) values "
+      +vals.join(",")+" on conflict (platform, on_date) do update "
+      +"set followers=excluded.followers;");
+  },
+
   /* the idea bank. Small, ordered, replaced wholesale. */
   ideas: function(){
     var rows=ideaLoad();
@@ -4039,6 +4347,9 @@ var SBW = {
   },
 
   posts: function(dateKey){
+    /* The dashboard's post buttons call SBSAVE("posts") with no date. Without a
+       default that sent a null date and the whole statement was refused. */
+    dateKey = dateKey || dkey(new Date());
     var vals=PLATS.map(function(pl){
       var tbl={tiktok:"tiktok",ig:"instagram",yt:"youtube"}[pl.k];
       return "("+qv(tbl)+","+qv(dateKey)+","+qn(LS("post_"+pl.k+"_"+dateKey)||"0")+")";});
@@ -4310,9 +4621,13 @@ function sbPull(){
     +"'social',     (select coalesce(json_agg(json_build_object('p',platform,'f',followers)),'[]'::json) from social_accounts),"
     +"'posts',      (select coalesce(json_agg(json_build_object('p',platform,'d',posted_on,'c',count)),'[]'::json) from social_posts where posted_on >= current_date - 30),"
     +"'folsrc',     (select coalesce(json_object_agg(platform, json_build_object('src',source,'at',checked_at)),'{}'::json) from social_accounts),"
-    +"'folhist',    (select coalesce(json_agg(json_build_object('p',platform,'d',on_date,'n',followers) order by on_date),'[]'::json) from social_history where on_date >= current_date - 30),"
+    /* the whole follower history, not the last 30 days — the backfilled curve
+       goes back 90 and cutting it off threw the shape away */
+    +"'folhist',    (select coalesce(json_agg(json_build_object('p',platform,'d',on_date,'n',followers) order by on_date),'[]'::json) from social_history),"
+    +"'reach',      (select coalesce(json_agg(json_build_object('p',platform,'s',period_start,'e',period_end,'days',days,'v',views,'r',reached,'pv',profile_views,'lk',likes,'nf',net_followers) order by period_start),'[]'::json) from social_reach),"
     +"'ideas',      (select coalesce(json_agg(json_build_object('hook',hook,'angle',angle,'format',format,'plat',platform,'why',why,'st',status,'on',posted_on,'views',views) order by sort),'[]'::json) from content_ideas),"
     +"'meets',      (select coalesce(json_agg(json_build_object('name',name,'at',at_time,'phone',phone,'email',email,'link',link,'notes',notes,'done',done) order by sort),'[]'::json) from meetings),"
+    +"'dtasks',     (select coalesce(json_agg(json_build_object('b',body,'done',done) order by sort),'[]'::json) from day_tasks where on_date=current_date),"
     +"'stages',     (select coalesce(json_agg(json_build_object('k',name_key,'s',stage,'n',notes,'p',phone,'e',email,'i',instagram,'pr',priority,"
     +"                 'came',came_in,'prec',came_in_precision,'fu',follow_up_on,'funote',follow_up_note,'detail',detail)),'[]'::json) from leads),"
     +"'forms',      (select coalesce(json_agg(json_build_object('name',name,'email',email,'phone',phone,'interest',interest,'at',submitted_at,'gid',gmail_id,'self',is_self_test) order by submitted_at desc),'[]'::json) from form_submissions),"
@@ -4385,6 +4700,7 @@ function sbPull(){
     /* which follower numbers came from an API, and the last 30 days of them */
     if(d.folsrc)  LS("fol_src",  JSON.stringify(d.folsrc));
     if(d.folhist) LS("fol_hist", JSON.stringify(d.folhist));
+    if(d.reach)   LS("fol_reach", JSON.stringify(d.reach));
     /* the safe */
     if(d.vacct) LS("vault_accounts", JSON.stringify(d.vacct));
     if(d.vexp)  LS("vault_expenses", JSON.stringify(d.vexp));
@@ -4392,6 +4708,7 @@ function sbPull(){
     /* the idea bank */
     if(d.ideas) LS("ideas",    JSON.stringify(d.ideas));
     if(d.meets) LS("meetings", JSON.stringify(d.meets));
+    if(d.dtasks) LS("dtasks_"+dkey(new Date()), JSON.stringify(d.dtasks));
     if(d.calendly!==undefined && d.calendly!==null) LS("calendly", d.calendly);
     /* The database is the truth for this. Anything already on the device is
        replaced, including an empty string, so a phone and a laptop can never
@@ -8730,7 +9047,7 @@ function jordanCtx(){
       newLeads:      bucket("New Lead"),
       warm:          bucket("Warm Lead"),
       demoNoSale:    bucket("Demo No Sale"),
-      joiningLater:  bucket("Joining in Future"),
+      joiningLater:  bucket("Contact in the Future"),
       priority:      (STATE.leads||[]).filter(function(x){return prGet(x.name);})
                        .map(function(x){return x.name+" ("+x.stage+")";}),
       signedUp:      bucket("Signed Up").length,
@@ -8921,9 +9238,20 @@ function actionProtocol(){
    +'[[CRM {"type":"pull_form","name":"Marco Martin"}]]\n'
    +'[[CRM {"type":"dismiss_form","name":"Marco Martin"}]]\n'
    +'[[CRM {"type":"dedupe_forms"}]]\n'
+   +'[[CRM {"type":"task_add","body":"Call Marco back"}]]\n'
+   +'[[CRM {"type":"task_done","body":"Call Marco back"}]]\n'
+   +'[[CRM {"type":"task_done","all":true}]]\n'
+   +'[[CRM {"type":"remove_lead","name":"Duplicate Dave"}]]\n'
    +'[[CRM {"type":"whiteboard","slot":"target","body":"$5,000 collected"}]]\n'
    +"dismiss_form takes a submission off the front desk. dedupe_forms collapses every duplicate "
-   +"in one go. Only emit an action when he actually asked you to change something.\n"
+   +"in one go.\n"
+   +"task_add puts something on today's checklist. task_done with a body crosses that one off; "
+   +"with all:true it crosses off everything for today — use that when he says he is done for "
+   +"the day. Add undo:true to un-tick. task_clear empties the list.\n"
+   +"remove_lead deletes someone from the CRM permanently, database and all. Only ever use it "
+   +"when he explicitly asks to remove or delete a lead, usually a duplicate. It cannot be "
+   +"undone, so never guess at it.\n"
+   +"Only emit an action when he actually asked you to change something.\n"
    +"# THE STAGES AND THE PURPLE DOT\n"
    +"The only stages that exist are: "+STATUSES.join(", ")+". "
    +"\"Call Completed\" was retired — anyone who took the call and did not buy is Demo No Sale. "
@@ -8998,6 +9326,53 @@ function jRunActions(text){
       var n=dedupeForms();
       done.push(n ? ("Collapsed "+n+" duplicate"+(n===1?"":"s")+" on the front desk")
                   : "No duplicates left to collapse");
+
+    /* ---- the day's checklist ----
+       "Tell Claudia my tasks are done and they should be crossed out." This is
+       that. One store, so ticking it here and ticking it on the dashboard are the
+       same act. */
+    } else if(o.type==="task_add"){
+      if(!o.body) return;
+      dtAdd(String(o.body));
+      SBW.acted("system","task_add",String(o.body).slice(0,60),o);
+      done.push('Added "'+String(o.body).slice(0,50)+'" to today');
+
+    } else if(o.type==="task_done"){
+      var tl=dtLoad();
+      if(o.all===true || (!o.body && !o.index)){
+        var cnt=dtAllDone(true);
+        SBW.acted("system","task_done_all","today",o);
+        done.push(cnt ? ("Crossed off all "+cnt+" task"+(cnt===1?"":"s")+" for today")
+                      : "Nothing on today's list yet");
+      } else {
+        /* match on the words he used, not an index he cannot see */
+        var want=String(o.body||"").toLowerCase().trim();
+        var hitI=-1;
+        for(var ti=0;ti<tl.length;ti++){
+          var b2=String(tl[ti].b||"").toLowerCase();
+          if(b2===want || (want && b2.indexOf(want)>=0)){ hitI=ti; break; }
+        }
+        if(hitI<0){ done.push('No task matching "'+want.slice(0,40)+'"'); return; }
+        tl[hitI].done=(o.undo===true)?false:true;
+        dtSave(tl);
+        SBW.acted("system","task_done",tl[hitI].b,o);
+        done.push((o.undo===true?"Un-ticked ":"Crossed off ")+'"'+String(tl[hitI].b).slice(0,44)+'"');
+      }
+
+    } else if(o.type==="task_clear"){
+      dtSave([]);
+      SBW.acted("system","task_clear","today",o);
+      done.push("Cleared today's list");
+
+    /* ---- removing a lead for good ---- */
+    } else if(o.type==="remove_lead"){
+      if(!o.name) return;
+      var target=leadBy(o.name);
+      if(!target){ done.push("No lead called "+o.name); return; }
+      var nm2=target.name;
+      leadDelete(nm2);
+      SBW.acted("system","remove_lead",nm2,o);
+      done.push(nm2+" removed from the CRM for good");
 
     } else if(o.type==="whiteboard"){
       var slots={target:"wb_target",goal:"wb_goal",working:"wb_working",
@@ -10136,7 +10511,7 @@ function weekAsk(){
     priorityLeads:L.filter(function(x){return prGet(x.name);})
       .map(function(x){return x.name+" — "+x.stage;}),
     warmLeads:L.filter(function(x){return x.stage==="Warm Lead";}).map(function(x){return x.name;}),
-    joiningLater:L.filter(function(x){return x.stage==="Joining in Future";}).map(function(x){return x.name;}),
+    joiningLater:L.filter(function(x){return x.stage==="Contact in the Future";}).map(function(x){return x.name;}),
     owedNow:m.chase,
     peopleWhoOwe:L.filter(function(x){return x.owed>0&&!x.deferred;})
       .map(function(x){return x.name+" $"+x.owed;}),
@@ -10258,63 +10633,27 @@ var PLATS=[
   {k:"yt",      nm:"YouTube",   ic:"&#9654;",  col:"#ff0000", url:"https://www.youtube.com/", goal:1000}
 ];
 function postKey(k){ return "post_"+k+"_"+dkey(new Date()); }
+/* ============ THE STUDIO'S COMMAND CENTER ============
+   The same analytics the dashboard shows, rendered from the same function and the
+   same store. He asked for it in both places; building it twice would guarantee
+   they drift, so it is built once. */
 function conCommand(){
-  var h='';
-  /* ---- the number that matters ---- */
-  var tt=parseInt(LS("fol_tiktok")||"0",10);
-  var toGo=Math.max(0,10000-tt);
-  var days=Math.max(1,Math.ceil((BANGKOK-new Date())/86400000));
-  var perDay=toGo?Math.ceil(toGo/days):0;
-  h+='<div class="cchero">'
-   +'<div><b>'+tt.toLocaleString()+'</b><i>TikTok followers</i></div>'
-   +'<div class="ccbar"><span style="width:'+Math.min(100,Math.round(tt/10000*100))+'%"></span></div>'
-   +'<div class="ccnums"><span><b>'+toGo.toLocaleString()+'</b>to 10k</span>'
-   +'<span><b>'+days+'</b>days left</span>'
-   +'<span><b>'+perDay+'</b>a day to make it</span></div></div>';
+  var h='<div class="info">Everything here is the same data as the dashboard, '
+   +'drawn from the same records. Type a follower count in either place and it '
+   +'updates in both.</div>';
+  h+=analyticsSection();
 
-  /* ---- today: a real count per platform, plus and minus, no fixed boxes ---- */
-  var todayTot=0, weekTot=0;
-  PLATS.forEach(function(pl){ todayTot+=parseInt(LS(postKey(pl.k))||"0",10); });
-  for(var d0=0;d0<7;d0++){
-    var dd0=new Date(); dd0.setDate(dd0.getDate()-d0);
-    PLATS.forEach(function(pl){ weekTot+=parseInt(LS("post_"+pl.k+"_"+dkey(dd0))||"0",10); });
-  }
-
-  h+='<div class="ptot"><b>'+todayTot+'</b><i>posted today</i>'
-   +'<span>'+weekTot+' in the last 7 days</span></div>';
-
-  h+='<div class="ccp">';
-  PLATS.forEach(function(pl){
-    var done=parseInt(LS(postKey(pl.k))||"0",10);
-    var fol=parseInt(LS("fol_"+pl.k)||"0",10);
-    h+='<div class="ccc" style="--pc:'+pl.col+'">'
-      +'<div class="ccc-h"><span class="ccic">'+pl.ic+'</span><b>'+pl.nm+'</b>'
-      +'<a href="'+pl.url+'" target="_blank" rel="noopener" title="Open">&#8599;</a></div>'
-      +'<div class="pcount">'
-        +'<button class="pmin" data-pd="'+pl.k+'"'+(done?'':' disabled')+'>&minus;</button>'
-        +'<span class="pnum'+(done?" on":"")+'">'+done+'</span>'
-        +'<button class="pplus" data-pu="'+pl.k+'">+</button>'
-      +'</div><div class="plab">posts today</div>'
-      +'<div class="ccc-f"><input class="folin" data-k="fol_'+pl.k+'" value="'+(fol||"")+'" placeholder="0">'
-      +'<i>followers</i></div></div>';});
-  h+='</div>';
-
-  /* ---- the fortnight, showing the actual count each day ---- */
-  h+='<h4 class="sh">Last 14 Days</h4><div class="ccweek">';
-  for(var d=13;d>=0;d--){
-    var day=new Date(); day.setDate(day.getDate()-d);
-    var tot=0;
-    PLATS.forEach(function(pl){ tot+=parseInt(LS("post_"+pl.k+"_"+dkey(day))||"0",10); });
-    var cls=tot>=4?"hot":tot>=2?"full":tot>0?"part":"none";
-    h+='<div class="ccd '+cls+(d===0?" now":"")+'" title="'+dkey(day)+' — '+tot+' post'+(tot===1?"":"s")+'">'
-      +'<b>'+DAYS[day.getDay()][0]+'</b><i>'+tot+'</i></div>';}
-  h+='</div>';
-
-  h+='<h4 class="sh">Sponsors &amp; Brand Deals</h4>';
-  h+='<textarea class="vin big" data-k="con_brands" placeholder="Who has reached out. Who I am chasing. What I quoted them.">'
-   +esc(LS("con_brands")||"")+'</textarea>';
-  h+='<div class="hint">Tap plus every time you post — there is no ceiling, five or six a day counts as five or six. '
-   +'Update follower counts when you screenshot your analytics.</div>';
+  h+='<div class="card dk" style="margin-top:14px"><h4>How Each Platform Is Read</h4>'
+   +'<div class="d"><b>YouTube</b> pulls itself. The API key is in Vercel and the '
+   +'scheduled job reads the subscriber count every morning, writing both the '
+   +'current figure and a history point, so its chart builds without you touching '
+   +'it.<br><br>'
+   +'<b>Instagram</b> and <b>TikTok</b> are typed in. Instagram needs a Meta app '
+   +'and a token that expires every sixty days; TikTok keeps follower counts behind '
+   +'an app review. Typing a number records it, so one glance a week is enough.'
+   +'<br><br>The month-by-month figures came off your own Insights screens. Each '
+   +'window was read as a total and the periods derived by subtracting the nested '
+   +'ones, which is why every period is exact and none of them overlap.</div></div>';
   return h;
 }
 
@@ -10525,8 +10864,8 @@ function dialerView(){
   var L=STATE.leads.slice();
   /* a new lead going cold is the most expensive thing here, so they come first
      after the purple list */
-  var order={"New Lead":0,"Warm Lead":1,"Demo No Sale":2,"Joining in Future":3,
-             "Signed Up":4,"Dead Lead":5};
+  var order={};
+  STATUSES.forEach(function(st,i){ order[st]=i; });
   var callable=L.filter(function(x){
       return x.stage!=="Dead Lead" && (dialable(x.phone).ok || findPhone(x.phone));})
     .sort(function(a,b){
@@ -10618,6 +10957,53 @@ function dialerView(){
    stored against the lead's name so it survives a Drive re-read. */
 var OPENLEAD=null;
 function actLoad(n){ return LJ("act_"+keyOf(n),[]); }
+
+/* ============ REMOVING A LEAD FOR GOOD ============
+   Duplicates were unkillable: the pipeline could hide a row but the record stayed
+   in Postgres and came straight back on the next pull. Deleting has to clear
+   BOTH sides — the database row and every local override keyed on the name —
+   otherwise the next sync resurrects it, or worse, a new person with the same
+   name inherits a dead lead's notes and stage.
+
+   Deliberately not undoable. It asks first. */
+var DEL_ASK=null;          /* the name currently awaiting a confirm */
+
+function leadWipeLocal(name){
+  var k=keyOf(name);
+  ["pr_","st_","nt_","lx_","cn_","act_","pay_"].forEach(function(pre){
+    try{ localStorage.removeItem("exodus_"+pre+k); }catch(e){}
+  });
+  /* anything he added by hand lives in its own list */
+  try{
+    var ml=mlLoad().filter(function(x){ return keyOf(x.name)!==k; });
+    mlSave(ml);
+  }catch(e){}
+}
+
+function leadDelete(name){
+  var k=keyOf(name);
+  /* off the screen immediately — waiting on the network to remove a duplicate
+     feels broken */
+  STATE.leads=(STATE.leads||[]).filter(function(L){ return keyOf(L.name)!==k; });
+  SBLEADS=(typeof SBLEADS!=="undefined"&&SBLEADS)
+    ? SBLEADS.filter(function(L){ return keyOf(L.name)!==k; }) : SBLEADS;
+  leadWipeLocal(name);
+  if(OPENLEAD && keyOf(OPENLEAD)===k) OPENLEAD=null;
+  DEL_ASK=null;
+
+  /* and gone from the database, with a WHERE on it */
+  sbRun("delete from lead_activity where name_key="+qv(k)+";"
+       +" delete from payments where name_key="+qv(k)+";"
+       +" delete from leads where name_key="+qv(k)+";");
+  /* a form submission with the same person would re-import them on the next
+     pull, so it is dismissed at the same time */
+  try{ sbRun("update form_submissions set pulled_into_crm=true"
+        +" where lower(trim(coalesce(name,'')))="+qv(k)+";"); }catch(e){}
+
+  refreshContacts();
+  redraw();
+  if(VIEW==="home") drawDash();
+}
 function actAdd(n,txt){
   var a=actLoad(n);
   a.unshift({t:txt,d:new Date().toISOString()});
@@ -10639,7 +11025,14 @@ function leadCard(){
    +'<button class="prdot lcpr'+(pri?" on":"")+'" data-pr="'+esc(L.name)+'" '
    +'title="'+(pri?"Actively pursuing — tap to unflag":"Flag as one you are chasing")+'"></button>'
    +'<span class="lc-nm">'+esc(L.name)+'</span>'+badge(L.stage)
-   +(pri?'<span class="pritag">Actively pursuing</span>':"")+'</div>';
+   +(pri?'<span class="pritag">Actively pursuing</span>':"")
+   +(DEL_ASK===L.name
+      ? '<span class="delask lc">Delete '+esc(L.name)+' for good?'
+        +'<button class="dy" data-delyes="'+esc(L.name)+'">Yes, remove</button>'
+        +'<button class="dn" data-delno="1">Keep</button></span>'
+      : '<button class="lc-del" data-delask="'+esc(L.name)+'" '
+        +'title="Remove this lead completely">Remove lead</button>')
+   +'</div>';
 
   /* the actions he actually takes */
   h+='<div class="lc-act">'
@@ -11410,6 +11803,14 @@ function salesPipe(){
      +'<button class="openlead" data-n="'+esc(x.name)+'" title="Open the full record">'+esc(x.name)+'</button>'
      +(x.flag?'<div class="softflag">'+esc(x.flag)+'</div>':'')
      +(x.manual?'<div class="manualflag" data-mi="'+x.mi+'">added by you · remove</div>':'')
+     /* Killing a duplicate has to be possible from the list itself, and it has to
+        ask, because it is not undoable. */
+     +(DEL_ASK===x.name
+        ? '<div class="delask">Delete for good?'
+          +'<button class="dy" data-delyes="'+esc(x.name)+'">Yes, remove</button>'
+          +'<button class="dn" data-delno="1">Keep</button></div>'
+        : '<button class="delone" data-delask="'+esc(x.name)+'" '
+          +'title="Remove this lead completely">remove</button>')
      +(function(){
         var fd=fuDaysOut(x.name);
         if(fd===null) return "";
@@ -12696,6 +13097,68 @@ function dashToFloor(room,tab){
   renderWins();
 }
 
+/* ============ TODAY'S CHECKLIST ============
+   His own list for the day, one row per item so it can actually be ticked. Kept
+   per date, so yesterday's list is still there and today starts clean.
+
+   Deliberately separate from week_plan: that is the freeform plan Claudia writes,
+   this is the list he crosses off. Both are visible; neither overwrites the
+   other.
+
+   The agents can reach this too — telling Claudia "done for today" ticks
+   everything, which is why it lives in one store rather than in the markup. */
+function dtKey(d){ return "dtasks_"+dkey(d||new Date()); }
+function dtLoad(d){ try{ return JSON.parse(LS(dtKey(d))||"[]")||[]; }catch(e){ return []; } }
+function dtSave(a,d){ LS(dtKey(d), JSON.stringify(a)); SBSAVE("daytasks"); }
+function dtAdd(body){
+  var a=dtLoad();
+  a.push({b:String(body||""), done:false});
+  dtSave(a);
+  return a.length-1;
+}
+function dtToggle(i){
+  var a=dtLoad(); if(!a[i]) return;
+  a[i].done=!a[i].done; dtSave(a);
+}
+function dtSet(i,body){
+  var a=dtLoad(); if(!a[i]) return;
+  a[i].b=String(body||""); dtSave(a);
+}
+function dtDel(i){
+  var a=dtLoad(); if(i<0||i>=a.length) return;
+  a.splice(i,1); dtSave(a);
+}
+/* used by the agents: "everything is done" */
+function dtAllDone(v){
+  var a=dtLoad();
+  a.forEach(function(t){ t.done = (v!==false); });
+  dtSave(a);
+  return a.length;
+}
+function dtOpenCount(){ return dtLoad().filter(function(t){ return !t.done; }).length; }
+function dtDoneCount(){ return dtLoad().filter(function(t){ return t.done; }).length; }
+
+/* Seed the list from the day's plan the first time he opens it, so the checklist
+   is not empty next to a plan that has five things in it. Splits on lines and on
+   full stops, because he writes both ways. */
+function dtSeedFromPlan(){
+  if(dtLoad().length) return 0;
+  var plan=(LS("week_plan_"+new Date().getDay())||"").trim();
+  if(!plan) return 0;
+  /* Lookbehind ((?<=\.)) is not safe on older Safari and this app has been
+     bitten by Safari before, so split on newlines then on ". " by hand. */
+  var bits=[];
+  plan.split(/\n+/).forEach(function(line){
+    line.replace(/\.\s+/g, ".\u0001").split("\u0001").forEach(function(part){
+      var t=part.replace(/^[-*\u2022\s]+/,"").trim();
+      if(t.length>2) bits.push(t);
+    });
+  });
+  if(!bits.length) return 0;
+  dtSave(bits.map(function(b){ return {b:b, done:false}; }));
+  return bits.length;
+}
+
 /* ---- the pieces of today ---- */
 function todayPlan(){ return (LS("week_plan_"+new Date().getDay())||"").trim(); }
 function todayDone(){ return LS("week_done_"+new Date().getDay())==="1"; }
@@ -12770,6 +13233,440 @@ function latestWeight(){
    exact cost breakdowns with receipts, "things I wish I knew before", hyper-local
    food under a minute, and a journey with a beginning and an end — the arc Itchy
    Boots turned into 2.5 million subscribers. */
+/* ============ CONTENT ANALYTICS ============
+   Instagram and TikTok carry the business, YouTube is third — that is the order
+   they appear in. PLATS is left alone because the studio uses it elsewhere.
+
+   Everything here is computed from social_history, which gets a row per platform
+   per day. Nothing is invented: where there is no history there is no line, and
+   it says so rather than drawing a flattering curve out of a single reading. */
+var ANALYTICS_ORDER=[
+  {k:"ig",     db:"instagram", nm:"Instagram", goal:10000, col:"#e1306c"},
+  {k:"tiktok", db:"tiktok",    nm:"TikTok",    goal:10000, col:"#ff2d55"},
+  {k:"yt",     db:"youtube",   nm:"YouTube",   goal:1000,  col:"#ff4444"}
+];
+
+function folNow(k){ return parseInt(LS("fol_"+k)||"0",10)||0; }
+
+/* 9,302,600 does not belong on a dashboard card. 9.3M does. */
+function abbr(n){
+  n=Number(n)||0;
+  if(n>=1e9) return (n/1e9).toFixed(n>=1e10?0:1).replace(/\.0$/,"")+"B";
+  if(n>=1e6) return (n/1e6).toFixed(n>=1e7?0:1).replace(/\.0$/,"")+"M";
+  if(n>=1e4) return Math.round(n/1e3)+"K";
+  if(n>=1e3) return (n/1e3).toFixed(1).replace(/\.0$/,"")+"K";
+  return String(n);
+}
+/* a follower delta, and the colour that goes with it */
+function dfmt(d){ return d===null||d===undefined ? "&mdash;"
+  : (d>0?"+":"")+Number(d).toLocaleString(); }
+function dcls(d){ return d===null||d===undefined ? "" : (d>0?"g":d<0?"r":""); }
+/* "2026-05-29" -> "29 May" */
+function shortDate(iso){
+  var s2=String(iso||"").slice(0,10).split("-");
+  if(s2.length<3) return String(iso||"");
+  var m=parseInt(s2[1],10)-1;
+  return parseInt(s2[2],10)+" "+(MON[m]||"").slice(0,3);
+}
+
+/* Every reading we have, oldest first, as {key:"YYYY-MM-DD", n:number}. The live
+   number is appended so the line always ends at today even before today's
+   history row exists. */
+function folSeries(k){
+  var full=(PLAT_FULL[k]||k);
+  var out=folHist().filter(function(x){ return x.p===full; })
+    .map(function(x){ return { key:String(x.d).slice(0,10), n:Number(x.n)||0 }; })
+    .sort(function(a,b){ return a.key.localeCompare(b.key); });
+  var today=dkey(new Date()), now=folNow(k);
+  if(out.length && out[out.length-1].key===today) out[out.length-1].n=now;
+  else if(now) out.push({ key:today, n:now });
+  return out;
+}
+/* change over n days, or null when there is not enough history to be honest */
+function folDelta(k,days){
+  var s2=folSeries(k);
+  if(s2.length<2) return null;
+  var cut=new Date(); cut.setDate(cut.getDate()-days);
+  var cutKey=dkey(cut), base=null;
+  for(var i=0;i<s2.length;i++){ if(s2[i].key<=cutKey) base=s2[i]; }
+  if(!base) base=s2[0];
+  var last=s2[s2.length-1];
+  if(base===last) return null;
+  return last.n-base.n;
+}
+/* followers a day, measured over whatever history exists */
+function folPerDay(k){
+  var s2=folSeries(k);
+  if(s2.length<2) return null;
+  var a=s2[0], b=s2[s2.length-1];
+  var days=Math.max(1, Math.round(
+    (new Date(b.key+"T12:00:00")-new Date(a.key+"T12:00:00"))/86400000));
+  return (b.n-a.n)/days;
+}
+/* On this pace, does he hit the goal before the flight? null when unknowable. */
+function folEta(k,goal){
+  var per=folPerDay(k), now=folNow(k);
+  if(per===null || per<=0 || now>=goal) return null;
+  var days=Math.ceil((goal-now)/per);
+  var when=new Date(); when.setDate(when.getDate()+days);
+  return { days:days, when:when, beatsBangkok: when<=BANGKOK };
+}
+/* what he needs per day from here to make the goal by 5 December */
+function folNeedPerDay(k,goal){
+  var left=Math.max(0, goal-folNow(k));
+  var days=Math.max(1, Math.ceil((BANGKOK-new Date())/86400000));
+  return left/days;
+}
+
+/* ---- views a day, period by period ----
+   The follower chart needs follower readings, and TikTok's Insights screens never
+   show a follower total — only views. But he HAS sent four periods of view data,
+   so the card can carry a real chart today by plotting the metric he actually has.
+   Each period becomes one point at its midpoint, valued at views per day, so
+   uneven period lengths compare fairly. */
+function reachSeries(k){
+  return reachRows(k).map(function(r){
+    var s2=new Date(String(r.s)+"T12:00:00"), e2=new Date(String(r.e)+"T12:00:00");
+    var mid=new Date((s2.getTime()+e2.getTime())/2);
+    return { key:dkey(mid), n:Math.round(Number(r.v||0)/Number(r.days||1)),
+             label:shortDate(r.s)+" - "+shortDate(r.e) };
+  }).filter(function(x){ return x.n>0; });
+}
+
+/* Which chart a card shows. Followers when there is a real curve, otherwise the
+   view data — never an empty box when there is something true to draw. */
+var CHART_MODE={};        /* per platform: "fol" | "reach" */
+function chartMode(k){
+  if(CHART_MODE[k]) return CHART_MODE[k];
+  return folSeries(k).length>1 ? "fol" : (reachSeries(k).length>1 ? "reach" : "fol");
+}
+
+/* ---- the chart ----
+   A small area chart drawn as SVG. Single readings and flat lines are handled
+   explicitly: one point draws nothing, because a straight line implies a trend
+   that has not been measured. */
+function folChart(k,col,w,h){
+  var mode=chartMode(k);
+  var s2 = mode==="reach" ? reachSeries(k) : folSeries(k);
+  w=w||300; h=h||64;
+  if(!s2.length) return '<div class="chart-none">No readings yet</div>';
+  if(s2.length===1) return '<div class="chart-none">'
+    +(mode==="reach" ? "One period on record" : "First reading logged")
+    +' &middot; '+(mode==="reach" ? "add another window and the line starts"
+                                  : "log again tomorrow and the line starts")+'</div>';
+
+  var lo=Math.min.apply(null,s2.map(function(p){return p.n;}));
+  var hi=Math.max.apply(null,s2.map(function(p){return p.n;}));
+  var span=Math.max(1,hi-lo), pad=span*0.18;
+  lo-=pad; hi+=pad;
+  var X=function(i){ return (i/(s2.length-1))*(w-2)+1; };
+  var Y=function(n){ return h-2-((n-lo)/(hi-lo))*(h-6); };
+
+  var line=s2.map(function(p,i){
+    return (i?"L":"M")+X(i).toFixed(1)+" "+Y(p.n).toFixed(1); }).join(" ");
+  var area=line+" L"+X(s2.length-1).toFixed(1)+" "+h+" L"+X(0).toFixed(1)+" "+h+" Z";
+  var gid="cg"+k+Math.round(w);
+  var up=s2[s2.length-1].n>=s2[0].n;
+
+  return '<div class="chartbox'+(up?"":" dn")+'">'
+    +'<span class="chart-t">'+(mode==="reach"?"views a day":"followers")+'</span>'
+    +'<svg class="chart" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" '
+    +'role="img" aria-label="follower growth">'
+    +'<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0" stop-color="'+col+'" stop-opacity=".34"/>'
+    +'<stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
+    +'<path d="'+area+'" fill="url(#'+gid+')"/>'
+    +'<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2" '
+    +'stroke-linecap="round" stroke-linejoin="round"/>'
+    +'<circle cx="'+X(s2.length-1).toFixed(1)+'" cy="'+Y(s2[s2.length-1].n).toFixed(1)+'" '
+    +'r="3" fill="'+col+'"/></svg>'
+    +'<span class="chart-n">'+s2.length+' readings</span></div>';
+}
+
+/* Log today's numbers into history. This is the one action that turns a figure he
+   typed into a trend. */
+function folLogToday(){
+  var d=dkey(new Date()), rows=[];
+  ANALYTICS_ORDER.forEach(function(pl){
+    var n=folNow(pl.k);
+    if(n) rows.push({ p:pl.db, d:d, n:n });
+  });
+  if(!rows.length) return 0;
+  var keep=folHist().filter(function(x){ return String(x.d).slice(0,10)!==d; });
+  LS("fol_hist", JSON.stringify(keep.concat(rows)));
+  SBSAVE("folhist");
+  return rows.length;
+}
+
+/* ---- reach and engagement ----
+   The follower count is the goal, but reach is the leading indicator: views fall
+   first, then followers stop. These come off his own Insights screens, derived by
+   subtracting nested windows, so every period is exact. */
+function reachRows(k){
+  var full=(PLAT_FULL[k]||k);
+  try{
+    return (JSON.parse(LS("fol_reach")||"[]")||[])
+      .filter(function(x){ return x.p===full; })
+      .sort(function(a,b){ return String(a.s).localeCompare(String(b.s)); });
+  }catch(e){ return []; }
+}
+/* the most recent period, and the one before it, for a like-for-like comparison */
+function reachLatest(k){
+  var r=reachRows(k);
+  return r.length ? r[r.length-1] : null;
+}
+function reachPerDay(row){
+  if(!row||!row.days) return null;
+  return Math.round(Number(row.v||0)/Number(row.days));
+}
+/* Views a day over the last 30 days of recorded periods, and the 30 before that.
+   Periods are uneven, so this weights by days rather than averaging averages. */
+function reachWindow(k, backDays, spanDays){
+  var rows=reachRows(k);
+  if(!rows.length) return null;
+  var end=new Date(); end.setDate(end.getDate()-backDays);
+  var start=new Date(end); start.setDate(start.getDate()-spanDays);
+  var v=0, d=0, nf=0;
+  rows.forEach(function(row){
+    var rs=new Date(String(row.s)+"T12:00:00"), re=new Date(String(row.e)+"T12:00:00");
+    /* how much of this period lands inside the window */
+    var lo=rs>start?rs:start, hi=re<end?re:end;
+    var overlap=Math.round((hi-lo)/86400000)+1;
+    if(overlap<=0) return;
+    var frac=overlap/Number(row.days||1);
+    v+=Number(row.v||0)*Math.min(1,frac);
+    if(row.nf!==null&&row.nf!==undefined) nf+=Number(row.nf)*Math.min(1,frac);
+    d+=Math.min(overlap, Number(row.days||1));
+  });
+  if(!d) return null;
+  return { views:Math.round(v), days:d, perDay:Math.round(v/d), net:Math.round(nf) };
+}
+/* Is reach accelerating or falling off a cliff? Compared like for like. */
+function reachMomentum(k){
+  var now=reachWindow(k,0,30), before=reachWindow(k,30,30);
+  if(!now||!before||!before.perDay) return null;
+  var pct=(now.perDay-before.perDay)/before.perDay*100;
+  var label = pct>=25 ? "Accelerating"
+            : pct>=-10 ? "Holding"
+            : pct>=-50 ? "Slowing"
+            : "Falling hard";
+  var cls   = pct>=25 ? "up" : pct>=-10 ? "flat" : pct>=-50 ? "down" : "bad";
+  return { pct:Math.round(pct), label:label, cls:cls,
+           now:now.perDay, before:before.perDay };
+}
+/* Everything on record, for the twelve-month headline. */
+function reachTotal(k, field){
+  return reachRows(k).reduce(function(t,r){ return t+Number(r[field]||0); },0);
+}
+
+/* The analytics section, built once and rendered in two places: the dashboard
+   and the Content Studio inside the building. Same function, same store, so
+   they can never disagree. */
+function analyticsSection(){
+  var h="";
+  var now=new Date();
+/* ============ CONTENT ANALYTICS ============
+     Followers are the goal; reach is the leading indicator. Views fall first,
+     then followers stop — so both are on the card, side by side, and the momentum
+     badge compares the last 30 days against the 30 before on a per-day basis so
+     uneven reporting windows cannot flatter the number. */
+    var total=ANALYTICS_ORDER.reduce(function(t,pl){ return t+folNow(pl.k); },0);
+    var w30=ANALYTICS_ORDER.reduce(function(t,pl){
+      var d2=folDelta(pl.k,30); return t+(d2||0); },0);
+    var reach30=ANALYTICS_ORDER.reduce(function(t,pl){
+      var w=reachWindow(pl.k,0,30); return t+(w?w.views:0); },0);
+    var viewsAll=ANALYTICS_ORDER.reduce(function(t,pl){
+      return t+reachTotal(pl.k,"v"); },0);
+
+    h+='<div class="sec"><div class="sec-h">'
+      +'<h2>Content Analytics</h2>'
+      +'<span class="sec-s">Instagram and TikTok are the engine. YouTube is the long game.</span>'
+      +'<button class="sec-b" id="an-log" title="Record today\'s numbers">Log today</button>'
+      +'<button class="sec-b" data-dgo="content|0">Studio</button>'
+      +'</div>';
+
+    /* ---- followers and views. Nothing else. ----
+       No countdown, no goal arithmetic: he asked for the numbers, not the
+       nagging. Every figure here is a measurement. */
+    var nf30=ANALYTICS_ORDER.reduce(function(t,pl){
+      var w=reachWindow(pl.k,0,30); return t+(w&&w.net!==null?w.net:0); },0);
+    h+='<div class="anrow">'
+      +'<div class="an-big">'
+        +'<span class="an-k">Total Following</span>'
+        +'<b>'+total.toLocaleString()+'</b>'
+        +'<i>'+(w30 ? '<span class="'+(w30>=0?"gu":"gd")+'">'+(w30>0?"+":"")
+              +w30.toLocaleString()+'</span> in 30 days' : "across all three")+'</i>'
+      +'</div>'
+      +'<div class="an-big">'
+        +'<span class="an-k">Total Views</span>'
+        +'<b class="b">'+(viewsAll?abbr(viewsAll):"&mdash;")+'</b>'
+        +'<i>everything on record</i>'
+      +'</div>'
+      +'<div class="an-big">'
+        +'<span class="an-k">Views, 30 Days</span>'
+        +'<b>'+(reach30?abbr(reach30):"&mdash;")+'</b>'
+        +'<i>'+(reach30?Math.round(reach30/30).toLocaleString()+" a day":"no data yet")+'</i>'
+      +'</div>'
+      +'<div class="an-big">'
+        +'<span class="an-k">New Followers, 30 Days</span>'
+        +'<b class="'+(nf30>0?"g":nf30<0?"r":"")+'">'
+        +(nf30>0?"+":"")+nf30.toLocaleString()+'</b>'
+        +'<i>across all three</i>'
+      +'</div></div>';
+
+    /* ---- one card per platform ---- */
+    h+='<div class="plats">';
+    ANALYTICS_ORDER.forEach(function(pl,idx){
+      var nowN=folNow(pl.k);
+      var pct=Math.min(100, pl.goal?Math.round(nowN/pl.goal*100):0);
+      var d7=folDelta(pl.k,7), d30=folDelta(pl.k,30), d90=folDelta(pl.k,90);
+      var per=folPerDay(pl.k);
+      var needP=folNeedPerDay(pl.k,pl.goal);
+      var eta=folEta(pl.k,pl.goal);
+      var st=folStatus(pl.k);
+      var mo=reachMomentum(pl.k);
+      var rw=reachWindow(pl.k,0,30);
+      var yr=reachTotal(pl.k,"v");
+      var pv=reachTotal(pl.k,"pv");
+
+      h+='<div class="plat'+(idx===2?" third":"")+'" style="--pc:'+pl.col+'">'
+        +'<div class="plat-h">'
+          +'<span class="plat-nm">'+pl.nm+'</span>'
+          +(mo?'<span class="mom '+mo.cls+'" title="'+esc(mo.now.toLocaleString()
+              +' views a day now, against '+mo.before.toLocaleString()
+              +' the 30 days before')+'">'+mo.label+'</span>':'')
+          +'<span class="conn'+(st.live?" live":"")+'" title="'+esc(st.why)+'">'
+          +(st.live?'<span class="cdot"></span>':'')+st.label+'</span>'
+        +'</div>'
+
+        /* followers, and the gap */
+        +'<div class="plat-n">'
+          +'<input class="folbig" data-k="fol_'+pl.k+'" value="'+(nowN||"")+'" '
+          +'inputmode="numeric" placeholder="0" title="Type your follower count">'
+          +'<span class="plat-goal">of '+pl.goal.toLocaleString()
+          +'<em>'+Math.max(0,pl.goal-nowN).toLocaleString()+' to go</em></span>'
+        +'</div>'
+        +'<button class="chart-hit" data-platopen="'+pl.k+'" '
+        +'title="Tap for the periods behind this line">'
+        +folChart(pl.k,pl.col,300,64)+'</button>' 
+        +'<div class="plat-bar" title="'+pct+'% of the way to '+pl.goal.toLocaleString()+'">'
+        +'<span style="width:'+pct+'%"></span></div>'
+
+        /* follower movement */
+        +'<div class="plat-stats">'
+          +'<span><b class="'+dcls(d7)+'">'+dfmt(d7)+'</b>7 days</span>'
+          +'<span><b class="'+dcls(d30)+'">'+dfmt(d30)+'</b>30 days</span>'
+          +'<span><b class="'+dcls(d90)+'">'+dfmt(d90)+'</b>90 days</span>'
+          +'<span><b class="'+(per!==null&&per>=needP?"g":"a")+'">'
+            +(per===null?"&mdash;":(per>=0?"+":"")+per.toFixed(1))+'</b>a day</span>'
+        +'</div>'
+
+        /* reach — the leading indicator */
+        +(rw||yr
+          ? '<div class="reach">'
+            +'<div class="reach-h">Reach</div>'
+            +'<div class="reach-g">'
+              +'<span><b>'+(rw?abbr(rw.views):"&mdash;")+'</b>views, 30d</span>'
+              +'<span><b>'+(rw?rw.perDay.toLocaleString():"&mdash;")+'</b>a day</span>'
+              +'<span><b>'+(yr?abbr(yr):"&mdash;")+'</b>on record</span>'
+              +'<span><b>'+(pv?abbr(pv):"&mdash;")+'</b>profile views</span>'
+            +'</div></div>'
+          : '')
+
+        +(eta
+          ? '<div class="plat-eta '+(eta.beatsBangkok?"good":"late")+'">'
+            +(eta.beatsBangkok?"On pace &middot; ":"Too slow &middot; ")
+            +pl.goal.toLocaleString()+' in '+eta.days+' days, '
+            +MON[eta.when.getMonth()].slice(0,3)+' '+eta.when.getDate()+'</div>'
+          : (per!==null && per<=0
+             ? '<div class="plat-eta late">Flat or falling &middot; needs '
+               +Math.ceil(needP)+' a day to make it</div>'
+             : ''))
+        +(PLAT_OPEN===pl.k ? platDetail(pl) : '')
+        +'</div>';
+    });
+    h+='</div>';
+
+    /* The period-by-period table is gone. The numbers it held now live on the
+       cards themselves, and a second table of the same figures was just more to
+       read. The data is still in social_reach, still driving the charts. */
+
+    var anyHist=ANALYTICS_ORDER.some(function(pl){ return folSeries(pl.k).length>1; });
+    if(!anyHist)
+      h+='<div class="an-hint">Type your follower counts and they record themselves. '
+        +'Two readings and the growth lines, the per-day pace and the 10k date all '
+        +'start working.</div>';
+    h+='</div>';
+
+
+  return h;
+}
+
+/* Which platform card is expanded, or null. Tapping a chart opens the detail —
+   the periods behind the line, and nothing else. He asked for useful, not
+   exhaustive. */
+var PLAT_OPEN=null;
+
+function platDetail(pl){
+  var rows=reachRows(pl.k);
+  var fol=folSeries(pl.k);
+  if(!rows.length && fol.length<2)
+    return '<div class="pd-none">Nothing recorded for '+esc(pl.nm)+' yet.</div>';
+
+  var h='<div class="pdet">';
+
+  /* the follower curve, bigger, with the actual numbers on it */
+  if(fol.length>1){
+    var first=fol[0], last=fol[fol.length-1];
+    h+='<div class="pd-h">Followers</div>'
+      +'<div class="pd-line">'+folChartBig(pl.k,pl.col)+'</div>'
+      +'<div class="pd-row"><span>'+esc(shortDate(first.key))+'</span>'
+      +'<b>'+first.n.toLocaleString()+'</b>'
+      +'<span>&rarr;</span><b>'+last.n.toLocaleString()+'</b>'
+      +'<span class="'+(last.n>=first.n?"gu":"gd")+'">'
+      +(last.n>=first.n?"+":"")+(last.n-first.n).toLocaleString()+'</span></div>';
+  }
+
+  /* every period, exact and non-overlapping */
+  if(rows.length){
+    h+='<div class="pd-h">Period by period</div><div class="pd-tab">';
+    rows.slice().reverse().forEach(function(r){
+      var pd=reachPerDay(r);
+      h+='<div class="pd-t">'
+        +'<span class="pd-when">'+esc(shortDate(r.s))+' &ndash; '+esc(shortDate(r.e))
+          +'<em>'+r.days+' days</em></span>'
+        +'<span class="pd-v"><b>'+(r.v?abbr(r.v):"&mdash;")+'</b>views</span>'
+        +'<span class="pd-v"><b>'+(pd?pd.toLocaleString():"&mdash;")+'</b>a day</span>'
+        +'<span class="pd-v"><b class="'
+          +(r.nf===null||r.nf===undefined?"":(Number(r.nf)>=0?"g":"r"))+'">'
+          +(r.nf===null||r.nf===undefined?"&mdash;"
+            :(Number(r.nf)>0?"+":"")+Number(r.nf).toLocaleString())+'</b>followers</span>'
+        +(r.pv?'<span class="pd-v"><b>'+abbr(r.pv)+'</b>profile views</span>':'')
+        +'</div>';
+    });
+    h+='</div>';
+  }
+  h+='<div class="pd-src">Read from your own Insights screens. Each period is '
+    +'exact and does not overlap the next.</div>';
+  return h+'</div>';
+}
+/* the same chart, taller, for the detail panel */
+function folChartBig(k,col){ return folChart(k,col,600,110); }
+
+/* Is a platform actually wired to its API, and if not, why not. Said plainly — a
+   dashboard implying a connection it does not have is worse than one that
+   admits it. */
+function folStatus(k){
+  if(folIsLive(k)) return { live:true, label:"Live",
+    why:"Pulled automatically every morning." };
+  if(k==="yt") return { live:false, label:"Manual",
+    why:"Can be automatic: add YOUTUBE_API_KEY in Vercel and it refreshes daily." };
+  if(k==="ig") return { live:false, label:"Manual",
+    why:"Needs a Meta app and a token that expires every 60 days." };
+  return { live:false, label:"Manual",
+    why:"TikTok keeps follower counts behind an app review. Type it in." };
+}
+
 /* ============ MEETINGS AND CALLS ============
    His own booking list, deliberately separate from Google Calendar: it needs no
    tokens at all, and it holds the two things a calendar entry does not — the
@@ -12870,23 +13767,12 @@ function folIsLive(k){
   var r=folSrc()[PLAT_FULL[k]||k];
   return !!(r && r.src==="api");
 }
-/* change over the last n days, from whatever history we have. null when there
-   is not enough history to say anything honest. */
-function folGrowth(k,days){
-  var full=PLAT_FULL[k]||k;
-  var rows=folHist().filter(function(x){ return x.p===full; });
-  if(rows.length<2) return null;
-  var cutoff=new Date(); cutoff.setDate(cutoff.getDate()-(days||7));
-  var older=null;
-  for(var i=0;i<rows.length;i++){
-    var d=new Date(String(rows[i].d)+"T12:00:00");
-    if(d<=cutoff) older=rows[i];
-  }
-  if(!older) older=rows[0];
-  var latest=rows[rows.length-1];
-  if(older===latest) return null;
-  return Number(latest.n)-Number(older.n);
-}
+/* Change over the last n days. There were two of these and they disagreed: this
+   one compared a reading anchored at midday against a cutoff carrying the current
+   time of day, so a reading dated exactly n days ago fell on the wrong side and
+   the delta reached one window too far back. folDelta compares date strings, which
+   has no time-of-day to get wrong, so that is the only one now. */
+function folGrowth(k,days){ return folDelta(k,days||7); }
 
 /* Everyone with a date on their record, newest first. cameInRaw is either
    YYYY-MM-DD or YYYY-MM, so a month-only entry sorts as the first of that
@@ -12909,287 +13795,330 @@ function kcalToday(){
   return fdToday().reduce(function(t,m){ var v=parseFloat(m.kcal); return t+(isNaN(v)?0:v); },0);
 }
 
+/* ============================================================
+   THE DASHBOARD
+   Order is deliberate and it is Glen's: what he is building (content), then what
+   pays for it (the dialer and the CRM), then what is booked, then the day, then
+   the slower stuff. Analytics leads because the 10k goal is the whole reason the
+   Discord has anyone in it.
+   ============================================================ */
+var WEEK_EDIT=false;        /* the week is read-only until he says otherwise */
+
 function dashView(){
   weekRoll();
   var now=new Date(), today=now.getDay();
   var m=money();
-  var lab=dayLabel(today), isAmz=/amazon/i.test(lab);
-  var plan=todayPlan(), tick=todayDone();
   var days=Math.max(0,Math.ceil((BANGKOK-now)/86400000));
+  var h="";
 
-  /* ================= TODAY ================= */
-  var h='<div class="dsh-hero">';
-  h+='<div class="dsh-today'+(isAmz?" amz":"")+(tick?" tick":"")+'">'
-   +'<div class="dt-top"><span class="dt-day">'+DAYFULL[today]+'</span>'
-   +'<span class="dt-dat">'+MON[now.getMonth()].slice(0,3)+' '+now.getDate()+'</span>'
-   +'<span class="dt-tag '+(isAmz?"amz":"off")+'">'+esc(lab)+'</span></div>'
-   +'<div class="dt-plan'+(plan?"":" none")+'">'
-   +(plan?esc(plan):"Nothing written for today yet. Ask Claudia to map the week.")+'</div>'
-   +'<div class="dt-act">'
-     +'<button class="dt-tk'+(tick?" on":"")+'" id="d-tick">'
-     +(tick?"&#10003; Day done":"Mark today done")+'</button>'
-     +'<button class="dt-tk" id="d-week">Open the week</button>'
-     +'<button class="dt-tk" id="d-plan">Ask Claudia to plan it</button>'
-   +'</div></div>';
+  /* ============ 1. EXODUS CRM  —  the money ============
+     Sales is the top of the page because it is the top of the business.
+     Cash first, then the pipeline, then who came in, then who to ring. */
+  (function(){
+    var recent=recentLeads();
+    var sc2=stageCounts(), tot2=0;
+    STATUSES.forEach(function(st){ tot2+=sc2[st]||0; });
+    h+='<div class="sec"><div class="sec-h"><h2>Exodus CRM</h2>'
+      +'<span class="sec-s">'+tot2+' leads &middot; '+prCount()+' on the purple list &middot; '
+      +'$'+m.collected.toLocaleString()+' collected</span>'
+      +'<a class="sec-b script" href="'+SCRIPT_URL+'" target="_blank" rel="noopener">'
+      +'Sales Script</a>'
+      +'<button class="sec-b" data-dgo="sales|5">Dialer</button>'
+      +'<button class="sec-b hot" data-dgo="sales|1">Open Full CRM</button></div>';
 
-  /* ---- what is actually on fire ---- */
-  var due=dueNow();
-  h+='<div class="dsh-next"><div class="dn-h">Today&rsquo;s Tasks</div>';
-  var rows=[];
-  due.slice(0,4).forEach(function(x){
-    rows.push(['#d4736f', x.L.name,
-      x.days<0 ? Math.abs(x.days)+"d late" : "today"]);
-  });
-  if(m.chase>0) rows.push(['#c9a25c', "$"+m.chase.toLocaleString()+" still to collect",
-    (function(){ var n=(STATE.leads||[]).filter(function(L){return L.owed>0&&!L.deferred;}).length;
-      return n+(n===1?" person":" people"); })()]);
-  var noPlan=0;
-  for(var c2=today;c2<7;c2++) if(!(LS("week_plan_"+c2)||"").trim()) noPlan++;
-  if(noPlan) rows.push(['#8fb3e8', noPlan+(noPlan===1?" day":" days")+" left blank this week","the week"]);
-  var ttf=parseInt(LS("fol_tiktok")||"0",10);
-  var posted=0; PLATS.forEach(function(pl){ posted+=parseInt(LS(postKey(pl.k))||"0",10); });
-  if(!posted) rows.push(['#ff2d55',"Nothing posted yet today","3 platforms"]);
-  if(!rows.length) h+='<div class="dn-clear">Nothing overdue, nothing owed, every day written. '
-    +'Go and make content.</div>';
-  else rows.slice(0,6).forEach(function(r){
-    h+='<div class="dn-row"><span class="dn-dot" style="background:'+r[0]+'"></span>'
-      +'<b>'+esc(r[1])+'</b><i>'+esc(r[2])+'</i></div>';
-  });
-  h+='</div></div>';
+    /* the money lives here, next to the people it comes from */
+    h+='<div class="crmmoney">'
+      +'<div class="cm"><span>Cash Collected</span><b class="g">$'
+        +m.collected.toLocaleString()+'</b><i>'+memberCount()+' paying</i></div>'
+      +'<div class="cm"><span>Still To Collect</span><b class="'+(m.chase?"a":"")+'">$'
+        +m.chase.toLocaleString()+'</b><i>already sold</i></div>'
+      +'<div class="cm"><span>Contingent</span><b>$'+m.conting.toLocaleString()+'</b>'
+        +'<i>once placed</i></div>'
+      +'<div class="cm"><span>New This Week</span><b class="b">'+newThisWeek()+'</b>'
+        +'<i>came in</i></div></div>';
 
-  /* ================= THE SEVEN DAYS ================= */
-  /* He types the week here, not just in the office. Same keys, same save path —
-     the office tab and this are two views of one thing. */
-  h+='<div class="dsh-week">';
-  for(var i=0;i<7;i++){
-    var dl=dayLabel(i), amz=/amazon/i.test(dl);
-    var dn=LS("week_done_"+i)==="1", pl2=(LS("week_plan_"+i)||"");
-    h+='<div class="dw-d'+(i===today?" now":"")+(dn?" done":"")+(amz?" amz":"")+'">'
-      +'<div class="dw-n"><span>'+DAYS[i]+(i===today?" &middot; today":"")+'</span>'
-      +'<button class="dw-ck'+(dn?" on":"")+'" data-dwck="'+i+'" '
-      +'title="'+(dn?"Done — tap to undo":"Mark the day done")+'">'
-      +(dn?"&#10003;":"")+'</button></div>'
-      +'<input class="dw-lab-i'+(amz?" amz":"")+'" data-dwl="'+i+'" value="'+esc(dl)+'" '
-      +'placeholder="Amazon / Off / Filming">'
-      +'<textarea class="dw-pi" data-dwp="'+i+'" rows="3" placeholder="'
-      +(amz?"Post before shift. 20 DMs on break.":"3 videos. 10 outreach calls.")+'">'
-      +esc(pl2)+'</textarea>'
-      +'</div>';
-  }
-  h+='</div>';
+    /* stage strip */
+    h+='<div class="stgstrip">';
+    STATUSES.forEach(function(st){
+      var n=sc2[st]||0;
+      h+='<button class="sg" data-dgo="sales|1" style="--sc:'+scol(st).hex+'">'
+        +'<b>'+n+'</b><i>'+esc(st)+'</i></button>';
+    });
+    h+='</div>';
 
-  /* ================= THE FOUR NUMBERS ================= */
-  h+='<div class="dsh-kpi">'
-   +'<div class="dk-c" data-dgo="office|4"><div class="dk-h">Cash Collected</div>'
-     +'<div class="dk-v g">$'+m.collected.toLocaleString()+'</div>'
-     +'<div class="dk-d">'+memberCount()+' paying member'+(memberCount()===1?"":"s")+'</div></div>'
-   +'<div class="dk-c" data-dgo="sales|1"><div class="dk-h">Still To Collect</div>'
-     +'<div class="dk-v'+(m.chase>0?" a":"")+'">$'+m.chase.toLocaleString()+'</div>'
-     +'<div class="dk-d">'+prCount()+' on the purple list</div></div>'
-   +'<div class="dk-c" data-dgo="content|0"><div class="dk-h">TikTok</div>'
-     +'<div class="dk-v b">'+ttf.toLocaleString()+'</div>'
-     +'<div class="dk-d">'+Math.max(0,10000-ttf).toLocaleString()+' to 10k</div></div>'
-   +'<div class="dk-c" data-dgo="office|0"><div class="dk-h">Days To Bangkok</div>'
-     +'<div class="dk-v">'+days+'</div>'
-     +'<div class="dk-d">5 December 2026</div></div>'
-   +'</div>';
+    h+='<div class="dp"><div class="dp-h"><div class="dp-t">Newest In'
+      +'<em>'+recent.length+' dated</em></div>'
+      +'<button class="dp-go" data-dgo="sales|3">Front Desk</button></div>'
+      +'<div class="dp-b tight"><div class="dp-scr">';
+    if(!recent.length) h+='<div class="dp-none">No lead has a date on it yet. '
+      +'Form submissions get one automatically.</div>';
+    else recent.slice(0,12).forEach(function(L){
+      var ph=(cnGet(L.name).p || L.phone || "");
+      var can=dialable(ph).ok;
+      var st=stageFix(L.stage||"New Lead");
+      h+='<div class="dcall">'
+        +(prGet(L.name)?'<span class="prdot2"></span>':'')
+        +'<div class="who"><b>'+esc(L.name)+'</b>'
+        +'<i><span class="stgchip" style="color:'+scol(st).dot+';border-color:'
+        +scol(st).hex+'55">'+esc(st)+'</span> '+esc(cameLabel(L.name))+'</i></div>'
+        +(DEL_ASK===L.name
+          ? '<span class="delask"><button class="dy" data-delyes="'+esc(L.name)+'">Remove</button>'
+            +'<button class="dn" data-delno="1">Keep</button></span>'
+          : '<button class="delone" data-delask="'+esc(L.name)+'">remove</button>')
+        +'<button class="dbtn" data-ddial="'+esc(L.name)+'" data-dtel="'+esc(ph)+'"'
+        +(can?'':' disabled')+'>CALL</button>'
+        +'</div>';
+    });
+    h+='</div></div></div></div>';
+  })();
 
-  /* ================= THE PANELS ================= */
-  h+='<div class="dsh-grid">';
+  /* ============ 2. THE DIALER  —  part of the same section ============ */
+  (function(){
+    var ct=callToday();
+    h+='<div class="sec"><div class="sec-h"><h2>Dialer</h2>'
+      +'<span class="sec-s">'+ct.length+' to ring &middot; overdue first, then the purple list, '
+      +'then anyone who owes</span>'
+      +'<button class="sec-b" data-dgo="sales|5">Full Dialer</button></div>';
+    h+='<div class="dp"><div class="dp-b tight"><div class="dp-scr">';
+    if(!ct.length) h+='<div class="dp-none">Nobody overdue and nobody owing. '
+      +'Go and make content.</div>';
+    else ct.slice(0,14).forEach(function(x){
+      var ph=(cnGet(x.L.name).p || x.L.phone || "");
+      var can=dialable(ph).ok;
+      var st=stageFix(x.L.stage||"New Lead");
+      h+='<div class="dcall">'
+        +(prGet(x.L.name)?'<span class="prdot2"></span>':'')
+        +'<div class="who"><b>'+esc(x.L.name)+'</b>'
+        +'<i><span class="stgchip" style="color:'+scol(st).dot+';border-color:'
+        +scol(st).hex+'55">'+esc(st)+'</span> '+esc(x.why)
+        +(ph?' &middot; '+esc(fmtPhone(ph)):' &middot; no number')+'</i></div>'
+        +(x.L.owed>0?'<span class="owe">$'+x.L.owed.toLocaleString()+'</span>':'')
+        +'<button class="dbtn" data-ddial="'+esc(x.L.name)+'" data-dtel="'+esc(ph)+'"'
+        +(can?'':' disabled')+'>CALL</button>'
+        +'</div>';
+    });
+    h+='</div></div></div></div>';
+  })();
 
-  /* ---- who to call ---- */
-  var ct=callToday();
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Call These People'
-    +'<em>'+ct.length+'</em></div>'
-    +'<button class="dp-go" data-dgo="sales|5">Dialer</button></div>'
-    +'<div class="dp-b tight"><div class="dp-scr">';
-  if(!ct.length) h+='<div class="dp-none">Nobody overdue and nobody owing. Go and find new leads.</div>';
-  else ct.slice(0,12).forEach(function(x){
-    /* the number he last typed on the record wins over whatever the sheet said */
-    var ph=(cnGet(x.L.name).p || x.L.phone || "");
-    var can=dialable(ph).ok;
-    h+='<div class="dcall">'
-      +(prGet(x.L.name)?'<span class="prdot2"></span>':'')
-      +'<div class="who"><b>'+esc(x.L.name)+'</b><i>'+esc(x.why)
-      +(ph?' &middot; '+esc(fmtPhone(ph)):' &middot; no number')+'</i></div>'
-      +(x.L.owed>0?'<span class="owe">$'+x.L.owed.toLocaleString()+'</span>':'')
-      +'<button class="dbtn" data-ddial="'+esc(x.L.name)+'" data-dtel="'+esc(ph)+'"'
-      +(can?'':' disabled')+'>CALL</button>'
-      +'</div>';
-  });
-  h+='</div></div></div>';
+  h+=analyticsSection();
 
-  /* ---- the pipeline ---- */
-  var sc2=stageCounts(), tot2=0, top2=0;
-  STATUSES.forEach(function(st){ tot2+=sc2[st]||0; top2=Math.max(top2,sc2[st]||0); });
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Pipeline<em>'+tot2+' leads</em></div>'
-    +'<button class="dp-go" data-dgo="sales|1">Open</button></div><div class="dp-b">';
-  STATUSES.forEach(function(st){
-    var n=sc2[st]||0;
-    /* scaled against the biggest stage, not the total — with six stages a total
-       scale leaves every bar a stub. scol() hands back an object, so .hex. */
-    var pct = top2 ? Math.max(n?6:0, Math.round(n/top2*100)) : 0;
-    h+='<div class="dstg"><span class="nm">'+esc(st)+'</span>'
-      +'<span class="bar"><span style="width:'+pct+'%;background:'
-      +scol(st).hex+'"></span></span><span class="n">'+n+'</span></div>';
-  });
-  h+='</div></div>';
-
-  /* ---- content ---- */
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Content<em>'
-    +posted+' posted today</em></div>'
-    +'<button class="dp-go" data-dgo="content|0">Studio</button></div><div class="dp-b">';
-  PLATS.forEach(function(pl){
-    var fol=parseInt(LS("fol_"+pl.k)||"0",10);
-    var pd=parseInt(LS(postKey(pl.k))||"0",10);
-    var live=folIsLive(pl.k);
-    var gw=folGrowth(pl.k,7);
-    h+='<div class="dsoc">'
-      +'<span class="ic" style="background:'+pl.col+'22;color:'+pl.col+'">'+pl.ic+'</span>'
-      +'<div class="mid"><b>'+fol.toLocaleString()
-      +(live?'<span class="livedot" title="pulled from '+esc(pl.nm)+' automatically"></span>'
-            :'<span class="handdot" title="you typed this in — '+esc(pl.nm)
-             +' does not let us read it yet">&#9998;</span>')
-      +'</b><i>'+pl.nm+' &middot; '
-      +Math.max(0,pl.goal-fol).toLocaleString()+' to '+(pl.goal>=10000?"10k":"1k")
-      +(gw!==null?' &middot; <span class="'+(gw>=0?"gup":"gdn")+'">'
-        +(gw>=0?"+":"")+gw.toLocaleString()+' this week</span>':'')
-      +'</i></div>'
-      +'<span class="pt '+(pd?"yes":"no")+'">'+(pd?pd+" today":"not yet")+'</span>'
-      +'</div>';
-  });
-  h+='<div class="dbar10"><span style="width:'+Math.min(100,Math.round(ttf/10000*100))+'%"></span></div>';
-  h+='</div></div>';
-
-  /* ---- who came in most recently ----
-     Newest first, because a lead that landed an hour ago is worth ten that
-     landed in May. The date is whatever the record says, so a form submission
-     and a hand-entered lead sort together. */
-  var recent=recentLeads();
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Recent Leads'
-    +'<em>'+recent.length+' dated</em></div>'
-    +'<button class="dp-go" data-dgo="sales|1">Pipeline</button></div>'
-    +'<div class="dp-b tight"><div class="dp-scr">';
-  if(!recent.length) h+='<div class="dp-none">No lead has a date on it yet. '
-    +'New form submissions get one automatically.</div>';
-  else recent.slice(0,10).forEach(function(L){
-    var ph=(cnGet(L.name).p || L.phone || "");
-    var can=dialable(ph).ok;
-    var st=stageFix(L.stage||"New Lead");
-    h+='<div class="dcall">'
-      +(prGet(L.name)?'<span class="prdot2"></span>':'')
-      +'<div class="who"><b>'+esc(L.name)+'</b>'
-      +'<i><span class="stgchip" style="color:'+scol(st).dot+';border-color:'
-      +scol(st).hex+'55">'+esc(st)+'</span> '+esc(cameLabel(L.name))+'</i></div>'
-      +'<button class="dbtn" data-ddial="'+esc(L.name)+'" data-dtel="'+esc(ph)+'"'
-      +(can?'':' disabled')+'>CALL</button>'
-      +'</div>';
-  });
-  h+='</div></div></div>';
-
-  /* ---- meetings and calls ----
-     He books these himself. Every row keeps the number, the email, the link and
-     the notes for the call, and nothing here needs a Google token to work. */
+  /* ============ 4. MEETINGS ============ */
   (function(){
     var ms=mtSorted().filter(function(x){ return !x.m.done; });
-    h+='<div class="dp wide"><div class="dp-h"><div class="dp-t">Upcoming Meetings &amp; Calls'
-      +'<em>'+ms.length+'</em></div>'
-      +'<button class="dp-go" id="mt-new">+ New Meeting</button>'
-      +'<button class="dp-go" data-dgo="office|2">Calendar</button></div>'
-      +'<div class="dp-b tight">';
+    h+='<div class="sec"><div class="sec-h"><h2>Meetings &amp; Calls</h2>'
+      +'<span class="sec-s">'+ms.length+' booked</span>'
+      +'<button class="sec-b" id="mt-new">+ New Meeting</button>'
+      +'<button class="sec-b" data-dgo="office|2">Calendar</button></div>';
     if(!calendlyLink())
       h+='<div class="mt-cal"><span>Set your Calendly once and every new meeting '
         +'carries a link you can send.</span>'
         +'<input id="mt-cly" placeholder="calendly.com/glenklein/30min" '
         +'value="'+esc(calendlyBase())+'"></div>';
     if(!ms.length)
-      h+='<div class="dp-none">Nothing booked. Hit New Meeting and it lands here, '
-        +'in the Calls module, and in the database.</div>';
+      h+='<div class="dp"><div class="dp-b"><div class="dp-none">Nothing booked. '
+        +'New Meeting adds it here and in the Calls module.</div></div></div>';
     else {
       h+='<div class="mts">';
       ms.forEach(function(row){
-        var i=row.i, m=row.m;
-        var past=mtIsPast(m);
-        var can=dialable(m.phone||"").ok;
+        var i=row.i, mm=row.m, past=mtIsPast(mm);
+        var can=dialable(mm.phone||"").ok;
         h+='<div class="mt'+(past?" past":"")+'">'
           +'<div class="mt-top">'
             +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" '
-            +'value="'+esc(m.name||"")+'" placeholder="Who">'
+            +'value="'+esc(mm.name||"")+'" placeholder="Who">'
             +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
-            +'value="'+esc(mtLocalValue(m.at))+'">'
-            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(m))+'</span>'
+            +'value="'+esc(mtLocalValue(mm.at))+'">'
+            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
             +'<button class="mt-x" data-mtdel="'+i+'" title="Remove">&times;</button>'
           +'</div>'
           +'<div class="mt-g">'
-            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" '
-            +'value="'+esc(m.phone||"")+'" placeholder="Phone">'
-            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" '
-            +'value="'+esc(m.email||"")+'" placeholder="Email">'
-            +'<input class="mt-f" data-mtf="link" data-mti="'+i+'" '
-            +'value="'+esc(m.link||"")+'" placeholder="Meeting link">'
+            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(mm.phone||"")+'" placeholder="Phone">'
+            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(mm.email||"")+'" placeholder="Email">'
+            +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(mm.link||"")+'" placeholder="Meeting link">'
           +'</div>'
           +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
-          +'placeholder="What this call is about. What they said last time.">'
-          +esc(m.notes||"")+'</textarea>'
+          +'placeholder="What this call is about.">'+esc(mm.notes||"")+'</textarea>'
           +'<div class="mt-act">'
             +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
             +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
             +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
-          +'</div>'
+          +'</div></div>';
+      });
+      h+='</div>';
+    }
+    h+='</div>';
+  })();
+
+  /* ============ 5. TODAY ============ */
+  (function(){
+    var lab=dayLabel(today), isAmz=/amazon/i.test(lab);
+    var plan=todayPlan(), tick=todayDone();
+    var tasks=dtLoad();
+    var open2=dtOpenCount(), done2=dtDoneCount();
+
+    h+='<div class="sec"><div class="sec-h"><h2>Today</h2>'
+      +'<span class="sec-s">'+DAYFULL[today]+' &middot; '+MON[now.getMonth()]+' '
+      +now.getDate()+'</span>'
+      +'<button class="sec-b'+(WEEK_EDIT?" hot":"")+'" id="wk-edit">'
+      +(WEEK_EDIT?"Done editing":"Edit the week")+'</button></div>';
+
+    h+='<div class="todayrow">';
+
+    /* the plan for today — read-only unless editing */
+    h+='<div class="tcard'+(isAmz?" amz":"")+(tick?" tick":"")+'">'
+      +'<div class="tc-h"><b>The Plan</b>'
+      +'<span class="dt-tag '+(isAmz?"amz":"off")+'">'+esc(lab)+'</span>'
+      +'<button class="tc-tick'+(tick?" on":"")+'" id="d-tick">'
+      +(tick?"&#10003; Day done":"Mark done")+'</button></div>';
+    if(WEEK_EDIT)
+      h+='<input class="dw-lab-i'+(isAmz?" amz":"")+'" data-dwl="'+today+'" '
+        +'value="'+esc(lab)+'" placeholder="Amazon / Off / Filming">'
+        +'<textarea class="dw-pi big" data-dwp="'+today+'" rows="4" '
+        +'placeholder="What today is for.">'+esc(plan)+'</textarea>';
+    else
+      h+='<div class="tc-plan'+(plan?"":" none")+'">'
+        +(plan?esc(plan):"Nothing written for today. Tap Edit the week, or ask Claudia to plan it.")
+        +'</div>';
+    h+='<div class="tc-act">'
+      +'<button class="dt-tk" id="d-plan">Ask Claudia to plan the week</button></div>';
+    h+='</div>';
+
+    /* the checklist */
+    h+='<div class="tcard list">'
+      +'<div class="tc-h"><b>Today&rsquo;s Tasks</b>'
+      +'<span class="tc-n">'+(tasks.length?done2+" of "+tasks.length+" done":"nothing yet")+'</span>'
+      +(!tasks.length&&plan?'<button class="tc-seed" id="dt-seed">Use the plan</button>':'')
+      +'</div>';
+    if(!tasks.length)
+      h+='<div class="tc-empty">Add what has to happen today. Tick it off as you go — '
+        +'Claudia can tick them for you too.</div>';
+    else {
+      h+='<div class="checks">';
+      tasks.forEach(function(t,i){
+        h+='<div class="tsk'+(t.done?" done":"")+'">'
+          +'<button class="tsk-b'+(t.done?" on":"")+'" data-dtt="'+i+'" '
+          +'title="'+(t.done?"Done — tap to undo":"Tick it off")+'">'
+          +(t.done?"&#10003;":"")+'</button>'
+          +'<input class="tsk-i" data-dti="'+i+'" value="'+esc(t.b||"")+'" '
+          +'placeholder="What needs doing">'
+          +'<button class="tsk-x" data-dtx="'+i+'" title="Remove">&times;</button>'
           +'</div>';
       });
+      h+='</div>';
+    }
+    h+='<div class="addbar tight"><input id="dt-new" placeholder="Add a task and hit Enter" '
+      +'autocomplete="off"><button class="btn" id="dt-add">Add</button></div>';
+    h+='</div>';
+
+    /* what the app noticed by itself */
+    var rows=[];
+    dueNow().slice(0,4).forEach(function(x){
+      rows.push(['#d4736f', x.L.name, x.days<0?Math.abs(x.days)+"d late":"due today"]);
+    });
+    if(m.chase>0) rows.push(['#c9a25c',"$"+m.chase.toLocaleString()+" still to collect",
+      (function(){ var n=(STATE.leads||[]).filter(function(L){
+        return L.owed>0&&!L.deferred; }).length;
+        return n+(n===1?" person":" people"); })()]);
+    /* No post counting anywhere — he asked for it gone and it was never a
+       measurement, only a tally he had to keep himself. */
+    var noPlan=0;
+    for(var c2=today;c2<7;c2++) if(!(LS("week_plan_"+c2)||"").trim()) noPlan++;
+    if(noPlan) rows.push(['#8fb3e8',noPlan+(noPlan===1?" day":" days")+" blank this week","the week"]);
+
+    h+='<div class="tcard alerts"><div class="tc-h"><b>Needs You</b>'
+      +'<span class="tc-n">'+(rows.length?rows.length+" flagged":"all clear")+'</span></div>';
+    if(!rows.length) h+='<div class="tc-empty">Nothing overdue, nothing owed, '
+      +'posted today. Good.</div>';
+    else rows.slice(0,6).forEach(function(r){
+      h+='<div class="dn-row"><span class="dn-dot" style="background:'+r[0]+'"></span>'
+        +'<b>'+esc(r[1])+'</b><i>'+esc(r[2])+'</i></div>';
+    });
+    h+='</div>';
+
+    h+='</div>';   /* .todayrow */
+
+    /* the seven days */
+    h+='<div class="dsh-week">';
+    for(var i=0;i<7;i++){
+      var dl=dayLabel(i), amz=/amazon/i.test(dl);
+      var dn=LS("week_done_"+i)==="1", pl2=(LS("week_plan_"+i)||"");
+      h+='<div class="dw-d'+(i===today?" now":"")+(dn?" done":"")+(amz?" amz":"")+'">'
+        +'<div class="dw-n"><span>'+DAYS[i]+(i===today?" &middot; today":"")+'</span>'
+        +'<button class="dw-ck'+(dn?" on":"")+'" data-dwck="'+i+'" '
+        +'title="'+(dn?"Done — tap to undo":"Mark the day done")+'">'
+        +(dn?"&#10003;":"")+'</button></div>';
+      if(WEEK_EDIT)
+        h+='<input class="dw-lab-i'+(amz?" amz":"")+'" data-dwl="'+i+'" value="'+esc(dl)+'" '
+          +'placeholder="Amazon / Off / Filming">'
+          +'<textarea class="dw-pi" data-dwp="'+i+'" rows="3" '
+          +'placeholder="'+(amz?"Post before shift.":"3 videos. 10 calls.")+'">'
+          +esc(pl2)+'</textarea>';
+      else
+        h+='<div class="dw-lab">'+esc(dl)+'</div>'
+          +'<div class="dw-p'+(pl2.trim()?"":" none")+'">'
+          +(pl2.trim()?esc(pl2):"nothing yet")+'</div>';
       h+='</div>';
     }
     h+='</div></div>';
   })();
 
-  /* ---- fitness ----
-     Everything Claude S. tracks, on one card, with a box to add food without
-     opening anything. The session count is the union of the log and the green
-     squares, so this and the gym can never disagree. */
+  /* ============ 6. THE SLOWER STUFF ============ */
+  h+='<div class="sec"><div class="sec-h"><h2>Pipeline, Body, Money</h2>'
+    +'<span class="sec-s">the things that do not need watching every hour</span></div>';
+  h+='<div class="dsh-grid">';
+
+  /* pipeline bars */
   (function(){
-    var kcT=0, prT=0;
-    fdToday().forEach(function(mm){
-      kcT+=parseInt(mm.kcal,10)||0;
-      prT+=parseInt(mm.p,10)||0;
+    var sc2=stageCounts(), tot2=0, top2=0;
+    STATUSES.forEach(function(st){ tot2+=sc2[st]||0; top2=Math.max(top2,sc2[st]||0); });
+    h+='<div class="dp"><div class="dp-h"><div class="dp-t">Pipeline<em>'+tot2+' leads</em></div>'
+      +'<button class="dp-go" data-dgo="sales|1">Open</button></div><div class="dp-b">';
+    STATUSES.forEach(function(st){
+      var n=sc2[st]||0;
+      var pct=top2?Math.max(n?6:0, Math.round(n/top2*100)):0;
+      h+='<div class="dstg"><span class="nm">'+esc(st)+'</span>'
+        +'<span class="bar"><span style="width:'+pct+'%;background:'+scol(st).hex+'"></span></span>'
+        +'<span class="n">'+n+'</span></div>';
     });
-    var gk=parseInt(LS("goal_kcal")||"2600",10);
-    var gp=parseInt(LS("goal_prot")||"180",10);
-    var mo=sessionsInMonth(new Date());
-    var wkN=sessionsThisWeek();
-    var wt=latestWeight();
-    var nt=nextTrainingDay();
-    h+='<div class="dp"><div class="dp-h"><div class="dp-t">Fitness'
-      +'<em>'+MON[new Date().getMonth()]+'</em></div>'
-      +'<button class="dp-go" data-dgo="gym|0">Claude S.</button></div>'
-      +'<div class="dp-b">';
-    h+='<div class="dfacts">'
-      +'<div class="dfact'+(kcT>=gk?" g":kcT?" a":"")+'"><b>'+kcT.toLocaleString()+'</b>'
-        +'<i>kcal &middot; '+(kcT>=gk?"target hit":Math.max(0,gk-kcT).toLocaleString()+" short")+'</i></div>'
-      +'<div class="dfact'+(prT>=gp?" g":prT?" a":"")+'"><b>'+prT+'g</b>'
-        +'<i>protein &middot; '+(prT>=gp?"good":Math.max(0,gp-prT)+"g short")+'</i></div>'
-      +'<div class="dfact'+(mo>=8?" g":"")+'"><b>'+mo+'</b><i>sessions this month</i></div>'
-      +'<div class="dfact'+(wkN>=3?" g":wkN?" a":"")+'"><b>'+wkN+'</b><i>days trained this week</i></div>'
-      +'<div class="dfact b"><b>'+(wt?esc(wt.label):"&mdash;")+'</b>'
-        +'<i>'+(wt?"current weight":"no weigh-in yet")+'</i></div>'
-      +'<div class="dfact"><b>'+(nt?esc(nt.when):"&mdash;")+'</b><i>next training day</i></div>'
-      +'</div>';
-    /* the same parser the gym uses — one food brain, not two */
-    h+='<div class="dfood">'
-      +'<input id="dfd-in" placeholder="3 eggs, toast, coffee…" autocomplete="off">'
-      +'<button class="btn" id="dfd-go">Add</button>'
-      +'</div>'
-      +'<div class="dfood-p" id="dfd-prev"></div>';
     h+='</div></div>';
   })();
 
-  /* ---- the safe ---- */
+  /* fitness */
+  (function(){
+    var kcT=0, prT=0;
+    fdToday().forEach(function(mm){
+      kcT+=parseInt(mm.kcal,10)||0; prT+=parseInt(mm.p,10)||0; });
+    var gk=parseInt(LS("goal_kcal")||"2600",10);
+    var gp=parseInt(LS("goal_prot")||"180",10);
+    var mo=sessionsInMonth(new Date()), wkN=sessionsThisWeek();
+    var wt=latestWeight(), nt=nextTrainingDay();
+    h+='<div class="dp"><div class="dp-h"><div class="dp-t">Fitness<em>'
+      +MON[now.getMonth()]+'</em></div>'
+      +'<button class="dp-go" data-dgo="gym|0">Claude S.</button></div><div class="dp-b">'
+      +'<div class="dfacts">'
+      +'<div class="dfact'+(kcT>=gk?" g":kcT?" a":"")+'"><b>'+kcT.toLocaleString()+'</b>'
+        +'<i>kcal &middot; '+(kcT>=gk?"hit":Math.max(0,gk-kcT).toLocaleString()+" short")+'</i></div>'
+      +'<div class="dfact'+(prT>=gp?" g":prT?" a":"")+'"><b>'+prT+'g</b>'
+        +'<i>protein &middot; '+(prT>=gp?"good":Math.max(0,gp-prT)+"g short")+'</i></div>'
+      +'<div class="dfact'+(mo>=8?" g":"")+'"><b>'+mo+'</b><i>sessions this month</i></div>'
+      +'<div class="dfact'+(wkN>=3?" g":wkN?" a":"")+'"><b>'+wkN+'</b><i>trained this week</i></div>'
+      +'<div class="dfact b"><b>'+(wt?esc(wt.label):"&mdash;")+'</b>'
+        +'<i>'+(wt?"current weight":"no weigh-in")+'</i></div>'
+      +'<div class="dfact"><b>'+(nt?esc(nt.when):"&mdash;")+'</b><i>next training day</i></div>'
+      +'</div>'
+      +'<div class="dfood"><input id="dfd-in" placeholder="3 eggs, toast, coffee…" '
+      +'autocomplete="off"><button class="btn" id="dfd-go">Add</button></div>'
+      +'<div class="dfood-p" id="dfd-prev"></div>'
+      +'</div></div>';
+  })();
+
+  /* the safe */
   h+='<div class="dp"><div class="dp-h"><div class="dp-t">Locked Information'
     +'<em>the safe</em></div>'
     +'<button class="dp-go" data-dgo="office|5">Open</button></div><div class="dp-b">';
   if(!VAULT_OPEN){
-    h+='<div class="dlock"><p>The safe is locked. Open it to see what is in the accounts '
-      +'and what goes out each month.</p>'
+    h+='<div class="dlock"><p>The safe is locked. Open it to see the accounts and '
+      +'what goes out each month.</p>'
       +'<button class="dt-tk" data-dgo="office|5">Open the safe</button></div>';
   } else {
     var accts=vxLoad("accounts");
@@ -13207,61 +14136,152 @@ function dashView(){
   }
   h+='</div></div>';
 
-  h+='</div>';   /* .dsh-grid */
+  h+='</div></div>';   /* .dsh-grid .sec */
 
   h+=operatorBar();
   return h;
 }
 
-/* ============ THE OPERATOR BAR ============
-   The switchboard, docked to the bottom of the dashboard. Three faces, whoever
-   is on duty by the building clock, and one tap to talk. Their faces are the
-   same drawings used on the floor plan and in their own rooms — one source, so
-   nobody ends up with two different faces. */
-var OPERATORS=[
-  {k:"assistant", npc:"claudia", nm:"Claudia",  role:"Chief of staff",
-   sub:"your day, week and calendar", ac:"#22d3ee", from:6.5, to:21.5},
-  {k:"sales",     npc:"jordan",  nm:"Jordan",   role:"Sales manager",
-   sub:"pipeline, calls, collections", ac:"#c8a86a", from:8.5, to:20},
-  {k:"gym",       npc:"claude",  nm:"Claude S.",role:"Coach",
-   sub:"training, food, recovery",     ac:"#84cc16", from:5.5, to:22}
-];
-function onDuty(o){
-  var h=nowHour();
-  return h>=o.from && h<o.to;
+/* how many leads came in during the last 7 days, by their own date */
+function newThisWeek(){
+  var cut=new Date(); cut.setDate(cut.getDate()-7);
+  var cutKey=dkey(cut);
+  return (STATE.leads||[]).filter(function(L){
+    var raw=cameInRaw(L.name);
+    if(!raw) return false;
+    return (raw.length===7 ? raw+"-01" : raw) >= cutKey;
+  }).length;
 }
+
+/* All three are always reachable. He said it plainly: "all the agents are always
+   on shift". The shift hours stay in the building simulation, where they belong —
+   they are not a reason to stop him talking to someone. */
+var OPERATORS=[
+  {k:"assistant", npc:"claudia", nm:"Claudia",   role:"Chief of staff", ac:"#22d3ee"},
+  {k:"sales",     npc:"jordan",  nm:"Jordan",    role:"Sales",          ac:"#c8a86a"},
+  {k:"gym",       npc:"claude",  nm:"Claude S.", role:"Coach",          ac:"#84cc16"}
+];
+
+/* ============ THE OPERATOR DOCK  ("jarvis mode") ============
+   Three faces pinned to the bottom-left corner. Tapping one opens a small dock
+   above them — not the full-screen sheet — so the dashboard stays visible while
+   he talks. He speaks, they answer out loud, and nothing covers the numbers he
+   was reading.
+
+   The dock reuses the existing chat state for each agent (CHAT / JCHAT / TCHAT)
+   so a conversation started here continues in their room and the other way
+   round. One conversation per person, two places to have it. */
+var DOCK=null;              /* which agent's dock is open, or null */
+var DOCK_MIN=false;
+
 function operatorBar(){
-  var h='<div class="opbar"><div class="opbar-in">'
-   +'<div class="op-lab"><b>The Office</b><i>tap a face to talk &middot; they answer out loud</i></div>'
-   +'<div class="op-row">';
+  var h='<div class="opdock" id="opdock">';
+
+  /* the open conversation, above the faces */
+  if(DOCK){
+    var o=null;
+    OPERATORS.forEach(function(x){ if(x.k===DOCK) o=x; });
+    if(o){
+      var n=NPC[o.npc];
+      var log=dockLog(DOCK);
+      h+='<div class="dk" style="--oc:'+o.ac+'">'
+        +'<div class="dk-h">'
+          +'<span class="dk-f">'+(n?n.face():"")+'</span>'
+          +'<span class="dk-who"><b>'+esc(o.nm)+'</b><i>'+esc(o.role)+'</i></span>'
+          +'<button class="dk-b" data-dkroom="'+o.k+'" title="Open the full room">Full</button>'
+          +'<button class="dk-x" id="dk-close" title="Close">&times;</button>'
+        +'</div>'
+        +'<div class="dk-log" id="dk-log">';
+      if(!log.length)
+        h+='<div class="dk-hi">'+esc(dockGreeting(o))+'</div>';
+      else log.slice(-6).forEach(function(m2){
+        var body = (typeof m2.t==="string") ? m2.t
+                 : Array.isArray(m2.t) ? m2.t.join(" · ") : String(m2.t||"");
+        if(!body) return;
+        h+='<div class="dk-m '+(m2.r==="me"?"me":m2.r==="did"?"did":"them")+'">'
+          +esc(body)+'</div>';
+      });
+      if(dockBusy(DOCK)) h+='<div class="dk-m them think">thinking…</div>';
+      h+='</div>'
+        +'<div class="dk-f2">'
+          +'<button class="dk-mic'+(dockMicLive(o.k)?" on":"")+'" id="dk-mic" '
+          +'title="Tap, speak, tap again">'
+          +(dockMicLive(o.k)?"&#9632;":"&#127908;")+'</button>'
+          +'<input id="dk-in" placeholder="Say it, or type it" autocomplete="off">'
+          +'<button class="dk-spk'+(SPEAK?" on":"")+'" id="dk-spk" '
+          +'title="'+esc(voiceLabel())+'">'+(SPEAK?"&#128266;":"&#128263;")+'</button>'
+          +'<button class="dk-go" id="dk-send">Send</button>'
+        +'</div>'
+        +'</div>';
+    }
+  }
+
+  /* the faces themselves */
+  h+='<div class="opfaces">';
   OPERATORS.forEach(function(o){
-    var duty=onDuty(o);
     var n=NPC[o.npc];
-    var line="";
-    try{ line=n&&n.line?n.line():""; }catch(e){ line=""; }
-    h+='<button class="op" data-optalk="'+o.k+'" style="--oc:'+o.ac+'" '
-      +'title="'+esc(o.nm+" — "+o.role)+'">'
-      +'<span class="op-f">'+(n?n.face():"")
-        +'<span class="op-dot'+(duty?" on":"")+'"></span></span>'
-      +'<span class="op-x">'
-        +'<b>'+esc(o.nm)+'</b>'
-        +'<i>'+(duty?esc(o.role):"off shift")+'</i>'
-      +'</span>'
+    h+='<button class="opf'+(DOCK===o.k?" on":"")+'" data-optalk="'+o.k+'" '
+      +'style="--oc:'+o.ac+'" title="'+esc(o.nm+" — "+o.role+" — always on")+'">'
+      +(n?n.face():"")
+      +'<span class="opf-dot"></span>'
+      +'<span class="opf-nm">'+esc(o.nm)+'</span>'
       +'</button>';
   });
-  h+='</div>'
-   /* a drawn microphone, not the emoji. An emoji renders as an empty box on any
-      machine without that glyph — which is exactly how the flags went wrong. */
-   +'<button class="op-mic" id="op-mic" title="Talk to Claudia">'
-   +'<svg viewBox="0 0 14 14" aria-hidden="true">'
-     +'<rect x="5" y="1.4" width="4" height="7" rx="2" fill="currentColor"/>'
-     +'<path d="M3.4 6.6a3.6 3.6 0 0 0 7.2 0" fill="none" stroke="currentColor" '
-     +'stroke-width="1.3" stroke-linecap="round"/>'
-     +'<path d="M7 10.2V12.4 M4.8 12.6h4.4" stroke="currentColor" stroke-width="1.3" '
-     +'stroke-linecap="round"/></svg>'
-   +'Speak</button>'
-   +'</div></div>';
+  h+='</div></div>';
   return h;
+}
+
+/* One conversation per agent, shared with their room. */
+/* The real stores: Claudia lives on STATE.chat, the other two on their own
+   arrays. Rows are {r:"me"|"ai"|"sys"|"did", t:text}. */
+function dockLog(k){
+  try{
+    if(k==="assistant") return (STATE&&STATE.chat)||[];
+    if(k==="sales")     return JCHAT||[];
+    if(k==="gym")       return TCHAT||[];
+  }catch(e){}
+  return [];
+}
+function dockBusy(k){
+  try{
+    if(k==="assistant") return !!(STATE&&STATE.busy);
+    if(k==="sales")     return !!JBUSY;
+    if(k==="gym")       return !!TBUSY;
+  }catch(e){}
+  return false;
+}
+/* the mic is a single shared recogniser; MICWHO says who it is pointed at */
+function dockMicWho(k){
+  return k==="sales" ? "jordan" : k==="gym" ? "claude" : "claudia";
+}
+function dockMicLive(k){ return RECON && MICWHO===dockMicWho(k); }
+function dockGreeting(o){
+  if(o.k==="assistant") return "Ask me about your day, your week or your calendar.";
+  if(o.k==="sales")     return "Who are we closing? I can see the whole pipeline.";
+  return "Tell me what you ate or lifted and I write it down.";
+}
+
+
+/* Send whatever is in the dock to whoever is open. Routes into the same ask
+   functions their rooms use, so actions, memory and voice all behave the same. */
+function dockSend(){
+  var box=document.getElementById("dk-in");
+  var t=box?box.value.trim():"";
+  if(!t||!DOCK) return;
+  if(box) box.value="";
+  try{
+    if(DOCK==="assistant")      ask(t);
+    else if(DOCK==="sales")     jAsk(t);
+    else if(DOCK==="gym")       tAsk(t);
+  }catch(e){}
+  setTimeout(function(){ if(VIEW==="home") drawDash(); },80);
+}
+function dockOpen(k){
+  DOCK=(DOCK===k)?null:k;
+  if(VIEW==="home") drawDash();
+  setTimeout(function(){
+    var b=document.getElementById("dk-in"); if(b&&!isPhone()) b.focus();
+  },80);
 }
 
 /* The open module, drawn as a sheet over the dashboard. This is the actual room
@@ -13405,20 +14425,128 @@ function wireDash(){
     dashGo(p2[0], parseInt(p2[1],10)||0);
   };
 
-  /* ---- the operator bar ---- */
+  /* ---- the operator dock ----
+     A face opens a small conversation above the avatars. It never opens the full
+     sheet, because the whole point is that the dashboard stays readable while he
+     talks. "Full" is there if he wants the room. */
   var ops=document.querySelectorAll("[data-optalk]");
   for(var o1=0;o1<ops.length;o1++) ops[o1].onclick=function(){
-    dashOpen(this.getAttribute("data-optalk"), 0);
+    dockOpen(this.getAttribute("data-optalk")); };
+
+  var dkr=document.querySelectorAll("[data-dkroom]");
+  for(var r1=0;r1<dkr.length;r1++) dkr[r1].onclick=function(){
+    var k=this.getAttribute("data-dkroom"); DOCK=null; dashOpen(k,0); };
+
+  var dkx=document.getElementById("dk-close");
+  if(dkx) dkx.onclick=function(){ DOCK=null; drawDash(); };
+
+  var dkg=document.getElementById("dk-send");
+  if(dkg) dkg.onclick=dockSend;
+  var dkin=document.getElementById("dk-in");
+  if(dkin) dkin.onkeydown=function(ev){
+    if(ev.key==="Enter"&&!ev.shiftKey){ ev.preventDefault(); dockSend(); } };
+
+  var dkm=document.getElementById("dk-mic");
+  if(dkm) dkm.onclick=function(){
+    if(!DOCK) return;
+    /* stop her mid-sentence if he starts talking — same as the rooms do */
+    try{ stopSpeaking(); }catch(e){}
+    startMic(dockMicWho(DOCK));
+    setTimeout(function(){ if(VIEW==="home") drawDash(); },120);
   };
-  var om=document.getElementById("op-mic");
-  if(om) om.onclick=function(){
-    dashOpen("assistant",0);
-    /* their mic button is inside the sheet, so it exists only after that draw */
+  var dks=document.getElementById("dk-spk");
+  if(dks) dks.onclick=function(){
+    SPEAK=!SPEAK; LS("speak", SPEAK?"1":"0");
+    if(!SPEAK){ try{ stopSpeaking(); }catch(e){} }
+    drawDash(); };
+
+  /* ---- analytics ---- */
+  var alog=document.getElementById("an-log");
+  if(alog) alog.onclick=function(){
+    var n=folLogToday();
+    this.textContent = n ? "Logged" : "Type a number first";
+    setTimeout(drawDash,700);
+  };
+  /* tapping a chart opens the periods behind it */
+  var po=document.querySelectorAll("[data-platopen]");
+  for(var z1=0;z1<po.length;z1++) po[z1].onclick=function(){
+    var k=this.getAttribute("data-platopen");
+    PLAT_OPEN = (PLAT_OPEN===k) ? null : k;
+    redraw(); if(VIEW==="home") drawDash(); };
+
+  /* the big follower boxes save straight into the same key the studio reads */
+  var fbig=document.querySelectorAll("input.folbig");
+  for(var b1=0;b1<fbig.length;b1++) (function(el){
+    el.oninput=function(){
+      var k=el.getAttribute("data-k");
+      LS(k, el.value.replace(/[^0-9]/g,""));
+      SBSAVE("social");
+      el.style.borderColor="var(--green)";
+      setTimeout(function(){ el.style.borderColor=""; },600);
+    };
+    /* Typing the number IS logging it.
+
+       Before this, changing a figure updated the headline but wrote nothing to
+       social_history, so the charts stayed empty unless he separately remembered
+       to tap "Log today" — every day, forever. Nobody does that. Now leaving the
+       box records today's reading, and because social_history is unique on
+       (platform, on_date) a correction later the same day overwrites rather than
+       adding a second point. The button stays for days when the number has not
+       moved but he wants the day marked anyway. */
+    el.onblur=function(){
+      try{ folLogToday(); }catch(e){}
+      setTimeout(function(){ if(!dashBusy()) drawDash(); },120);
+    };
+  })(fbig[b1]);
+
+  /* post counters, per platform */
+  var pup=document.querySelectorAll("[data-pu]");
+  for(var u1=0;u1<pup.length;u1++) pup[u1].onclick=function(){
+    var k=this.getAttribute("data-pu");
+    LS(postKey(k), String((parseInt(LS(postKey(k))||"0",10))+1));
+    SBSAVE("posts"); drawDash(); };
+  var pdn=document.querySelectorAll("[data-pd]");
+  for(var u2=0;u2<pdn.length;u2++) pdn[u2].onclick=function(){
+    var k=this.getAttribute("data-pd");
+    LS(postKey(k), String(Math.max(0,(parseInt(LS(postKey(k))||"0",10))-1)));
+    SBSAVE("posts"); drawDash(); };
+
+  /* ---- the week: read-only until he asks ---- */
+  var we=document.getElementById("wk-edit");
+  if(we) we.onclick=function(){ WEEK_EDIT=!WEEK_EDIT; drawDash(); };
+
+  /* ---- today's checklist ---- */
+  var dtn=document.getElementById("dt-new"), dta=document.getElementById("dt-add");
+  function addTask(){
+    var box=document.getElementById("dt-new");
+    var v=box?box.value.trim():"";
+    if(!v) return;
+    dtAdd(v);
+    drawDash();
     setTimeout(function(){
-      var mic=document.getElementById("mic");
-      if(mic) mic.click();
-    },140);
-  };
+      var b=document.getElementById("dt-new"); if(b) b.focus();
+    },60);
+  }
+  if(dta) dta.onclick=addTask;
+  if(dtn) dtn.onkeydown=function(ev){
+    if(ev.key==="Enter"){ ev.preventDefault(); addTask(); } };
+
+  var dts2=document.querySelectorAll("[data-dtt]");
+  for(var t8=0;t8<dts2.length;t8++) dts2[t8].onclick=function(){
+    dtToggle(parseInt(this.getAttribute("data-dtt"),10)); drawDash(); };
+  var dtx=document.querySelectorAll("[data-dtx]");
+  for(var t7=0;t7<dtx.length;t7++) dtx[t7].onclick=function(){
+    dtDel(parseInt(this.getAttribute("data-dtx"),10)); drawDash(); };
+  var dti=document.querySelectorAll("input.tsk-i");
+  for(var t6=0;t6<dti.length;t6++) (function(el){
+    el.oninput=function(){
+      dtSet(parseInt(el.getAttribute("data-dti"),10), el.value);
+      el.style.borderColor="var(--green)";
+      setTimeout(function(){ el.style.borderColor=""; },600);
+    };
+  })(dti[t6]);
+  var dsd=document.getElementById("dt-seed");
+  if(dsd) dsd.onclick=function(){ dtSeedFromPlan(); drawDash(); };
 
   /* ---- meetings ----
      The row handlers are shared with the Calls module, so they live in
@@ -13767,6 +14895,13 @@ function dashBusy(){
   var t=(a.tagName||"").toLowerCase();
   return t==="input" || t==="textarea" || t==="select";
 }
+/* One repaint for the whole app.
+
+   Glen's rule: "every module on this app should update if something is changed
+   in another". So there is exactly one place that repaints, everything routes
+   through it, and every view reads the same store rather than keeping a copy.
+   Telling Claudia the day is done ticks the checklist because the checklist is
+   drawn from day_tasks, not from the markup that was there a second ago. */
 function redraw(){
   renderWins(); drawMobileStack();
   /* the dashboard summarises the same numbers the rooms hold, so it repaints
@@ -14163,6 +15298,20 @@ function wire(){
       refreshContacts();drawBuilding();
       redraw();};
   }
+  /* ---- removing a lead ---- */
+  var dask=document.querySelectorAll("[data-delask]");
+  for(var q9=0;q9<dask.length;q9++) dask[q9].onclick=function(ev){
+    ev.stopPropagation();
+    DEL_ASK=this.getAttribute("data-delask");
+    redraw(); if(VIEW==="home") drawDash(); };
+  var dno=document.querySelectorAll("[data-delno]");
+  for(var q8=0;q8<dno.length;q8++) dno[q8].onclick=function(ev){
+    ev.stopPropagation(); DEL_ASK=null;
+    redraw(); if(VIEW==="home") drawDash(); };
+  var dyes=document.querySelectorAll("[data-delyes]");
+  for(var q7=0;q7<dyes.length;q7++) dyes[q7].onclick=function(ev){
+    ev.stopPropagation(); leadDelete(this.getAttribute("data-delyes")); };
+
   var mf=document.querySelectorAll(".manualflag");
   for(var q2=0;q2<mf.length;q2++) mf[q2].onclick=function(){
     mlDel(parseInt(this.getAttribute("data-mi"),10));
