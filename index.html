@@ -1661,6 +1661,60 @@ a.lnk:hover{color:#bfdbfe}
   cursor:pointer;font-size:10px;letter-spacing:.5px;padding:3px 9px;text-transform:uppercase}
 .vtog.on{border-color:rgba(74,222,128,.5);color:#4ade80;background:rgba(74,222,128,.09)}
 
+/* ============ THE FOUR CLOCKS IN THE BANNER ============ */
+.tb-zones{display:flex;align-items:stretch;flex:1;min-width:0;gap:0;
+  padding:0 6px 0 15px;border-left:1px solid #1e2634;overflow:hidden}
+.tbz{display:flex;align-items:center;gap:7px;padding:0 13px;min-width:0;flex:none;
+  border-radius:8px}
+.tbz.home{background:rgba(75,123,212,.11)}
+.tbz-f{width:17px;height:11.5px;flex:none;border-radius:2px;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+.tbz-f svg{display:block;width:100%;height:100%}
+.tbz-x{min-width:0;line-height:1.15}
+/* both are spans, so they have to be told to stack — inline they ran together
+   on one line and read as "9:22am +1BANGKOK" */
+.tbz-t,.tbz-k{display:block}
+.tbz-t{font-size:13.5px;font-weight:800;letter-spacing:-.4px;color:#e9edf4;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbz-t em{font-style:normal;font-size:8px;font-weight:800;color:var(--mut);
+  margin-left:2px;letter-spacing:.3px}
+.tbz.home .tbz-t{color:#fff}
+.tbz-k{font-size:7.5px;font-weight:800;letter-spacing:1.5px;color:#6f7a8a;
+  text-transform:uppercase;white-space:nowrap}
+.tbz.home .tbz-k{color:var(--blu2)}
+/* the day marker, for when a zone is on a different date to him */
+.tbz-d{font-size:7.5px;font-weight:800;color:var(--amber);margin-left:3px}
+
+/* ============ THE PLAYER IN THE BANNER ============
+   Seven attempts at this painted a white box. Two reasons, both now fixed:
+   Spotify's `theme=0` is the LIGHT theme, not the dark one, and any iframe is
+   blank where there is no network. So: no theme parameter at all, and the card
+   is what renders — the frame is swapped in only after its load event fires. */
+.tb-mus{flex:none;position:relative;width:200px;height:38px;margin-right:10px}
+.mus-card{position:absolute;inset:0;display:flex;align-items:center;gap:9px;
+  width:100%;padding:0 12px;border-radius:9px;cursor:pointer;font-family:inherit;
+  background:linear-gradient(150deg,#18211b,#121a15);border:1px solid #24402e;
+  transition:.14s;text-align:left}
+.mus-card:hover{border-color:#1db954;background:linear-gradient(150deg,#1b271f,#141d17)}
+.mus-ic{width:18px;height:18px;flex:none}
+.mus-ic svg{display:block;width:100%;height:100%}
+.mus-t{min-width:0;line-height:1.15}
+.mus-t b{display:block;font-size:10.5px;font-weight:800;color:#e8f3ec;letter-spacing:.3px}
+.mus-t i{display:block;font-style:normal;font-size:8px;font-weight:700;color:#7f9a88;
+  letter-spacing:1.1px;text-transform:uppercase;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.mus-frame{position:absolute;inset:0;border-radius:9px;overflow:hidden;
+  opacity:0;pointer-events:none;transition:opacity .25s}
+/* only ever revealed by the load handler */
+.tb-mus.live .mus-frame{opacity:1;pointer-events:auto}
+.tb-mus.live .mus-card{opacity:0;pointer-events:none}
+.mus-frame iframe{display:block;width:100%;height:100%;border:0;
+  background:#121a15}
+.mus-why{position:absolute;left:0;right:0;top:42px;z-index:5;
+  background:var(--paper2);border:1px solid var(--line);border-radius:9px;
+  padding:9px 11px;font-size:10.5px;color:var(--mut);line-height:1.45;
+  box-shadow:0 10px 24px rgba(0,0,0,.45)}
+
 /* =========================================================
    THE DASHBOARD
    The homepage. Quiet, flat, and readable at a glance. Rules it keeps to:
@@ -1740,6 +1794,26 @@ body.homeview .tower{display:none}
 .dw-p{font-size:11.5px;line-height:1.45;color:var(--ink);margin-top:7px;flex:1;
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
 .dw-p.none{color:#5f6875;font-style:italic}
+/* the editable versions */
+.dw-ck{margin-left:auto;width:18px;height:18px;flex:none;border-radius:5px;cursor:pointer;
+  background:transparent;border:1.6px solid #454e5c;color:#08120c;font-size:11px;
+  line-height:1;padding:0;transition:.14s}
+.dw-ck:hover{border-color:var(--green)}
+.dw-ck.on{background:var(--green);border-color:var(--green)}
+input.dw-lab-i{width:100%;margin-top:5px;background:transparent;border:1px solid transparent;
+  border-radius:6px;padding:2px 4px;color:#7f8b9c;font-family:inherit;font-size:9.5px;
+  font-weight:800;letter-spacing:.9px;text-transform:uppercase;transition:border-color .2s}
+input.dw-lab-i.amz{color:#a8bde0}
+input.dw-lab-i:hover{border-color:#2f3540}
+input.dw-lab-i:focus{outline:none;border-color:var(--blu);color:var(--ink);
+  text-transform:none;letter-spacing:0}
+textarea.dw-pi{width:100%;flex:1;margin-top:6px;min-height:56px;resize:vertical;
+  background:transparent;border:1px solid transparent;border-radius:7px;padding:4px 5px;
+  color:var(--ink);font-family:inherit;font-size:11.5px;line-height:1.45;
+  transition:border-color .2s}
+textarea.dw-pi:hover{border-color:#2f3540}
+textarea.dw-pi:focus{outline:none;border-color:var(--blu);background:var(--raise)}
+textarea.dw-pi::placeholder{color:#4e5763;font-style:italic}
 
 /* ---- the numbers ---- */
 .dsh-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
@@ -1788,6 +1862,11 @@ body.homeview .tower{display:none}
 .dcall .dbtn:hover{background:rgba(75,123,212,.3);color:#fff}
 .dcall .dbtn[disabled]{opacity:.35;cursor:default}
 
+/* a stage, small, beside a name */
+.stgchip{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.7px;
+  text-transform:uppercase;border:1px solid;border-radius:20px;padding:1px 7px;
+  margin-right:5px;vertical-align:1px}
+
 /* stage bars */
 .dstg{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12px}
 .dstg .nm{width:104px;flex:none;color:var(--mut);font-size:11px;font-weight:600}
@@ -1809,6 +1888,15 @@ body.homeview .tower{display:none}
   border-radius:20px;padding:3px 9px;border:1px solid;flex:none}
 .dsoc .pt.yes{color:var(--green);border-color:rgba(95,179,124,.42);background:rgba(95,179,124,.1)}
 .dsoc .pt.no{color:#8a929f;border-color:var(--line)}
+/* a live number versus one he typed in */
+.livedot{display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--green);margin-left:6px;vertical-align:middle;
+  box-shadow:0 0 0 3px rgba(95,179,124,.16)}
+.handdot{display:inline-block;margin-left:6px;font-size:9.5px;color:#6f7a8a;
+  vertical-align:middle;font-weight:400}
+.gup{color:var(--green);font-weight:700}
+.gdn{color:var(--red);font-weight:700}
+
 .dbar10{height:6px;border-radius:3px;background:#23282f;overflow:hidden;margin-top:11px}
 .dbar10 span{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blu),var(--ice))}
 
@@ -1822,9 +1910,187 @@ body.homeview .tower{display:none}
 .dfact.g b{color:var(--green)} .dfact.a b{color:var(--amber)}
 .dfact.r b{color:var(--red)}   .dfact.b b{color:var(--blu2)}
 
+/* ============ MEETINGS AND CALLS ============ */
+.dp.wide{grid-column:1 / -1}
+.mtblock{margin-bottom:14px}
+.mtb-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.mtb-h b{font-size:13px}
+.mtb-h span{flex:1;min-width:0;font-size:11px;color:var(--mut)}
+.mt-cal{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 12px;
+  padding:9px 11px;border:1px dashed #333b47;border-radius:9px}
+.mt-cal span{flex:1;min-width:180px;font-size:11px;color:var(--mut)}
+.mt-cal input{flex:1;min-width:200px;background:var(--raise);border:1px solid var(--line);
+  border-radius:7px;padding:7px 9px;color:var(--ink);font-family:inherit;font-size:12px}
+.mt-cal input:focus{outline:none;border-color:var(--blu)}
+.mts{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+.mt{background:var(--raise);border:1px solid #2b3038;border-radius:11px;padding:10px 11px;
+  min-width:0;border-left:3px solid var(--blu)}
+.mt.past{border-left-color:var(--red)}
+.mt-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+input.mt-nm{flex:1;min-width:110px;background:transparent;border:1px solid transparent;
+  border-radius:6px;padding:4px 6px;color:var(--ink);font-family:inherit;font-size:13.5px;
+  font-weight:700;transition:border-color .2s}
+input.mt-nm:hover{border-color:#333b47}
+input.mt-nm:focus{outline:none;border-color:var(--blu);background:var(--paper2)}
+input.mt-at{flex:none;background:var(--paper2);border:1px solid var(--line);border-radius:6px;
+  padding:4px 6px;color:var(--ink);font-family:inherit;font-size:11px;
+  color-scheme:dark}
+input.mt-at:focus{outline:none;border-color:var(--blu)}
+.mt-when{font-size:9.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--blu2);white-space:nowrap}
+.mt-when.late{color:var(--red)}
+.mt-x{margin-left:auto;background:none;border:0;color:#4a5462;cursor:pointer;
+  font-size:17px;line-height:1;padding:0 4px}
+.mt-x:hover{color:var(--red)}
+.mt-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+input.mt-f{min-width:0;background:var(--paper2);border:1px solid var(--line);border-radius:7px;
+  padding:6px 8px;color:var(--ink);font-family:inherit;font-size:11.5px}
+input.mt-f:focus{outline:none;border-color:var(--blu)}
+input.mt-f:nth-child(3){grid-column:1 / -1}
+textarea.mt-nt{width:100%;margin-top:6px;min-height:44px;resize:vertical;
+  background:var(--paper2);border:1px solid var(--line);border-radius:7px;padding:7px 8px;
+  color:var(--ink);font-family:inherit;font-size:11.5px;line-height:1.5}
+textarea.mt-nt:focus{outline:none;border-color:var(--blu)}
+.mt-act{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.mt-b{background:none;border:1px solid var(--line);border-radius:7px;padding:6px 11px;
+  color:var(--mut);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;
+  letter-spacing:.4px;transition:.14s}
+.mt-b:hover{border-color:var(--blu);color:var(--ink)}
+.mt-b.go{color:var(--blu2);border-color:rgba(75,123,212,.45);background:rgba(75,123,212,.12)}
+.mt-b[disabled]{opacity:.35;cursor:default}
+
+/* adding food straight from the dashboard */
+.dfood{display:flex;gap:7px;margin-top:11px}
+.dfood input{flex:1;min-width:0;background:var(--raise);border:1px solid var(--line);
+  border-radius:8px;padding:9px 11px;color:var(--ink);font-family:inherit;font-size:12.5px}
+.dfood input:focus{outline:none;border-color:var(--blu)}
+.dfood .btn{flex:none}
+.dfood-p{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.dfood-p:empty{display:none}
+
 /* the safe, still shut */
 .dlock{text-align:center;padding:14px 0 6px}
 .dlock p{font-size:12px;color:var(--mut);margin:9px 0 12px}
+
+/* ---- a module opened on top of the dashboard ---- */
+body.dsheeting{overflow:hidden}
+.dsheet-wrap{position:fixed;inset:0;z-index:900;display:flex;
+  align-items:flex-start;justify-content:center;padding:34px 20px;
+  background:rgba(6,8,12,.72);backdrop-filter:blur(3px);
+  animation:dsIn .16s ease-out}
+@keyframes dsIn{from{opacity:0}to{opacity:1}}
+/* Expanded: the CRM gets the whole browser window, because that is where he
+   works leads for an hour at a time and 1080px of it is not enough. */
+.dsheet-wrap.wide{padding:14px}
+.dsheet-wrap.wide .dsheet{width:100%;max-width:none;max-height:calc(100vh - 28px);
+  height:calc(100vh - 28px)}
+.dsheet{width:min(1080px,100%);max-height:calc(100vh - 68px);display:flex;
+  flex-direction:column;min-width:0;
+  background:var(--paper2);border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 30px 70px rgba(0,0,0,.6);overflow:hidden;
+  animation:dsUp .18s ease-out}
+@keyframes dsUp{from{transform:translateY(10px);opacity:.6}to{transform:none;opacity:1}}
+.dsheet-h{display:flex;align-items:center;gap:9px;flex:none;
+  padding:12px 14px;border-bottom:1px solid #23282f;background:var(--raise)}
+.dsheet-ic{font-size:15px;flex:none}
+.dsheet-h b{font-size:13px;font-weight:700;flex:none}
+.dsheet-no{flex:1;min-width:0;font-size:8.5px;font-weight:800;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--mut);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.dsheet-fl{flex:none;background:none;border:1px solid var(--line);border-radius:7px;
+  padding:6px 11px;color:var(--mut);font-family:inherit;font-size:10.5px;font-weight:700;
+  cursor:pointer;letter-spacing:.4px;transition:.14s;white-space:nowrap}
+.dsheet-fl:hover{border-color:var(--blu);color:var(--ink)}
+.dsheet-x{flex:none;background:none;border:1px solid var(--line);border-radius:7px;
+  width:30px;height:28px;color:var(--mut);font-size:17px;line-height:1;cursor:pointer;
+  transition:.14s}
+.dsheet-x:hover{border-color:var(--red);color:var(--red)}
+.dsheet-b{flex:1;min-height:0;overflow-y:auto;padding:0}
+.dsheet-b .wbody{padding:14px 16px 18px;min-width:0}
+
+/* ============ THE OPERATOR BAR ============ */
+/* Docked to the bottom of the SCREEN, not the bottom of the page — he asked for
+   an operator console, and a console does not scroll away. Sticky with a negative
+   margin got clipped by the footer, so this is properly fixed and the page
+   reserves room for it. */
+.opbar{position:fixed;left:0;right:0;bottom:0;z-index:60;
+  padding:14px 16px 12px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(20,23,29,0),rgba(20,23,29,.92) 34%,var(--paper))}
+.opbar-in{pointer-events:auto;max-width:1700px;margin:0 auto}
+/* out of the way while a module is open — the sheet owns the screen then */
+body.dsheeting .opbar{display:none}
+.opbar-in{display:flex;align-items:center;gap:14px;
+  background:linear-gradient(160deg,#1c212a,#161a21);
+  border:1px solid #2b313b;border-radius:14px;padding:11px 14px;
+  box-shadow:0 -6px 26px rgba(0,0,0,.42)}
+.op-lab{flex:none;min-width:0}
+.op-lab b{display:block;font-size:11px;font-weight:800;letter-spacing:1.6px;
+  text-transform:uppercase;color:#aeb6c4}
+.op-lab i{display:block;font-style:normal;font-size:10px;color:var(--mut);margin-top:2px}
+.op-row{display:flex;gap:9px;flex:1;min-width:0;justify-content:center;flex-wrap:wrap}
+.op{display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer;
+  background:#20252e;border:1px solid #2f3540;border-radius:12px;padding:7px 14px 7px 8px;
+  font-family:inherit;transition:.14s;text-align:left}
+.op:hover{border-color:var(--oc);background:#252b35;transform:translateY(-1px)}
+.op-f{position:relative;width:38px;height:38px;flex:none;border-radius:10px;
+  overflow:hidden;background:#12151b;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.op-f svg{display:block;width:100%;height:100%}
+.op-dot{position:absolute;right:1px;bottom:1px;width:9px;height:9px;border-radius:50%;
+  background:#4a5462;box-shadow:0 0 0 2px #20252e}
+.op-dot.on{background:var(--green)}
+.op-x{min-width:0;line-height:1.2}
+.op-x b{display:block;font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
+.op-x i{display:block;font-style:normal;font-size:9.5px;color:var(--mut);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.op-mic{flex:none;display:flex;align-items:center;gap:7px;cursor:pointer;
+  background:rgba(75,123,212,.16);border:1px solid rgba(75,123,212,.5);border-radius:11px;
+  padding:9px 15px;color:var(--blu2);font-family:inherit;font-size:11.5px;font-weight:800;
+  letter-spacing:.6px;transition:.14s}
+.op-mic:hover{background:rgba(75,123,212,.3);color:#fff}
+.op-mic{min-height:40px}
+.op-mic svg{width:14px;height:14px;display:block;flex:none}
+/* the bar is fixed to the bottom, so the page needs room under the last panel */
+body.homeview .wrap{padding-bottom:96px}
+
+/* ============ THE IDEA BANK ============ */
+.ideabar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:var(--paper2);border:1px solid var(--line);border-radius:12px;padding:11px 15px}
+.ib-n{min-width:0}
+.ib-n b{display:block;font-size:20px;font-weight:800;letter-spacing:-.7px;
+  font-variant-numeric:tabular-nums;line-height:1}
+.ib-n i{display:block;font-style:normal;font-size:9px;font-weight:800;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--mut);margin-top:3px}
+.ib-sp{flex:1;min-width:0}
+.ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(276px,1fr));gap:10px;
+  margin-top:4px}
+.idea{background:var(--paper2);border:1px solid var(--line);border-radius:12px;
+  padding:11px 12px;min-width:0;border-left:3px solid #3a4150}
+.idea.st-filming{border-left-color:var(--amber)}
+.idea.st-posted{border-left-color:var(--green)}
+.idea.st-dead{opacity:.42}
+.i-top{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.i-st{background:none;border:1px solid var(--line);border-radius:20px;padding:2px 10px;
+  color:var(--mut);font-family:inherit;font-size:9px;font-weight:800;letter-spacing:1.1px;
+  text-transform:uppercase;cursor:pointer;transition:.14s}
+.i-st:hover{border-color:var(--blu);color:var(--ink)}
+.idea.st-filming .i-st{color:var(--amber);border-color:rgba(201,162,92,.45)}
+.idea.st-posted .i-st{color:var(--green);border-color:rgba(95,179,124,.45)}
+.i-tag{font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--blu2);background:rgba(75,123,212,.12);border-radius:20px;padding:2px 8px}
+.i-tag.dim{color:var(--mut);background:var(--raise)}
+.i-x{margin-left:auto;background:none;border:0;color:#4a5462;cursor:pointer;
+  font-size:16px;line-height:1;padding:0 3px}
+.i-x:hover{color:var(--red)}
+textarea.i-hook{width:100%;background:var(--raise);border:1px solid transparent;
+  border-radius:8px;padding:8px 9px;color:var(--ink);font-family:inherit;font-size:12.5px;
+  line-height:1.5;resize:vertical;min-height:52px;transition:border-color .2s}
+textarea.i-hook:focus{outline:none;border-color:var(--blu)}
+.i-why{font-size:10.5px;color:var(--mut);line-height:1.5;margin-top:7px;
+  padding-left:8px;border-left:2px solid #2b3038}
+
+.bstamp{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:20px;
+  border:1px solid var(--line);font-size:9px;font-weight:800;letter-spacing:1px;
+  color:#5f6875;font-style:normal;text-transform:uppercase;cursor:help}
 
 /* the room picker is phone-only */
 .rooms-m{display:none}
@@ -2271,9 +2537,113 @@ body.homeview .tower{display:none}
   .dfact b{font-size:19px}
   .dlock .dt-tk{width:100%;min-height:46px}
 }
+
+/* ---- the banner, on a phone ----
+   52px and four clocks and a player do not coexist on a 390px screen, so the
+   banner becomes two rows: identity and time on top, the clocks scrolling
+   underneath with the player pinned beside them. */
+@media (max-width:760px){
+  .topbar{height:auto;flex-wrap:wrap;padding:8px 10px;gap:8px;row-gap:8px}
+  .tb-brand{padding-right:8px}
+  .tb-here{padding:0 10px}
+  .tb-cd{padding-left:8px}
+
+  /* A horizontal scroller here looked fine but left four children sticking out
+     past the viewport, which is exactly the shape of the overflow bug this app
+     has been chased around for weeks. Two by two instead: nothing to swipe,
+     nothing hanging off the edge. */
+  .tb-zones{order:9;display:grid;grid-template-columns:1fr 1fr;gap:4px;
+    flex:1 1 100%;width:100%;min-width:0;border-left:0;border-top:1px solid #1e2634;
+    padding:8px 0 0;overflow:hidden}
+  .tbz{padding:0 9px;min-height:40px;min-width:0;flex:auto}
+  .tbz-t{font-size:13px}
+  .tbz-x{overflow:hidden}
+  .tbz-k{overflow:hidden;text-overflow:ellipsis}
+
+  .tb-mus{order:8;flex:1 1 auto;width:auto;min-width:150px;max-width:100%;
+    height:40px;margin-right:0}
+  .mus-card{padding:0 11px}
+  .vswitch{order:7}
+}
+
+
+/* ---- a module on a phone: full screen, no wasted frame ---- */
+@media (max-width:760px){
+  .dsheet-wrap{padding:0;align-items:stretch}
+  .dsheet{width:100%;max-height:100vh;height:100vh;border-radius:0;border:0}
+  .dsheet-h{padding:10px 12px;gap:7px;position:sticky;top:0;z-index:2}
+  .dsheet-h b{font-size:13.5px}
+  .dsheet-no{display:none}
+  .dsheet-fl{min-height:40px;display:inline-flex;align-items:center}
+  .dsheet-x{width:40px;height:40px;font-size:22px}
+  .dsheet-b .wbody{padding:12px 12px 28px}
+  /* the tab row inside a sheet scrolls in one line, same as a room */
+  .dsheet-b .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .dsheet-b .tabs::-webkit-scrollbar{display:none}
+}
+
+/* ---- the operator bar on a phone: three big faces, nothing else ---- */
+@media (max-width:760px){
+  /* the desktop bar bleeds -16px each side to sit flush with the page gutter.
+     On a phone the gutter is smaller, so -16px made it 402px wide on a 390px
+     screen — the same overflow shape as every other bug in this file. */
+  .opbar{padding:12px 10px 10px}
+  .opbar-in{flex-direction:column;align-items:stretch;gap:9px;padding:10px}
+  .op-lab{text-align:center}
+  .op-lab i{display:none}
+  .op-row{gap:7px;flex-wrap:nowrap}
+  .op{flex:1 1 0;min-width:0;flex-direction:column;gap:5px;padding:8px 5px;
+    align-items:center;text-align:center;min-height:74px}
+  .op-f{width:34px;height:34px}
+  .op-x b{font-size:11px}
+  .op-x i{font-size:8.5px}
+  .op-mic{width:100%;justify-content:center;min-height:46px}
+  body.homeview .wrap{padding-bottom:150px}
+}
+
+@media (max-width:760px){
+  .ideabar{gap:12px;padding:10px 12px}
+  .ib-n b{font-size:18px}
+  .ideas{grid-template-columns:1fr}
+  textarea.i-hook{font-size:16px;min-height:60px}
+  .i-x{font-size:22px;padding:4px 8px;min-height:38px}
+  .i-st{min-height:32px;display:inline-flex;align-items:center}
+}
+
+@media (max-width:760px){
+  .dw-d{min-height:auto}
+  input.dw-lab-i{font-size:11px;min-height:32px}
+  input.dw-lab-i:focus{font-size:16px}
+  textarea.dw-pi{font-size:16px;min-height:70px}
+  .dw-ck{width:30px;height:30px;font-size:14px}
+}
+
+@media (max-width:760px){
+  .mts{grid-template-columns:1fr}
+  .mt-g{grid-template-columns:1fr}
+  input.mt-f:nth-child(3){grid-column:auto}
+  input.mt-nm,input.mt-f,input.mt-at,textarea.mt-nt,.mt-cal input{font-size:16px}
+  input.mt-at{width:100%}
+  .mt-b{min-height:40px;display:inline-flex;align-items:center}
+  .mt-x{font-size:22px;padding:4px 8px;min-height:38px}
+  /* .btn goes full width on a phone, which pushed the Add button 340px wide
+     inside a flex row and off the right edge. Keep it beside the input. */
+  .dfood{gap:6px}
+  .dfood input{font-size:16px;min-height:44px;flex:1 1 auto;min-width:0}
+  .dfood .btn{min-height:44px;width:auto;flex:0 0 auto;padding:0 16px}
+}
+
+/* On a phone the sheet is already full screen, so Expand has nothing to add. */
+@media (max-width:760px){
+  #dsheet-wide{display:none}
+  .dsheet-wrap.wide{padding:0}
+  .dsheet-wrap.wide .dsheet{height:100vh;max-height:100vh}
+}
 </style>
 </head>
-<body>
+<body data-build="2026-07-30-b">
+<!-- EXODUS HQ BUILD 2026-07-30-b — if this line is missing from the deployed page,
+     the index.html that got uploaded is an older download. -->
 <div class="wrap">
 
   <div class="sect">
@@ -2287,6 +2657,31 @@ body.homeview .tower{display:none}
         <div class="tb-sub"><span id="tb-place">—</span> &middot; <span id="tb-date">—</span></div>
       </div>
       <div class="tb-cd"><b id="cd-n">—</b><i>days to Bangkok</i></div>
+
+      <!-- the four places that matter: where he is going, the two he deals
+           with, and the coast he sells into -->
+      <div class="tb-zones" id="tb-zones"></div>
+
+      <!-- Music. The frame is only revealed once it has actually loaded, so a
+           dead network leaves the card, never a white rectangle. -->
+      <div class="tb-mus" id="tb-mus">
+        <button class="mus-card" id="mus-card" title="Play the playlist">
+          <span class="mus-ic">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <circle cx="8" cy="8" r="7.2" fill="#1db954"/>
+              <path d="M4.6 5.6q3.6-1 7 .5" stroke="#0a1a10" stroke-width="1.35"
+                fill="none" stroke-linecap="round"/>
+              <path d="M5 8q3-.8 5.8.5" stroke="#0a1a10" stroke-width="1.15"
+                fill="none" stroke-linecap="round"/>
+              <path d="M5.4 10.2q2.4-.6 4.6.4" stroke="#0a1a10" stroke-width=".95"
+                fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="mus-t"><b>Play</b><i>Your playlist</i></span>
+        </button>
+        <div class="mus-frame" id="mus-frame"></div>
+      </div>
+
       <button class="vswitch" id="vswitch" title="Switch between the dashboard and the floor plan">
         <span class="vs-ic" id="vs-ic"></span><span class="vs-t" id="vs-t">Building</span>
       </button>
@@ -2339,7 +2734,8 @@ body.homeview .tower{display:none}
   </div>
 
 
-  <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically</div>
+  <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-30-b</span></div>
 </div>
 
 <script>
@@ -2830,6 +3226,12 @@ function wxGet(){
 var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
   rain:"\U0001f327️",storm:"⛈️",snow:"❄️",fog:"\U0001f32b️",wind:"\U0001f4a8"};
 
+/* Which build is running. There is no way to tell two 800KB index.html files
+   apart by eye, and an older download getting uploaded by mistake cost a whole
+   round of "nothing changed". This is the answer to that. */
+var BUILD="2026-07-30-b";
+try{ window.EXODUS_BUILD=BUILD; }catch(e){}
+
 function paintTopBar(){
   var tz=localTZ(), here=inZone(tz);
   var t=document.getElementById("tb-time");
@@ -2837,8 +3239,9 @@ function paintTopBar(){
   var pl=document.getElementById("tb-place"); if(pl)pl.textContent=placeName();
   var dt=document.getElementById("tb-date");  if(dt)dt.textContent=here.wd+" "+here.day+" "+here.mon;
 
-  /* the world clocks live on the sales floor wall now, not up here */
+  /* the sales floor wall strip, and the four in the banner */
   tickSalesClocks();
+  paintZones();
 
   var cd=document.getElementById("cd-n");
   if(cd){ var dl=Math.ceil((BANGKOK-new Date())/86400000); cd.textContent=dl>0?dl:"HERE"; }
@@ -2855,16 +3258,150 @@ function tickSalesClocks(){
   });
 }
 
-/* There is no music player in the banner. An embed cannot be controlled from
-   the page around it — no skip, no shuffle — and it paints a white rectangle
-   anywhere the frame cannot load. The record player in the office opens Spotify
-   properly, which is the honest version of the same thing. */
+/* ============ THE FOUR CLOCKS IN THE BANNER ============
+   Bangkok because that is where he is going, London because GMT is how everyone
+   quotes a call time, Dubai and the west coast because that is who he deals
+   with. His own zone is highlighted, and if a place is on a different calendar
+   day to him it gets a +1 or -1 so a call never gets booked on the wrong date. */
+var BANNER_ZONES=[
+  {k:"Bangkok",  tz:"Asia/Bangkok",        f:"th"},
+  {k:"GMT",      tz:"Europe/London",       f:"gb"},
+  {k:"Dubai",    tz:"Asia/Dubai",          f:"ae"},
+  {k:"West Cst", tz:"America/Los_Angeles", f:"us"}
+];
+/* Which calendar day a zone is on, as a plain number, so two zones can be
+   compared without any date parsing. */
+function zoneDayNo(tz,d){
+  try{
+    var f=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit"});
+    return f.format(d||new Date());
+  }catch(e){ return ""; }
+}
+function paintZones(){
+  var host=document.getElementById("tb-zones");
+  if(!host) return;
+  var mine=localTZ(), now=new Date();
+  var myDay=zoneDayNo(mine,now);
+  host.innerHTML=BANNER_ZONES.map(function(z){
+    var t=inZone(z.tz,now);
+    var home=(z.tz===mine);
+    /* ahead or behind him by a calendar day */
+    var d=zoneDayNo(z.tz,now), off="";
+    if(d && myDay && d!==myDay) off = (d>myDay) ? '<span class="tbz-d">+1</span>'
+                                                : '<span class="tbz-d">&minus;1</span>';
+    return '<div class="tbz'+(home?" home":"")+'" title="'+esc(z.tz)+'">'
+      +'<span class="tbz-f">'+(FLAG[z.f]||"")+'</span>'
+      +'<span class="tbz-x">'
+        +'<span class="tbz-t">'+t.txt+'<em>'+t.ampm.toLowerCase()+'</em>'+off+'</span>'
+        +'<span class="tbz-k">'+esc(z.k)+(home?" &middot; you":"")+'</span>'
+      +'</span></div>';
+  }).join("");
+}
 
-/* The banner used to carry a Spotify player. It is gone. An embed cannot be
-   controlled from the page around it — no skip, no shuffle — and it renders a
-   white rectangle anywhere the frame cannot load, which is most of the time.
-   The record player in the office still opens Spotify, which is the honest
-   version of the same thing. */
+/* ============ THE PLAYER IN THE BANNER ============
+   This failed seven times and painted a white box every time. Both causes are
+   now understood and neither was Spotify's fault:
+
+     1. I passed `theme=0`. That is Spotify's LIGHT theme — the white box WAS
+        the player, working correctly, in white. No theme parameter at all gives
+        the dark one.
+     2. An iframe is blank wherever there is no network, which is every preview
+        environment this has ever been looked at in.
+
+   So the card is what renders. The iframe is created hidden, and is only
+   revealed by its own load event. If it never loads, the card stays and he sees
+   a button, not a white rectangle. On the deployed site the embed serves all
+   100 tracks — I checked the endpoint directly rather than assuming.
+
+   What an embed can and cannot do, plainly: Spotify's embed has its own play,
+   pause, next and previous, and those work. Shuffle is not exposed to the page
+   around it by any public API, so there is no shuffle button here — the office
+   record player still opens Spotify proper, where shuffle lives. */
+var MUSIC_PLAYLIST="37i9dQZF1CKP6BedYNZqyO";
+var MUSIC_LOADED=false, MUSIC_TRYING=false;
+
+/* Can this browser actually reach Spotify?
+
+   The iframe's own load event is NOT a good enough answer. When a request is
+   blocked or fails, the browser renders its own error page inside the frame and
+   fires load anyway — so trusting load is precisely how you end up revealing an
+   empty pane. Verified: with the route aborted, load still fired.
+
+   An image request needs no CORS and its onload / onerror are both honest, so a
+   favicon is a reliable knock on the door. Only if it answers do we build the
+   frame at all. */
+function spotifyReachable(cb){
+  var done=false, img=new Image();
+  function finish(ok){ if(done) return; done=true; cb(ok); }
+  img.onload=function(){ finish(true); };
+  img.onerror=function(){ finish(false); };
+  setTimeout(function(){ finish(false); },3500);
+  /* cache-bust so a previous failure is not remembered as a success */
+  img.src="https://open.spotify.com/favicon.ico?_="+Date.now();
+}
+
+function musicUri(){ return "spotify:playlist:"+MUSIC_PLAYLIST; }
+function musicEmbedSrc(){
+  /* compact player. No `theme` parameter — see above. */
+  return "https://open.spotify.com/embed/playlist/"+MUSIC_PLAYLIST+"?utm_source=exodushq";
+}
+function musicOpen(){ return "https://open.spotify.com/playlist/"+MUSIC_PLAYLIST; }
+
+function startMusic(){
+  var box=document.getElementById("tb-mus");
+  var host=document.getElementById("mus-frame");
+  if(!box||!host||MUSIC_LOADED||MUSIC_TRYING) return;
+  MUSIC_TRYING=true;
+
+  var card=document.getElementById("mus-card");
+  if(card){ var l=card.querySelector(".mus-t b"); if(l) l.textContent="Loading\u2026"; }
+
+  spotifyReachable(function(up){
+    MUSIC_TRYING=false;
+    if(!up){ musicFailed(); return; }
+
+    var f=document.createElement("iframe");
+    f.setAttribute("title","Spotify player");
+    f.setAttribute("allow","autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture");
+    f.setAttribute("frameborder","0");
+    var t=setTimeout(function(){ if(!MUSIC_LOADED) musicFailed(); },6000);
+    f.onload=function(){ MUSIC_LOADED=true; box.classList.add("live"); clearTimeout(t); };
+    f.onerror=function(){ clearTimeout(t); musicFailed(); };
+    f.src=musicEmbedSrc();
+    host.innerHTML="";
+    host.appendChild(f);
+  });
+}
+
+function musicFailed(){
+  var box=document.getElementById("tb-mus");
+  if(!box || MUSIC_LOADED) return;
+  MUSIC_TRYING=false;
+  /* Tear the frame out entirely. An empty iframe is the white box. */
+  var host=document.getElementById("mus-frame");
+  if(host) host.innerHTML="";
+  box.classList.remove("live");
+  var card=document.getElementById("mus-card");
+  if(card){
+    var ic=card.querySelector(".mus-ic");
+    card.innerHTML='<span class="mus-ic">'+(ic?ic.innerHTML:"")+'</span>'
+      +'<span class="mus-t"><b>Open Spotify</b><i>player would not load</i></span>';
+  }
+  if(box.querySelector(".mus-why")) return;
+  var why=document.createElement("div");
+  why.className="mus-why";
+  why.innerHTML="Spotify's player needs a live connection, so it stays blank in a "
+    +"preview. On the deployed site it plays. Tap again to open Spotify itself.";
+  box.appendChild(why);
+  setTimeout(function(){ if(why.parentNode) why.parentNode.removeChild(why); },7000);
+  /* from here the card is a link, not a loader */
+  if(card) card.onclick=function(){ window.open(musicOpen(),"_blank","noopener"); };
+}
+
+(function wireMusic(){
+  var card=document.getElementById("mus-card");
+  if(card) card.onclick=function(){ startMusic(); };
+})();
 
 
 /* ---- a real clock face, hands set from your local time ---- *//* ---- a real clock face, hands set from your local time ---- */
@@ -3415,6 +3952,48 @@ var SBW = {
       +" where name_key="+qv(keyOf(name))+";");
   },
 
+  /* Loose one-off settings that live in the settings table. SBSAVE("settings")
+     was being called with no writer behind it, so the Calendly link saved to the
+     device and never reached the cloud — the silent-failure shape this app has
+     been bitten by repeatedly. */
+  settings: function(){
+    var v=LS("calendly")||"";
+    if(v==="") return sbRun("delete from settings where key='calendly';");
+    return sbRun("insert into settings (key,value) values ('calendly',"+qv(v)+") "
+      +"on conflict (key) do update set value=excluded.value;");
+  },
+
+  /* meetings he booked himself */
+  meetings: function(){
+    var rows=mtLoad();
+    var sql="delete from meetings where true;";
+    if(rows.length){
+      var vals=rows.map(function(r,i){
+        return "("+[qv(r.name||""), (r.at?qv(r.at):"null"), qv(r.phone||""), qv(r.email||""),
+          qv(r.link||""), qv(r.notes||""), (r.done?"true":"false"), i].join(",")+")";});
+      sql+=" insert into meetings (name,at_time,phone,email,link,notes,done,sort) values "
+        +vals.join(",")+";";
+    }
+    return sbRun(sql);
+  },
+
+  /* the idea bank. Small, ordered, replaced wholesale. */
+  ideas: function(){
+    var rows=ideaLoad();
+    var sql="delete from content_ideas where true;";
+    if(rows.length){
+      var vals=rows.map(function(r,i){
+        return "("+[qv(r.hook||""), qv(r.angle||""), qv(r.format||""), qv(r.plat||""),
+          qv(r.why||""), qv(IDEA_ST.indexOf(r.st)>=0?r.st:"idea"),
+          (r.on?qv(r.on):"null"),
+          (r.views===""||r.views===undefined||r.views===null)?"null":qn(r.views),
+          i].join(",")+")";});
+      sql+=" insert into content_ideas (hook,angle,format,platform,why,status,posted_on,views,sort) values "
+        +vals.join(",")+";";
+    }
+    return sbRun(sql);
+  },
+
   /* the safe. Three small lists, replaced wholesale so the order sticks. */
   vault_accounts: function(){ return vaultPush("accounts"); },
   vault_expenses: function(){ return vaultPush("expenses"); },
@@ -3730,6 +4309,10 @@ function sbPull(){
     +"'students',   (select coalesce(json_agg(json_build_object('name',name,'phone',phone,'email',email,'journey',journey,'goal',goal,'situation',situation,'updates',updates)),'[]'::json) from students where active),"
     +"'social',     (select coalesce(json_agg(json_build_object('p',platform,'f',followers)),'[]'::json) from social_accounts),"
     +"'posts',      (select coalesce(json_agg(json_build_object('p',platform,'d',posted_on,'c',count)),'[]'::json) from social_posts where posted_on >= current_date - 30),"
+    +"'folsrc',     (select coalesce(json_object_agg(platform, json_build_object('src',source,'at',checked_at)),'{}'::json) from social_accounts),"
+    +"'folhist',    (select coalesce(json_agg(json_build_object('p',platform,'d',on_date,'n',followers) order by on_date),'[]'::json) from social_history where on_date >= current_date - 30),"
+    +"'ideas',      (select coalesce(json_agg(json_build_object('hook',hook,'angle',angle,'format',format,'plat',platform,'why',why,'st',status,'on',posted_on,'views',views) order by sort),'[]'::json) from content_ideas),"
+    +"'meets',      (select coalesce(json_agg(json_build_object('name',name,'at',at_time,'phone',phone,'email',email,'link',link,'notes',notes,'done',done) order by sort),'[]'::json) from meetings),"
     +"'stages',     (select coalesce(json_agg(json_build_object('k',name_key,'s',stage,'n',notes,'p',phone,'e',email,'i',instagram,'pr',priority,"
     +"                 'came',came_in,'prec',came_in_precision,'fu',follow_up_on,'funote',follow_up_note,'detail',detail)),'[]'::json) from leads),"
     +"'forms',      (select coalesce(json_agg(json_build_object('name',name,'email',email,'phone',phone,'interest',interest,'at',submitted_at,'gid',gmail_id,'self',is_self_test) order by submitted_at desc),'[]'::json) from form_submissions),"
@@ -3738,6 +4321,7 @@ function sbPull(){
     +"'pays',       (select coalesce(json_agg(json_build_object('k',name_key,'a',amount)),'[]'::json) from payments),"
     +"'brands',     (select value from settings where key='brand_notes'),"
     +"'cash',       (select value from settings where key='cash_collected'),"
+    +"'calendly',   (select value from settings where key='calendly'),"
     +"'vacct',      (select coalesce(json_agg(json_build_object('label',label,'kind',kind,'institution',institution,'last4',last4,'balance',balance,'limit_amt',limit_amt,'note',note) order by sort),'[]'::json) from vault_accounts),"
     +"'vexp',       (select coalesce(json_agg(json_build_object('label',label,'amount',amount,'cadence',cadence,'due_day',due_day,'category',category,'paid_with',paid_with,'active',active,'note',note) order by sort),'[]'::json) from vault_expenses),"
     +"'vlog',       (select coalesce(json_agg(json_build_object('label',label,'username',username,'secret',secret,'url',url,'note',note) order by sort),'[]'::json) from vault_logins),"
@@ -3798,10 +4382,17 @@ function sbPull(){
       var k={tiktok:"tiktok",instagram:"ig",youtube:"yt"}[pp.p]||pp.p;
       LS("post_"+k+"_"+String(pp.d).slice(0,10), String(pp.c||0)); });
     if(d.brands) LS("con_brands", d.brands);
+    /* which follower numbers came from an API, and the last 30 days of them */
+    if(d.folsrc)  LS("fol_src",  JSON.stringify(d.folsrc));
+    if(d.folhist) LS("fol_hist", JSON.stringify(d.folhist));
     /* the safe */
     if(d.vacct) LS("vault_accounts", JSON.stringify(d.vacct));
     if(d.vexp)  LS("vault_expenses", JSON.stringify(d.vexp));
     if(d.vlog)  LS("vault_logins",   JSON.stringify(d.vlog));
+    /* the idea bank */
+    if(d.ideas) LS("ideas",    JSON.stringify(d.ideas));
+    if(d.meets) LS("meetings", JSON.stringify(d.meets));
+    if(d.calendly!==undefined && d.calendly!==null) LS("calendly", d.calendly);
     /* The database is the truth for this. Anything already on the device is
        replaced, including an empty string, so a phone and a laptop can never
        disagree about how much has come in. */
@@ -8488,7 +9079,8 @@ function trainerCtx(){
               protein:parseInt(LS("goal_prot")||"180",10),
               carbs:parseInt(LS("goal_carb")||"280",10),
               fat:parseInt(LS("goal_fat")||"80",10) },
-    workoutsThisMonth:thisMonth.length,
+    workoutsThisMonth:sessionsInMonth(new Date()),
+    sessionsThisWeek:sessionsThisWeek(),
     lastFiveSessions:w.slice(-5).map(function(x){
       return {when:new Date(x.d).toDateString(), what:x.t};}),
     weight:ws.length?{latest:ws[ws.length-1], entries:ws.length}:null,
@@ -8801,7 +9393,8 @@ function tAsk(q){
 function trainerChat(){
   var w=wkLoad(), ws=wtLoad(), today=fdToday();
   var now=new Date(), y=now.getFullYear(), m=now.getMonth();
-  var thisMonth=w.filter(function(x){var d=new Date(x.d);return d.getFullYear()===y&&d.getMonth()===m;});
+  /* the union of the written log and the green squares — see trainedDays */
+  var monthCount=sessionsInMonth(now);
   function sum(rows,f){return rows.reduce(function(a,b){return a+(parseInt(b[f],10)||0);},0);}
   var gk=parseInt(LS("goal_kcal")||"2600",10), gp=parseInt(LS("goal_prot")||"180",10);
   var kc=sum(today,"kcal"), pr=sum(today,"p");
@@ -8812,8 +9405,9 @@ function trainerChat(){
 
   /* what he sees, at a glance */
   h+='<div class="grid3" style="margin:12px 0">'
-   +'<div class="card dk"><h4>'+MON[m]+' Sessions</h4><div class="v">'+thisMonth.length+'</div>'
-   +'<div class="d">'+(thisMonth.length>=12?"sehr gut":thisMonth.length>=8?"acceptable":"not enough")+'</div></div>'
+   +'<div class="card dk"><h4>'+MON[m]+' Sessions</h4><div class="v">'+monthCount+'</div>'
+   +'<div class="d">'+(monthCount>=12?"sehr gut":monthCount>=8?"acceptable":"not enough")
+   +' &middot; log + calendar</div></div>'
    +'<div class="card"><h4>Calories Today</h4><div class="v">'+kc.toLocaleString()+'</div>'
    +'<div class="d">'+(kc>=gk?"target hit":Math.max(0,gk-kc).toLocaleString()+" short")+'</div></div>'
    +'<div class="card"><h4>Protein Today</h4><div class="v" style="color:'+(pr>=gp?"#4ade80":"#fbbf24")+'">'+pr+'g</div>'
@@ -9290,9 +9884,55 @@ function execMoney(){
   return h;
 }
 function execCalls(){
+  var h="";
+
+  /* His own booking list first, because it is the one that always works. The
+     Google side needs tokens; this does not. Same rows the dashboard renders —
+     one store, two places to read it. */
+  (function(){
+    var open2=mtSorted().filter(function(x){ return !x.m.done; });
+    var done2=mtLoad().filter(function(x){ return x.done; }).length;
+    h+='<div class="mtblock"><div class="mtb-h"><b>Your Meetings</b>'
+      +'<span>'+open2.length+' booked'+(done2?" \u00b7 "+done2+" done":"")+'</span>'
+      +'<button class="btn" id="mt-new2">+ New Meeting</button></div>';
+    if(!open2.length)
+      h+='<div class="info">Nothing booked yet. Add one here or from the dashboard \u2014 '
+        +'it is the same list.</div>';
+    else {
+      h+='<div class="mts">';
+      open2.forEach(function(row){
+        var i=row.i, m=row.m;
+        var can=dialable(m.phone||"").ok;
+        h+='<div class="mt'+(mtIsPast(m)?" past":"")+'">'
+          +'<div class="mt-top">'
+            +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" value="'+esc(m.name||"")+'" '
+            +'placeholder="Who">'
+            +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
+            +'value="'+esc(mtLocalValue(m.at))+'">'
+            +'<span class="mt-when'+(mtIsPast(m)?" late":"")+'">'+esc(mtWhen(m))+'</span>'
+            +'<button class="mt-x" data-mtdel="'+i+'" title="Remove">&times;</button>'
+          +'</div>'
+          +'<div class="mt-g">'
+            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(m.phone||"")+'" placeholder="Phone">'
+            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(m.email||"")+'" placeholder="Email">'
+            +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(m.link||"")+'" placeholder="Meeting link">'
+          +'</div>'
+          +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
+          +'placeholder="What this call is about.">'+esc(m.notes||"")+'</textarea>'
+          +'<div class="mt-act">'
+            +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
+            +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
+            +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
+          +'</div></div>';
+      });
+      h+='</div>';
+    }
+    h+='</div>';
+  })();
+
   /* Claudia books it. He types the appointment the way he would say it out
      loud, she turns that into a real event on his Google Calendar. */
-  var h='<div class="card bookc"><h4>Tell Claudia To Book It</h4>'
+  h+='<div class="card bookc"><h4>Tell Claudia To Book It</h4>'
    +'<div class="d" style="margin-bottom:9px">Plain English. "Call with Marco tomorrow at 2pm", '
    +'"Interview Thursday 10:30 for 45 minutes, marco@gmail.com". She reads it, you confirm, it lands '
    +'on your calendar with a Meet link.</div>'
@@ -11331,17 +11971,66 @@ function conAnalytics(){
     +'<div class="s" style="margin-top:6px;font-weight:700">Followers · Views · Engagement</div></div>';});
   return h+'</div>';
 }
+/* ============ THE IDEA BANK, IN THE STUDIO ============
+   The same rows the dashboard shows, with room to work: filter by angle, cycle a
+   card through idea → filming → posted, write his own, and see WHY each pattern
+   travels rather than just the hook. */
 function conIdeas(){
-  return '<div class="info">Your niche: <b>moto-travel</b> plus remote income and overseas living.</div>'
-   +'<div class="grid2">'
-   +'<div class="skel"><div class="t">Hook Bank</div><div class="s">Openers that stop the scroll</div></div>'
-   +'<div class="skel"><div class="t">Competitor Teardowns</div><div class="s">Moto-travel creators, what works</div></div>'
-   +'<div class="skel"><div class="t">Post Calendar</div><div class="s">What ships, when, where</div></div>'
-   +'<div class="skel"><div class="t">Repurposing Map</div><div class="s">One TikTok → Reel → Short</div></div></div>'
-   +'<div class="card dk" style="margin-top:13px"><h4>What Already Works</h4>'
-   +'<div class="d">Millions of views a month on TikTok, and the free-guide PDF converts DMs into calls. '
-   +'Christopher Fredrick, Kyle Engley, Troy Byrd and Ulus all came through DMs after the guide. '
-   +'That loop is the thing worth scaling.</div></div>';
+  var rows=ideaLoad();
+  var h='<div class="ideabar">'
+   +'<div class="ib-n"><b>'+ideaCount("idea")+'</b><i>ideas</i></div>'
+   +'<div class="ib-n"><b style="color:var(--amber)">'+ideaCount("filming")+'</b><i>filming</i></div>'
+   +'<div class="ib-n"><b style="color:var(--green)">'+ideaCount("posted")+'</b><i>posted</i></div>'
+   +'<div class="ib-sp"></div>'
+   +'<button class="btn" id="idea-add">+ Write One</button>'
+   +'</div>';
+
+  h+='<div class="pills" style="margin-top:12px">'
+   +'<button class="pill'+(IDEA_FILTER==="all"?" on":"")+'" data-iaf="all">Everything</button>'
+   +ideaAngles().map(function(a){
+      return '<button class="pill'+(IDEA_FILTER===a?" on":"")+'" data-iaf="'+esc(a)+'">'
+        +esc(a)+'</button>';}).join("")
+   +'</div>';
+
+  var show=rows.filter(function(x){
+    return IDEA_FILTER==="all" || (x.angle||"other")===IDEA_FILTER;
+  });
+  if(!show.length) h+='<div class="empty">Nothing here yet. Write one.</div>';
+  else {
+    h+='<div class="ideas">';
+    show.forEach(function(x){
+      var i2=rows.indexOf(x);
+      var st=x.st||"idea";
+      h+='<div class="idea st-'+esc(st)+'">'
+        +'<div class="i-top">'
+          +'<button class="i-st" data-ist="'+i2+'" title="Tap to move it along">'+esc(st)+'</button>'
+          +(x.angle?'<span class="i-tag">'+esc(x.angle)+'</span>':'')
+          +(x.format?'<span class="i-tag dim">'+esc(x.format)+'</span>':'')
+          +(x.plat&&x.plat!=="all"?'<span class="i-tag dim">'+esc(x.plat)+'</span>':'')
+          +'<button class="i-x" data-ix="'+i2+'" title="Remove">&times;</button>'
+        +'</div>'
+        +'<textarea class="i-hook" data-ih="'+i2+'" rows="2" '
+        +'placeholder="The line he hears in the first second">'+esc(x.hook||"")+'</textarea>'
+        +(x.why?'<div class="i-why">'+esc(x.why)+'</div>':'')
+        +'</div>';
+    });
+    h+='</div>';
+  }
+
+  h+='<div class="card dk" style="margin-top:14px"><h4>Why These Shapes</h4>'
+   +'<div class="d">Hooks land in the first second — cut every half to one and a half '
+   +'seconds through the first five, and put the hook on screen as text, not a title. '
+   +'The formats that travel: exact costs with receipts, "things I wish I knew before", '
+   +'hyper-local food under sixty seconds, before-and-after transitions, and itineraries — '
+   +'because a saved video gets pushed harder than a liked one. Raw handheld beats polished. '
+   +'A journey with a start and an end is what turned Itchy Boots into 2.5 million '
+   +'subscribers, and it is the one thing his Bangkok move gives him for free.</div></div>';
+
+  h+='<div class="card" style="margin-top:11px"><h4>What Already Works For You</h4>'
+   +'<div class="d">Millions of views a month on TikTok, and the free-guide PDF turns DMs '
+   +'into calls. Christopher Fredrick, Kyle Engley, Troy Byrd and Ulus all came through DMs '
+   +'after the guide. That loop is the thing worth scaling.</div></div>';
+  return h;
 }
 
 
@@ -11424,9 +12113,25 @@ function gymView(){
 
   /* ---- this month's sessions ---- */
   if(!mine.length){
-    h+='<div class="info">Nothing logged in '+MON[m]+' yet. Type what you did and hit Log It.</div>';
+    /* He may well have painted green squares without writing the session down.
+       Saying "nothing logged" while the headline says 6 sessions is the kind of
+       contradiction that made him stop trusting the number. */
+    var onlyGreen=sessionsInMonth(new Date());
+    h+='<div class="info">'
+      +(onlyGreen
+        ? onlyGreen+' day'+(onlyGreen===1?'':'s')+' marked green on the calendar this '
+          +MON[m]+', but nothing written down. Type what you did and hit Log It.'
+        : 'Nothing logged in '+MON[m]+' yet. Type what you did and hit Log It.')
+      +'</div>';
   }else{
-    h+='<h4 class="sh">'+MON[m]+' Sessions &mdash; '+mine.length+'</h4>';
+    /* Written sessions here; the headline count also includes days he only
+       painted green on the calendar, so say which is which rather than showing
+       two different numbers with the same label. */
+    var greenOnly=sessionsInMonth(new Date())-mine.length;
+    h+='<h4 class="sh">'+MON[m]+' Sessions &mdash; '+mine.length+' written'
+      +(greenOnly>0?' <span style="color:var(--mut);font-weight:600">+ '+greenOnly
+        +' marked on the calendar = '+sessionsInMonth(new Date())+' total</span>':'')
+      +'</h4>';
     mine.slice().reverse().forEach(function(x){
       var dt=new Date(x.d);
       var gi=w.indexOf(x);
@@ -11464,6 +12169,74 @@ function dayState(d){
   return "";
 }
 function nextState(v){ return v==="g" ? "b" : v==="b" ? "r" : "g"; }
+
+/* ============ DID HE TRAIN THAT DAY? ============
+   There were two answers to this and they disagreed. The workout log holds the
+   sessions he types; the consistency calendar holds a green square per day.
+   Claude S. counted only the log, so a month of green squares still reported
+   "0 sessions" — exactly what Glen spotted. One function now, both stores feed
+   it: a green square counts, a logged workout counts, and a day recorded in
+   both counts once.
+
+   dayState already falls back to the log, so a logged day shows green on the
+   calendar. This is the other half of that bridge. */
+function trainedDays(year, month){
+  var seen={};
+  wkLoad().forEach(function(x){
+    if(!x||!x.d) return;
+    var d=new Date(x.d);
+    if(isNaN(d.getTime())) return;
+    if(year!==undefined && (d.getFullYear()!==year || d.getMonth()!==month)) return;
+    seen[dkey(d)]=1;
+  });
+  var from, to;
+  if(year===undefined){
+    from=new Date(); from.setFullYear(from.getFullYear()-2);
+    to=new Date();
+  } else {
+    from=new Date(year,month,1);
+    to=new Date(year,month+1,0);
+  }
+  var cur=new Date(from.getFullYear(),from.getMonth(),from.getDate());
+  var guard=0;
+  while(cur<=to && guard++<1000){
+    if(LS("cs_"+dkey(cur))==="g") seen[dkey(cur)]=1;
+    cur.setDate(cur.getDate()+1);
+  }
+  return Object.keys(seen).sort();
+}
+function sessionsInMonth(d){
+  d=d||new Date();
+  return trainedDays(d.getFullYear(), d.getMonth()).length;
+}
+/* Monday start, because a training week is not a calendar week. */
+function sessionsThisWeek(){
+  var now=new Date(); now.setHours(0,0,0,0);
+  var dow=(now.getDay()+6)%7;
+  var mon=new Date(now); mon.setDate(mon.getDate()-dow);
+  var n=0;
+  for(var i=0;i<7;i++){
+    var d=new Date(mon); d.setDate(mon.getDate()+i);
+    if(d>now) break;
+    if(LS("cs_"+dkey(d))==="g"){ n++; continue; }
+    var hit=wkLoad().some(function(x){
+      return x && x.d && dkey(new Date(x.d))===dkey(d); });
+    if(hit) n++;
+  }
+  return n;
+}
+/* His rota is Amazon Mon/Thu/Fri/Sat, so the next free day is the honest answer
+   to "when am I next training". If today is free and untrained, it is today. */
+function nextTrainingDay(){
+  var now=new Date(); now.setHours(0,0,0,0);
+  for(var i=0;i<14;i++){
+    var d=new Date(now); d.setDate(now.getDate()+i);
+    if(AMAZON.indexOf(d.getDay())>=0) continue;
+    if(i===0 && LS("cs_"+dkey(d))==="g") continue;
+    return { d:d, when: i===0 ? "today" : i===1 ? "tomorrow" : DAYFULL[d.getDay()] };
+  }
+  return null;
+}
 
 function consistView(){
   var now=new Date(); now.setHours(0,0,0,0);
@@ -11877,11 +12650,46 @@ function paintSwitch(){
       +'<rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>';
 }
 
-/* Tapping anything on the dashboard drops him into the room that owns it. The
-   phone has its own one-room-at-a-time view, so it takes a different door. */
-function dashGo(room,tab){
+/* ---- opening a module WITHOUT leaving the dashboard ----
+   Tapping a panel used to throw him into the floor plan, which is the opposite
+   of what a homepage is for. Now the room's own panel opens as a sheet on top of
+   the dashboard: same tabs, same content, same handlers — it is the real room,
+   just rendered here. Only the Building button changes views.
+
+   DASH_MOD is the open module, or null. It is deliberately not part of WINS:
+   those are the draggable desktop windows that belong to the floor plan, and
+   mixing the two is what would make the view flicker. */
+var DASH_MOD=null;          /* {room, tab} */
+/* The CRM is the thing he works in for an hour at a stretch, so it opens wide
+   and stays wide. Remembered, because having to re-expand it every time is the
+   kind of friction that makes someone stop using a tool. */
+var DASH_WIDE = LS("dash_wide")==="1";
+/* Rooms that are worth the whole screen by default. */
+var WIDE_BY_DEFAULT={sales:1};
+
+function dashOpen(room,tab){
+  if(!FLOORS[room]) return;
+  var tabs=FLOORS[room].tabs||[];
+  tab=Math.max(0, Math.min(tabs.length-1, tab||0));
+  /* the pipeline gets the full screen the first time, then whatever he chose */
+  if(WIDE_BY_DEFAULT[room] && LS("dash_wide")===null) DASH_WIDE=true;
+  DASH_MOD={room:room, tab:tab};
+  drawDash();
+  /* start at the top of the sheet, not wherever the page was scrolled */
+  var sh=document.getElementById("dsheet-b");
+  if(sh) sh.scrollTop=0;
+}
+function dashClose(){ DASH_MOD=null; drawDash(); }
+function dashTab(i){ if(DASH_MOD){ DASH_MOD.tab=i; drawDash(); } }
+
+/* Kept because a lot of call sites say "go here". It no longer switches views. */
+function dashGo(room,tab){ dashOpen(room,tab); }
+
+/* Jump all the way into the building — only the Building button and the
+   room's own "open in the floor plan" link do this. */
+function dashToFloor(room,tab){
   setView("floor");
-  if(isPhone()) { mOpen(room, tab||0); return; }
+  if(isPhone()){ mOpen(room, tab||0); return; }
   STATE.roof=false; STATE.base=false; STATE.floor=room; STATE.tab=tab||0;
   drawBuilding();
   var w=winOpen(room); w.tab=tab||0; w.min=false;
@@ -11945,12 +12753,158 @@ function trainStreak(){
   }
   return n;
 }
+/* Weigh-ins are stored as {d:"YYYY-MM-DD", w:pounds}. This read s2[0] and callers
+   reached for .t, which is not a field on the record — the dashboard would have
+   printed "undefined" the first time Glen weighed himself. The gym panel had it
+   right all along; this brings the rest into line. */
 function latestWeight(){
-  var a=wtLoad();
+  var a=wtLoad().filter(function(x){ return x && x.d && x.w!==undefined && x.w!==""; });
   if(!a.length) return null;
-  var s2=a.slice().sort(function(x,y){ return new Date(y.d)-new Date(x.d); });
-  return s2[0];
+  a.sort(function(x,y){ return String(y.d).localeCompare(String(x.d)); });
+  var top=a[0];
+  return { d:top.d, w:top.w, label:String(top.w).replace(/[^0-9.]/g,"")+" lb" };
 }
+/* ============ THE IDEA BANK ============
+   Hooks and formats, kept in Postgres so they follow him between his phone and
+   his laptop. Seeded from what actually travels on short-form travel content:
+   exact cost breakdowns with receipts, "things I wish I knew before", hyper-local
+   food under a minute, and a journey with a beginning and an end — the arc Itchy
+   Boots turned into 2.5 million subscribers. */
+/* ============ MEETINGS AND CALLS ============
+   His own booking list, deliberately separate from Google Calendar: it needs no
+   tokens at all, and it holds the two things a calendar entry does not — the
+   number to ring and the notes he wants in front of him on the call.
+
+   The Calendly base is a field he sets once. Every meeting then carries a link he
+   can send, and if he has not set one the row still works with a plain Meet link,
+   so nothing here depends on a setting being filled in. */
+function mtLoad(){ try{ return JSON.parse(LS("meetings")||"[]")||[]; }catch(e){ return []; } }
+function mtSave(a){ LS("meetings", JSON.stringify(a)); SBSAVE("meetings"); }
+function calendlyBase(){ return (LS("calendly")||"").trim(); }
+function calendlyLink(){
+  var b=calendlyBase();
+  if(!b) return "";
+  if(!/^https?:\/\//i.test(b)) b="https://"+b.replace(/^\/+/,"");
+  return b.replace(/\/+$/,"");
+}
+var MEET_FALLBACK="https://meet.google.com/landing";
+function mtLinkFor(m){
+  if(m && m.link) return m.link;
+  return calendlyLink() || MEET_FALLBACK;
+}
+/* Soonest first. Anything with no time sits at the bottom rather than vanishing,
+   because a booked call with a missing time is still a booked call.
+
+   Returns {i, m} pairs, where i is the row's position in the STORED list. This
+   matters: mtLoad() re-parses the JSON on every call, so it hands back brand new
+   objects each time and mtLoad().indexOf(m) is always -1. Rendering with that
+   index gave every row data-mti="-1", and every edit then hit `if(!a[-1]) return`
+   and silently did nothing. Carrying the real index is the fix. */
+function mtSorted(){
+  var a=mtLoad().map(function(m,i){ return {i:i, m:m}; });
+  a.sort(function(x,y){
+    var xd=x.m.at?new Date(x.m.at).getTime():Infinity;
+    var yd=y.m.at?new Date(y.m.at).getTime():Infinity;
+    if(xd!==yd) return xd-yd;
+    return String(x.m.name||"").localeCompare(String(y.m.name||""));
+  });
+  return a;
+}
+function mtWhen(m){
+  if(!m.at) return "no time set";
+  var d=new Date(m.at);
+  if(isNaN(d.getTime())) return "no time set";
+  var now=new Date();
+  var t=d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+  if(d.toDateString()===now.toDateString()) return "today "+t;
+  var tm=new Date(now); tm.setDate(tm.getDate()+1);
+  if(d.toDateString()===tm.toDateString()) return "tomorrow "+t;
+  if(d<now) return "was "+DAYS[d.getDay()]+" "+(d.getMonth()+1)+"/"+d.getDate();
+  return DAYS[d.getDay()]+" "+(d.getMonth()+1)+"/"+d.getDate()+" "+t;
+}
+/* datetime-local wants local wall-clock, not an ISO string with a Z on the end —
+   feeding it UTC shifts every meeting by the timezone offset. */
+function mtLocalValue(at){
+  if(!at) return "";
+  var d=new Date(at);
+  if(isNaN(d.getTime())) return "";
+  function two(n){ return (n<10?"0":"")+n; }
+  return d.getFullYear()+"-"+two(d.getMonth()+1)+"-"+two(d.getDate())
+    +"T"+two(d.getHours())+":"+two(d.getMinutes());
+}
+function mtIsPast(m){
+  if(!m.at) return false;
+  var d=new Date(m.at);
+  return !isNaN(d.getTime()) && d < new Date();
+}
+
+function ideaLoad(){ try{ return JSON.parse(LS("ideas")||"[]")||[]; }catch(e){ return []; } }
+function ideaSave(a){ LS("ideas", JSON.stringify(a)); SBSAVE("ideas"); }
+var IDEA_ST=["idea","filming","posted","dead"];
+function ideaNext(st){
+  var i=IDEA_ST.indexOf(st); if(i<0) i=0;
+  return IDEA_ST[(i+1)%IDEA_ST.length];
+}
+function ideaCount(st){
+  return ideaLoad().filter(function(x){ return (x.st||"idea")===st; }).length;
+}
+var IDEA_FILTER="all";
+function ideaAngles(){
+  var seen={}, out=[];
+  ideaLoad().forEach(function(x){
+    var a=x.angle||"other";
+    if(!seen[a]){ seen[a]=1; out.push(a); }
+  });
+  return out.sort();
+}
+
+/* ---- follower numbers: live or hand-typed, and which way they are moving ----
+   /api/social writes source='api' for a platform it could actually read. Where
+   it could not — TikTok until the app review lands — the number stays whatever
+   Glen typed, and gets no live badge. Nothing overwrites his figure with a zero. */
+function folSrc(){ try{ return JSON.parse(LS("fol_src")||"{}")||{}; }catch(e){ return {}; } }
+function folHist(){ try{ return JSON.parse(LS("fol_hist")||"[]")||[]; }catch(e){ return []; } }
+/* the app uses yt / ig / tiktok, the database uses the full names */
+var PLAT_FULL={tiktok:"tiktok", ig:"instagram", yt:"youtube"};
+function folIsLive(k){
+  var r=folSrc()[PLAT_FULL[k]||k];
+  return !!(r && r.src==="api");
+}
+/* change over the last n days, from whatever history we have. null when there
+   is not enough history to say anything honest. */
+function folGrowth(k,days){
+  var full=PLAT_FULL[k]||k;
+  var rows=folHist().filter(function(x){ return x.p===full; });
+  if(rows.length<2) return null;
+  var cutoff=new Date(); cutoff.setDate(cutoff.getDate()-(days||7));
+  var older=null;
+  for(var i=0;i<rows.length;i++){
+    var d=new Date(String(rows[i].d)+"T12:00:00");
+    if(d<=cutoff) older=rows[i];
+  }
+  if(!older) older=rows[0];
+  var latest=rows[rows.length-1];
+  if(older===latest) return null;
+  return Number(latest.n)-Number(older.n);
+}
+
+/* Everyone with a date on their record, newest first. cameInRaw is either
+   YYYY-MM-DD or YYYY-MM, so a month-only entry sorts as the first of that
+   month — good enough to keep the order honest without pretending to a day. */
+function recentLeads(){
+  var out=[];
+  (STATE.leads||[]).forEach(function(L){
+    var raw=cameInRaw(L.name);
+    if(!raw) return;
+    var iso=(raw.length===7) ? raw+"-01" : raw;
+    var t=new Date(iso+"T12:00:00").getTime();
+    if(isNaN(t)) return;
+    out.push({L:L, t:t});
+  });
+  out.sort(function(a,b){ return b.t-a.t; });
+  return out.map(function(x){ return x.L; });
+}
+
 function kcalToday(){
   return fdToday().reduce(function(t,m){ var v=parseFloat(m.kcal); return t+(isNaN(v)?0:v); },0);
 }
@@ -11980,7 +12934,7 @@ function dashView(){
 
   /* ---- what is actually on fire ---- */
   var due=dueNow();
-  h+='<div class="dsh-next"><div class="dn-h">Needs You Today</div>';
+  h+='<div class="dsh-next"><div class="dn-h">Today&rsquo;s Tasks</div>';
   var rows=[];
   due.slice(0,4).forEach(function(x){
     rows.push(['#d4736f', x.L.name,
@@ -12004,15 +12958,22 @@ function dashView(){
   h+='</div></div>';
 
   /* ================= THE SEVEN DAYS ================= */
+  /* He types the week here, not just in the office. Same keys, same save path —
+     the office tab and this are two views of one thing. */
   h+='<div class="dsh-week">';
   for(var i=0;i<7;i++){
     var dl=dayLabel(i), amz=/amazon/i.test(dl);
-    var dn=LS("week_done_"+i)==="1", pl2=(LS("week_plan_"+i)||"").trim();
-    h+='<div class="dw-d'+(i===today?" now":"")+(dn?" done":"")+(amz?" amz":"")+'" data-dwd="'+i+'">'
+    var dn=LS("week_done_"+i)==="1", pl2=(LS("week_plan_"+i)||"");
+    h+='<div class="dw-d'+(i===today?" now":"")+(dn?" done":"")+(amz?" amz":"")+'">'
       +'<div class="dw-n"><span>'+DAYS[i]+(i===today?" &middot; today":"")+'</span>'
-      +(dn?'<span class="dw-tick">&#10003;</span>':'')+'</div>'
-      +'<div class="dw-lab">'+esc(dl)+'</div>'
-      +'<div class="dw-p'+(pl2?"":" none")+'">'+(pl2?esc(pl2):"nothing yet")+'</div>'
+      +'<button class="dw-ck'+(dn?" on":"")+'" data-dwck="'+i+'" '
+      +'title="'+(dn?"Done — tap to undo":"Mark the day done")+'">'
+      +(dn?"&#10003;":"")+'</button></div>'
+      +'<input class="dw-lab-i'+(amz?" amz":"")+'" data-dwl="'+i+'" value="'+esc(dl)+'" '
+      +'placeholder="Amazon / Off / Filming">'
+      +'<textarea class="dw-pi" data-dwp="'+i+'" rows="3" placeholder="'
+      +(amz?"Post before shift. 20 DMs on break.":"3 videos. 10 outreach calls.")+'">'
+      +esc(pl2)+'</textarea>'
       +'</div>';
   }
   h+='</div>';
@@ -12081,41 +13042,151 @@ function dashView(){
   PLATS.forEach(function(pl){
     var fol=parseInt(LS("fol_"+pl.k)||"0",10);
     var pd=parseInt(LS(postKey(pl.k))||"0",10);
+    var live=folIsLive(pl.k);
+    var gw=folGrowth(pl.k,7);
     h+='<div class="dsoc">'
       +'<span class="ic" style="background:'+pl.col+'22;color:'+pl.col+'">'+pl.ic+'</span>'
-      +'<div class="mid"><b>'+fol.toLocaleString()+'</b><i>'+pl.nm+' &middot; '
-      +Math.max(0,pl.goal-fol).toLocaleString()+' to '+(pl.goal>=10000?"10k":"1k")+'</i></div>'
+      +'<div class="mid"><b>'+fol.toLocaleString()
+      +(live?'<span class="livedot" title="pulled from '+esc(pl.nm)+' automatically"></span>'
+            :'<span class="handdot" title="you typed this in — '+esc(pl.nm)
+             +' does not let us read it yet">&#9998;</span>')
+      +'</b><i>'+pl.nm+' &middot; '
+      +Math.max(0,pl.goal-fol).toLocaleString()+' to '+(pl.goal>=10000?"10k":"1k")
+      +(gw!==null?' &middot; <span class="'+(gw>=0?"gup":"gdn")+'">'
+        +(gw>=0?"+":"")+gw.toLocaleString()+' this week</span>':'')
+      +'</i></div>'
       +'<span class="pt '+(pd?"yes":"no")+'">'+(pd?pd+" today":"not yet")+'</span>'
       +'</div>';
   });
   h+='<div class="dbar10"><span style="width:'+Math.min(100,Math.round(ttf/10000*100))+'%"></span></div>';
   h+='</div></div>';
 
-  /* ---- the gym ---- */
-  var wt=latestWeight(), kc=kcalToday(), strk=trainStreak();
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Training</div>'
-    +'<button class="dp-go" data-dgo="gym|3">Consistency</button></div><div class="dp-b">'
-    +'<div class="dfacts">'
-    +'<div class="dfact'+(strk?" g":"")+'"><b>'+strk+'</b><i>day streak</i></div>'
-    +'<div class="dfact b"><b>'+(wt?esc(String(wt.t)):"—")+'</b><i>'+(wt?"last weigh-in":"no weigh-in")+'</i></div>'
-    +'<div class="dfact'+(kc?" a":"")+'"><b>'+(kc?Math.round(kc).toLocaleString():"—")+'</b><i>kcal today</i></div>'
-    +'<div class="dfact"><b>'+wkLoad().length+'</b><i>workouts logged</i></div>'
-    +'</div></div></div>';
+  /* ---- who came in most recently ----
+     Newest first, because a lead that landed an hour ago is worth ten that
+     landed in May. The date is whatever the record says, so a form submission
+     and a hand-entered lead sort together. */
+  var recent=recentLeads();
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Recent Leads'
+    +'<em>'+recent.length+' dated</em></div>'
+    +'<button class="dp-go" data-dgo="sales|1">Pipeline</button></div>'
+    +'<div class="dp-b tight"><div class="dp-scr">';
+  if(!recent.length) h+='<div class="dp-none">No lead has a date on it yet. '
+    +'New form submissions get one automatically.</div>';
+  else recent.slice(0,10).forEach(function(L){
+    var ph=(cnGet(L.name).p || L.phone || "");
+    var can=dialable(ph).ok;
+    var st=stageFix(L.stage||"New Lead");
+    h+='<div class="dcall">'
+      +(prGet(L.name)?'<span class="prdot2"></span>':'')
+      +'<div class="who"><b>'+esc(L.name)+'</b>'
+      +'<i><span class="stgchip" style="color:'+scol(st).dot+';border-color:'
+      +scol(st).hex+'55">'+esc(st)+'</span> '+esc(cameLabel(L.name))+'</i></div>'
+      +'<button class="dbtn" data-ddial="'+esc(L.name)+'" data-dtel="'+esc(ph)+'"'
+      +(can?'':' disabled')+'>CALL</button>'
+      +'</div>';
+  });
+  h+='</div></div></div>';
 
-  /* ---- students ---- */
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Members &amp; Students'
-    +'<em>'+stuList().length+' on the roster</em></div>'
-    +'<button class="dp-go" data-dgo="office|1">Open</button></div><div class="dp-b">'
-    +'<div class="dfacts">'
-    +'<div class="dfact g"><b>'+memberCount()+'</b><i>paying</i></div>'
-    +'<div class="dfact a"><b>$'+m.conting.toLocaleString()+'</b><i>contingent</i></div>'
-    +'<div class="dfact"><b>$'+m.defer.toLocaleString()+'</b><i>deferred</i></div>'
-    +'<div class="dfact b"><b>'+(STATE.forms?STATE.forms.length:0)+'</b><i>form submissions</i></div>'
-    +'</div></div></div>';
+  /* ---- meetings and calls ----
+     He books these himself. Every row keeps the number, the email, the link and
+     the notes for the call, and nothing here needs a Google token to work. */
+  (function(){
+    var ms=mtSorted().filter(function(x){ return !x.m.done; });
+    h+='<div class="dp wide"><div class="dp-h"><div class="dp-t">Upcoming Meetings &amp; Calls'
+      +'<em>'+ms.length+'</em></div>'
+      +'<button class="dp-go" id="mt-new">+ New Meeting</button>'
+      +'<button class="dp-go" data-dgo="office|2">Calendar</button></div>'
+      +'<div class="dp-b tight">';
+    if(!calendlyLink())
+      h+='<div class="mt-cal"><span>Set your Calendly once and every new meeting '
+        +'carries a link you can send.</span>'
+        +'<input id="mt-cly" placeholder="calendly.com/glenklein/30min" '
+        +'value="'+esc(calendlyBase())+'"></div>';
+    if(!ms.length)
+      h+='<div class="dp-none">Nothing booked. Hit New Meeting and it lands here, '
+        +'in the Calls module, and in the database.</div>';
+    else {
+      h+='<div class="mts">';
+      ms.forEach(function(row){
+        var i=row.i, m=row.m;
+        var past=mtIsPast(m);
+        var can=dialable(m.phone||"").ok;
+        h+='<div class="mt'+(past?" past":"")+'">'
+          +'<div class="mt-top">'
+            +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" '
+            +'value="'+esc(m.name||"")+'" placeholder="Who">'
+            +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
+            +'value="'+esc(mtLocalValue(m.at))+'">'
+            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(m))+'</span>'
+            +'<button class="mt-x" data-mtdel="'+i+'" title="Remove">&times;</button>'
+          +'</div>'
+          +'<div class="mt-g">'
+            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" '
+            +'value="'+esc(m.phone||"")+'" placeholder="Phone">'
+            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" '
+            +'value="'+esc(m.email||"")+'" placeholder="Email">'
+            +'<input class="mt-f" data-mtf="link" data-mti="'+i+'" '
+            +'value="'+esc(m.link||"")+'" placeholder="Meeting link">'
+          +'</div>'
+          +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
+          +'placeholder="What this call is about. What they said last time.">'
+          +esc(m.notes||"")+'</textarea>'
+          +'<div class="mt-act">'
+            +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
+            +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
+            +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
+          +'</div>'
+          +'</div>';
+      });
+      h+='</div>';
+    }
+    h+='</div></div>';
+  })();
+
+  /* ---- fitness ----
+     Everything Claude S. tracks, on one card, with a box to add food without
+     opening anything. The session count is the union of the log and the green
+     squares, so this and the gym can never disagree. */
+  (function(){
+    var kcT=0, prT=0;
+    fdToday().forEach(function(mm){
+      kcT+=parseInt(mm.kcal,10)||0;
+      prT+=parseInt(mm.p,10)||0;
+    });
+    var gk=parseInt(LS("goal_kcal")||"2600",10);
+    var gp=parseInt(LS("goal_prot")||"180",10);
+    var mo=sessionsInMonth(new Date());
+    var wkN=sessionsThisWeek();
+    var wt=latestWeight();
+    var nt=nextTrainingDay();
+    h+='<div class="dp"><div class="dp-h"><div class="dp-t">Fitness'
+      +'<em>'+MON[new Date().getMonth()]+'</em></div>'
+      +'<button class="dp-go" data-dgo="gym|0">Claude S.</button></div>'
+      +'<div class="dp-b">';
+    h+='<div class="dfacts">'
+      +'<div class="dfact'+(kcT>=gk?" g":kcT?" a":"")+'"><b>'+kcT.toLocaleString()+'</b>'
+        +'<i>kcal &middot; '+(kcT>=gk?"target hit":Math.max(0,gk-kcT).toLocaleString()+" short")+'</i></div>'
+      +'<div class="dfact'+(prT>=gp?" g":prT?" a":"")+'"><b>'+prT+'g</b>'
+        +'<i>protein &middot; '+(prT>=gp?"good":Math.max(0,gp-prT)+"g short")+'</i></div>'
+      +'<div class="dfact'+(mo>=8?" g":"")+'"><b>'+mo+'</b><i>sessions this month</i></div>'
+      +'<div class="dfact'+(wkN>=3?" g":wkN?" a":"")+'"><b>'+wkN+'</b><i>days trained this week</i></div>'
+      +'<div class="dfact b"><b>'+(wt?esc(wt.label):"&mdash;")+'</b>'
+        +'<i>'+(wt?"current weight":"no weigh-in yet")+'</i></div>'
+      +'<div class="dfact"><b>'+(nt?esc(nt.when):"&mdash;")+'</b><i>next training day</i></div>'
+      +'</div>';
+    /* the same parser the gym uses — one food brain, not two */
+    h+='<div class="dfood">'
+      +'<input id="dfd-in" placeholder="3 eggs, toast, coffee…" autocomplete="off">'
+      +'<button class="btn" id="dfd-go">Add</button>'
+      +'</div>'
+      +'<div class="dfood-p" id="dfd-prev"></div>';
+    h+='</div></div>';
+  })();
 
   /* ---- the safe ---- */
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Money Out</div>'
-    +'<button class="dp-go" data-dgo="office|5">The Safe</button></div><div class="dp-b">';
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Locked Information'
+    +'<em>the safe</em></div>'
+    +'<button class="dp-go" data-dgo="office|5">Open</button></div><div class="dp-b">';
   if(!VAULT_OPEN){
     h+='<div class="dlock"><p>The safe is locked. Open it to see what is in the accounts '
       +'and what goes out each month.</p>'
@@ -12136,37 +13207,144 @@ function dashView(){
   }
   h+='</div></div>';
 
-  /* ---- the three of them ---- */
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Your Office</div>'
-    +'<button class="dp-go" data-dgo="assistant|0">Ask Claudia</button></div>'
-    +'<div class="dp-b tight">'
-    +[["assistant",0,"Claudia","chief of staff · your day and week"],
-      ["sales",0,"Jordan Claudefort","sales manager · pipeline and calls"],
-      ["gym",0,"Claude Schwarzaneager","coach · training and food"]].map(function(a){
-        return '<div class="dcall"><div class="who"><b>'+a[2]+'</b><i>'+a[3]+'</i></div>'
-          +'<button class="dbtn" data-dgo="'+a[0]+'|'+a[1]+'">TALK</button></div>';
-      }).join("")
-    +'</div></div>';
-
   h+='</div>';   /* .dsh-grid */
+
+  h+=operatorBar();
   return h;
+}
+
+/* ============ THE OPERATOR BAR ============
+   The switchboard, docked to the bottom of the dashboard. Three faces, whoever
+   is on duty by the building clock, and one tap to talk. Their faces are the
+   same drawings used on the floor plan and in their own rooms — one source, so
+   nobody ends up with two different faces. */
+var OPERATORS=[
+  {k:"assistant", npc:"claudia", nm:"Claudia",  role:"Chief of staff",
+   sub:"your day, week and calendar", ac:"#22d3ee", from:6.5, to:21.5},
+  {k:"sales",     npc:"jordan",  nm:"Jordan",   role:"Sales manager",
+   sub:"pipeline, calls, collections", ac:"#c8a86a", from:8.5, to:20},
+  {k:"gym",       npc:"claude",  nm:"Claude S.",role:"Coach",
+   sub:"training, food, recovery",     ac:"#84cc16", from:5.5, to:22}
+];
+function onDuty(o){
+  var h=nowHour();
+  return h>=o.from && h<o.to;
+}
+function operatorBar(){
+  var h='<div class="opbar"><div class="opbar-in">'
+   +'<div class="op-lab"><b>The Office</b><i>tap a face to talk &middot; they answer out loud</i></div>'
+   +'<div class="op-row">';
+  OPERATORS.forEach(function(o){
+    var duty=onDuty(o);
+    var n=NPC[o.npc];
+    var line="";
+    try{ line=n&&n.line?n.line():""; }catch(e){ line=""; }
+    h+='<button class="op" data-optalk="'+o.k+'" style="--oc:'+o.ac+'" '
+      +'title="'+esc(o.nm+" — "+o.role)+'">'
+      +'<span class="op-f">'+(n?n.face():"")
+        +'<span class="op-dot'+(duty?" on":"")+'"></span></span>'
+      +'<span class="op-x">'
+        +'<b>'+esc(o.nm)+'</b>'
+        +'<i>'+(duty?esc(o.role):"off shift")+'</i>'
+      +'</span>'
+      +'</button>';
+  });
+  h+='</div>'
+   /* a drawn microphone, not the emoji. An emoji renders as an empty box on any
+      machine without that glyph — which is exactly how the flags went wrong. */
+   +'<button class="op-mic" id="op-mic" title="Talk to Claudia">'
+   +'<svg viewBox="0 0 14 14" aria-hidden="true">'
+     +'<rect x="5" y="1.4" width="4" height="7" rx="2" fill="currentColor"/>'
+     +'<path d="M3.4 6.6a3.6 3.6 0 0 0 7.2 0" fill="none" stroke="currentColor" '
+     +'stroke-width="1.3" stroke-linecap="round"/>'
+     +'<path d="M7 10.2V12.4 M4.8 12.6h4.4" stroke="currentColor" stroke-width="1.3" '
+     +'stroke-linecap="round"/></svg>'
+   +'Speak</button>'
+   +'</div></div>';
+  return h;
+}
+
+/* The open module, drawn as a sheet over the dashboard. This is the actual room
+   panel — tabBody() reads STATE.floor and STATE.tab, so we point STATE at the
+   module, render, and every existing handler in wire() finds the same markup it
+   always has. */
+function dashSheet(){
+  if(!DASH_MOD) return "";
+  var R=FLOORS[DASH_MOD.room]; if(!R) return "";
+  var keepFloor=STATE.floor, keepTab=STATE.tab;
+  STATE.floor=DASH_MOD.room; STATE.tab=DASH_MOD.tab;
+  var body;
+  try{ body=tabBody(); }
+  catch(e){ body='<div class="dp-none">That module hit a snag: '
+    +esc((e&&e.message)||e)+'</div>'; }
+  STATE.floor=keepFloor; STATE.tab=keepTab;
+
+  var tabs=(R.tabs||[]).length>1
+    ? '<div class="tabs">'+R.tabs.map(function(t,i){
+        return '<button class="tab'+(DASH_MOD.tab===i?" on":"")+'" data-dtab="'+i+'">'
+          +esc(t)+'</button>';}).join("")+'</div>'
+    : "";
+
+  return '<div class="dsheet-wrap'+(DASH_WIDE?" wide":"")+'">'
+    +'<div class="dsheet" role="dialog" aria-label="'+esc(R.nm)+'">'
+      +'<div class="dsheet-h">'
+        +'<span class="dsheet-ic">'+R.ic+'</span>'
+        +'<b>'+esc(R.nm)+'</b><span class="dsheet-no">'+esc(R.no)+'</span>'
+        +'<button class="dsheet-fl" id="dsheet-wide" '
+        +'title="'+(DASH_WIDE?"Back to a narrower panel":"Fill the screen")+'">'
+        +(DASH_WIDE?"Narrow":"Expand")+'</button>'
+        +'<button class="dsheet-fl" id="dsheet-floor" title="Show this room in the building">'
+        +'In the building</button>'
+        +'<button class="dsheet-x" id="dsheet-x" title="Close — everything is saved">'
+        +'&times;</button>'
+      +'</div>'
+      +'<div class="dsheet-b" id="dsheet-b"><div class="wbody">'+tabs
+      +'<div class="tb">'+body+'</div></div></div>'
+    +'</div></div>';
 }
 
 function drawDash(){
   var host=document.getElementById("dash");
   if(!host) return;
-  try{ host.innerHTML=dashView(); }
+  try{ host.innerHTML=dashView()+dashSheet(); }
   catch(e){
     host.innerHTML='<div class="dp"><div class="dp-b"><div class="dp-none">'
       +'The dashboard hit a snag: '+esc((e&&e.message)||e)+'</div></div></div>';
     return;
   }
+  document.body.classList.toggle("dsheeting", !!DASH_MOD);
   wireDash();
+  /* Everything inside the sheet is a real room panel, so it needs the room's own
+     handlers — the same wire() the floating windows use. */
+  if(DASH_MOD){
+    var keepFloor=STATE.floor, keepTab=STATE.tab;
+    STATE.floor=DASH_MOD.room; STATE.tab=DASH_MOD.tab;
+    try{ wire(); }catch(e){}
+    STATE.floor=keepFloor; STATE.tab=keepTab;
+  }
 }
 
 function wireDash(){
   var vs=document.getElementById("vswitch");
   if(vs) vs.onclick=function(){ setView(VIEW==="home"?"floor":"home"); };
+
+  /* ---- the module sheet ---- */
+  var sx=document.getElementById("dsheet-x");
+  if(sx) sx.onclick=dashClose;
+  var sw=document.getElementById("dsheet-wide");
+  if(sw) sw.onclick=function(){
+    DASH_WIDE=!DASH_WIDE; LS("dash_wide", DASH_WIDE?"1":"0"); drawDash(); };
+  var sf=document.getElementById("dsheet-floor");
+  if(sf) sf.onclick=function(){
+    var m=DASH_MOD; DASH_MOD=null;
+    if(m) dashToFloor(m.room,m.tab);
+  };
+  var dts=document.querySelectorAll("[data-dtab]");
+  for(var q1=0;q1<dts.length;q1++) dts[q1].onclick=function(){
+    dashTab(parseInt(this.getAttribute("data-dtab"),10)||0); };
+  /* tapping the dimmed area behind the sheet closes it */
+  var wrap=document.querySelector(".dsheet-wrap");
+  if(wrap) wrap.onclick=function(ev){ if(ev.target===wrap) dashClose(); };
 
   var tk=document.getElementById("d-tick");
   if(tk) tk.onclick=function(){
@@ -12178,8 +13356,47 @@ function wireDash(){
   var pn=document.getElementById("d-plan");
   if(pn) pn.onclick=function(){ dashGo("office",0); setTimeout(weekAsk,60); };
 
-  var dw=document.querySelectorAll("[data-dwd]");
-  for(var i2=0;i2<dw.length;i2++) dw[i2].onclick=function(){ dashGo("office",0); };
+  /* ---- typing the week on the dashboard ----
+     Exactly the same keys and the same save path as the office tab. Two views of
+     one thing, so nothing can disagree. */
+  var dwl=document.querySelectorAll("[data-dwl]");
+  for(var w1=0;w1<dwl.length;w1++) (function(el){
+    el.oninput=function(){
+      LS("week_lab_"+el.getAttribute("data-dwl"), el.value); SBSAVE("week");
+      el.style.borderColor="var(--green)";
+    };
+    /* It used to redraw the whole dashboard on every blur so an Amazon day would
+       pick up its colour. That threw the DOM away mid-interaction and ate the
+       next click — tabbing out of a day and hitting New Meeting did nothing.
+       Now it only redraws when the label actually crossed the Amazon boundary,
+       and it recolours in place otherwise. */
+    el.onblur=function(){
+      el.style.borderColor="";
+      var wasAmz=el.classList.contains("amz");
+      var isAmz=/amazon/i.test(el.value);
+      if(wasAmz===isAmz) return;
+      el.classList.toggle("amz", isAmz);
+      var card=el.parentNode;
+      if(card && card.classList) card.classList.toggle("amz", isAmz);
+    };
+  })(dwl[w1]);
+
+  var dwp=document.querySelectorAll("[data-dwp]");
+  for(var w2=0;w2<dwp.length;w2++) (function(el){
+    el.oninput=function(){
+      LS("week_plan_"+el.getAttribute("data-dwp"), el.value); SBSAVE("week");
+      el.style.borderColor="var(--green)";
+    };
+    /* Do NOT redraw on blur — it would wipe the box he is tabbing into.
+       Only the tasks list needs refreshing, and it can wait for the next paint. */
+    el.onblur=function(){ setTimeout(function(){ el.style.borderColor=""; },600); };
+  })(dwp[w2]);
+
+  var dwc=document.querySelectorAll("[data-dwck]");
+  for(var w3=0;w3<dwc.length;w3++) dwc[w3].onclick=function(){
+    var d=this.getAttribute("data-dwck");
+    LS("week_done_"+d, LS("week_done_"+d)==="1"?"":"1");
+    SBSAVE("week"); drawDash(); };
 
   var go=document.querySelectorAll("[data-dgo]");
   for(var g4=0;g4<go.length;g4++) go[g4].onclick=function(ev){
@@ -12187,6 +13404,96 @@ function wireDash(){
     var p2=String(this.getAttribute("data-dgo")).split("|");
     dashGo(p2[0], parseInt(p2[1],10)||0);
   };
+
+  /* ---- the operator bar ---- */
+  var ops=document.querySelectorAll("[data-optalk]");
+  for(var o1=0;o1<ops.length;o1++) ops[o1].onclick=function(){
+    dashOpen(this.getAttribute("data-optalk"), 0);
+  };
+  var om=document.getElementById("op-mic");
+  if(om) om.onclick=function(){
+    dashOpen("assistant",0);
+    /* their mic button is inside the sheet, so it exists only after that draw */
+    setTimeout(function(){
+      var mic=document.getElementById("mic");
+      if(mic) mic.click();
+    },140);
+  };
+
+  /* ---- meetings ----
+     The row handlers are shared with the Calls module, so they live in
+     wireMeetings and both callers use the same code. Only the two things unique
+     to the dashboard are here. */
+  wireMeetings();
+  var mn=document.getElementById("mt-new");
+  if(mn) mn.onclick=function(){
+    var a=mtLoad();
+    var when=new Date(); when.setHours(when.getHours()+24,0,0,0);
+    a.unshift({name:"", at:when.toISOString(), phone:"", email:"",
+               link:calendlyLink(), notes:"", done:false});
+    mtSave(a); drawDash();
+    setTimeout(function(){
+      var f=document.querySelector('input.mt-nm[data-mti="0"]'); if(f) f.focus();
+    },60);
+  };
+  var mc=document.getElementById("mt-cly");
+  if(mc) mc.oninput=function(){ LS("calendly", this.value); SBSAVE("settings"); };
+
+  /* ---- adding food from the dashboard ----
+     Deliberately routed through the same foodParse + fdSave the gym uses, so a
+     meal added here is identical to one added in the food log. Claudia fills in
+     anything the parser does not recognise, same as there. */
+  (function(){
+    var box=document.getElementById("dfd-in"),
+        go=document.getElementById("dfd-go"),
+        prev=document.getElementById("dfd-prev");
+    if(!box) return;
+    function paint(){
+      if(!prev) return;
+      if(!box.value.trim()){ prev.innerHTML=""; return; }
+      var r=foodParse(box.value);
+      var bits=r.items.map(function(x){
+        return '<span class="fq'+(x.guessed?" guess":"")+'"><b>'
+          +esc(x.qty+" "+x.unit+" "+x.name)+'</b>'+x.kcal+' cal &middot; '+x.p+'p</span>';});
+      r.unknown.forEach(function(u){
+        bits.push('<span class="fq unk"><b>'+esc(u.qty+" "+u.unknown)
+          +'</b>Claudia will estimate</span>');});
+      if(r.items.length) bits.push('<span class="fq tot"><b>Total</b>'+r.kcal
+        +' cal &middot; '+r.p+'p</span>');
+      prev.innerHTML=bits.join("");
+    }
+    function store(what,k,pp,cc,ff){
+      var a=fdLoad();
+      a.push({d:new Date().toISOString(),what:what,
+        kcal:String(k),p:String(pp),c:String(cc||0),f:String(ff||0)});
+      fdSave(a);
+      box.value=""; if(prev) prev.innerHTML="";
+      drawDash();
+    }
+    function add(){
+      var raw=box.value.trim(); if(!raw) return;
+      var r=foodParse(raw);
+      if(r.unknown.length && window.cowork && window.cowork.askClaude){
+        if(prev) prev.innerHTML='<span class="fq unk"><b>Working it out\u2026</b>asking Claudia</span>';
+        var q=r.unknown.map(function(u){ return u.qty+" "+u.unknown; }).join(", ");
+        window.cowork.askClaude(
+          "Estimate the nutrition for exactly this food and quantity: \""+q+"\". "
+          +"Reply with ONLY four whole numbers separated by commas, in this order: "
+          +"calories, protein grams, carb grams, fat grams. No words, no units, no explanation. "
+          +"Example reply: 430,38,22,19",[])
+        .then(function(ans){
+          var mm=String(ans).match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+          var k=r.kcal, pp=r.p, cc=r.c, ff=r.fat;
+          if(mm){ k+=parseInt(mm[1],10); pp+=parseInt(mm[2],10);
+                  cc+=parseInt(mm[3],10); ff+=parseInt(mm[4],10); }
+          store(raw,k,pp,cc,ff);})
+        .catch(function(){ store(raw,r.kcal,r.p,r.c,r.fat); });
+      } else store(raw,r.kcal,r.p,r.c,r.fat);
+    }
+    box.oninput=paint;
+    box.onkeydown=function(ev){ if(ev.key==="Enter"){ ev.preventDefault(); add(); } };
+    if(go) go.onclick=add;
+  })();
 
   var dl=document.querySelectorAll("[data-ddial]");
   for(var d5=0;d5<dl.length;d5++) dl[d5].onclick=function(ev){
@@ -12442,14 +13749,136 @@ function labelCells(){
 }
 /* One place that re-renders whatever working windows are open. Every handler
    calls this instead of reaching for #tabbody directly. */
+/* Is he typing into the dashboard right now?
+
+   This matters more than it looks. redraw() runs from all sorts of background
+   work — a save landing, a save FAILING and painting its warning bar, a pull
+   finishing. Each of those replaced the dashboard's innerHTML, which threw away
+   the box he had half-filled and the caret with it. Meeting notes and the food
+   box both lost text this way.
+
+   So: a background repaint never interrupts him. The numbers catch up the moment
+   he clicks away, which is soon enough. */
+function dashBusy(){
+  var host=document.getElementById("dash");
+  var a=document.activeElement;
+  if(!host||!a||a===document.body) return false;
+  if(!host.contains(a)) return false;
+  var t=(a.tagName||"").toLowerCase();
+  return t==="input" || t==="textarea" || t==="select";
+}
 function redraw(){
   renderWins(); drawMobileStack();
-  /* the dashboard summarises the same numbers the rooms hold, so it has to
-     repaint whenever anything is saved — otherwise it quietly goes stale */
-  if(VIEW==="home") drawDash();
+  /* the dashboard summarises the same numbers the rooms hold, so it repaints
+     whenever anything is saved — unless he is mid-sentence in it */
+  if(VIEW==="home" && !dashBusy()) drawDash();
 }
+function wireIdeas(){
+  var af=document.querySelectorAll("[data-iaf]");
+  for(var a1=0;a1<af.length;a1++) af[a1].onclick=function(){
+    IDEA_FILTER=this.getAttribute("data-iaf"); redraw(); };
+
+  var hooks=document.querySelectorAll("textarea.i-hook");
+  for(var h1=0;h1<hooks.length;h1++) (function(el){
+    el.oninput=function(){
+      var a=ideaLoad(), i=parseInt(el.getAttribute("data-ih"),10);
+      if(!a[i]) return;
+      a[i].hook=el.value; ideaSave(a);
+      el.style.borderColor="var(--green)";
+      setTimeout(function(){ el.style.borderColor=""; },600);
+    };
+  })(hooks[h1]);
+
+  var sts=document.querySelectorAll("[data-ist]");
+  for(var s1=0;s1<sts.length;s1++) sts[s1].onclick=function(){
+    var a=ideaLoad(), i=parseInt(this.getAttribute("data-ist"),10);
+    if(!a[i]) return;
+    a[i].st=ideaNext(a[i].st||"idea");
+    if(a[i].st==="posted" && !a[i].on) a[i].on=dkey(new Date());
+    ideaSave(a); redraw(); };
+
+  var xs=document.querySelectorAll("[data-ix]");
+  for(var x1=0;x1<xs.length;x1++) xs[x1].onclick=function(){
+    var a=ideaLoad(), i=parseInt(this.getAttribute("data-ix"),10);
+    if(i<0||i>=a.length) return;
+    a.splice(i,1); ideaSave(a); redraw(); };
+
+  var ia=document.getElementById("idea-add");
+  if(ia) ia.onclick=function(){
+    var a=ideaLoad();
+    a.unshift({hook:"", angle:IDEA_FILTER==="all"?"":IDEA_FILTER, format:"", plat:"all",
+               why:"", st:"idea"});
+    ideaSave(a); redraw();
+    setTimeout(function(){
+      var f=document.querySelector('textarea.i-hook[data-ih="0"]'); if(f) f.focus();
+    },60);
+  };
+}
+
+/* The meeting rows appear in two places — the dashboard panel and the Calls
+   module — so their handlers live in one function that both call. */
+function wireMeetings(){
+  var mf=document.querySelectorAll("[data-mtf]");
+  for(var f1=0;f1<mf.length;f1++) (function(el){
+    var ev = el.tagName==="TEXTAREA" ? "oninput"
+           : (el.type==="datetime-local" ? "onchange" : "oninput");
+    el[ev]=function(){
+      var a=mtLoad(), i=parseInt(el.getAttribute("data-mti"),10);
+      if(!a[i]) return;
+      var field=el.getAttribute("data-mtf");
+      if(field==="at") a[i].at = el.value ? new Date(el.value).toISOString() : null;
+      else a[i][field]=el.value;
+      mtSave(a);
+      el.style.borderColor="var(--green)";
+      setTimeout(function(){ el.style.borderColor=""; },600);
+    };
+  })(mf[f1]);
+
+  var mdel=document.querySelectorAll("[data-mtdel]");
+  for(var d6=0;d6<mdel.length;d6++) mdel[d6].onclick=function(){
+    var a=mtLoad(), i=parseInt(this.getAttribute("data-mtdel"),10);
+    if(i<0||i>=a.length) return;
+    a.splice(i,1); mtSave(a); redraw(); if(VIEW==="home") drawDash(); };
+
+  var mdone=document.querySelectorAll("[data-mtdone]");
+  for(var o2=0;o2<mdone.length;o2++) mdone[o2].onclick=function(){
+    var a=mtLoad(), i=parseInt(this.getAttribute("data-mtdone"),10);
+    if(!a[i]) return;
+    a[i].done=true; mtSave(a); redraw(); if(VIEW==="home") drawDash(); };
+
+  var mjoin=document.querySelectorAll("[data-mtjoin]");
+  for(var j1=0;j1<mjoin.length;j1++) mjoin[j1].onclick=function(){
+    var a=mtLoad(), i=parseInt(this.getAttribute("data-mtjoin"),10);
+    var url=mtLinkFor(a[i]);
+    if(url) window.open(url,"_blank","noopener"); };
+
+  var mdial=document.querySelectorAll("[data-mtdial]");
+  for(var k1=0;k1<mdial.length;k1++) mdial[k1].onclick=function(){
+    var a=mtLoad(), i=parseInt(this.getAttribute("data-mtdial"),10);
+    if(!a[i]) return;
+    var nm=a[i].name||"this meeting", tel=a[i].phone||"";
+    if(VIEW==="home"){ dashOpen("sales",5); }
+    else { STATE.floor="sales"; STATE.tab=5; redraw(); }
+    setTimeout(function(){ try{ askCall(nm,tel); }catch(e){} },100);
+  };
+
+  var mn2=document.getElementById("mt-new2");
+  if(mn2) mn2.onclick=function(){
+    var a=mtLoad();
+    var when=new Date(); when.setHours(when.getHours()+24,0,0,0);
+    a.unshift({name:"", at:when.toISOString(), phone:"", email:"",
+               link:calendlyLink(), notes:"", done:false});
+    mtSave(a); redraw();
+    setTimeout(function(){
+      var f=document.querySelector('input.mt-nm[data-mti="0"]'); if(f) f.focus();
+    },60);
+  };
+}
+
 function wire(){
   labelCells();
+  wireIdeas();
+  wireMeetings();
   wireStudents();
   wireFields();
   wireWeek();
