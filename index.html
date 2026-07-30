@@ -1661,6 +1661,171 @@ a.lnk:hover{color:#bfdbfe}
   cursor:pointer;font-size:10px;letter-spacing:.5px;padding:3px 9px;text-transform:uppercase}
 .vtog.on{border-color:rgba(74,222,128,.5);color:#4ade80;background:rgba(74,222,128,.09)}
 
+/* =========================================================
+   THE DASHBOARD
+   The homepage. Quiet, flat, and readable at a glance. Rules it keeps to:
+   one blue for anything interactive, numbers in tabular figures so columns
+   line up, and no panel taller than a screen without its own scroll.
+   ========================================================= */
+.vswitch{display:flex;align-items:center;gap:7px;background:var(--raise);
+  border:1px solid var(--line);border-radius:9px;padding:8px 13px;cursor:pointer;
+  color:var(--mut);font-family:inherit;font-size:11.5px;font-weight:700;
+  letter-spacing:.4px;flex:none;transition:.14s}
+.vswitch:hover{color:var(--ink);border-color:var(--blu);background:#262b35}
+.vs-ic{width:14px;height:14px;display:block;opacity:.85}
+.vs-ic svg{width:14px;height:14px;display:block}
+
+.dash{display:none}
+body.homeview .dash{display:block;margin-top:12px}
+body.homeview .tower{display:none}
+
+/* ---- today ---- */
+.dsh-hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:12px;
+  margin-bottom:12px}
+.dsh-today{background:var(--paper2);border:1px solid var(--line);border-radius:13px;
+  padding:16px 18px;min-width:0;position:relative;overflow:hidden}
+.dsh-today.amz{border-color:#33405c}
+.dsh-today:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--blu)}
+.dsh-today.amz:before{background:#5b78a8}
+.dsh-today.tick:before{background:var(--green)}
+.dt-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:3px}
+.dt-day{font-size:19px;font-weight:800;letter-spacing:-.4px}
+.dt-dat{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase}
+.dt-tag{font-size:9.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  border-radius:20px;padding:3px 10px;border:1px solid}
+.dt-tag.amz{color:#a8bde0;border-color:#3d4d6b;background:rgba(91,120,168,.14)}
+.dt-tag.off{color:var(--green);border-color:rgba(95,179,124,.4);background:rgba(95,179,124,.1)}
+.dt-plan{font-size:14px;line-height:1.6;white-space:pre-wrap;margin-top:9px;
+  min-height:44px;color:var(--ink)}
+.dt-plan.none{color:var(--mut);font-style:italic}
+.dt-act{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}
+.dt-tk{background:none;border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+  color:var(--mut);font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;
+  letter-spacing:.4px;transition:.14s}
+.dt-tk:hover{border-color:var(--blu);color:var(--ink)}
+.dt-tk.on{border-color:rgba(95,179,124,.5);color:var(--green);background:rgba(95,179,124,.1)}
+
+/* the next thing that needs doing */
+.dsh-next{background:var(--paper2);border:1px solid var(--line);border-radius:13px;
+  padding:15px 17px;min-width:0;display:flex;flex-direction:column}
+.dn-h{font-size:9.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--blu2);margin-bottom:11px}
+.dn-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid #23282f;
+  font-size:12.5px}
+.dn-row:first-of-type{border-top:0}
+.dn-row b{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.dn-row i{font-style:normal;color:var(--mut);font-size:11px;flex:none}
+.dn-dot{width:7px;height:7px;border-radius:50%;flex:none}
+.dn-clear{color:var(--mut);font-size:12.5px;padding:12px 0}
+
+/* ---- the seven days ---- */
+.dsh-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;
+  margin-bottom:14px}
+.dw-d{background:var(--paper2);border:1px solid var(--line);border-radius:11px;
+  padding:11px 11px 13px;min-width:0;min-height:112px;cursor:pointer;transition:.14s;
+  display:flex;flex-direction:column}
+.dw-d:hover{border-color:var(--blu)}
+.dw-d.now{border-color:var(--blu);background:#1e2530}
+.dw-d.done{opacity:.62}
+.dw-n{font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  color:var(--mut);display:flex;justify-content:space-between;align-items:center;gap:4px}
+.dw-d.now .dw-n{color:var(--blu2)}
+.dw-tick{color:var(--green);font-size:11px}
+.dw-lab{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+  margin-top:5px;color:#7f8b9c}
+.dw-d.amz .dw-lab{color:#a8bde0}
+.dw-p{font-size:11.5px;line-height:1.45;color:var(--ink);margin-top:7px;flex:1;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.dw-p.none{color:#5f6875;font-style:italic}
+
+/* ---- the numbers ---- */
+.dsh-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.dk-c{background:var(--paper2);border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;min-width:0;cursor:pointer;transition:.14s}
+.dk-c:hover{border-color:var(--blu)}
+.dk-h{font-size:9px;font-weight:800;letter-spacing:1.7px;text-transform:uppercase;
+  color:var(--mut)}
+.dk-v{font-size:26px;font-weight:800;letter-spacing:-1.1px;margin-top:5px;
+  font-variant-numeric:tabular-nums;line-height:1.05}
+.dk-v.g{color:var(--green)} .dk-v.b{color:var(--blu2)}
+.dk-v.a{color:var(--amber)} .dk-v.r{color:var(--red)}
+.dk-d{font-size:10.5px;color:var(--mut);margin-top:4px}
+
+/* ---- panels ---- */
+.dsh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:12px}
+.dp{background:var(--paper2);border:1px solid var(--line);border-radius:13px;
+  min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.dp-h{display:flex;align-items:center;gap:9px;padding:13px 16px 11px;
+  border-bottom:1px solid #23282f}
+.dp-t{flex:1;min-width:0;font-size:12.5px;font-weight:700;letter-spacing:.2px}
+.dp-t em{font-style:normal;color:var(--mut);font-weight:600;font-size:11px;margin-left:6px}
+.dp-go{background:none;border:1px solid var(--line);border-radius:7px;padding:5px 11px;
+  color:var(--mut);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;
+  letter-spacing:.4px;flex:none;transition:.14s;white-space:nowrap}
+.dp-go:hover{border-color:var(--blu);color:var(--ink)}
+.dp-b{padding:6px 16px 15px;min-width:0}
+.dp-b.tight{padding-top:2px}
+.dp-scr{max-height:290px;overflow-y:auto}
+.dp-none{color:var(--mut);font-size:12.5px;padding:18px 0;text-align:center}
+
+/* a person to call */
+.dcall{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #23282f}
+.dcall:first-child{border-top:0}
+.dcall .who{flex:1;min-width:0}
+.dcall .who b{display:block;font-size:12.5px;font-weight:600;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.dcall .who i{display:block;font-style:normal;font-size:10.5px;color:var(--mut);
+  margin-top:2px;font-variant-numeric:tabular-nums}
+.dcall .prdot2{width:8px;height:8px;border-radius:50%;background:#a855f7;flex:none}
+.dcall .owe{font-size:11.5px;font-weight:700;color:var(--amber);
+  font-variant-numeric:tabular-nums;flex:none}
+.dcall .dbtn{background:rgba(75,123,212,.16);border:1px solid rgba(75,123,212,.5);
+  border-radius:7px;padding:6px 12px;color:var(--blu2);font-family:inherit;
+  font-size:10.5px;font-weight:800;letter-spacing:.6px;cursor:pointer;flex:none;transition:.14s}
+.dcall .dbtn:hover{background:rgba(75,123,212,.3);color:#fff}
+.dcall .dbtn[disabled]{opacity:.35;cursor:default}
+
+/* stage bars */
+.dstg{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12px}
+.dstg .nm{width:104px;flex:none;color:var(--mut);font-size:11px;font-weight:600}
+.dstg .bar{flex:1;min-width:0;height:7px;border-radius:4px;background:#23282f;overflow:hidden}
+.dstg .bar span{display:block;height:100%;border-radius:4px}
+.dstg .n{width:26px;flex:none;text-align:right;font-weight:700;
+  font-variant-numeric:tabular-nums;font-size:11.5px}
+
+/* social */
+.dsoc{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid #23282f}
+.dsoc:first-child{border-top:0}
+.dsoc .ic{width:30px;height:30px;border-radius:8px;flex:none;display:flex;
+  align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.dsoc .mid{flex:1;min-width:0}
+.dsoc .mid b{display:block;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;
+  letter-spacing:-.4px}
+.dsoc .mid i{display:block;font-style:normal;font-size:10.5px;color:var(--mut);margin-top:1px}
+.dsoc .pt{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+  border-radius:20px;padding:3px 9px;border:1px solid;flex:none}
+.dsoc .pt.yes{color:var(--green);border-color:rgba(95,179,124,.42);background:rgba(95,179,124,.1)}
+.dsoc .pt.no{color:#8a929f;border-color:var(--line)}
+.dbar10{height:6px;border-radius:3px;background:#23282f;overflow:hidden;margin-top:11px}
+.dbar10 span{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blu),var(--ice))}
+
+/* small two-up facts */
+.dfacts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
+.dfact{background:var(--raise);border:1px solid #2b3038;border-radius:10px;padding:10px 12px}
+.dfact b{display:block;font-size:17px;font-weight:800;letter-spacing:-.5px;
+  font-variant-numeric:tabular-nums}
+.dfact i{display:block;font-style:normal;font-size:9.5px;color:var(--mut);
+  letter-spacing:1.1px;text-transform:uppercase;font-weight:700;margin-top:3px}
+.dfact.g b{color:var(--green)} .dfact.a b{color:var(--amber)}
+.dfact.r b{color:var(--red)}   .dfact.b b{color:var(--blu2)}
+
+/* the safe, still shut */
+.dlock{text-align:center;padding:14px 0 6px}
+.dlock p{font-size:12px;color:var(--mut);margin:9px 0 12px}
+
 /* the room picker is phone-only */
 .rooms-m{display:none}
 
@@ -1855,10 +2020,12 @@ a.lnk:hover{color:#bfdbfe}
   select, .jsel, .stsel{min-height:48px;padding:11px 12px}
   button, .cbtn, .fdbtn, .tbi{min-height:46px}
   /* the day tick on The Week was 19px — too small to hit reliably */
-  .chk{min-height:0;width:34px;height:34px;font-size:17px}
+  /* both of these were a couple of pixels under a comfortable thumb — 34 and 36
+     on a 40-ish target. Rounded up so the sweep is clean rather than nearly. */
+  .chk{min-height:0;width:42px;height:42px;font-size:18px}
   .mc, .qd{min-height:0}
   .xbtn{min-height:0}
-  .xbtn{width:36px;height:36px;font-size:18px}
+  .xbtn{width:42px;height:42px;font-size:19px}
   .mnav{min-height:46px;min-width:50px;font-size:16px}
   .mnav.today{min-width:0;font-size:12px}
   .sin,.vin,.cin,.lin{padding:12px 13px}
@@ -2061,6 +2228,49 @@ a.lnk:hover{color:#bfdbfe}
   .vtog{min-height:38px;padding:0 14px;display:inline-flex;align-items:center}
   .vuse{font-size:11px}
 }
+
+/* ---- the dashboard, on a phone ----
+   One column. Everything he taps is at least a finger tall. The seven-day strip
+   becomes two rows of small cards rather than seven slivers 40px wide. */
+@media (max-width:760px){
+  body.homeview .dash{margin-top:10px}
+  .vswitch{padding:9px 11px;font-size:11px;min-height:40px}
+  .vs-t{display:none}                      /* the icon is enough up there */
+
+  .dsh-hero{grid-template-columns:1fr;gap:10px;margin-bottom:10px}
+  .dsh-today{padding:14px 15px}
+  .dt-day{font-size:17px}
+  .dt-plan{font-size:13.5px;min-height:0}
+  .dt-act{gap:7px}
+  .dt-act .dt-tk{flex:1 1 100%;min-height:46px;text-align:center}
+
+  .dsh-week{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:12px}
+  .dw-d{min-height:96px;padding:10px}
+  .dw-p{-webkit-line-clamp:3}
+  /* Today used to span both columns. A full-width cell forces a row break, so
+     the day before and the day after each ended up alone with a hole beside it.
+     The blue border is enough to pick today out. */
+
+  .dsh-kpi{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+  .dk-c{padding:12px 13px}
+  .dk-v{font-size:22px}
+
+  .dsh-grid{grid-template-columns:1fr;gap:10px}
+  .dp-h{padding:12px 14px 10px}
+  .dp-b{padding:6px 14px 14px}
+  .dp-scr{max-height:none;overflow:visible}   /* no nested scrollers on a phone */
+  .dp-go{min-height:38px;padding:0 13px;display:inline-flex;align-items:center}
+
+  .dcall{padding:11px 0;gap:9px}
+  .dcall .who b{font-size:13.5px;white-space:normal}
+  .dcall .who i{font-size:11.5px}
+  .dcall .dbtn{min-height:42px;padding:0 15px;font-size:11.5px}
+  .dstg .nm{width:88px;font-size:10.5px}
+  .dsoc{padding:12px 0}
+  .dfacts{gap:8px}
+  .dfact b{font-size:19px}
+  .dlock .dt-tk{width:100%;min-height:46px}
+}
 </style>
 </head>
 <body>
@@ -2077,8 +2287,18 @@ a.lnk:hover{color:#bfdbfe}
         <div class="tb-sub"><span id="tb-place">—</span> &middot; <span id="tb-date">—</span></div>
       </div>
       <div class="tb-cd"><b id="cd-n">—</b><i>days to Bangkok</i></div>
+      <button class="vswitch" id="vswitch" title="Switch between the dashboard and the floor plan">
+        <span class="vs-ic" id="vs-ic"></span><span class="vs-t" id="vs-t">Building</span>
+      </button>
       <span class="syncdot idle" id="syncdot" title="Cloud sync"></span>
     </div>
+
+    <!-- ============ THE DASHBOARD ============
+         This is the homepage. The floor plan is one tap away and nothing about
+         it changed — same rooms, same panels, same data. This is just a flat,
+         quiet way to see the whole business at once. -->
+    <div class="dash" id="dash"></div>
+
     <div class="tower">
       <div class="mtopstats" id="mtopstats"></div>
       <svg class="bld" viewBox="0 0 1300 1000" xmlns="http://www.w3.org/2000/svg" id="bld"></svg>
@@ -2461,9 +2681,15 @@ function followUp(n){
   var d=new Date(v+"T12:00:00");
   return isNaN(d.getTime())?null:d;
 }
+/* Days until a follow-up. followUp() anchors the stored date at midday so a
+   timezone can never shunt it onto the wrong day — which means TODAY has to be
+   measured from midday too. It was measured from midnight, so a follow-up set
+   for today came out as +1 and read "in 1d": the "follow up today" label never
+   once appeared, the pipeline's "N due" button skipped today's calls, and so
+   did the dialer's overdue count. Same clock on both sides, and 0 means today. */
 function fuDaysOut(n){
   var d=followUp(n); if(!d) return null;
-  var t=new Date(); t.setHours(0,0,0,0);
+  var t=new Date(); t.setHours(12,0,0,0);
   return Math.round((d-t)/86400000);
 }
 
@@ -3661,7 +3887,7 @@ function boot(){
     /* The pull lands after the first paint, so anything already on screen is
        showing pre-sync numbers — that is how a phone ended up saying $430 while
        the laptop said $1,600. Repaint whatever is open. */
-    try{ redraw(); }catch(e){}
+    try{ redraw(); if(VIEW==="home") drawDash(); }catch(e){}
     return readDrive(LEADS_ID)
       .then(function(md){
         var sheet = parseLeads(md);
@@ -6387,6 +6613,13 @@ function mRoomOf(k){ for(var i=0;i<MROOMS.length;i++) if(MROOMS[i].k===k) return
 
 function mOpen(k,tab){
   tab=tab||0;
+  /* Opening a room means leaving the dashboard. Without this, anything that
+     called mOpen directly opened the room underneath a dashboard that was still
+     covering the whole screen — nothing visible, nothing tappable. */
+  if(VIEW!=="floor"){
+    VIEW="floor"; LS("view","floor");
+    try{ document.body.classList.remove("homeview"); paintSwitch(); }catch(e){}
+  }
   MVIEW=k; STATE.floor=k; STATE.tab=tab;
   /* the real plan zooms to the room — no second copy of the drawing */
   MZOOM=k; STATE.roof=false; STATE.base=false;
@@ -11610,6 +11843,363 @@ function musicView(){
 }
 
 /* ============================ NOTES + WIRING ============================ */
+/* ============================================================
+   THE DASHBOARD  —  the homepage
+   ------------------------------------------------------------
+   Glen asked for one page to track everything, with the floor plan still one
+   tap away. Nothing here owns any data: every figure is read from the same
+   functions the rooms use, so the dashboard can never drift out of step with
+   the panel it summarises. Every block is a door — tapping it opens the room
+   that actually does the work.
+   ============================================================ */
+var VIEW = (LS("view")==="floor") ? "floor" : "home";
+
+function setView(v){
+  VIEW = (v==="floor") ? "floor" : "home";
+  LS("view", VIEW);
+  document.body.classList.toggle("homeview", VIEW==="home");
+  if(VIEW==="home"){ closePanel(); drawDash(); }
+  else { drawBuilding(); redraw(); }
+  paintSwitch();
+}
+function paintSwitch(){
+  var t=document.getElementById("vs-t"), ic=document.getElementById("vs-ic");
+  if(t) t.textContent = (VIEW==="home") ? "Building" : "Dashboard";
+  if(ic) ic.innerHTML = (VIEW==="home")
+    /* going to the building: a floor plan */
+    ? '<svg viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="1.5" fill="none" '
+      +'stroke="currentColor" stroke-width="1.4"/><path d="M6 1 V13 M6 7 H13" stroke="currentColor" '
+      +'stroke-width="1.4"/></svg>'
+    /* going home: four tiles */
+    : '<svg viewBox="0 0 14 14"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/>'
+      +'<rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".55"/>'
+      +'<rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".55"/>'
+      +'<rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>';
+}
+
+/* Tapping anything on the dashboard drops him into the room that owns it. The
+   phone has its own one-room-at-a-time view, so it takes a different door. */
+function dashGo(room,tab){
+  setView("floor");
+  if(isPhone()) { mOpen(room, tab||0); return; }
+  STATE.roof=false; STATE.base=false; STATE.floor=room; STATE.tab=tab||0;
+  drawBuilding();
+  var w=winOpen(room); w.tab=tab||0; w.min=false;
+  renderWins();
+}
+
+/* ---- the pieces of today ---- */
+function todayPlan(){ return (LS("week_plan_"+new Date().getDay())||"").trim(); }
+function todayDone(){ return LS("week_done_"+new Date().getDay())==="1"; }
+
+/* Everybody with a follow-up that has come due, soonest first. This is the list
+   that actually earns money, so it is the one thing on the page that is allowed
+   to shout. */
+function dueNow(){
+  var out=[];
+  (STATE.leads||[]).forEach(function(L){
+    var d=fuDaysOut(L.name);
+    if(d===null||d===undefined) return;
+    if(d<=0) out.push({L:L,days:d});
+  });
+  out.sort(function(a,b){ return a.days-b.days; });
+  return out;
+}
+/* Who to ring today: anything overdue, then the purple list, then whoever is
+   owed money. Never the same person twice. */
+function callToday(){
+  var seen={}, out=[];
+  function add(L,why){
+    var k=keyOf(L.name); if(seen[k]) return; seen[k]=true;
+    out.push({L:L,why:why});
+  }
+  dueNow().forEach(function(x){
+    var d=x.days;
+    add(x.L, d<0 ? Math.abs(d)+"d overdue" : "due today");
+  });
+  (STATE.leads||[]).forEach(function(L){ if(prGet(L.name)) add(L,"priority"); });
+  (STATE.leads||[]).forEach(function(L){ if(L.owed>0&&!L.deferred) add(L,"owes money"); });
+  return out;
+}
+/* refreshContacts has already merged his own stage pick over the sheet's, so
+   L.stage is the answer — reaching for stGet again would second-guess it. */
+function stageCounts(){
+  var c={};
+  STATUSES.forEach(function(st){ c[st]=0; });
+  (STATE.leads||[]).forEach(function(L){
+    var st=stageFix(L.stage||stGet(L.name)||"New Lead");
+    if(STATUSES.indexOf(st)<0) st="New Lead";
+    c[st]++;
+  });
+  return c;
+}
+/* days trained in a row, counting back from today */
+function trainStreak(){
+  var n=0, d=new Date(); d.setHours(0,0,0,0);
+  for(var i=0;i<400;i++){
+    var st=dayState(d);
+    if(st==="g") n++;
+    else if(i===0 && st!=="r") { /* today not marked yet — do not break the run */ }
+    else break;
+    d.setDate(d.getDate()-1);
+  }
+  return n;
+}
+function latestWeight(){
+  var a=wtLoad();
+  if(!a.length) return null;
+  var s2=a.slice().sort(function(x,y){ return new Date(y.d)-new Date(x.d); });
+  return s2[0];
+}
+function kcalToday(){
+  return fdToday().reduce(function(t,m){ var v=parseFloat(m.kcal); return t+(isNaN(v)?0:v); },0);
+}
+
+function dashView(){
+  weekRoll();
+  var now=new Date(), today=now.getDay();
+  var m=money();
+  var lab=dayLabel(today), isAmz=/amazon/i.test(lab);
+  var plan=todayPlan(), tick=todayDone();
+  var days=Math.max(0,Math.ceil((BANGKOK-now)/86400000));
+
+  /* ================= TODAY ================= */
+  var h='<div class="dsh-hero">';
+  h+='<div class="dsh-today'+(isAmz?" amz":"")+(tick?" tick":"")+'">'
+   +'<div class="dt-top"><span class="dt-day">'+DAYFULL[today]+'</span>'
+   +'<span class="dt-dat">'+MON[now.getMonth()].slice(0,3)+' '+now.getDate()+'</span>'
+   +'<span class="dt-tag '+(isAmz?"amz":"off")+'">'+esc(lab)+'</span></div>'
+   +'<div class="dt-plan'+(plan?"":" none")+'">'
+   +(plan?esc(plan):"Nothing written for today yet. Ask Claudia to map the week.")+'</div>'
+   +'<div class="dt-act">'
+     +'<button class="dt-tk'+(tick?" on":"")+'" id="d-tick">'
+     +(tick?"&#10003; Day done":"Mark today done")+'</button>'
+     +'<button class="dt-tk" id="d-week">Open the week</button>'
+     +'<button class="dt-tk" id="d-plan">Ask Claudia to plan it</button>'
+   +'</div></div>';
+
+  /* ---- what is actually on fire ---- */
+  var due=dueNow();
+  h+='<div class="dsh-next"><div class="dn-h">Needs You Today</div>';
+  var rows=[];
+  due.slice(0,4).forEach(function(x){
+    rows.push(['#d4736f', x.L.name,
+      x.days<0 ? Math.abs(x.days)+"d late" : "today"]);
+  });
+  if(m.chase>0) rows.push(['#c9a25c', "$"+m.chase.toLocaleString()+" still to collect",
+    (function(){ var n=(STATE.leads||[]).filter(function(L){return L.owed>0&&!L.deferred;}).length;
+      return n+(n===1?" person":" people"); })()]);
+  var noPlan=0;
+  for(var c2=today;c2<7;c2++) if(!(LS("week_plan_"+c2)||"").trim()) noPlan++;
+  if(noPlan) rows.push(['#8fb3e8', noPlan+(noPlan===1?" day":" days")+" left blank this week","the week"]);
+  var ttf=parseInt(LS("fol_tiktok")||"0",10);
+  var posted=0; PLATS.forEach(function(pl){ posted+=parseInt(LS(postKey(pl.k))||"0",10); });
+  if(!posted) rows.push(['#ff2d55',"Nothing posted yet today","3 platforms"]);
+  if(!rows.length) h+='<div class="dn-clear">Nothing overdue, nothing owed, every day written. '
+    +'Go and make content.</div>';
+  else rows.slice(0,6).forEach(function(r){
+    h+='<div class="dn-row"><span class="dn-dot" style="background:'+r[0]+'"></span>'
+      +'<b>'+esc(r[1])+'</b><i>'+esc(r[2])+'</i></div>';
+  });
+  h+='</div></div>';
+
+  /* ================= THE SEVEN DAYS ================= */
+  h+='<div class="dsh-week">';
+  for(var i=0;i<7;i++){
+    var dl=dayLabel(i), amz=/amazon/i.test(dl);
+    var dn=LS("week_done_"+i)==="1", pl2=(LS("week_plan_"+i)||"").trim();
+    h+='<div class="dw-d'+(i===today?" now":"")+(dn?" done":"")+(amz?" amz":"")+'" data-dwd="'+i+'">'
+      +'<div class="dw-n"><span>'+DAYS[i]+(i===today?" &middot; today":"")+'</span>'
+      +(dn?'<span class="dw-tick">&#10003;</span>':'')+'</div>'
+      +'<div class="dw-lab">'+esc(dl)+'</div>'
+      +'<div class="dw-p'+(pl2?"":" none")+'">'+(pl2?esc(pl2):"nothing yet")+'</div>'
+      +'</div>';
+  }
+  h+='</div>';
+
+  /* ================= THE FOUR NUMBERS ================= */
+  h+='<div class="dsh-kpi">'
+   +'<div class="dk-c" data-dgo="office|4"><div class="dk-h">Cash Collected</div>'
+     +'<div class="dk-v g">$'+m.collected.toLocaleString()+'</div>'
+     +'<div class="dk-d">'+memberCount()+' paying member'+(memberCount()===1?"":"s")+'</div></div>'
+   +'<div class="dk-c" data-dgo="sales|1"><div class="dk-h">Still To Collect</div>'
+     +'<div class="dk-v'+(m.chase>0?" a":"")+'">$'+m.chase.toLocaleString()+'</div>'
+     +'<div class="dk-d">'+prCount()+' on the purple list</div></div>'
+   +'<div class="dk-c" data-dgo="content|0"><div class="dk-h">TikTok</div>'
+     +'<div class="dk-v b">'+ttf.toLocaleString()+'</div>'
+     +'<div class="dk-d">'+Math.max(0,10000-ttf).toLocaleString()+' to 10k</div></div>'
+   +'<div class="dk-c" data-dgo="office|0"><div class="dk-h">Days To Bangkok</div>'
+     +'<div class="dk-v">'+days+'</div>'
+     +'<div class="dk-d">5 December 2026</div></div>'
+   +'</div>';
+
+  /* ================= THE PANELS ================= */
+  h+='<div class="dsh-grid">';
+
+  /* ---- who to call ---- */
+  var ct=callToday();
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Call These People'
+    +'<em>'+ct.length+'</em></div>'
+    +'<button class="dp-go" data-dgo="sales|5">Dialer</button></div>'
+    +'<div class="dp-b tight"><div class="dp-scr">';
+  if(!ct.length) h+='<div class="dp-none">Nobody overdue and nobody owing. Go and find new leads.</div>';
+  else ct.slice(0,12).forEach(function(x){
+    /* the number he last typed on the record wins over whatever the sheet said */
+    var ph=(cnGet(x.L.name).p || x.L.phone || "");
+    var can=dialable(ph).ok;
+    h+='<div class="dcall">'
+      +(prGet(x.L.name)?'<span class="prdot2"></span>':'')
+      +'<div class="who"><b>'+esc(x.L.name)+'</b><i>'+esc(x.why)
+      +(ph?' &middot; '+esc(fmtPhone(ph)):' &middot; no number')+'</i></div>'
+      +(x.L.owed>0?'<span class="owe">$'+x.L.owed.toLocaleString()+'</span>':'')
+      +'<button class="dbtn" data-ddial="'+esc(x.L.name)+'" data-dtel="'+esc(ph)+'"'
+      +(can?'':' disabled')+'>CALL</button>'
+      +'</div>';
+  });
+  h+='</div></div></div>';
+
+  /* ---- the pipeline ---- */
+  var sc2=stageCounts(), tot2=0, top2=0;
+  STATUSES.forEach(function(st){ tot2+=sc2[st]||0; top2=Math.max(top2,sc2[st]||0); });
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Pipeline<em>'+tot2+' leads</em></div>'
+    +'<button class="dp-go" data-dgo="sales|1">Open</button></div><div class="dp-b">';
+  STATUSES.forEach(function(st){
+    var n=sc2[st]||0;
+    /* scaled against the biggest stage, not the total — with six stages a total
+       scale leaves every bar a stub. scol() hands back an object, so .hex. */
+    var pct = top2 ? Math.max(n?6:0, Math.round(n/top2*100)) : 0;
+    h+='<div class="dstg"><span class="nm">'+esc(st)+'</span>'
+      +'<span class="bar"><span style="width:'+pct+'%;background:'
+      +scol(st).hex+'"></span></span><span class="n">'+n+'</span></div>';
+  });
+  h+='</div></div>';
+
+  /* ---- content ---- */
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Content<em>'
+    +posted+' posted today</em></div>'
+    +'<button class="dp-go" data-dgo="content|0">Studio</button></div><div class="dp-b">';
+  PLATS.forEach(function(pl){
+    var fol=parseInt(LS("fol_"+pl.k)||"0",10);
+    var pd=parseInt(LS(postKey(pl.k))||"0",10);
+    h+='<div class="dsoc">'
+      +'<span class="ic" style="background:'+pl.col+'22;color:'+pl.col+'">'+pl.ic+'</span>'
+      +'<div class="mid"><b>'+fol.toLocaleString()+'</b><i>'+pl.nm+' &middot; '
+      +Math.max(0,pl.goal-fol).toLocaleString()+' to '+(pl.goal>=10000?"10k":"1k")+'</i></div>'
+      +'<span class="pt '+(pd?"yes":"no")+'">'+(pd?pd+" today":"not yet")+'</span>'
+      +'</div>';
+  });
+  h+='<div class="dbar10"><span style="width:'+Math.min(100,Math.round(ttf/10000*100))+'%"></span></div>';
+  h+='</div></div>';
+
+  /* ---- the gym ---- */
+  var wt=latestWeight(), kc=kcalToday(), strk=trainStreak();
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Training</div>'
+    +'<button class="dp-go" data-dgo="gym|3">Consistency</button></div><div class="dp-b">'
+    +'<div class="dfacts">'
+    +'<div class="dfact'+(strk?" g":"")+'"><b>'+strk+'</b><i>day streak</i></div>'
+    +'<div class="dfact b"><b>'+(wt?esc(String(wt.t)):"—")+'</b><i>'+(wt?"last weigh-in":"no weigh-in")+'</i></div>'
+    +'<div class="dfact'+(kc?" a":"")+'"><b>'+(kc?Math.round(kc).toLocaleString():"—")+'</b><i>kcal today</i></div>'
+    +'<div class="dfact"><b>'+wkLoad().length+'</b><i>workouts logged</i></div>'
+    +'</div></div></div>';
+
+  /* ---- students ---- */
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Members &amp; Students'
+    +'<em>'+stuList().length+' on the roster</em></div>'
+    +'<button class="dp-go" data-dgo="office|1">Open</button></div><div class="dp-b">'
+    +'<div class="dfacts">'
+    +'<div class="dfact g"><b>'+memberCount()+'</b><i>paying</i></div>'
+    +'<div class="dfact a"><b>$'+m.conting.toLocaleString()+'</b><i>contingent</i></div>'
+    +'<div class="dfact"><b>$'+m.defer.toLocaleString()+'</b><i>deferred</i></div>'
+    +'<div class="dfact b"><b>'+(STATE.forms?STATE.forms.length:0)+'</b><i>form submissions</i></div>'
+    +'</div></div></div>';
+
+  /* ---- the safe ---- */
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Money Out</div>'
+    +'<button class="dp-go" data-dgo="office|5">The Safe</button></div><div class="dp-b">';
+  if(!VAULT_OPEN){
+    h+='<div class="dlock"><p>The safe is locked. Open it to see what is in the accounts '
+      +'and what goes out each month.</p>'
+      +'<button class="dt-tk" data-dgo="office|5">Open the safe</button></div>';
+  } else {
+    var accts=vxLoad("accounts");
+    var cash=accts.filter(function(a){return a.kind!=="credit";})
+      .reduce(function(t,a){return t+(parseFloat(a.balance)||0);},0);
+    var owed2=accts.filter(function(a){return a.kind==="credit";})
+      .reduce(function(t,a){return t+(parseFloat(a.balance)||0);},0);
+    var out2=monthlyOut();
+    h+='<div class="dfacts">'
+      +'<div class="dfact b"><b>'+money2(cash)+'</b><i>in the accounts</i></div>'
+      +'<div class="dfact'+(owed2>0?" r":"")+'"><b>'+money2(owed2)+'</b><i>on the cards</i></div>'
+      +'<div class="dfact a"><b>'+money2(out2)+'</b><i>out every month</i></div>'
+      +'<div class="dfact'+((cash-owed2-out2)<0?" r":" g")+'"><b>'+money2(cash-owed2-out2)+'</b>'
+      +'<i>left over</i></div></div>';
+  }
+  h+='</div></div>';
+
+  /* ---- the three of them ---- */
+  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Your Office</div>'
+    +'<button class="dp-go" data-dgo="assistant|0">Ask Claudia</button></div>'
+    +'<div class="dp-b tight">'
+    +[["assistant",0,"Claudia","chief of staff · your day and week"],
+      ["sales",0,"Jordan Claudefort","sales manager · pipeline and calls"],
+      ["gym",0,"Claude Schwarzaneager","coach · training and food"]].map(function(a){
+        return '<div class="dcall"><div class="who"><b>'+a[2]+'</b><i>'+a[3]+'</i></div>'
+          +'<button class="dbtn" data-dgo="'+a[0]+'|'+a[1]+'">TALK</button></div>';
+      }).join("")
+    +'</div></div>';
+
+  h+='</div>';   /* .dsh-grid */
+  return h;
+}
+
+function drawDash(){
+  var host=document.getElementById("dash");
+  if(!host) return;
+  try{ host.innerHTML=dashView(); }
+  catch(e){
+    host.innerHTML='<div class="dp"><div class="dp-b"><div class="dp-none">'
+      +'The dashboard hit a snag: '+esc((e&&e.message)||e)+'</div></div></div>';
+    return;
+  }
+  wireDash();
+}
+
+function wireDash(){
+  var vs=document.getElementById("vswitch");
+  if(vs) vs.onclick=function(){ setView(VIEW==="home"?"floor":"home"); };
+
+  var tk=document.getElementById("d-tick");
+  if(tk) tk.onclick=function(){
+    var i=new Date().getDay();
+    LS("week_done_"+i, LS("week_done_"+i)==="1" ? "" : "1");
+    SBSAVE("week"); drawDash(); };
+  var ow=document.getElementById("d-week");
+  if(ow) ow.onclick=function(){ dashGo("office",0); };
+  var pn=document.getElementById("d-plan");
+  if(pn) pn.onclick=function(){ dashGo("office",0); setTimeout(weekAsk,60); };
+
+  var dw=document.querySelectorAll("[data-dwd]");
+  for(var i2=0;i2<dw.length;i2++) dw[i2].onclick=function(){ dashGo("office",0); };
+
+  var go=document.querySelectorAll("[data-dgo]");
+  for(var g4=0;g4<go.length;g4++) go[g4].onclick=function(ev){
+    ev.stopPropagation();
+    var p2=String(this.getAttribute("data-dgo")).split("|");
+    dashGo(p2[0], parseInt(p2[1],10)||0);
+  };
+
+  var dl=document.querySelectorAll("[data-ddial]");
+  for(var d5=0;d5<dl.length;d5++) dl[d5].onclick=function(ev){
+    ev.stopPropagation();
+    var nm=this.getAttribute("data-ddial");
+    var tel=this.getAttribute("data-dtel")||"";
+    dashGo("sales",5);
+    /* askCall shows him the exact +1 number before Twilio dials anything —
+       the same confirmation step as the dialer, no shortcut around it */
+    setTimeout(function(){ try{ askCall(nm,tel); }catch(e){} },80);
+  };
+}
+
 /* ================= THE WALL SAFE =================
    Logins, accounts and what goes out every month, behind a PIN. Closing it
    locks it again, so it is shut by default every time the app loads.
@@ -11852,7 +12442,12 @@ function labelCells(){
 }
 /* One place that re-renders whatever working windows are open. Every handler
    calls this instead of reaching for #tabbody directly. */
-function redraw(){ renderWins(); drawMobileStack(); }
+function redraw(){
+  renderWins(); drawMobileStack();
+  /* the dashboard summarises the same numbers the rooms hold, so it has to
+     repaint whenever anything is saved — otherwise it quietly goes stale */
+  if(VIEW==="home") drawDash();
+}
 function wire(){
   labelCells();
   wireStudents();
@@ -12260,6 +12855,12 @@ function wire(){
   };
 })();
 
+/* ---- the dashboard / building switch (wired once, it lives in the top bar) ---- */
+(function wireSwitch(){
+  var vs=document.getElementById("vswitch");
+  if(vs) vs.onclick=function(){ setView(VIEW==="home"?"floor":"home"); };
+})();
+
 /* ---- assistant popup on the map (wired once) ---- */
 (function wireMapChat(){
   var t=document.getElementById("mtoggle"),box=document.getElementById("mchat"),
@@ -12280,6 +12881,14 @@ function wire(){
 /* On the hosted build the sign-in gate calls boot() once it has a token.
    With no gate configured, or a token already stored, start straight away. */
 (function(){
+  /* The dashboard is home. Whichever view he was last on is remembered, so
+     jumping into the building and refreshing does not throw him back out. */
+  try{
+    document.body.classList.toggle("homeview", VIEW==="home");
+    paintSwitch();
+    if(VIEW==="home") drawDash();
+  }catch(e){}
+
   /* In Cowork the shim stood down, so __EXODUS_HOSTED__ was never set and we
      start straight away. On the server the gate sets it, and boot waits until
      there is a token. */
