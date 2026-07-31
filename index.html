@@ -80,12 +80,12 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
 .kpi.warn .v{color:#ff8f8f} .kpi.good .v{color:#5ee3a4} .kpi.blue .v{color:var(--blu2)}
 
 /* ============ TOP BAR ============ */
-/* The banner was a fixed 52px. The Spotify player needs 80px for its own play
-   button to render — at 38px the controls were clipped, which is why the play
-   button could not be found. min-height instead of height so the banner grows
-   around it rather than the player hanging out over the page. */
+/* min-height, not height: the clocks wrap onto a second row on a narrow window
+   and the banner has to grow around them rather than clip them. The player that
+   used to live here is gone — Glen asked for it out, and it was the only reason
+   this bar was ever 96px tall. */
 .topbar{display:flex;align-items:center;gap:0;flex-wrap:nowrap;margin-bottom:9px;
-  padding:8px 14px;min-height:96px;border-radius:11px;
+  padding:8px 14px;min-height:62px;border-radius:11px;
   background:linear-gradient(160deg,#090d14,#0f1622);
   border:1px solid #1e2634;box-shadow:0 6px 20px rgba(0,0,0,.38)}
 .tb-brand{display:flex;align-items:center;gap:8px;flex:none;padding-right:15px}
@@ -1569,7 +1569,7 @@ textarea.ntbox::placeholder{color:#5a6474;font-style:italic}
   color:var(--mut);font-weight:800}
 .af-grid input,.af-grid select,.addform input{margin-top:4px}
 /* removing a lead — small until you need it, then loud */
-.delone{display:inline-block;margin-top:4px;background:none;border:0;padding:0;
+.delone{display:block;margin-top:5px;background:none;border:0;padding:0;text-align:left;
   color:#4a5462;font-family:inherit;font-size:8.5px;font-weight:800;letter-spacing:.9px;
   text-transform:uppercase;cursor:pointer;transition:color .14s}
 .delone:hover{color:var(--red)}
@@ -1710,40 +1710,19 @@ a.lnk:hover{color:#bfdbfe}
 /* the day marker, for when a zone is on a different date to him */
 .tbz-d{font-size:7.5px;font-weight:800;color:var(--amber);margin-left:3px}
 
-/* ============ THE PLAYER IN THE BANNER ============
-   Seven attempts at this painted a white box. Two reasons, both now fixed:
-   Spotify's `theme=0` is the LIGHT theme, not the dark one, and any iframe is
-   blank where there is no network. So: no theme parameter at all, and the card
-   is what renders — the frame is swapped in only after its load event fires. */
-/* The frame was 200x38. Spotify's compact player needs 80px of height for its
-   own play button to render at all — at 38px the controls were clipped off the
-   bottom, which is why he could not find it. 152px is Spotify's documented
-   compact height and the whole control row fits. It drops out of the banner into
-   its own row so it is not fighting four clocks for width. */
-.tb-mus{flex:none;position:relative;width:280px;height:80px;margin-right:10px}
-.mus-card{position:absolute;inset:0;display:flex;align-items:center;gap:11px;
-  width:100%;padding:0 14px;border-radius:11px;cursor:pointer;font-family:inherit;
-  background:linear-gradient(150deg,#18211b,#121a15);border:1px solid #24402e;
-  transition:.14s;text-align:left}
-.mus-card:hover{border-color:#1db954;background:linear-gradient(150deg,#1b271f,#141d17)}
-.mus-ic{width:28px;height:28px;flex:none}
-.mus-ic svg{display:block;width:100%;height:100%}
-.mus-t{min-width:0;line-height:1.15}
-.mus-t b{display:block;font-size:13px;font-weight:800;color:#e8f3ec;letter-spacing:.2px}
-.mus-t i{display:block;font-style:normal;font-size:8px;font-weight:700;color:#7f9a88;
-  letter-spacing:1.1px;text-transform:uppercase;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis}
-.mus-frame{position:absolute;inset:0;border-radius:11px;overflow:hidden;
-  opacity:0;pointer-events:none;transition:opacity .25s}
-/* only ever revealed by the load handler */
-.tb-mus.live .mus-frame{opacity:1;pointer-events:auto}
-.tb-mus.live .mus-card{opacity:0;pointer-events:none}
-.mus-frame iframe{display:block;width:100%;height:100%;border:0;
-  background:#121a15}
-.mus-why{position:absolute;left:0;right:0;top:42px;z-index:5;
-  background:var(--paper2);border:1px solid var(--line);border-radius:9px;
-  padding:9px 11px;font-size:10.5px;color:var(--mut);line-height:1.45;
-  box-shadow:0 10px 24px rgba(0,0,0,.45)}
+/* Every stage renders its own table, so without a fixed layout each one sized
+   its columns to its own rows and the columns stepped sideways down the page.
+   The <th> widths are the contract; this makes the browser honour them. */
+.wbody .scroll.big table{table-layout:fixed;width:100%}
+.wbody .scroll.big th:nth-child(2){width:210px}
+.wbody .scroll.big td.nm-c{overflow-wrap:anywhere}
+
+/* The pipeline sitting inside a dashboard section. It brings its own scroller,
+   so this is only a frame: room to breathe and a rule to sit against. */
+.crmwrap{margin-top:12px;border-top:1px solid var(--line);padding-top:14px}
+.crmwrap .wbody{padding:0;background:none;border:0}
+.crmwrap .scroll.big{max-height:none}
+@media(max-width:640px){ .crmwrap{margin-top:9px;padding-top:10px} }
 
 /* =========================================================
    THE DASHBOARD
@@ -2765,9 +2744,6 @@ textarea.dw-pi.big{min-height:92px}
   .tbz-x{overflow:hidden}
   .tbz-k{overflow:hidden;text-overflow:ellipsis}
 
-  .tb-mus{order:8;flex:1 1 100%;width:100%;min-width:0;max-width:100%;
-    height:80px;margin-right:0}
-  .mus-card{padding:0 11px}
   .vswitch{order:7}
 }
 
@@ -2913,7 +2889,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-07-30-h">
+<body data-build="2026-07-30-i">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -2933,26 +2909,6 @@ textarea.dw-pi.big{min-height:92px}
       <!-- the four places that matter: where he is going, the two he deals
            with, and the coast he sells into -->
       <div class="tb-zones" id="tb-zones"></div>
-
-      <!-- Music. The frame is only revealed once it has actually loaded, so a
-           dead network leaves the card, never a white rectangle. -->
-      <div class="tb-mus" id="tb-mus">
-        <button class="mus-card" id="mus-card" title="Play the playlist">
-          <span class="mus-ic">
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <circle cx="8" cy="8" r="7.2" fill="#1db954"/>
-              <path d="M4.6 5.6q3.6-1 7 .5" stroke="#0a1a10" stroke-width="1.35"
-                fill="none" stroke-linecap="round"/>
-              <path d="M5 8q3-.8 5.8.5" stroke="#0a1a10" stroke-width="1.15"
-                fill="none" stroke-linecap="round"/>
-              <path d="M5.4 10.2q2.4-.6 4.6.4" stroke="#0a1a10" stroke-width=".95"
-                fill="none" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span class="mus-t"><b>Play</b><i>Your playlist</i></span>
-        </button>
-        <div class="mus-frame" id="mus-frame"></div>
-      </div>
 
       <button class="vswitch" id="vswitch" title="Switch between the dashboard and the floor plan">
         <span class="vs-ic" id="vs-ic"></span><span class="vs-t" id="vs-t">Building</span>
@@ -3007,7 +2963,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-30-h</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-30-i</span></div>
 </div>
 
 <script>
@@ -3511,7 +3467,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-07-30-h";
+var BUILD="2026-07-30-i";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -3581,114 +3537,7 @@ function paintZones(){
   }).join("");
 }
 
-/* ============ THE PLAYER IN THE BANNER ============
-   This failed seven times and painted a white box every time. Both causes are
-   now understood and neither was Spotify's fault:
-
-     1. I passed `theme=0`. That is Spotify's LIGHT theme — the white box WAS
-        the player, working correctly, in white. No theme parameter at all gives
-        the dark one.
-     2. An iframe is blank wherever there is no network, which is every preview
-        environment this has ever been looked at in.
-
-   So the card is what renders. The iframe is created hidden, and is only
-   revealed by its own load event. If it never loads, the card stays and he sees
-   a button, not a white rectangle. On the deployed site the embed serves all
-   100 tracks — I checked the endpoint directly rather than assuming.
-
-   What an embed can and cannot do, plainly: Spotify's embed has its own play,
-   pause, next and previous, and those work. Shuffle is not exposed to the page
-   around it by any public API, so there is no shuffle button here — the office
-   record player still opens Spotify proper, where shuffle lives. */
-var MUSIC_PLAYLIST="37i9dQZF1CKP6BedYNZqyO";
-var MUSIC_LOADED=false, MUSIC_TRYING=false;
-
-/* Can this browser actually reach Spotify?
-
-   The iframe's own load event is NOT a good enough answer. When a request is
-   blocked or fails, the browser renders its own error page inside the frame and
-   fires load anyway — so trusting load is precisely how you end up revealing an
-   empty pane. Verified: with the route aborted, load still fired.
-
-   An image request needs no CORS and its onload / onerror are both honest, so a
-   favicon is a reliable knock on the door. Only if it answers do we build the
-   frame at all. */
-function spotifyReachable(cb){
-  var done=false, img=new Image();
-  function finish(ok){ if(done) return; done=true; cb(ok); }
-  img.onload=function(){ finish(true); };
-  img.onerror=function(){ finish(false); };
-  setTimeout(function(){ finish(false); },3500);
-  /* cache-bust so a previous failure is not remembered as a success */
-  img.src="https://open.spotify.com/favicon.ico?_="+Date.now();
-}
-
-function musicUri(){ return "spotify:playlist:"+MUSIC_PLAYLIST; }
-function musicEmbedSrc(){
-  /* No `theme` parameter — see above. The frame is 80px tall, which is the size
-     Spotify's compact player needs for its play button to be visible at all. */
-  return "https://open.spotify.com/embed/playlist/"+MUSIC_PLAYLIST+"?utm_source=exodushq";
-}
-function musicOpen(){ return "https://open.spotify.com/playlist/"+MUSIC_PLAYLIST; }
-
-function startMusic(){
-  var box=document.getElementById("tb-mus");
-  var host=document.getElementById("mus-frame");
-  if(!box||!host||MUSIC_LOADED||MUSIC_TRYING) return;
-  MUSIC_TRYING=true;
-
-  var card=document.getElementById("mus-card");
-  if(card){ var l=card.querySelector(".mus-t b"); if(l) l.textContent="Loading\u2026"; }
-
-  spotifyReachable(function(up){
-    MUSIC_TRYING=false;
-    if(!up){ musicFailed(); return; }
-
-    var f=document.createElement("iframe");
-    f.setAttribute("title","Spotify player");
-    f.setAttribute("allow","autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture");
-    f.setAttribute("frameborder","0");
-    var t=setTimeout(function(){ if(!MUSIC_LOADED) musicFailed(); },6000);
-    f.onload=function(){ MUSIC_LOADED=true; box.classList.add("live"); clearTimeout(t); };
-    f.onerror=function(){ clearTimeout(t); musicFailed(); };
-    f.src=musicEmbedSrc();
-    host.innerHTML="";
-    host.appendChild(f);
-  });
-}
-
-function musicFailed(){
-  var box=document.getElementById("tb-mus");
-  if(!box || MUSIC_LOADED) return;
-  MUSIC_TRYING=false;
-  /* Tear the frame out entirely. An empty iframe is the white box. */
-  var host=document.getElementById("mus-frame");
-  if(host) host.innerHTML="";
-  box.classList.remove("live");
-  var card=document.getElementById("mus-card");
-  if(card){
-    var ic=card.querySelector(".mus-ic");
-    card.innerHTML='<span class="mus-ic">'+(ic?ic.innerHTML:"")+'</span>'
-      +'<span class="mus-t"><b>Open Spotify</b><i>player would not load</i></span>';
-  }
-  if(box.querySelector(".mus-why")) return;
-  var why=document.createElement("div");
-  why.className="mus-why";
-  why.innerHTML="Spotify's player needs a live connection, so it stays blank in a "
-    +"preview. On the deployed site it plays. Tap again to open Spotify itself.";
-  box.appendChild(why);
-  setTimeout(function(){ if(why.parentNode) why.parentNode.removeChild(why); },7000);
-  /* from here the card is a link, not a loader */
-  if(card) card.onclick=function(){ window.open(musicOpen(),"_blank","noopener"); };
-}
-
-(function wireMusic(){
-  var card=document.getElementById("mus-card");
-  if(card) card.onclick=function(){ startMusic(); };
-})();
-
-
-/* ---- a real clock face, hands set from your local time ---- *//* ---- a real clock face, hands set from your local time ---- */
+/* ---- a real clock face, hands set from your local time ---- */
 function clockFace(cx,cy,r,face,rim,hands,tz){
   face=face||"#0f141b"; rim=rim||"#c8a86a"; hands=hands||"#e8edf5";
   var t=inZone(tz||localTZ());
@@ -11787,8 +11636,10 @@ function salesPipe(){
     h+='<table><thead><tr>'
      +'<th style="width:30px" title="Priority">&#9679;</th>'
      +'<th>Name</th><th style="width:140px">Status</th>'
-     +'<th style="width:112px">Phone</th><th style="width:158px">Email</th><th style="width:104px">Handle</th>'
-     +'<th style="width:62px">Owed</th><th>Notes</th></tr></thead><tbody>';
+     +'<th style="width:118px">Phone</th><th style="width:170px">Email</th>'
+     +'<th style="width:112px">Handle</th>'
+     +'<th style="width:62px">Owed</th><th style="width:124px">Came In</th>'
+     +'<th>Notes</th></tr></thead><tbody>';
     g.rows.forEach(function(x){
     function fld(field,val,ph){
       return '<input class="cn" data-n="'+esc(x.name)+'" data-k="'+field+'" value="'+esc(val||"")
@@ -11819,10 +11670,6 @@ function salesPipe(){
         return '<div class="fuflag '+cls+'">'+txt+'</div>';
       })()
      +'</td>'
-     +'<td data-l="Came In" class="camecell">'
-       +'<input class="cin-came" type="'+(camePrec(x.name)==="month"?"month":"date")+'" '
-       +'data-n="'+esc(x.name)+'" value="'+esc(cameInRaw(x.name))+'">'
-     +'</td>'
      +'<td><select class="stsel" data-n="'+esc(x.name)+'" style="border-color:'+c.hex+'66;color:'+c.dot+'">'
      +STATUSES.map(function(st){
         return '<option'+(st===x.stage?" selected":"")+'>'+esc(st)+'</option>';}).join("")
@@ -11831,6 +11678,10 @@ function salesPipe(){
      +'<td>'+fld("e",x.email,"add email")+'</td>'
      +'<td>'+fld("s",x.ig,"@handle")+'</td>'
      +'<td class="'+(x.owed?"owe":"")+'">'+(x.owed?"$"+x.owed:"—")+'</td>'
+     +'<td data-l="Came In" class="camecell">'
+       +'<input class="cin-came" type="'+(camePrec(x.name)==="month"?"month":"date")+'" '
+       +'data-n="'+esc(x.name)+'" value="'+esc(cameInRaw(x.name))+'">'
+     +'</td>'
      +'<td><textarea class="ntbox" data-n="'+esc(x.name)+'" rows="2" '
      +'placeholder="Notes — type anything">'+esc(x.notes||"")+'</textarea>'
      +(x.notesSet?'<div class="editedflag">edited</div>':'')+'</td></tr>';});
@@ -13811,145 +13662,7 @@ function dashView(){
   var days=Math.max(0,Math.ceil((BANGKOK-now)/86400000));
   var h="";
 
-  /* ============ 1. EXODUS CRM  —  the money ============
-     Sales is the top of the page because it is the top of the business.
-     Cash first, then the pipeline, then who came in, then who to ring. */
-  (function(){
-    var recent=recentLeads();
-    var sc2=stageCounts(), tot2=0;
-    STATUSES.forEach(function(st){ tot2+=sc2[st]||0; });
-    h+='<div class="sec"><div class="sec-h"><h2>Exodus CRM</h2>'
-      +'<span class="sec-s">'+tot2+' leads &middot; '+prCount()+' on the purple list &middot; '
-      +'$'+m.collected.toLocaleString()+' collected</span>'
-      +'<a class="sec-b script" href="'+SCRIPT_URL+'" target="_blank" rel="noopener">'
-      +'Sales Script</a>'
-      +'<button class="sec-b" data-dgo="sales|5">Dialer</button>'
-      +'<button class="sec-b hot" data-dgo="sales|1">Open Full CRM</button></div>';
-
-    /* the money lives here, next to the people it comes from */
-    h+='<div class="crmmoney">'
-      +'<div class="cm"><span>Cash Collected</span><b class="g">$'
-        +m.collected.toLocaleString()+'</b><i>'+memberCount()+' paying</i></div>'
-      +'<div class="cm"><span>Still To Collect</span><b class="'+(m.chase?"a":"")+'">$'
-        +m.chase.toLocaleString()+'</b><i>already sold</i></div>'
-      +'<div class="cm"><span>Contingent</span><b>$'+m.conting.toLocaleString()+'</b>'
-        +'<i>once placed</i></div>'
-      +'<div class="cm"><span>New This Week</span><b class="b">'+newThisWeek()+'</b>'
-        +'<i>came in</i></div></div>';
-
-    /* stage strip */
-    h+='<div class="stgstrip">';
-    STATUSES.forEach(function(st){
-      var n=sc2[st]||0;
-      h+='<button class="sg" data-dgo="sales|1" style="--sc:'+scol(st).hex+'">'
-        +'<b>'+n+'</b><i>'+esc(st)+'</i></button>';
-    });
-    h+='</div>';
-
-    h+='<div class="dp"><div class="dp-h"><div class="dp-t">Newest In'
-      +'<em>'+recent.length+' dated</em></div>'
-      +'<button class="dp-go" data-dgo="sales|3">Front Desk</button></div>'
-      +'<div class="dp-b tight"><div class="dp-scr">';
-    if(!recent.length) h+='<div class="dp-none">No lead has a date on it yet. '
-      +'Form submissions get one automatically.</div>';
-    else recent.slice(0,12).forEach(function(L){
-      var ph=(cnGet(L.name).p || L.phone || "");
-      var can=dialable(ph).ok;
-      var st=stageFix(L.stage||"New Lead");
-      h+='<div class="dcall">'
-        +(prGet(L.name)?'<span class="prdot2"></span>':'')
-        +'<div class="who"><b>'+esc(L.name)+'</b>'
-        +'<i><span class="stgchip" style="color:'+scol(st).dot+';border-color:'
-        +scol(st).hex+'55">'+esc(st)+'</span> '+esc(cameLabel(L.name))+'</i></div>'
-        +(DEL_ASK===L.name
-          ? '<span class="delask"><button class="dy" data-delyes="'+esc(L.name)+'">Remove</button>'
-            +'<button class="dn" data-delno="1">Keep</button></span>'
-          : '<button class="delone" data-delask="'+esc(L.name)+'">remove</button>')
-        +'<button class="dbtn" data-ddial="'+esc(L.name)+'" data-dtel="'+esc(ph)+'"'
-        +(can?'':' disabled')+'>CALL</button>'
-        +'</div>';
-    });
-    h+='</div></div></div></div>';
-  })();
-
-  /* ============ 2. THE DIALER  —  part of the same section ============ */
-  (function(){
-    var ct=callToday();
-    h+='<div class="sec"><div class="sec-h"><h2>Dialer</h2>'
-      +'<span class="sec-s">'+ct.length+' to ring &middot; overdue first, then the purple list, '
-      +'then anyone who owes</span>'
-      +'<button class="sec-b" data-dgo="sales|5">Full Dialer</button></div>';
-    h+='<div class="dp"><div class="dp-b tight"><div class="dp-scr">';
-    if(!ct.length) h+='<div class="dp-none">Nobody overdue and nobody owing. '
-      +'Go and make content.</div>';
-    else ct.slice(0,14).forEach(function(x){
-      var ph=(cnGet(x.L.name).p || x.L.phone || "");
-      var can=dialable(ph).ok;
-      var st=stageFix(x.L.stage||"New Lead");
-      h+='<div class="dcall">'
-        +(prGet(x.L.name)?'<span class="prdot2"></span>':'')
-        +'<div class="who"><b>'+esc(x.L.name)+'</b>'
-        +'<i><span class="stgchip" style="color:'+scol(st).dot+';border-color:'
-        +scol(st).hex+'55">'+esc(st)+'</span> '+esc(x.why)
-        +(ph?' &middot; '+esc(fmtPhone(ph)):' &middot; no number')+'</i></div>'
-        +(x.L.owed>0?'<span class="owe">$'+x.L.owed.toLocaleString()+'</span>':'')
-        +'<button class="dbtn" data-ddial="'+esc(x.L.name)+'" data-dtel="'+esc(ph)+'"'
-        +(can?'':' disabled')+'>CALL</button>'
-        +'</div>';
-    });
-    h+='</div></div></div></div>';
-  })();
-
-  h+=analyticsSection();
-
-  /* ============ 4. MEETINGS ============ */
-  (function(){
-    var ms=mtSorted().filter(function(x){ return !x.m.done; });
-    h+='<div class="sec"><div class="sec-h"><h2>Meetings &amp; Calls</h2>'
-      +'<span class="sec-s">'+ms.length+' booked</span>'
-      +'<button class="sec-b" id="mt-new">+ New Meeting</button>'
-      +'<button class="sec-b" data-dgo="office|2">Calendar</button></div>';
-    if(!calendlyLink())
-      h+='<div class="mt-cal"><span>Set your Calendly once and every new meeting '
-        +'carries a link you can send.</span>'
-        +'<input id="mt-cly" placeholder="calendly.com/glenklein/30min" '
-        +'value="'+esc(calendlyBase())+'"></div>';
-    if(!ms.length)
-      h+='<div class="dp"><div class="dp-b"><div class="dp-none">Nothing booked. '
-        +'New Meeting adds it here and in the Calls module.</div></div></div>';
-    else {
-      h+='<div class="mts">';
-      ms.forEach(function(row){
-        var i=row.i, mm=row.m, past=mtIsPast(mm);
-        var can=dialable(mm.phone||"").ok;
-        h+='<div class="mt'+(past?" past":"")+'">'
-          +'<div class="mt-top">'
-            +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" '
-            +'value="'+esc(mm.name||"")+'" placeholder="Who">'
-            +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
-            +'value="'+esc(mtLocalValue(mm.at))+'">'
-            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
-            +'<button class="mt-x" data-mtdel="'+i+'" title="Remove">&times;</button>'
-          +'</div>'
-          +'<div class="mt-g">'
-            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(mm.phone||"")+'" placeholder="Phone">'
-            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(mm.email||"")+'" placeholder="Email">'
-            +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(mm.link||"")+'" placeholder="Meeting link">'
-          +'</div>'
-          +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
-          +'placeholder="What this call is about.">'+esc(mm.notes||"")+'</textarea>'
-          +'<div class="mt-act">'
-            +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
-            +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
-            +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
-          +'</div></div>';
-      });
-      h+='</div>';
-    }
-    h+='</div>';
-  })();
-
-  /* ============ 5. TODAY ============ */
+  /* ============ 1. TODAY  —  the day and the week, first ============ */
   (function(){
     var lab=dayLabel(today), isAmz=/amazon/i.test(lab);
     var plan=todayPlan(), tick=todayDone();
@@ -14062,7 +13775,112 @@ function dashView(){
     h+='</div></div>';
   })();
 
-  /* ============ 6. THE SLOWER STUFF ============ */
+  /* ============ 2. CONTENT ANALYTICS ============ */
+  h+=analyticsSection();
+
+  /* ============ 3. EXODUS CRM  —  the real pipeline, in place ============
+     Sales is the top of the page because it is the top of the business.
+     Cash first, then the pipeline, then who came in, then who to ring. */
+  (function(){
+    var recent=recentLeads();
+    var sc2=stageCounts(), tot2=0;
+    STATUSES.forEach(function(st){ tot2+=sc2[st]||0; });
+    h+='<div class="sec"><div class="sec-h"><h2>Exodus CRM</h2>'
+      +'<span class="sec-s">'+tot2+' leads &middot; '+prCount()+' on the purple list &middot; '
+      +'$'+m.collected.toLocaleString()+' collected</span>'
+      +'<a class="sec-b script" href="'+SCRIPT_URL+'" target="_blank" rel="noopener">'
+      +'Sales Script</a>'
+      +'<button class="sec-b" data-dgo="sales|5">Dialer</button>'
+      +'<button class="sec-b hot" data-dgo="sales|1">Full Screen</button></div>';
+
+    /* the money lives here, next to the people it comes from */
+    h+='<div class="crmmoney">'
+      +'<div class="cm"><span>Cash Collected</span><b class="g">$'
+        +m.collected.toLocaleString()+'</b><i>'+memberCount()+' paying</i></div>'
+      +'<div class="cm"><span>Still To Collect</span><b class="'+(m.chase?"a":"")+'">$'
+        +m.chase.toLocaleString()+'</b><i>already sold</i></div>'
+      +'<div class="cm"><span>Contingent</span><b>$'+m.conting.toLocaleString()+'</b>'
+        +'<i>once placed</i></div>'
+      +'<div class="cm"><span>New This Week</span><b class="b">'+newThisWeek()+'</b>'
+        +'<i>came in</i></div></div>';
+
+    /* stage strip */
+    h+='<div class="stgstrip">';
+    STATUSES.forEach(function(st){
+      var n=sc2[st]||0;
+      h+='<button class="sg" data-dgo="sales|1" style="--sc:'+scol(st).hex+'">'
+        +'<b>'+n+'</b><i>'+esc(st)+'</i></button>';
+    });
+    h+='</div>';
+
+    /* The Pipeline tab itself, not a summary of it. salesPipe() is that tab, so
+       it is called directly — one renderer, one set of handlers, nothing that
+       can drift out of step with the full-screen copy.
+
+       It stands down while the CRM sheet is open above it, because that sheet
+       draws the same markup with the same element ids, and two #lsearch boxes
+       on one page is how you get a search that types into the wrong one. */
+    var sheetHasIt = DASH_MOD && DASH_MOD.room==="sales" && DASH_MOD.tab===1;
+    h+='<div class="crmwrap" id="dash-crm"><div class="wbody"><div class="tb">';
+    if(sheetHasIt)
+      h+='<div class="dp-none">The CRM is open full screen above this.</div>';
+    else {
+      try{ h+=salesPipe(); }
+      catch(e){ h+='<div class="dp-none">The pipeline hit a snag: '
+        +esc((e&&e.message)||e)+'</div>'; }
+    }
+    h+='</div></div></div>';
+    h+='</div>';
+  })();
+
+  /* ============ 4. MEETINGS ============ */
+  (function(){
+    var ms=mtSorted().filter(function(x){ return !x.m.done; });
+    h+='<div class="sec"><div class="sec-h"><h2>Meetings &amp; Calls</h2>'
+      +'<span class="sec-s">'+ms.length+' booked</span>'
+      +'<button class="sec-b" id="mt-new">+ New Meeting</button>'
+      +'<button class="sec-b" data-dgo="office|2">Calendar</button></div>';
+    if(!calendlyLink())
+      h+='<div class="mt-cal"><span>Set your Calendly once and every new meeting '
+        +'carries a link you can send.</span>'
+        +'<input id="mt-cly" placeholder="calendly.com/glenklein/30min" '
+        +'value="'+esc(calendlyBase())+'"></div>';
+    if(!ms.length)
+      h+='<div class="dp"><div class="dp-b"><div class="dp-none">Nothing booked. '
+        +'New Meeting adds it here and in the Calls module.</div></div></div>';
+    else {
+      h+='<div class="mts">';
+      ms.forEach(function(row){
+        var i=row.i, mm=row.m, past=mtIsPast(mm);
+        var can=dialable(mm.phone||"").ok;
+        h+='<div class="mt'+(past?" past":"")+'">'
+          +'<div class="mt-top">'
+            +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" '
+            +'value="'+esc(mm.name||"")+'" placeholder="Who">'
+            +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
+            +'value="'+esc(mtLocalValue(mm.at))+'">'
+            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
+            +'<button class="mt-x" data-mtdel="'+i+'" title="Remove">&times;</button>'
+          +'</div>'
+          +'<div class="mt-g">'
+            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(mm.phone||"")+'" placeholder="Phone">'
+            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(mm.email||"")+'" placeholder="Email">'
+            +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(mm.link||"")+'" placeholder="Meeting link">'
+          +'</div>'
+          +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
+          +'placeholder="What this call is about.">'+esc(mm.notes||"")+'</textarea>'
+          +'<div class="mt-act">'
+            +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
+            +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
+            +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
+          +'</div></div>';
+      });
+      h+='</div>';
+    }
+    h+='</div>';
+  })();
+
+  /* ============ 5. THE SLOWER STUFF ============ */
   h+='<div class="sec"><div class="sec-h"><h2>Pipeline, Body, Money</h2>'
     +'<span class="sec-s">the things that do not need watching every hour</span></div>';
   h+='<div class="dsh-grid">';
@@ -14341,6 +14159,14 @@ function drawDash(){
     STATE.floor=DASH_MOD.room; STATE.tab=DASH_MOD.tab;
     try{ wire(); }catch(e){}
     STATE.floor=keepFloor; STATE.tab=keepTab;
+  } else if(document.getElementById("dash-crm")){
+    /* The pipeline is rendered straight into the page now, so it needs the same
+       handlers the room gives it — the sort box, the search, the stage selects,
+       every editable cell. Same call, pointed at sales tab 1. */
+    var kf=STATE.floor, kt=STATE.tab;
+    STATE.floor="sales"; STATE.tab=1;
+    try{ wire(); }catch(e){}
+    STATE.floor=kf; STATE.tab=kt;
   }
 }
 
