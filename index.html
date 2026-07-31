@@ -1809,17 +1809,87 @@ a.lnk:hover{color:#bfdbfe}
   text-transform:uppercase;color:#66748a;margin-top:3px}
 .wt-n{margin-top:11px;font-size:11px;line-height:1.5;color:var(--mut)}
 
+/* ---- the Jarvis row: him on the left, the sky on the right ---- */
+.jvrow{display:flex;gap:11px;align-items:stretch;margin-bottom:11px}
+.jvrow .jarvis{flex:1 1 auto;margin:0}
+.jv-stop{flex:none;margin-left:8px;padding:7px 13px;border-radius:8px;
+  background:rgba(212,115,111,.16);border:1px solid rgba(212,115,111,.45);
+  font-size:10.5px;font-weight:800;letter-spacing:.5px;color:#f0b8b6;transition:.14s}
+.jv-stop:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* the sky, where he actually is */
+.wxp{flex:0 0 300px;display:flex;align-items:center;gap:13px;padding:10px 15px;
+  border-radius:12px;background:linear-gradient(120deg,#0d1520,#101a26 60%,#0d1520);
+  border:1px solid #22303f}
+.wxp.empty{justify-content:center}
+.wx-get{background:rgba(75,123,212,.16);border:1px solid rgba(75,123,212,.4);
+  border-radius:8px;padding:9px 16px;color:#a9c6f5;font-family:inherit;
+  font-size:11px;font-weight:800;letter-spacing:.4px;cursor:pointer}
+.wx-get:hover{background:var(--blu);color:#fff}
+.wx-l{display:flex;align-items:center;gap:9px;flex:none}
+.wx-ic svg{display:block}
+.wx-now b{display:block;font-size:27px;font-weight:800;letter-spacing:-1.4px;
+  color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.wx-now i{display:block;font-style:normal;font-size:8.5px;font-weight:700;
+  letter-spacing:.9px;text-transform:uppercase;color:#7b8697;margin-top:3px;
+  max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wx-r{min-width:0;flex:1}
+.wx-pl{font-size:11.5px;font-weight:800;color:#dbe3ee;letter-spacing:-.1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wx-pl em{font-style:normal;font-weight:700;color:#6f7a8a;margin-left:5px;
+  font-variant-numeric:tabular-nums}
+.wx-24{display:flex;gap:12px;margin-top:5px}
+.wx-24 span{line-height:1.15}
+.wx-24 b{font-size:12.5px;font-weight:800;color:#e6ecf4;
+  font-variant-numeric:tabular-nums}
+.wx-24 i{display:block;font-style:normal;font-size:7.5px;font-weight:800;
+  letter-spacing:1px;text-transform:uppercase;color:#66748a;margin-top:2px}
+.wx-ahead{display:flex;align-items:center;gap:5px;margin-top:5px;
+  font-size:9.5px;font-weight:700;color:var(--amber);text-transform:uppercase;
+  letter-spacing:.7px}
+.wx-ahead svg{flex:none}
+
+/* ---- the desks ---- */
+.ndesks{display:flex;gap:4px;flex-wrap:wrap;margin:9px 0 2px}
+.ndesk{background:rgba(255,255,255,.035);border:1px solid #262d38;border-radius:7px;
+  padding:5px 9px;cursor:pointer;font-family:inherit;font-size:9.5px;font-weight:800;
+  letter-spacing:.7px;text-transform:uppercase;color:#7b8697;transition:.13s;
+  display:inline-flex;align-items:center;gap:5px}
+.ndesk:hover{color:#cfd7e3;border-color:#39424f}
+.ndesk.on{background:var(--blu);border-color:var(--blu);color:#fff}
+.ndesk i{font-style:normal;font-size:8.5px;font-weight:800;opacity:.6;
+  font-variant-numeric:tabular-nums}
+
+/* the masthead badge takes the publisher's own colour */
+.nw-s{border-left:3px solid var(--sc,#5b7fb8);padding-left:7px;color:var(--sc,#8fb3e8)}
+
+/* the coin symbol */
+.cxs{font-style:normal;color:#7f8b9c;margin-right:2px;font-weight:700}
+.cxp b{display:flex;align-items:baseline}
+
+@media (max-width:900px){
+  .jvrow{flex-direction:column}
+  .wxp{flex:1 1 auto}
+}
+
 /* ---- headlines on the dashboard ---- */
-.todayrow.two{grid-template-columns:1.15fr 1fr}
+/* Tasks on the left, headlines on the right. align-items:start so an empty
+   task list does not stretch to the height of nine headlines. */
+.todayrow.two{grid-template-columns:1fr 1.25fr;align-items:start}
 @media (max-width:900px){ .todayrow.two{grid-template-columns:1fr} }
-.tcard.news .newsbox{display:flex;flex-direction:column;gap:1px;margin-top:4px}
+.tcard.news .newsbox{display:flex;flex-direction:column;gap:1px;margin-top:6px;
+  max-height:360px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:900px){ .tcard.news .newsbox{max-height:none} }
 .nw{display:flex;align-items:flex-start;gap:9px;padding:9px 8px;border-radius:8px;
   text-decoration:none;color:inherit;transition:background .12s;
   border-bottom:1px solid rgba(255,255,255,.045)}
 .nw:last-child{border-bottom:0}
 a.nw:hover{background:rgba(255,255,255,.045)}
-.nw-s{flex:none;width:62px;font-size:8px;font-weight:800;letter-spacing:1px;
-  text-transform:uppercase;color:var(--blu2);padding-top:3px}
+/* Wide enough for SMITHSONIAN, which is the longest masthead in the list and
+   is one unbreakable word — anything narrower ran it into the headline. */
+.nw-s{flex:none;width:86px;font-size:7.5px;font-weight:800;letter-spacing:.9px;
+  line-height:1.3;text-transform:uppercase;color:var(--blu2);padding-top:3px;
+  overflow:hidden;text-overflow:ellipsis}
 .nw-t{flex:1;min-width:0;font-size:13px;line-height:1.42;color:#dde4ee;font-weight:600}
 a.nw:hover .nw-t{color:#fff}
 .nw-go{flex:none;color:#4a5462;font-size:12px;padding-top:2px}
@@ -3154,7 +3224,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-07-31-d">
+<body data-build="2026-07-31-e">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3193,12 +3263,17 @@ textarea.dw-pi.big{min-height:92px}
          tap again, she answers out loud. The bars idle slowly when nothing is
          happening and run fast while she is hearing you, so the state of the
          thing is visible from across the room. -->
-    <button class="jarvis" id="jarvis" title="Tap, speak, tap again">
-      <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
-      <span class="jv-t"><b id="jv-lab">Talk to Claudia</b>
-        <i id="jv-sub">tap and speak</i></span>
-      <span class="jv-brief" id="jv-brief" title="Weather, news, sport and today, read back">Brief</span>
-    </button>
+    <div class="jvrow">
+      <button class="jarvis" id="jarvis" title="Tap, speak, tap again">
+        <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
+        <span class="jv-t"><b id="jv-lab">Talk to Claudia</b>
+          <i id="jv-sub">tap and speak</i></span>
+        <span class="jv-brief" id="jv-brief" title="Weather, news, sport and today, read back">Brief</span>
+        <span class="jv-stop" id="jv-stop" title="Stop her talking">Stop</span>
+      </button>
+      <!-- the sky where he actually is, filled by wxPaint() -->
+      <div class="wxp" id="wxp"></div>
+    </div>
 
     <div class="dash" id="dash"></div>
 
@@ -3243,7 +3318,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-31-d</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-31-e</span></div>
 </div>
 
 <script>
@@ -3747,7 +3822,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-07-31-d";
+var BUILD="2026-07-31-e";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -10399,6 +10474,77 @@ function scriptSheet(){
 }
 
 
+/* ============================ THE SKY, WHERE HE IS ============================
+   A small panel next to the Jarvis bar. Everything in it is fetched — the place
+   name is reverse-geocoded from his device, the temperature and the next 24
+   hours come from the forecast. If there is no fix it says New York and says
+   that it is the default, rather than quietly claiming to know. */
+function wxIcon(sky, big){
+  var s=String(sky||"").toLowerCase();
+  var w=big?34:26;
+  function sun(){ return '<circle cx="16" cy="16" r="7" fill="#f6c65b"/>'
+    +'<g stroke="#f6c65b" stroke-width="2.2" stroke-linecap="round">'
+    +'<path d="M16 2v4M16 26v4M2 16h4M26 16h4M6.3 6.3l2.8 2.8M22.9 22.9l2.8 2.8'
+    +'M25.7 6.3l-2.8 2.8M9.1 22.9l-2.8 2.8"/></g>'; }
+  function cloud(c){ return '<path d="M9 23a5.5 5.5 0 0 1 .6-11 8 8 0 0 1 15.2 2.3A4.8 4.8 0 0 1 24 23z" fill="'
+    +(c||"#9aa8ba")+'"/>'; }
+  function drops(c){ return '<g stroke="'+(c||"#5b9bd5")+'" stroke-width="2.2" stroke-linecap="round">'
+    +'<path d="M11 26l-1.5 3M17 26l-1.5 3M23 26l-1.5 3"/></g>'; }
+  var g;
+  if(/thunder/.test(s)) g=cloud("#7c8797")+'<path d="M17 24l-4 6h4l-2 5 7-8h-4l2-3z" fill="#f6c65b"/>';
+  else if(/snow/.test(s)) g=cloud()+drops("#cfe3f5");
+  else if(/rain|drizzle|shower/.test(s)) g=cloud()+drops();
+  else if(/overcast|fog/.test(s)) g=cloud("#828d9c");
+  else if(/partly|mostly cloudy/.test(s)) g='<circle cx="12" cy="12" r="6" fill="#f6c65b"/>'+cloud();
+  else if(/mostly clear/.test(s)) g='<circle cx="13" cy="13" r="6.5" fill="#f6c65b"/>'+cloud("#a8b4c4");
+  else g=sun();
+  return '<svg viewBox="0 0 32 32" width="'+w+'" height="'+w+'" aria-hidden="true">'+g+'</svg>';
+}
+
+function wxPaint(){
+  var host=document.getElementById("wxp");
+  if(!host) return;
+  var w=(briefFresh()&&BRIEF&&BRIEF.weather)?BRIEF.weather.here:null;
+  if(!w || w.error){
+    host.className="wxp empty";
+    host.innerHTML='<button class="wx-get" id="wx-get">'
+      +(w&&w.error?"Weather unavailable — retry":"Show my weather")+'</button>';
+    var g=document.getElementById("wx-get");
+    if(g) g.onclick=function(){ newsRefresh(); };
+    return;
+  }
+  var a=w.next24||{};
+  host.className="wxp";
+  host.innerHTML=
+     '<div class="wx-l">'
+      +'<span class="wx-ic">'+wxIcon(w.sky,true)+'</span>'
+      +'<span class="wx-now"><b>'+w.now+'&deg;</b><i>'+esc(w.sky)+'</i></span>'
+     +'</div>'
+    +'<div class="wx-r">'
+      +'<div class="wx-pl">'+esc(w.place||"Where you are")
+        +(w.localTime?' <em>'+esc(w.localTime)+'</em>':'')+'</div>'
+      +'<div class="wx-24">'
+        +(isFinite(a.high)
+           ? '<span><b>'+a.high+'&deg;</b> / <b>'+a.low+'&deg;</b><i>next 24h</i></span>'
+           : '<span><b>'+w.high+'&deg;</b> / <b>'+w.low+'&deg;</b><i>today</i></span>')
+        +'<span><b>'+(isFinite(a.rainChance)?a.rainChance:(w.rainChance||0))+'%</b>'
+          +'<i>rain</i></span>'
+        +'<span><b>'+w.feels+'&deg;</b><i>feels</i></span>'
+      +'</div>'
+      +(a.worst && a.worst!==w.sky
+         ? '<div class="wx-ahead">'+wxIcon(a.worst)+'<span>'+esc(a.worst)+' coming</span></div>'
+         : '')
+    +'</div>';
+}
+
+/* The banner said NEW YORK CITY whatever the truth was. It follows him now. */
+function bannerPlace(){
+  var w=(briefFresh()&&BRIEF&&BRIEF.weather)?BRIEF.weather.here:null;
+  if(w && w.place && !w.error) return w.place;
+  var g=geoSaved();
+  return g && g.place ? g.place : "New York City";
+}
+
 /* ============================ THE JARVIS BAR ============================
    One tap: the mic opens, the bars run, she hears you. Tap again and she
    answers out loud. It is the same recogniser and the same ask() the dock
@@ -10410,6 +10556,15 @@ function jvPaint(){
   var think=!!(STATE && STATE.busy);
   b.classList.toggle("live", !!live);
   b.classList.toggle("think", !live && think);
+  /* Stop only shows when there is something to stop. A dead button is worse
+     than no button — it teaches him it does nothing. */
+  var st=document.getElementById("jv-stop");
+  if(st){
+    var talking=false;
+    try{ talking = !!(window.speechSynthesis && window.speechSynthesis.speaking); }catch(e){}
+    try{ if(!talking && VOICE_AUDIO && !VOICE_AUDIO.paused) talking=true; }catch(e){}
+    st.style.display=(talking||live||think)?"":"none";
+  }
   var lab=document.getElementById("jv-lab"), sub=document.getElementById("jv-sub");
   if(lab) lab.textContent = live ? "Listening…" : think ? "Claudia is thinking…"
                                  : "Talk to Claudia";
@@ -10432,11 +10587,9 @@ function jvTap(){
     var b=document.getElementById("jarvis");
     if(!b){ setTimeout(go,300); return; }
     b.onclick=function(ev){
-      if(ev.target && ev.target.id==="jv-brief"){
-        ev.stopPropagation();
-        briefNow();
-        return;
-      }
+      var id=ev.target && ev.target.id;
+      if(id==="jv-brief"){ ev.stopPropagation(); briefNow(); return; }
+      if(id==="jv-stop"){ ev.stopPropagation(); briefStop(); return; }
       jvTap();
     };
     /* The bars are drawn here rather than in the markup so the count is one
@@ -10557,21 +10710,33 @@ function smsSend(){
    Its own endpoint and its own one-minute cache, because a price is the only
    thing in the brief that is stale after two minutes. */
 var CRYPTO=null;
+/* The banner said NEW YORK CITY no matter where he was. It follows the same
+   fix the forecast uses, so the clock and the city agree with each other. */
+function bannerPaint(){
+  var el=document.getElementById("tb-place");
+  if(!el) return;
+  var p=bannerPlace();
+  if(el.textContent!==p) el.textContent=p;
+}
+
 function cryptoPaint(){
   var host=document.getElementById("tb-cx");
   if(!host) return;
   if(!CRYPTO || CRYPTO.error){ host.innerHTML=""; return; }
-  function one(k, nm){
+  /* ₿ (U+20BF, the actual Bitcoin sign) and Ξ (capital Xi, which is what
+     Ethereum uses). Both are plain Unicode — no icon font, nothing to load. */
+  function one(k, nm, sym){
     var c=CRYPTO[k];
     if(!c || !isFinite(c.usd)) return "";
     var ch=c.change24h;
     var cls = ch===null||ch===undefined ? "" : ch>=0 ? "up" : "dn";
     var sign = (ch>=0?"+":"");
-    return '<div class="cxp"><b>$'+Math.round(c.usd).toLocaleString()+'</b>'
+    return '<div class="cxp"><b><em class="cxs">'+sym+'</em>'
+      +Math.round(c.usd).toLocaleString()+'</b>'
       +'<span>'+nm+(cls?' <i class="'+cls+'">'+sign+(ch||0).toFixed(1)+'%</i>':'')
       +'</span></div>';
   }
-  host.innerHTML=one("btc","BTC")+one("eth","ETH");
+  host.innerHTML=one("btc","BTC","\u20BF")+one("eth","ETH","\u039E");
 }
 function cryptoPull(){
   if(!window.__EXODUS_HOSTED__) return;
@@ -10635,20 +10800,25 @@ function briefFetch(cb){
 
 /* One city, as a sentence rather than a readout. Spoken aloud, "69 and mostly
    clear, up to 87" is a person talking; "temp: 69F, condition: clear" is not. */
-function briefWx(b, key, label){
-  var w=b && b.weather && b.weather[key];
-  /* The server labels the local card with the real place name — Philadelphia,
-     not "here" — so use its word rather than ours when it has one. */
-  if(w && w.place && label==="Here") label=w.place;
+/* One line, about where he is, covering the next 24 hours — not a two-city
+   readout. He asked for exactly this: his location, his local time, and what
+   the sky is going to do between now and tomorrow. */
+function briefWx(b){
+  var w=b && b.weather && b.weather.here;
   if(!w) return "";
-  if(w.error) return label+": weather unavailable.";
-  var t=label+": "+w.now+" and "+w.sky;
-  /* Only when the difference is worth saying out loud. 69 that feels like 74 is
-     just weather; 84 that feels like 93 is a reason to film indoors. */
+  if(w.error) return "Weather unavailable right now.";
+  var where=w.place||"Where you are";
+  var t=where+(w.localTime?", "+w.localTime:"")+": "+w.now+" and "+w.sky;
   if(isFinite(w.feels) && Math.abs(w.feels-w.now)>=7) t+=", feels like "+w.feels;
-  if(isFinite(w.high)) t+=". High "+w.high+", low "+w.low;
-  if(isFinite(w.rainChance) && w.rainChance>=40) t+=". "+w.rainChance+"% chance of rain";
-  return t+".";
+  t+=".";
+  var a=w.next24;
+  if(a && isFinite(a.high)){
+    t+=" Next 24 hours: "+a.high+" down to "+a.low;
+    if(a.worst && a.worst!==w.sky) t+=", "+a.worst+" coming";
+    if(isFinite(a.rainChance) && a.rainChance>=30) t+=", "+a.rainChance+"% chance of rain";
+    t+=".";
+  }
+  return t;
 }
 
 function briefNews(b, max){
@@ -10699,35 +10869,131 @@ function watchBox(){
     +'</div>';
 }
 
+/* ---- the desks ----
+   The eight things he actually reads. Order is his: sport, USA, men's health,
+   global, trading, high-impact, Thailand, military, history — folded into
+   eight desks because several of those are the same desk. */
+var DESKS=[
+  {k:"all",      nm:"All"},
+  {k:"world",    nm:"Global"},
+  {k:"usa",      nm:"USA"},
+  {k:"markets",  nm:"Trading"},
+  {k:"military", nm:"Military"},
+  {k:"thailand", nm:"Thailand"},
+  {k:"sport",    nm:"Sport"},
+  {k:"history",  nm:"History"},
+  {k:"fitness",  nm:"Health"}
+];
+var NEWSDESK=LS("newsdesk")||"all";
+var NEWS_OFF=0;                 /* how far into the pool Refresh has walked */
+var NEWS_PAGE=9;
+
+/* A masthead's own colour, so the eye learns the badge before it reads it.
+   Anything not listed gets the house blue rather than a guess at a brand. */
+var SRCCOL={
+  "BBC":"#bb1919","BBC Sport":"#bb1919","Reuters":"#ff8000","AP":"#e03131",
+  "Al Jazeera":"#fa9000","Guardian":"#0057b8","DW":"#00a5ff","NPR":"#4a7ec7",
+  "CBC":"#e51937","ToI":"#1d68b5","CNBC":"#005594","MarketWatch":"#00a949",
+  "Yahoo Fin":"#7b16ff","Investing":"#1d68b5","CoinDesk":"#f7a600",
+  "Cointelegraph":"#f7a600","ESPN":"#c8102e","ESPN NFL":"#c8102e",
+  "ESPN NBA":"#c8102e","ESPN MLB":"#c8102e","ESPN Soccer":"#c8102e",
+  "Men's Health":"#e4002b","M&F":"#e4002b","Runner's World":"#e4002b",
+  "Stronger by Science":"#22a06b","Outside":"#00b3a4","Healthline":"#0fb3a1",
+  "NYT Well":"#cfd4dc","CBS":"#0057b8","ABC":"#1a7fd4","The Hill":"#0a3161",
+  "Bangkok Post":"#00529b","Thaiger":"#f0b323","Thailand":"#ed1c24",
+  "Defense News":"#8a9199","War on the Rocks":"#8a9199",
+  "Breaking Defense":"#8a9199","Task & Purpose":"#8a9199",
+  "Smithsonian":"#c8a86a","History Today":"#c8a86a",
+  "Ancient Origins":"#c8a86a","Live Science":"#7a5cff"
+};
+function srcCol(s){ return SRCCOL[s] || "#5b7fb8"; }
+
+/* Everything fetched, in the desk he is looking at. */
+function newsPool(){
+  if(!briefFresh() || !BRIEF || BRIEF.offline) return [];
+  var all=BRIEF.headlines || BRIEF.news || [];
+  if(NEWSDESK!=="all") return all.filter(function(x){ return x.cat===NEWSDESK; });
+
+  /* The server returns the desks one after another, so "All" straight off the
+     wire is twelve world stories, then twelve USA, then twelve markets. That is
+     not "all", it is "world, and scroll for the rest". Round-robin them so the
+     first screen has one of everything — which is the point of the tab. */
+  var buckets={}, order=[];
+  all.forEach(function(x){
+    var c=x.cat||"other";
+    if(!buckets[c]){ buckets[c]=[]; order.push(c); }
+    buckets[c].push(x);
+  });
+  var out=[], i=0, more=true;
+  while(more){
+    more=false;
+    for(var j=0;j<order.length;j++){
+      var row=buckets[order[j]][i];
+      if(row){ out.push(row); more=true; }
+    }
+    i++;
+  }
+  return out;
+}
+
 /* The headlines, as links. Every one opens the real article at the real
-   publisher — this is a reader, not a rewrite, and nothing here is summarised
-   by anything. If the feed has not been fetched it says so and offers the
-   button rather than showing an empty box that looks broken. */
+   publisher — this is a reader, not a rewrite, and nothing is summarised by
+   anything. Refresh walks an offset through the pool, so tapping it genuinely
+   gives him different stories rather than redrawing the same nine. */
 function newsList(){
   if(!briefFresh() || !BRIEF || BRIEF.offline)
-    return '<div class="nw-none">Tap Refresh for the biggest stories right now — '
-      +'BBC, Al Jazeera, NPR, DW and CBC.</div>';
-  var rows=(BRIEF.news||[]);
-  if(!rows.length)
-    return '<div class="nw-none">'+esc(BRIEF.newsError||"No feed answered just now.")+'</div>';
-  return rows.slice(0,6).map(function(x){
+    return '<div class="nw-none">Tap Refresh for what is happening right now — '
+      +'BBC, Reuters, AP, CNBC, ESPN, Bangkok Post and a dozen more.</div>';
+  var pool=newsPool();
+  if(!pool.length)
+    return '<div class="nw-none">'
+      +esc(BRIEF.newsError||"Nothing came back for that desk just now.")+'</div>';
+
+  var off=NEWS_OFF % pool.length;
+  var rows=[];
+  for(var i=0;i<Math.min(NEWS_PAGE,pool.length);i++) rows.push(pool[(off+i)%pool.length]);
+
+  return rows.map(function(x){
     var href=x.link||"";
-    /* Only ever http(s). A feed is outside content and a javascript: URL in a
+    /* Only ever http(s). A feed is outside content, and a javascript: URL in a
        title field is exactly the shape that attack takes. */
     if(!/^https?:\/\//i.test(href)) href="";
+    var c=srcCol(x.src);
     return (href
       ? '<a class="nw" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'
       : '<div class="nw">')
-      +'<span class="nw-s">'+esc(x.src)+'</span>'
+      +'<span class="nw-s" style="--sc:'+c+'">'+esc(x.src)+'</span>'
       +'<span class="nw-t">'+esc(x.title)+'</span>'
       +(href?'<span class="nw-go">&#8599;</span>':'')
       +(href?'</a>':'</div>');
   }).join("");
 }
-/* The button, and the once-a-day automatic pull. He asked for it fresh every
-   day; the cheapest honest way to do that is to check whenever he opens the
-   dashboard and refetch if what we have is from yesterday. */
+
+function newsDeskTabs(){
+  var counts=(briefFresh()&&BRIEF&&BRIEF.counts)||{};
+  return '<div class="ndesks">'+DESKS.map(function(d){
+    var n2 = d.k==="all"
+      ? (briefFresh()&&BRIEF&&BRIEF.headlines?BRIEF.headlines.length:0)
+      : (counts[d.k]||0);
+    return '<button class="ndesk'+(NEWSDESK===d.k?" on":"")+'" data-ndesk="'+d.k+'">'
+      +esc(d.nm)+(n2?'<i>'+n2+'</i>':'')+'</button>';
+  }).join("")+'</div>';
+}
+function newsDeskSet(k){
+  NEWSDESK=k; LS("newsdesk",k); NEWS_OFF=0; drawDash();
+}
+
+/* Refresh does two things in order: walk to the next set of stories we already
+   have, and if we have walked the whole pool, go and get new ones. That way a
+   tap is instant and still eventually brings genuinely new material. */
 function newsRefresh(){
+  var pool=newsPool();
+  if(pool.length > NEWS_PAGE && (NEWS_OFF+NEWS_PAGE) < pool.length){
+    NEWS_OFF+=NEWS_PAGE;
+    drawDash();
+    return;
+  }
+  NEWS_OFF=0;
   var lab=document.getElementById("news-n");
   if(lab) lab.textContent="fetching…";
   BRIEF=null;
@@ -10783,20 +11049,20 @@ function briefText(b, want){
   if(want.wx){
     if(b && b.offline) lines.push("No weather — "+briefWhy(b)+".");
     else {
-      var a=briefWx(b,"here","Here"), c=briefWx(b,"bangkok","Bangkok");
-      if(a) lines.push(a);
-      if(c) lines.push(c);
-      if(!a && !c) lines.push("No weather came back just now.");
+      var a=briefWx(b);
+      lines.push(a || "No weather came back just now.");
     }
   }
 
   if(want.news){
     if(b && b.offline) lines.push("No headlines — "+briefWhy(b)+".");
     else {
-      var hs=briefNews(b,4);
+      /* Three, not four, and only the global desk. He reads the rest on the
+         dashboard — spoken aloud, a long list stops being a briefing. */
+      var hs=briefNews(b,3);
       if(!hs.length) lines.push("No headlines came back just now.");
       else {
-        lines.push("Around the world right now:");
+        lines.push("Top of the news:");
         hs.forEach(function(t){ lines.push("• "+t); });
       }
     }
@@ -10806,30 +11072,26 @@ function briefText(b, want){
     if(b && b.offline) lines.push("No sport — "+briefWhy(b)+".");
     else {
       var live=(b.scores||[]).filter(function(x){ return x.live; });
-      var fin =(b.scores||[]).filter(function(x){ return x.done; }).slice(0,4);
+      var fin =(b.scores||[]).filter(function(x){ return x.done; }).slice(0,3);
       var soon=(b.scores||[]).filter(function(x){ return !x.live && !x.done; }).slice(0,3);
       function score(g){
         var t=(g.teams||[]).map(function(x){ return x.team+" "+(x.score===null?"-":x.score); });
         return g.league+": "+t.join(", ")+(g.detail?" ("+g.detail+")":"");
       }
+      /* Live games always. Finals only if nothing is live. One ESPN line.
+         Spoken aloud, everything else is somebody reading him a fixture list. */
       if(live.length){
         lines.push("Live right now:");
-        live.slice(0,4).forEach(function(g){ lines.push("• "+score(g)); });
+        live.slice(0,3).forEach(function(g){ lines.push("• "+score(g)); });
+      } else if(fin.length){
+        lines.push("Last night:");
+        fin.slice(0,3).forEach(function(g){ lines.push("• "+score(g)); });
+      } else if(soon.length){
+        lines.push("Coming up: "+soon.slice(0,2).map(function(g){
+          return g.league+" "+g.name+(g.detail?" "+g.detail:""); }).join("; ")+".");
       }
-      if(fin.length){
-        lines.push(live.length?"Final:":"Last night:");
-        fin.forEach(function(g){ lines.push("• "+score(g)); });
-      }
-      if(soon.length && !live.length){
-        lines.push("Coming up:");
-        soon.forEach(function(g){
-          lines.push("• "+g.league+": "+g.name+(g.detail?" — "+g.detail:"")); });
-      }
-      var sh=(b.sport||[]).slice(0,2);
-      if(sh.length){
-        lines.push("From ESPN:");
-        sh.forEach(function(x){ lines.push("• "+x.title); });
-      }
+      var sh=(b.sport||[]).slice(0,1);
+      if(sh.length) lines.push("ESPN: "+sh[0].title);
       if(!live.length && !fin.length && !soon.length && !sh.length)
         lines.push("No sport came back just now.");
     }
@@ -10850,6 +11112,22 @@ function briefText(b, want){
   }
 
   return lines.join("\n");
+}
+
+/* Stop her mid-sentence.
+
+   She has a real voice and the brief is read aloud, so there has to be a way to
+   cut it off that is not closing the tab. This stops the ElevenLabs audio, the
+   browser's own speech, and the recogniser if it happens to be listening — all
+   three, because which one is running is not something he should have to know. */
+function briefStop(){
+  /* stopSpeaking() already handles both voices — the ElevenLabs <audio> and the
+     browser's own synthesiser. Reuse it rather than writing a second version
+     that will drift out of step with it. */
+  try{ stopSpeaking(); }catch(e){}
+  /* and stop listening, if that is what is happening instead */
+  try{ if(RECON && REC){ if(REC.__stop) REC.__stop(); else REC.stop(); } }catch(e){}
+  try{ jvPaint(); }catch(e){}
 }
 
 /* Run it and put it in the log. Deliberately does not touch the model: it is
@@ -14939,23 +15217,6 @@ function dashView(){
        below in the seven days, and Needs You was repeating the CRM. */
     h+='<div class="todayrow two">';
 
-    h+='<div class="tcard news"><div class="tc-h">'
-      +'<span class="ntabs">'
-        +'<button class="ntab'+(NEWSTAB==="news"?" on":"")+'" data-ntab="news">Headlines</button>'
-        +'<button class="ntab'+(NEWSTAB==="watch"?" on":"")+'" data-ntab="watch">Watch</button>'
-      +'</span>'
-      +(NEWSTAB==="news"
-        ? '<span class="tc-n" id="news-n">'
-          +(briefFresh()&&BRIEF.news&&BRIEF.news.length
-             ? BRIEF.news.length+" stories" : "tap refresh")
-          +'</span><button class="tc-seed" id="news-go">Refresh</button>'
-        : '<span class="tc-n">TalentFLX</span>')
-      +'</div>'
-      +(NEWSTAB==="news"
-        ? '<div class="newsbox" id="newsbox">'+newsList()+'</div>'
-        : watchBox())
-      +'</div>';
-
     /* the checklist */
     h+='<div class="tcard list">'
       +'<div class="tc-h"><b>Today&rsquo;s Tasks</b>'
@@ -14982,6 +15243,23 @@ function dashView(){
     h+='<div class="addbar tight"><input id="dt-new" placeholder="Add a task and hit Enter" '
       +'autocomplete="off"><button class="btn" id="dt-add">Add</button></div>';
     h+='</div>';
+
+    h+='<div class="tcard news"><div class="tc-h">'
+      +'<span class="ntabs">'
+        +'<button class="ntab'+(NEWSTAB==="news"?" on":"")+'" data-ntab="news">Headlines</button>'
+        +'<button class="ntab'+(NEWSTAB==="watch"?" on":"")+'" data-ntab="watch">Watch</button>'
+      +'</span>'
+      +(NEWSTAB==="news"
+        ? '<span class="tc-n" id="news-n">'
+          +(briefFresh()&&BRIEF&&BRIEF.headlines&&BRIEF.headlines.length
+             ? BRIEF.headlines.length+" stories" : "tap refresh")
+          +'</span><button class="tc-seed" id="news-go">Refresh</button>'
+        : '<span class="tc-n">TalentFLX</span>')
+      +'</div>'
+      +(NEWSTAB==="news"
+        ? newsDeskTabs()+'<div class="newsbox" id="newsbox">'+newsList()+'</div>'
+        : watchBox())
+      +'</div>';
 
     h+='</div>';   /* .todayrow */
 
@@ -15339,6 +15617,7 @@ function drawDash(){
   }
   document.body.classList.toggle("dsheeting", !!DASH_MOD);
   wireDash();
+  try{ wxPaint(); bannerPaint(); }catch(e){}
   /* Everything inside the sheet is a real room panel, so it needs the room's own
      handlers — the same wire() the floating windows use. */
   if(DASH_MOD){
@@ -15357,7 +15636,21 @@ function drawDash(){
   }
 }
 
+/* Escape is the one keyboard way out, bound once rather than per render. */
+var ESC_BOUND=false;
+function bindEscape(){
+  if(ESC_BOUND) return;
+  ESC_BOUND=true;
+  document.addEventListener("keydown", function(ev){
+    if(ev.key!=="Escape") return;
+    if(SCRIPT_OPEN){ scriptOpen(false); return; }
+    if(DASH_MOD){ dashClose(); return; }
+    if(DOCK){ DOCK=null; if(VIEW==="home") drawDash(); }
+  });
+}
+
 function wireDash(){
+  bindEscape();
   var vs=document.getElementById("vswitch");
   if(vs) vs.onclick=function(){ setView(VIEW==="home"?"floor":"home"); };
 
@@ -15379,6 +15672,9 @@ function wireDash(){
   var nts=document.querySelectorAll("[data-ntab]");
   for(var t9=0;t9<nts.length;t9++) nts[t9].onclick=function(){
     newsTab(this.getAttribute("data-ntab")); };
+  var nds=document.querySelectorAll("[data-ndesk]");
+  for(var d9=0;d9<nds.length;d9++) nds[d9].onclick=function(){
+    newsDeskSet(this.getAttribute("data-ndesk")); };
 
   /* the call script */
   var sco=document.getElementById("sc-open");
@@ -15392,8 +15688,8 @@ function wireDash(){
   var scd=document.querySelectorAll("[data-scgo]");
   for(var s9=0;s9<scd.length;s9++) scd[s9].onclick=function(){
     scSet(parseInt(this.getAttribute("data-scgo"),10)||0); };
-  var scw=document.getElementById("scwrap");
-  if(scw) scw.onclick=function(ev){ if(ev.target===scw) scriptOpen(false); };
+  /* Same for the call script — see the note above. Mid-call is exactly when a
+     stray tap happens and exactly when losing the page costs money. */
 
   var sgo=document.getElementById("sms-go");
   if(sgo) sgo.onclick=smsSend;
@@ -15405,9 +15701,9 @@ function wireDash(){
   var dts=document.querySelectorAll("[data-dtab]");
   for(var q1=0;q1<dts.length;q1++) dts[q1].onclick=function(){
     dashTab(parseInt(this.getAttribute("data-dtab"),10)||0); };
-  /* tapping the dimmed area behind the sheet closes it */
-  var wrap=document.querySelector(".dsheet-wrap");
-  if(wrap) wrap.onclick=function(ev){ if(ev.target===wrap) dashClose(); };
+  /* A click on the dark area behind a sheet used to close it, which meant a
+     mis-tap while reading the script threw the whole thing away mid-call. It
+     closes on its X, or on Escape. Nothing else. */
 
   var tk=document.getElementById("d-tick");
   if(tk) tk.onclick=function(){
