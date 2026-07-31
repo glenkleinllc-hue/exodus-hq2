@@ -1735,6 +1735,245 @@ a.lnk:hover{color:#bfdbfe}
 .crmwrap .scroll.big{max-height:none}
 @media(max-width:640px){ .crmwrap{margin-top:9px;padding-top:10px} }
 
+/* ---- reach buttons on a CRM row ---- */
+.rbx{display:flex;gap:4px;flex-wrap:wrap}
+.rb{flex:1 1 auto;min-width:38px;padding:6px 4px;border-radius:7px;cursor:pointer;
+  font-family:inherit;font-size:9.5px;font-weight:800;letter-spacing:.7px;
+  text-transform:uppercase;border:1px solid;transition:.13s}
+.rb.call{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.4);color:#6fe0a0}
+.rb.call:hover:not([disabled]){background:var(--green);color:#04140a}
+.rb.alt{background:rgba(200,168,106,.11);border-color:rgba(200,168,106,.38);color:#dcbe86}
+.rb.alt:hover:not([disabled]){background:var(--gold);color:#140f04}
+.rb.txt{background:rgba(75,123,212,.12);border-color:rgba(75,123,212,.4);color:#9dbdf0}
+.rb.txt:hover:not([disabled]){background:var(--blu);color:#fff}
+.rb[disabled]{opacity:.28;cursor:default}
+@media (max-width:640px){ .rb{flex:1 1 30%;font-size:11px;padding:9px 4px} }
+
+/* =========================================================
+   THE PROFESSIONAL PASS
+   Mostly subtraction. A dashboard shown to a paying client should have one
+   typographic voice, one border colour and one rhythm — most of what read as
+   "unfinished" was four slightly different greys and three card radii.
+   ========================================================= */
+
+/* Section headings: a quiet eyebrow rule and a heavier title, so the eye finds
+   the four sections without them shouting. */
+.sec{margin-bottom:26px}
+.sec-h{align-items:baseline;padding-bottom:11px;margin-bottom:15px;
+  border-bottom:1px solid rgba(255,255,255,.07)}
+.sec-h h2{font-size:16.5px;font-weight:800;letter-spacing:-.45px;color:#fff}
+.sec-h .sec-s{font-size:11.5px;color:#77828f;letter-spacing:.1px}
+
+/* One radius and one border across every card on the page. Before this there
+   were 9px, 10px, 11px, 12px and 13px in use within a single screen. */
+.tcard,.plat,.dp,.crmmoney .cm,.stgstrip .sg,.opdock,.smsd{border-radius:12px}
+.tcard,.dp{border-color:rgba(255,255,255,.075)}
+
+/* Numbers line up in columns everywhere, without exception. A money column
+   whose digits do not align is the thing that makes a page look homemade. */
+.cm b,.sg b,.an-v,.dfact b,.plat-big,.nw-t,.sb-n{font-variant-numeric:tabular-nums}
+
+/* The pipeline, tightened. Rows were 4px taller than they needed to be, which
+   cost about one lead per screen. */
+.wbody .scroll.big table{border-collapse:separate;border-spacing:0}
+.wbody .scroll.big th{font-size:8.5px;letter-spacing:1.3px;color:#6d7787;
+  padding:9px 10px;background:rgba(255,255,255,.022);font-weight:800}
+.wbody .scroll.big td{padding:9px 10px;vertical-align:top}
+.wbody .scroll.big tbody tr{transition:background .1s}
+.wbody .scroll.big tbody tr:hover{background:rgba(255,255,255,.022)}
+.crmwrap .pills{gap:6px}
+.crmwrap .legend{opacity:.9}
+
+/* ---- the two tabs on the top-left card ---- */
+.ntabs{display:flex;gap:3px;padding:2px;border-radius:9px;
+  background:rgba(255,255,255,.04);border:1px solid #262d38}
+.ntab{background:none;border:0;border-radius:7px;padding:5px 12px;cursor:pointer;
+  font-family:inherit;font-size:10px;font-weight:800;letter-spacing:1.1px;
+  text-transform:uppercase;color:#7b8697;transition:.13s}
+.ntab:hover{color:#cfd7e3}
+.ntab.on{background:var(--blu);color:#fff}
+
+/* ---- Watch ---- */
+.watchbox{margin-top:10px}
+.wt-go{display:flex;align-items:center;gap:13px;padding:18px 17px;border-radius:11px;
+  text-decoration:none;color:#dde4ee;
+  background:linear-gradient(150deg,#171d27,#111620);
+  border:1px solid #2a3341;transition:.15s}
+.wt-go:hover{border-color:var(--blu);background:linear-gradient(150deg,#18202c,#131a25);
+  color:#fff}
+.wt-ic{flex:none;width:34px;height:34px;color:var(--blu2)}
+.wt-go:hover .wt-ic{color:#fff}
+.wt-ic svg{display:block;width:100%;height:100%}
+.wt-t b{display:block;font-size:15px;font-weight:800;letter-spacing:-.2px}
+.wt-t i{display:block;font-style:normal;font-size:9px;font-weight:800;letter-spacing:1.2px;
+  text-transform:uppercase;color:#66748a;margin-top:3px}
+.wt-n{margin-top:11px;font-size:11px;line-height:1.5;color:var(--mut)}
+
+/* ---- headlines on the dashboard ---- */
+.todayrow.two{grid-template-columns:1.15fr 1fr}
+@media (max-width:900px){ .todayrow.two{grid-template-columns:1fr} }
+.tcard.news .newsbox{display:flex;flex-direction:column;gap:1px;margin-top:4px}
+.nw{display:flex;align-items:flex-start;gap:9px;padding:9px 8px;border-radius:8px;
+  text-decoration:none;color:inherit;transition:background .12s;
+  border-bottom:1px solid rgba(255,255,255,.045)}
+.nw:last-child{border-bottom:0}
+a.nw:hover{background:rgba(255,255,255,.045)}
+.nw-s{flex:none;width:62px;font-size:8px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;color:var(--blu2);padding-top:3px}
+.nw-t{flex:1;min-width:0;font-size:13px;line-height:1.42;color:#dde4ee;font-weight:600}
+a.nw:hover .nw-t{color:#fff}
+.nw-go{flex:none;color:#4a5462;font-size:12px;padding-top:2px}
+a.nw:hover .nw-go{color:var(--blu2)}
+.nw-none{padding:14px 8px;font-size:12px;color:var(--mut);line-height:1.5}
+
+/* ---- the call script, full screen, readable across a room ---- */
+body.scripting{overflow:hidden}
+.scwrap{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;
+  justify-content:center;padding:22px;background:rgba(4,6,10,.82);
+  backdrop-filter:blur(3px)}
+.scsheet{width:min(880px,100%);max-height:92vh;display:flex;flex-direction:column;
+  border-radius:16px;overflow:hidden;background:linear-gradient(168deg,#141a23,#0f141b);
+  border:1px solid #2b3341;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.sc-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:13px 18px;
+  border-bottom:1px solid #232a35;background:rgba(255,255,255,.02)}
+.sc-part{font-size:8.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--mut)}
+.sc-num{font-size:8.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:#0a0d12;background:var(--gold);border-radius:20px;padding:3px 9px}
+.sc-t{flex:1 1 100%;font-size:19px;font-weight:800;letter-spacing:-.4px;color:#fff}
+.sc-doc{font-size:10px;font-weight:800;letter-spacing:.6px;color:var(--blu2);
+  text-decoration:none;border:1px solid rgba(75,123,212,.4);border-radius:7px;
+  padding:5px 11px;margin-left:auto}
+.sc-doc:hover{background:var(--blu);color:#fff}
+.sc-x{background:none;border:0;color:var(--mut);font-size:24px;line-height:1;
+  cursor:pointer;padding:0 2px}
+.sc-x:hover{color:#fff}
+.sc-b{flex:1;overflow-y:auto;padding:20px 22px 24px;-webkit-overflow-scrolling:touch}
+/* The lines he actually says, at a size you can read at arm's length with a
+   phone against your ear. Everything else is deliberately smaller. */
+.sc-q{font-size:19px;line-height:1.5;color:#eef3fa;font-weight:600;margin:0 0 15px;
+  padding-left:14px;border-left:3px solid var(--blu)}
+.sc-story{font-size:15.5px;line-height:1.62;color:#dbe3ee;background:rgba(200,168,106,.07);
+  border:1px solid rgba(200,168,106,.24);border-radius:10px;padding:14px 16px;margin-bottom:15px}
+.sc-ul{margin:0 0 15px;padding-left:20px}
+.sc-ul li{font-size:15px;line-height:1.55;color:#dde4ee;margin-bottom:8px}
+.sc-proof{font-size:16px;line-height:1.55;color:#fff;font-weight:600;margin:0 0 15px;
+  padding:13px 15px;border-radius:10px;background:rgba(34,197,94,.09);
+  border:1px solid rgba(34,197,94,.26)}
+.sc-warn{font-size:13px;line-height:1.5;color:#f3c9c6;background:rgba(212,115,111,.11);
+  border:1px solid rgba(212,115,111,.35);border-radius:9px;padding:11px 13px;margin-bottom:12px}
+.sc-note{font-size:12.5px;line-height:1.55;color:#8b95a5;padding:11px 13px;
+  border-radius:9px;background:rgba(255,255,255,.028)}
+.sc-f{display:flex;align-items:center;gap:12px;padding:11px 16px;
+  border-top:1px solid #232a35;background:rgba(0,0,0,.24)}
+.sc-nav{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;
+  padding:10px 16px;color:#cfd7e3;font-family:inherit;font-size:12.5px;font-weight:800;
+  cursor:pointer;flex:none}
+.sc-nav:hover:not([disabled]){background:rgba(255,255,255,.1);color:#fff}
+.sc-nav.go{background:var(--blu);border-color:var(--blu);color:#fff}
+.sc-nav.go:hover:not([disabled]){filter:brightness(1.12)}
+.sc-nav[disabled]{opacity:.3;cursor:default}
+.sc-dots{flex:1;display:flex;gap:4px;flex-wrap:wrap;justify-content:center;min-width:0}
+.sc-dot{width:9px;height:9px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  background:#39414f;transition:.12s}
+.sc-dot:hover{background:#5b6478}
+.sc-dot.on{background:var(--gold);transform:scale(1.25)}
+.sc-of{flex:none;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--mut);font-variant-numeric:tabular-nums}
+@media (max-width:640px){
+  .scwrap{padding:0}
+  .scsheet{width:100%;max-height:100vh;height:100%;border-radius:0;border:0}
+  .sc-t{font-size:17px}
+  .sc-q{font-size:17.5px}
+  .sc-b{padding:16px 15px 20px}
+  .sc-dots{display:none}
+  .sc-nav{flex:1}
+}
+
+/* a meeting asking to be deleted */
+.mt-del{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;
+  padding:4px 8px;border-radius:8px;background:rgba(212,115,111,.12);
+  border:1px solid rgba(212,115,111,.45)}
+.mt-del em{font-style:normal;font-size:10.5px;font-weight:700;color:#f0b8b6}
+.mt-del button{background:none;border:1px solid var(--line);border-radius:6px;
+  padding:3px 9px;font-family:inherit;font-size:10px;font-weight:800;cursor:pointer}
+.mt-dy{color:#ffb4b0;border-color:rgba(212,115,111,.6)!important}
+.mt-dy:hover{background:var(--red);color:#fff}
+.mt-dn{color:var(--mut)}
+.mt-dn:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+
+/* ---- the two coins in the banner ---- */
+.tb-cx{flex:none;display:flex;gap:7px;margin-right:10px}
+.cxp{display:flex;flex-direction:column;gap:1px;padding:5px 9px;border-radius:9px;
+  background:rgba(255,255,255,.03);border:1px solid #222a36;min-width:78px}
+.cxp b{font-size:12.5px;font-weight:800;letter-spacing:-.3px;color:#e9edf4;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.cxp span{font-size:7.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  color:#6f7a8a;display:flex;gap:4px;align-items:baseline}
+.cxp span i{font-style:normal;letter-spacing:.2px;font-variant-numeric:tabular-nums}
+.cxp span i.up{color:var(--green)} .cxp span i.dn{color:var(--red)}
+
+/* ---- the Jarvis bar ---- */
+.jarvis{display:flex;align-items:center;gap:13px;width:100%;margin:0 0 11px;
+  padding:11px 15px;border-radius:12px;cursor:pointer;font-family:inherit;
+  text-align:left;
+  background:linear-gradient(120deg,#0d1520,#111b28 55%,#0d1520);
+  border:1px solid #22303f;transition:border-color .16s,background .16s}
+.jarvis:hover{border-color:var(--blu);background:linear-gradient(120deg,#101a27,#16232f 55%,#101a27)}
+.jarvis.live{border-color:#22d3ee;background:linear-gradient(120deg,#0b1a1e,#0f2630 55%,#0b1a1e)}
+.jv-wave{display:flex;align-items:center;gap:3px;height:26px;flex:none}
+/* Each bar is its own element so they can be out of phase — one animation on a
+   single element only ever gives you a pulse, and a pulse does not read as a
+   voice. */
+.jv-wave i{display:block;width:3px;border-radius:2px;background:var(--blu2);
+  height:6px;animation:jvIdle 2.4s ease-in-out infinite}
+.jarvis.live .jv-wave i{background:#22d3ee;animation:jvLive .62s ease-in-out infinite}
+.jarvis.think .jv-wave i{background:#c8a86a;animation:jvLive 1.5s ease-in-out infinite}
+@keyframes jvIdle{0%,100%{height:5px;opacity:.5}50%{height:13px;opacity:.9}}
+@keyframes jvLive{0%,100%{height:4px}50%{height:26px}}
+.jv-t{min-width:0;line-height:1.2}
+.jv-t b{display:block;font-size:13px;font-weight:800;color:#e8eef7;letter-spacing:.2px}
+.jv-t i{display:block;font-style:normal;font-size:8.5px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;color:#66748a;margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jv-brief{margin-left:auto;flex:none;padding:7px 14px;border-radius:8px;
+  background:rgba(75,123,212,.16);border:1px solid rgba(75,123,212,.4);
+  font-size:10.5px;font-weight:800;letter-spacing:.5px;color:#a9c6f5;
+  transition:.14s}
+.jv-brief:hover{background:var(--blu);color:#fff;border-color:var(--blu)}
+
+/* ---- a text she has written, waiting on him ---- */
+.smsd{margin:0 0 11px;padding:13px 15px;border-radius:12px;
+  background:linear-gradient(150deg,#17210f,#121a0d);
+  border:1px solid #35461f;border-left:3px solid #84cc16}
+.smsd-h{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.smsd-h b{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:#c7e59b}
+.smsd-h span{font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums}
+.smsd-h .smsd-x{margin-left:auto;background:none;border:0;color:#5f6875;
+  font-family:inherit;font-size:9px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;cursor:pointer}
+.smsd-h .smsd-x:hover{color:var(--red)}
+.smsd textarea{width:100%;min-height:64px;resize:vertical;padding:10px 12px;
+  border-radius:9px;background:#0b110a;border:1px solid #2e3a22;color:#e6f0d8;
+  font-family:inherit;font-size:13px;line-height:1.5}
+.smsd textarea:focus{outline:none;border-color:#84cc16}
+.smsd-f{display:flex;align-items:center;gap:9px;margin-top:10px;flex-wrap:wrap}
+.smsd-go{background:#4d7c0f;border:0;border-radius:9px;padding:9px 18px;color:#fff;
+  font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.4px;cursor:pointer}
+.smsd-go:hover{background:#5f9612}
+.smsd-go[disabled]{opacity:.45;cursor:default}
+.smsd-n{font-size:10.5px;color:var(--mut);line-height:1.45}
+.smsd-n b{color:#c7e59b}
+
+@media (max-width:640px){
+  .tb-cx{order:9;width:100%;margin-right:0}
+  .cxp{flex:1 1 0;min-width:0}
+  .jarvis{padding:10px 12px;gap:10px}
+  .jv-brief{padding:8px 12px}
+  .jv-t b{font-size:14px}
+}
+
 /* =========================================================
    THE DASHBOARD
    The homepage. Quiet, flat, and readable at a glance. Rules it keeps to:
@@ -2031,12 +2270,23 @@ body.dsheeting{overflow:hidden}
 /* ============ THE OPERATOR DOCK ============
    Bottom-left corner, out of the way of everything, always there. The talking
    window is small on purpose: he wants to read his numbers while he talks. */
-.opdock{position:fixed;left:16px;bottom:16px;z-index:800;display:flex;
-  flex-direction:column;align-items:flex-start;gap:9px;pointer-events:none}
-.opdock > *{pointer-events:auto}
+/* It used to be position:fixed in the bottom-left corner, and it covered
+   whatever scrolled underneath it — the CRM search box most of all. It is a
+   section of the page now, last in the flow, which is where Glen wants it. */
+.opdock{position:static;margin:14px 0 4px;padding:14px 16px;border-radius:13px;
+  background:linear-gradient(168deg,#11151c,#0c1015);
+  border:1px solid var(--line);display:flex;flex-direction:column;gap:11px}
 body.dsheeting .opdock{display:none}
+.opdock-h{display:flex;align-items:center;gap:9px;margin-bottom:-2px}
+.opdock-h b{font-size:10px;font-weight:800;letter-spacing:1.6px;
+  text-transform:uppercase;color:#e6ecf4}
+.opdock-h span{font-size:10.5px;color:var(--mut)}
+.opdock-h .brf{margin-left:auto;background:var(--blu);border:0;border-radius:8px;
+  padding:7px 13px;color:#fff;font-family:inherit;font-size:10.5px;font-weight:800;
+  letter-spacing:.4px;cursor:pointer;transition:.14s}
+.opdock-h .brf:hover{filter:brightness(1.12)}
 
-.opfaces{display:flex;gap:8px}
+.opfaces{display:flex;gap:8px;flex-wrap:wrap}
 .opf{position:relative;width:52px;height:52px;flex:none;border-radius:14px;
   overflow:hidden;cursor:pointer;padding:0;
   background:#12151b;border:1px solid #2f3540;transition:.16s;
@@ -2053,7 +2303,8 @@ body.dsheeting .opdock{display:none}
   color:#cfd6e1;text-align:center}
 
 /* the conversation */
-.dk{width:min(380px,calc(100vw - 32px));display:flex;flex-direction:column;
+/* 380px was the width the corner could spare. It sits in the page now. */
+.opchat{width:min(680px,100%);display:flex;flex-direction:column;
   background:linear-gradient(170deg,#1b212a,#151a21);
   border:1px solid #2f3540;border-left:3px solid var(--oc);border-radius:14px;
   box-shadow:0 22px 54px rgba(0,0,0,.6);overflow:hidden;
@@ -2077,8 +2328,11 @@ body.dsheeting .opdock{display:none}
 .dk-log{max-height:210px;overflow-y:auto;padding:10px 11px;display:flex;
   flex-direction:column;gap:7px}
 .dk-hi{font-size:11.5px;color:var(--mut);font-style:italic;line-height:1.5}
+/* pre-line, because the brief is written as lines — a greeting, two cities,
+   the headlines, then his own words. Collapsed into one paragraph it reads as a
+   wall and the verbatim quote stops standing out. */
 .dk-m{font-size:12.5px;line-height:1.5;padding:7px 10px;border-radius:10px;max-width:88%;
-  word-wrap:break-word}
+  word-wrap:break-word;white-space:pre-line}
 .dk-m.me{align-self:flex-end;background:rgba(75,123,212,.2);
   border:1px solid rgba(75,123,212,.34);color:#e9eff8}
 .dk-m.them{align-self:flex-start;background:var(--raise);border:1px solid #2b3038}
@@ -2838,11 +3092,11 @@ textarea.dw-pi.big{min-height:92px}
    the corner, and a tap on the page's own content still lands. The page also
    reserves room for them at the bottom. */
 @media (max-width:760px){
-  .opdock{left:10px;bottom:10px;gap:7px}
-  .opf{width:42px;height:42px;border-radius:11px}
+  .opdock{margin:11px 0 2px;padding:11px 12px;gap:9px}
+  .opf{width:44px;height:44px;border-radius:11px}
   .opf-nm{font-size:6.5px;padding:1px 0 2px}
   .opf-dot{width:7px;height:7px;right:2px;top:2px}
-  .dk{width:calc(100vw - 20px)}
+  .opchat{width:100%}
   .dk-log{max-height:170px}
   #dk-in{font-size:16px}
   .dk-mic,.dk-spk{width:40px;height:40px}
@@ -2900,7 +3154,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-07-30-j">
+<body data-build="2026-07-31-d">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -2921,6 +3175,9 @@ textarea.dw-pi.big{min-height:92px}
            with, and the coast he sells into -->
       <div class="tb-zones" id="tb-zones"></div>
 
+      <!-- the two coins, polled on their own short cache -->
+      <div class="tb-cx" id="tb-cx"></div>
+
       <button class="vswitch" id="vswitch" title="Switch between the dashboard and the floor plan">
         <span class="vs-ic" id="vs-ic"></span><span class="vs-t" id="vs-t">Building</span>
       </button>
@@ -2931,6 +3188,18 @@ textarea.dw-pi.big{min-height:92px}
          This is the homepage. The floor plan is one tap away and nothing about
          it changed — same rooms, same panels, same data. This is just a flat,
          quiet way to see the whole business at once. -->
+    <!-- ============ THE JARVIS BAR ============
+         A waveform, not a face. Tap it and the mic is already listening; talk,
+         tap again, she answers out loud. The bars idle slowly when nothing is
+         happening and run fast while she is hearing you, so the state of the
+         thing is visible from across the room. -->
+    <button class="jarvis" id="jarvis" title="Tap, speak, tap again">
+      <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
+      <span class="jv-t"><b id="jv-lab">Talk to Claudia</b>
+        <i id="jv-sub">tap and speak</i></span>
+      <span class="jv-brief" id="jv-brief" title="Weather, news, sport and today, read back">Brief</span>
+    </button>
+
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -2974,7 +3243,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-30-j</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-31-d</span></div>
 </div>
 
 <script>
@@ -3478,7 +3747,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-07-30-j";
+var BUILD="2026-07-31-d";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -4036,6 +4305,8 @@ var SBW = {
     var vals=rows.map(function(r){
       return "("+qv(r.title)+","+qv(r.url)+","+qv(r.track||"Getting Hired")+","+qv(r.note||"")+")";});
     var sql="delete from training_library where true;";
+    /* title, url and track are all NOT NULL */
+    vals=vals.filter(function(v){ return v.indexOf("null,")!==0; });
     if(vals.length) sql+=" insert into training_library (title,url,track,note) values "+vals.join(",")+";";
     return sbRun(sql);
   },
@@ -4076,6 +4347,10 @@ var SBW = {
     var x=lxGet(L.name);
     var came = x.came ? (x.came.length===7 ? x.came+"-01" : x.came) : null;
     var prec = x.came ? (x.came.length===7 ? "month" : "day") : "day";
+    /* leads.name is NOT NULL. There is no path in the UI that saves a nameless
+       lead, but this is the write that matters most, so it refuses rather than
+       gets refused. */
+    if(!String(L.name||"").trim()) return Promise.resolve();
     return sbRun("insert into leads (name,phone,email,instagram,stage,source,notes,owed,contingent,deferred,write_off,came_in,came_in_precision,follow_up_on,follow_up_note,detail) values ("
       +qv(L.name)+","+qv(phone)+","+qv(email)+","+qv(ig)+","+qv(st)+","+qv(L.funnel)+","
       +qv(notes)+","+qn(L.owed)+","+qn(L.contingent)+","+(L.deferred?"true":"false")+","
@@ -4109,7 +4384,13 @@ var SBW = {
 
   /* meetings he booked himself */
   meetings: function(){
-    var rows=mtLoad();
+    /* A meeting with no name yet is a row he is still typing into — the New
+       Meeting button creates it blank on purpose. qv("") is SQL NULL and
+       meetings.name is NOT NULL, so pushing it got the whole statement refused
+       and showed him a sync error for something he had not finished doing.
+       It stays on the device until it has a name, then syncs like anything
+       else. */
+    var rows=mtLoad().filter(function(r){ return String(r.name||"").trim()!==""; });
     var sql="delete from meetings where true;";
     if(rows.length){
       var vals=rows.map(function(r,i){
@@ -4124,7 +4405,9 @@ var SBW = {
   /* today's checklist. One row per item so the agents can tick a single one. */
   daytasks: function(){
     var d=dkey(new Date());
-    var rows=dtLoad();
+    /* day_tasks.body is NOT NULL and an empty task is one he is mid-way through
+       typing. Same rule as meetings. */
+    var rows=dtLoad().filter(function(r){ return String(r.b||"").trim()!==""; });
     var sql="delete from day_tasks where on_date="+qv(d)+";";
     if(rows.length){
       var vals=rows.map(function(r,i){
@@ -4146,22 +4429,6 @@ var SBW = {
   },
 
   /* the idea bank. Small, ordered, replaced wholesale. */
-  ideas: function(){
-    var rows=ideaLoad();
-    var sql="delete from content_ideas where true;";
-    if(rows.length){
-      var vals=rows.map(function(r,i){
-        return "("+[qv(r.hook||""), qv(r.angle||""), qv(r.format||""), qv(r.plat||""),
-          qv(r.why||""), qv(IDEA_ST.indexOf(r.st)>=0?r.st:"idea"),
-          (r.on?qv(r.on):"null"),
-          (r.views===""||r.views===undefined||r.views===null)?"null":qn(r.views),
-          i].join(",")+")";});
-      sql+=" insert into content_ideas (hook,angle,format,platform,why,status,posted_on,views,sort) values "
-        +vals.join(",")+";";
-    }
-    return sbRun(sql);
-  },
-
   /* the safe. Three small lists, replaced wholesale so the order sticks. */
   vault_accounts: function(){ return vaultPush("accounts"); },
   vault_expenses: function(){ return vaultPush("expenses"); },
@@ -4485,7 +4752,6 @@ function sbPull(){
        goes back 90 and cutting it off threw the shape away */
     +"'folhist',    (select coalesce(json_agg(json_build_object('p',platform,'d',on_date,'n',followers) order by on_date),'[]'::json) from social_history),"
     +"'reach',      (select coalesce(json_agg(json_build_object('p',platform,'s',period_start,'e',period_end,'days',days,'v',views,'r',reached,'pv',profile_views,'lk',likes,'nf',net_followers) order by period_start),'[]'::json) from social_reach),"
-    +"'ideas',      (select coalesce(json_agg(json_build_object('hook',hook,'angle',angle,'format',format,'plat',platform,'why',why,'st',status,'on',posted_on,'views',views) order by sort),'[]'::json) from content_ideas),"
     +"'meets',      (select coalesce(json_agg(json_build_object('name',name,'at',at_time,'phone',phone,'email',email,'link',link,'notes',notes,'done',done) order by sort),'[]'::json) from meetings),"
     +"'dtasks',     (select coalesce(json_agg(json_build_object('b',body,'done',done) order by sort),'[]'::json) from day_tasks where on_date=current_date),"
     +"'stages',     (select coalesce(json_agg(json_build_object('k',name_key,'s',stage,'n',notes,'p',phone,'e',email,'i',instagram,'pr',priority,"
@@ -4822,7 +5088,7 @@ var FLOORS={
     tabs:["The Week","Students","Calls & Calendar","Payment & Links","Money","The Safe","Notes"]},
   sales :{ic:"📈",nm:"Sales Floor · Jordan Claudefort",no:"NORTH EAST",
     tabs:["Jordan","Pipeline","Directory","Front Desk","Call Script","Dialer","Objections","Training & Resources","Notes"]},
-  content:{ic:"🎬",nm:"Content Studio",no:"WEST WING",tabs:["Command Center","Analytics","Ideas","Notes"]},
+  content:{ic:"🎬",nm:"Content Studio",no:"WEST WING",tabs:["Command Center","Analytics","Notes"]},
   gym  :{ic:"💪",nm:"The Gym · Claude Schwarzaneager",no:"WAREHOUSE · SOUTH",
     tabs:["Claude S.","Workout Log","Food Log","Consistency","Notes"]}
 };
@@ -8851,6 +9117,16 @@ function ctxPack(){
   var m=money();
   return {
     today:new Date().toDateString(),
+    /* Whatever the last brief fetched. If it is missing she is told it is
+       missing rather than left to imagine a temperature. */
+    weatherAndNews: briefFresh() ? BRIEF : "not fetched this session",
+    todayLabel: dayLabel(new Date().getDay()),
+    todayPlanVerbatim: todayVerbatim(),
+    weekVerbatim: (function(){
+      var o={};
+      for(var i=0;i<7;i++) o[DAYFULL[i]]={label:dayLabel(i), plan:(LS("week_plan_"+i)||"")};
+      return o;
+    })(),
     daysToBangkok:Math.ceil((BANGKOK-new Date())/86400000),
     money:{collected:m.collected,chaseNow:m.chase,deferred:m.defer,contingent:m.conting},
     pricing:{fullMembership:497,foundingClose:297,julyTier:140,placementFee:150},
@@ -9103,6 +9379,37 @@ function actionProtocol(){
    +'[[CRM {"type":"task_done","all":true}]]\n'
    +'[[CRM {"type":"remove_lead","name":"Duplicate Dave"}]]\n'
    +'[[CRM {"type":"whiteboard","slot":"target","body":"$5,000 collected"}]]\n'
+   +'[[CRM {"type":"week_plan","day":"Thursday","body":"Amazon 7-4. One video after."}]]\n'
+   +'[[CRM {"type":"week_label","day":"Sunday","body":"Filming"}]]\n'
+   +'[[CRM {"type":"week_done","day":"Thursday","on":true}]]\n'
+   +'[[CRM {"type":"cash","amount":1600}]]\n'
+   +'[[CRM {"type":"paid","name":"Marco Martin","amount":297}]]\n'
+   +'[[CRM {"type":"contact","name":"Marco Martin","field":"phone","value":"561-307-4077"}]]\n'
+   +'[[CRM {"type":"followup","name":"Marco Martin","date":"2026-08-05","note":"after payday"}]]\n'
+   +'[[CRM {"type":"came","name":"Marco Martin","date":"2026-07-14"}]]\n'
+   +'[[CRM {"type":"meeting_add","name":"Marco Martin","at":"2026-08-05T14:30",'
+   +'"phone":"561-307-4077","notes":"Second call. Closing."}]]\n'
+   +'[[CRM {"type":"meeting_done","name":"Marco Martin"}]]\n'
+   +'[[CRM {"type":"calendly","url":"calendly.com/glenklein/30min"}]]\n'
+   +'[[CRM {"type":"followers","platform":"tiktok","count":6671}]]\n'
+   +'[[CRM {"type":"sms_draft","name":"Marco Martin","body":"Glen here — still want that seat?"}]]\n'
+   +"# THE DASHBOARD IS YOURS\n"
+   +"week_plan writes a day's plan in his own box; week_label sets whether it is an Amazon "
+   +"day, an off day or a filming day; week_done ticks the day off. day takes a weekday name "
+   +"or a number, 0 for Sunday.\n"
+   +"cash sets the running cash-collected total. paid records what one person actually paid, "
+   +"which is what feeds that total. contact edits a phone, "
+   +"email or handle — field is phone, email or handle. followup sets the date you next chase "
+   +"someone; came sets the date they came in.\n"
+   +"meeting_add books a call and it appears in Meetings and in the Calls module. meeting_done "
+   +"marks it finished. calendly sets his booking link.\n"
+   +"followers records today's count for instagram, tiktok or youtube — only ever from a number "
+   +"he gives you, never a guess.\n"
+   +"# TEXTING — READ THIS PROPERLY\n"
+   +"sms_draft WRITES a text. It does not send one. It puts the number and the exact words on "
+   +"his screen with a Send button, and nothing leaves until he presses it. That is deliberate: "
+   +"a text to a lead cannot be unsent. Never tell him you have sent a text — say you have it "
+   +"ready for him to send. If the person has no number on file, say so instead of drafting.\n"
    +"dismiss_form takes a submission off the front desk. dedupe_forms collapses every duplicate "
    +"in one go.\n"
    +"task_add puts something on today's checklist. task_done with a body crosses that one off; "
@@ -9233,6 +9540,112 @@ function jRunActions(text){
       leadDelete(nm2);
       SBW.acted("system","remove_lead",nm2,o);
       done.push(nm2+" removed from the CRM for good");
+
+    } else if(o.type==="week_plan" || o.type==="week_label" || o.type==="week_done"){
+      /* "day" may arrive as Thursday, thursday, thu or 4. All of them mean the
+         same day and she should not have to guess which spelling we accept. */
+      var di=dayIndex(o.day);
+      if(di===null){ done.push("I could not tell which day you meant"); return; }
+      if(o.type==="week_plan"){
+        LS("week_plan_"+di, String(o.body||"")); SBSAVE("week");
+        done.push("Wrote "+DAYFULL[di]+"'s plan");
+      } else if(o.type==="week_label"){
+        LS("week_lab_"+di, String(o.body||"")); SBSAVE("week");
+        done.push(DAYFULL[di]+" is now "+String(o.body||""));
+      } else {
+        var on=(o.on!==false);
+        LS("week_done_"+di, on?"1":""); SBSAVE("week");
+        done.push(DAYFULL[di]+(on?" marked done":" un-ticked"));
+      }
+
+    } else if(o.type==="cash"){
+      var amt=parseFloat(String(o.amount).replace(/[^0-9.\-]/g,""));
+      if(!isFinite(amt)){ done.push("That cash figure did not make sense"); return; }
+      LS("cash_collected", String(amt)); SBW.cash();
+      done.push("Cash collected set to $"+amt.toLocaleString());
+
+    } else if(o.type==="paid"){
+      /* pay_<name> is the per-person figure collectedRaw() sums, so this is the
+         key that actually moves money on the dashboard. Note it is keyed on the
+         raw name, matching the Payment tab — not keyOf(). */
+      if(!o.name) return;
+      var oL=leadBy(o.name);
+      if(!oL){ done.push("No lead called "+o.name); return; }
+      var ov=parseFloat(String(o.amount).replace(/[^0-9.\-]/g,""));
+      if(!isFinite(ov)){ done.push("That amount did not make sense"); return; }
+      LS("pay_"+oL.name, String(ov));
+      /* same save path the Payment tab uses, so her edit syncs like his does */
+      try{ SBSAVE("payment", oL.name, String(ov)); }catch(e){}
+      done.push(oL.name+" paid $"+ov.toLocaleString());
+
+    } else if(o.type==="contact"){
+      if(!o.name) return;
+      var cL=leadBy(o.name);
+      if(!cL){ done.push("No lead called "+o.name); return; }
+      var fmap={phone:"p", email:"e", handle:"s", ig:"s", instagram:"s"};
+      var fk=fmap[String(o.field||"").toLowerCase()];
+      if(!fk){ done.push("I can set a phone, an email or a handle"); return; }
+      cnPut(cL.name, fk, String(o.value||""));
+      done.push("Set "+cL.name+"'s "+String(o.field).toLowerCase());
+
+    } else if(o.type==="followup" || o.type==="came"){
+      if(!o.name) return;
+      var dL=leadBy(o.name);
+      if(!dL){ done.push("No lead called "+o.name); return; }
+      var iso=String(o.date||"").slice(0,10);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+        done.push("That date was not in a form I could read"); return; }
+      lxPut(dL.name, o.type==="came"?"came":"fu", iso);
+      if(o.type==="followup" && o.note) lxPut(dL.name,"funote",String(o.note));
+      done.push(o.type==="came"
+        ? dL.name+" came in "+iso
+        : "Following up with "+dL.name+" on "+iso);
+
+    } else if(o.type==="meeting_add"){
+      if(!o.name || !o.at){ done.push("A meeting needs a name and a time"); return; }
+      var when=new Date(String(o.at));
+      if(isNaN(when.getTime())){ done.push("I could not read that time"); return; }
+      var a=mtLoad();
+      a.push({name:String(o.name), at:when.toISOString(),
+              phone:String(o.phone||""), email:String(o.email||""),
+              link:String(o.link||""), notes:String(o.notes||""), done:false});
+      mtSave(a);
+      done.push("Booked "+o.name+" for "+mtWhen({at:when.toISOString()}));
+
+    } else if(o.type==="meeting_done"){
+      var ms=mtLoad(), hitI=-1;
+      for(var mi=0;mi<ms.length;mi++)
+        if(keyOf(ms[mi].name)===keyOf(o.name||"")) hitI=mi;
+      if(hitI<0){ done.push("No meeting booked with "+o.name); return; }
+      ms[hitI].done=true; mtSave(ms);
+      done.push("Marked the "+ms[hitI].name+" call done");
+
+    } else if(o.type==="calendly"){
+      if(!o.url) return;
+      LS("calendly", String(o.url)); try{ SBSAVE("settings"); }catch(e){}
+      done.push("Calendly set to "+String(o.url));
+
+    } else if(o.type==="followers"){
+      var pk={instagram:"ig", ig:"ig", tiktok:"tiktok", youtube:"yt", yt:"yt"}[
+        String(o.platform||"").toLowerCase()];
+      var cnt=parseInt(String(o.count).replace(/[^0-9]/g,""),10);
+      if(!pk||!isFinite(cnt)){ done.push("I need a platform and a number"); return; }
+      LS("fol_"+pk, String(cnt));
+      try{ folLogToday(); }catch(e){}
+      done.push(String(o.platform)+" logged at "+cnt.toLocaleString());
+
+    } else if(o.type==="sms_draft"){
+      /* SHE DRAFTS. SHE DOES NOT SEND. The draft sits on screen with the number
+         and the words until Glen presses Send. A text to a lead cannot be
+         unsent, so there is no version of this where a model fires it. */
+      if(!o.name && !o.to){ done.push("Who am I texting?"); return; }
+      var sL=o.name?leadBy(o.name):null;
+      var tel=String(o.to||"") || (sL?(cnGet(sL.name).p || sL.phone || ""):"");
+      var who=sL?sL.name:String(o.name||"");
+      if(!dialable(tel).ok){
+        done.push("No usable number for "+(who||"them")+" — nothing drafted"); return; }
+      smsDraft(who, tel, String(o.body||""));
+      done.push("Text ready for "+(who||tel)+" — check it and press Send");
 
     } else if(o.type==="whiteboard"){
       var slots={target:"wb_target",goal:"wb_goal",working:"wb_working",
@@ -9734,8 +10147,747 @@ function seedChat(){
   body+="\n· "+freeDays()+" open days in the next three weeks with nothing booked";
   STATE.chat.push({r:"ai",t:open+body+"\n\nWhat do you want handled?"});
 }
+/* ======================= THE CALL SCRIPT, IN THE APP =======================
+   The Google Doc is still one tap away, but a doc is the wrong shape for a live
+   call: it scrolls, it reflows, and the line you need is never where you left
+   it. This is the same script as steps. Big questions, small notes, one part at
+   a time, and it remembers where he was — so if he taps away mid-call and comes
+   back, he is on the same step.
+
+   Prices here are $497 and $297. The doc still says $597 in places; the number
+   people are actually quoted is the one that belongs in the thing he reads from.
+
+   `q` lines are what he says. `note` is the reason, in small grey. `warn` is a
+   rule that costs money when it is broken. */
+var SCRIPT_PARTS=[
+ {part:"Part 1 — Discovery", steps:[
+  {n:1, t:"Rapport & Source Transition",
+   q:["Hey [Name], good to meet you. Before we dive in — how'd you find the [webinar/ad/post]? How'd that go for you?",
+      "What about that made you want to book this call today?"],
+   note:"Anchor them back to whatever emotionally hooked them — the relatability, the story, the offer."},
+
+  {n:2, t:"Desired Outcome (Beyond Info)",
+   q:["Got it. Aside from just getting more information, what specifically are you hoping to get out of something like this?",
+      "Why is that important to you right now?"],
+   note:"Make them say the real outcome out loud — leaving the job, freedom, financial security."},
+
+  {n:0, t:"Your Story — 30 seconds",
+   story:"College football, then years in sales. Travelled in my late twenties and decided to make it work. "
+        +"Three or four years of getting burnt and scammed. I spent close to 20–30k on trips before I ever "
+        +"turned my first profit while travelling.\n\n"
+        +"One day I figured I was going to make it work. I invested in a mentor and put myself around people "
+        +"living the life I wanted. My first few offers I had doubt — working my 9-to-5 while I built the "
+        +"income remote. But when I hit my first $7,000 month in Thailand, I knew.\n\n"
+        +"My whole goal is to help people figure it out without the same costly mistakes we made. It took me "
+        +"years to find these connections and job opportunities. It cost me thousands in lost time and years "
+        +"coming back and forth to work jobs I hated just so I could keep travelling. This exists so you "
+        +"don't have to do that.",
+   note:"Thirty seconds. It is proof, not a monologue — if it runs long it stops being credible."},
+
+  {n:3, t:"Current Situation & Impact",
+   q:["What do you do for work right now?",
+      "How long have you been doing that?",
+      "What's your day-to-day look like?",
+      "What's that been doing to you personally — mentally, physically, emotionally?"],
+   note:"Deepen the pain. Do not move on until they have actually opened up.",
+   warn:"This is the step people rush. Sit in it."},
+
+  {n:4, t:"Time Capacity Check",
+   q:["Do you even have time to take something like this on? Where would that time come from?",
+      "When are you looking to travel? Switch jobs? Start something on the side?"],
+   note:"Handle the time objection now, before it arrives as an objection. Recommend joining months "
+       +"ahead of the trip so there is time to plan properly."},
+
+  {n:5, t:"Why Mentorship vs. DIY",
+   q:["A lot of people just try to figure it out with YouTube or books. Why not go that route instead?",
+      "What do you think usually happens to people who try to figure it out on their own?",
+      "Why is it important for you not to end up like that?"],
+   note:"Get them to say mentorship is the faster, safer path — in their own words, not yours."},
+
+  {n:6, t:"Past Attempts & Reframes",
+   q:["What have you tried in the past to change your situation?",
+      "What do you feel was missing that stopped it from working?"],
+   note:"If they were burnt before: “What had you still looking for the next opportunity instead of "
+       +"just giving up?” That answer is the thing you sell to.",
+   warn:"Overcome “I tried before and it didn't work” here, not after the pitch."},
+
+  {n:7, t:"Identity & Responsibility",
+   q:["Whose responsibility is it to change your situation?",
+      "What do you feel you need to let go of to finally move forward?",
+      "How committed are you to making that shift?"],
+   note:"Frame them as the one in control. Removes blame and removes excuses."},
+
+  {n:8, t:"Future Vision",
+   q:["Let's zoom out. Say we walked you through getting overseas and through your first deal — how much "
+      +"would you want to be making monthly?",
+      "Once you're at [$X a month], what changes for you specifically?",
+      "You mentioned [house / travel / whatever they said]. What exactly would that look like?",
+      "If you had that, how would you feel?"],
+   note:"The more specific they get, the stronger the pull. Write down the number — you quote it back in Step 12."},
+
+  {n:9, t:"Consequences of Inaction",
+   q:["Let's look at the other side. If nothing changes and six months from now you're still doing "
+      +"[their situation] — what does life look like?",
+      "Would you be willing to settle for that?",
+      "Do you feel like it might be time for a change?"],
+   note:"Urgency comes from the gap between Step 8 and this. You do not have to add pressure — the "
+       +"contrast is the pressure."},
+
+  {n:10, t:"Pre-Pitch Segue",
+   q:["I appreciate you sharing that. Sounds like you're serious about making a change. What I'd like to "
+      +"do now is show you how the program works, how we can help you hit [$X], and then you can decide "
+      +"if it makes sense. Fair?"],
+   note:"Get a yes before you pitch. Assumptive, smooth, and it hands you permission."}
+ ]},
+
+ {part:"Part 2 — The Pitch", steps:[
+  {n:11, t:"Program Presentation",
+   q:["Here's what we've built. It's a private community of people all over the world travelling and "
+      +"making money. We plan your trips with you, and you get full access to me on anything travel — "
+      +"boots on the ground, any issue, any emergency, I'm in your pocket, and so is a community that "
+      +"has been doing this for years.",
+      "We get you placed in a remote sales role and help you build income online before you ever step "
+      +"on a plane."],
+   bullets:["Remote sales job placements — members in roles paying $5K–$10K+/month. 15–20+ jobs a week, "
+            +"all through our own network.",
+            "1-on-1 access to me. Message me directly, your own channel, a strategy built for your "
+            +"situation.",
+            "A community actually doing it — expats, remote workers, people who already made the move.",
+            "Visas, cost of living, where to go first, how to make it work financially. That alone "
+            +"saves you thousands.",
+            "Travel tools, remote work resources, the exact roadmap I used."],
+   proof:"I've been to Thailand multiple times, I'm moving back to Bangkok this year, and I'm building "
+        +"this in real time. You're not learning from someone who did it ten years ago. This is "
+        +"happening right now.",
+   note:"This isn't a course you watch once. It's a live community where things actually happen. "
+       +"Specificity sells — say the numbers."},
+
+  {n:12, t:"The Ask",
+   q:["Based on everything you've shared with me today — [their pain, their vision] — does this sound "
+      +"like something you could see yourself ultimately benefitting from?",
+      "The investment to join is $497. That gets you everything I walked you through — community, "
+      +"placements, 1-on-1 access, the full program. We can get you set up right now. How do you want "
+      +"to handle the payment?"],
+   note:"Do not explain the price. Do not justify it. Say it flat, ask the payment question, then stop "
+       +"talking. Silence is doing the work.",
+   warn:"Get the verbal yes BEFORE the number. First question, then the price — never the other way round."}
+ ]},
+
+ {part:"Part 3 — Objections", steps:[
+  {n:13, t:"“I need to think about it.”",
+   q:["Money aside — could you actually see yourself getting results with this?",
+      "What specifically about what we talked about gives you that confidence?",
+      "And with me next to you through the whole process of getting you [their goal] — helping you stick "
+      +"with it — what does that change for you ultimately?",
+      "Do you believe you're capable of getting results working with me?"],
+   note:"Then: “I've done a lot of these calls. The motivation dies down and the doubt creeps in. "
+       +"Earlier we said different results need different decisions — sometimes that means an "
+       +"uncomfortable one, and sometimes you need someone next to you for it. When you look at the "
+       +"person you want to be, does that person let uncertainty decide whether they get help, or do "
+       +"they push past it? Why do you think they push past it?”",
+   warn:"A second call is a real option. Offer it before you lose the relationship."},
+
+  {n:0, t:"“I need to talk to my spouse.”",
+   q:["Absolutely, that makes sense. Two questions: do they support you making a change like this in general?",
+      "[Yes] Then what do you think they'd say if you told them you found a real path to remote work and "
+      +"financial freedom? If you need them on the call, let's get them on right now — I'd rather we all "
+      +"get aligned today than have you go back and forth for a week."]},
+
+  {n:0, t:"“I don't have the time.”",
+   q:["You mentioned earlier that [reflect exactly what they said about time]. Here's the thing — you "
+      +"don't need to quit your job or rearrange your life to start. Most of our members are working "
+      +"full time while they build this. Thirty to sixty minutes a day is enough to get moving.",
+      "The question isn't really time. The question is whether the result is worth it to you."]},
+
+  {n:0, t:"“I've been burned before.”",
+   q:["I hear you, and that's a real concern. What specifically made that not work for you?",
+      "Here's what's different: this isn't a course you buy and sit on. It's live, it's a real community, "
+      +"and you've got direct access to me. I'm not selling you a PDF. If something's not working, I'm in "
+      +"the Discord. We figure it out together. That's the whole point."]},
+
+  {n:0, t:"“Is this legit?”",
+   q:["Fair question. I've got members placed in remote roles, and I'm doing this myself in real time.",
+      "I'm not teaching from a whiteboard. I'm teaching from a motorbike in Vietnam with 1.3 million likes.",
+      "And honestly — the way you know it works is you get in and see it. That's why the price is what it "
+      +"is. It's not $10K. It's $497. The barrier is low by design."]}
+ ]},
+
+ {part:"Part 4 — Founding Member", steps:[
+  {n:14, t:"Price Objection → $297",
+   q:["I get it, and I want to be real with you. [Pause.] You've been serious this whole call. You told "
+      +"me [mirror their pain and their vision]. I want to help you get there.",
+      "Here's what I'm going to do. The last thing I want is to take food off the table, and I work with "
+      +"most of my students on pricing. I'm going to extend you a founding member rate — that's the price "
+      +"I offered the first fifteen people who took advantage of the program. That's $297.",
+      "That's not the normal price and it's not something I offer everyone. But I'd rather get you in at a "
+      +"rate that makes sense and actually have you moving forward than let price be the thing that stops "
+      +"you. Can we make $297 work today?"],
+   warn:"ONLY after a verbal yes AND a hesitation on $497. Never preemptively, never twice. "
+       +"$297 in the door beats $497 lost — the relationship is the asset."}
+ ]},
+
+ {part:"Part 5 — Lock It In", steps:[
+  {n:15, t:"After They Say Yes",
+   q:["Perfect. Let me send you the link right now.",
+      "Once you're in, first thing — introduce yourself in #introductions. Who you are, where you're at, "
+      +"what you're working toward.",
+      "I'll reach out to you personally inside the Discord within 24 hours and we'll figure out the best "
+      +"next step for your situation.",
+      "Any questions before I send you the link?"],
+   note:"Buyer's remorse kicks in fast. Speed kills doubt — make onboarding feel immediate and personal.",
+   warn:"Do this on the call. Not after."}
+ ]}
+];
+
+/* Which step he is on, remembered — a call he steps away from is a call he
+   comes back to on the same line. */
+var SCRIPT_OPEN=false;
+function scStep(){ var v=parseInt(LS("script_step")||"0",10); return isFinite(v)?v:0; }
+function scSet(i){ LS("script_step", String(i)); drawDash(); }
+function scFlat(){
+  var out=[];
+  SCRIPT_PARTS.forEach(function(p){
+    p.steps.forEach(function(st){ out.push({part:p.part, s:st}); });
+  });
+  return out;
+}
+function scriptOpen(v){
+  SCRIPT_OPEN=(v===undefined)?!SCRIPT_OPEN:!!v;
+  document.body.classList.toggle("scripting", SCRIPT_OPEN);
+  drawDash();
+}
+
+function scriptSheet(){
+  if(!SCRIPT_OPEN) return "";
+  var all=scFlat(), i=Math.max(0,Math.min(all.length-1, scStep()));
+  var cur=all[i], st=cur.s;
+
+  var h='<div class="scwrap" id="scwrap"><div class="scsheet" role="dialog" aria-label="Call script">'
+   +'<div class="sc-h">'
+     +'<span class="sc-part">'+esc(cur.part)+'</span>'
+     +(st.n?'<span class="sc-num">Step '+st.n+'</span>':'')
+     +'<b class="sc-t">'+st.t+'</b>'
+     +'<a class="sc-doc" href="'+SCRIPT_URL+'" target="_blank" rel="noopener">Full doc</a>'
+     +'<button class="sc-x" id="sc-x" title="Close">&times;</button>'
+   +'</div>'
+   +'<div class="sc-b">';
+
+  if(st.q) st.q.forEach(function(line){ h+='<p class="sc-q">'+esc(line)+'</p>'; });
+  if(st.story) h+='<div class="sc-story">'+esc(st.story).replace(/\n/g,"<br>")+'</div>';
+  if(st.bullets){
+    h+='<ul class="sc-ul">';
+    st.bullets.forEach(function(b){ h+='<li>'+esc(b)+'</li>'; });
+    h+='</ul>';
+  }
+  if(st.proof) h+='<p class="sc-proof">'+esc(st.proof)+'</p>';
+  if(st.warn)  h+='<div class="sc-warn">'+st.warn+'</div>';
+  if(st.note)  h+='<div class="sc-note">'+st.note+'</div>';
+
+  h+='</div>'
+   +'<div class="sc-f">'
+     +'<button class="sc-nav" id="sc-prev"'+(i===0?" disabled":"")+'>&larr; Back</button>'
+     +'<div class="sc-dots">';
+  all.forEach(function(x,j){
+    h+='<button class="sc-dot'+(j===i?" on":"")+'" data-scgo="'+j+'" '
+      +'title="'+esc((x.s.n?"Step "+x.s.n+" — ":"")+x.s.t)+'"></button>';
+  });
+  h+='</div>'
+     +'<span class="sc-of">'+(i+1)+' of '+all.length+'</span>'
+     +'<button class="sc-nav go" id="sc-next"'+(i===all.length-1?" disabled":"")+'>Next &rarr;</button>'
+   +'</div></div></div>';
+  return h;
+}
+
+
+/* ============================ THE JARVIS BAR ============================
+   One tap: the mic opens, the bars run, she hears you. Tap again and she
+   answers out loud. It is the same recogniser and the same ask() the dock
+   uses — this is a shortcut to it, not a second brain. */
+function jvPaint(){
+  var b=document.getElementById("jarvis");
+  if(!b) return;
+  var live=(typeof RECON!=="undefined" && RECON && MICWHO==="claudia");
+  var think=!!(STATE && STATE.busy);
+  b.classList.toggle("live", !!live);
+  b.classList.toggle("think", !live && think);
+  var lab=document.getElementById("jv-lab"), sub=document.getElementById("jv-sub");
+  if(lab) lab.textContent = live ? "Listening…" : think ? "Claudia is thinking…"
+                                 : "Talk to Claudia";
+  if(sub) sub.textContent = live ? "tap again when you are done"
+        : think ? "one moment" : "tap and speak";
+}
+function jvTap(){
+  DOCK="assistant";
+  if(VIEW==="home") drawDash();
+  /* startMic handles start, stop and the permission failure message, and
+     tapping again while it is live is how you stop it — so this one handler
+     is both halves of the interaction. */
+  setTimeout(function(){
+    try{ startMic("claudia"); }catch(e){}
+    jvPaint();
+  },60);
+}
+(function wireJarvis(){
+  function go(){
+    var b=document.getElementById("jarvis");
+    if(!b){ setTimeout(go,300); return; }
+    b.onclick=function(ev){
+      if(ev.target && ev.target.id==="jv-brief"){
+        ev.stopPropagation();
+        briefNow();
+        return;
+      }
+      jvTap();
+    };
+    /* The bars are drawn here rather than in the markup so the count is one
+       number to change, not seven copies of a span. */
+    var w=document.getElementById("jv-wave");
+    if(w && !w.childElementCount){
+      var bars="";
+      for(var i=0;i<7;i++)
+        bars+='<i style="animation-delay:'+(i*0.11).toFixed(2)+'s"></i>';
+      w.innerHTML=bars;
+    }
+    setInterval(jvPaint, 700);
+    jvPaint();
+  }
+  go();
+})();
+
+/* ============================ WHERE HE IS ============================
+   He asked her to always know his location. The browser will give it once he
+   allows it, and it is remembered so he is asked once rather than every
+   morning. Without permission this falls back to New York, which is where he
+   is anyway, and the brief says which of the two it used. */
+function geoSaved(){
+  try{ var o=JSON.parse(LS("geo")||"null"); return (o&&isFinite(o.lat))?o:null; }
+  catch(e){ return null; }
+}
+function geoSave(o){ try{ LS("geo", JSON.stringify(o)); }catch(e){} }
+function geoAsk(cb){
+  var have=geoSaved();
+  /* A fix older than a day is worth refreshing — he travels. */
+  if(have && (Date.now()-(have.at||0)) < 86400000){ if(cb) cb(have); return; }
+  if(!navigator.geolocation){ if(cb) cb(have); return; }
+  var done=false;
+  function finish(v){ if(done) return; done=true; if(cb) cb(v); }
+  setTimeout(function(){ finish(have); }, 6000);
+  try{
+    navigator.geolocation.getCurrentPosition(function(p){
+      var o={lat:Math.round(p.coords.latitude*10000)/10000,
+             lon:Math.round(p.coords.longitude*10000)/10000,
+             tz:localTZ(), at:Date.now()};
+      geoSave(o); BRIEF=null;          /* a new place means a new forecast */
+      finish(o);
+    }, function(){ finish(have); }, {timeout:5500, maximumAge:3600000});
+  }catch(e){ finish(have); }
+}
+
+/* ============================ A TEXT, WAITING ============================
+   Claudia writes it. It sits here, with the number and the words in front of
+   him, until he presses Send. Nothing about that is a placeholder — /api/sms
+   refuses anything that does not carry confirmed:true, and the page only sets
+   that from this button. A text to a lead cannot be unsent. */
+var SMS_DRAFT=null, SMS_SENDING=false, SMS_MSG="";
+
+function smsDraft(who, tel, body){
+  SMS_DRAFT={who:who||"", tel:tel||"", body:body||""};
+  SMS_MSG=""; SMS_SENDING=false;
+  if(VIEW==="home") drawDash();
+}
+function smsDiscard(){ SMS_DRAFT=null; SMS_MSG=""; if(VIEW==="home") drawDash(); }
+
+function smsCard(){
+  if(!SMS_DRAFT) return "";
+  var d=SMS_DRAFT;
+  var v=dialable(d.tel);
+  var segs=Math.ceil((d.body||"").length/153)||1;
+  return '<div class="smsd" id="smsd">'
+    +'<div class="smsd-h"><b>Text ready to send</b>'
+    +'<span>'+esc(d.who||"")+(d.who?" &middot; ":"")+esc(v.ok?v.e164:d.tel)+'</span>'
+    +'<button class="smsd-x" id="sms-x">discard</button></div>'
+    +'<textarea id="sms-body" placeholder="What to say">'+esc(d.body||"")+'</textarea>'
+    +'<div class="smsd-f">'
+    +'<button class="smsd-go" id="sms-go"'+(SMS_SENDING?" disabled":"")+'>'
+    +(SMS_SENDING?"Sending…":"Send it")+'</button>'
+    +'<span class="smsd-n">'
+    +(SMS_MSG ? esc(SMS_MSG)
+       : 'Claudia wrote this. <b>Nothing goes out until you press Send.</b> '
+         +segs+' segment'+(segs>1?'s':''))
+    +'</span></div></div>';
+}
+
+function smsSend(){
+  if(!SMS_DRAFT || SMS_SENDING) return;
+  var box=document.getElementById("sms-body");
+  if(box) SMS_DRAFT.body=box.value;
+  var body=(SMS_DRAFT.body||"").trim();
+  if(!body){ SMS_MSG="Write something first."; drawDash(); return; }
+  var v=dialable(SMS_DRAFT.tel);
+  if(!v.ok){ SMS_MSG="That number is not textable: "+v.why; drawDash(); return; }
+  if(!window.__EXODUS_HOSTED__){
+    SMS_MSG="Texting only works on the live site."; drawDash(); return; }
+  SMS_SENDING=true; SMS_MSG=""; drawDash();
+  fetch("/api/sms",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({to:v.e164, body:body, name:SMS_DRAFT.who, confirmed:true})
+  }).then(function(r){ return r.json().catch(function(){ return {}; }); })
+    .then(function(j){
+      SMS_SENDING=false;
+      if(j && j.ok){
+        var who=SMS_DRAFT.who||v.e164;
+        /* it happened, so it goes in the record like any other contact */
+        try{ actAdd(who, "Texted: "+body.slice(0,120)); }catch(e){}
+        SMS_DRAFT=null;
+        STATE.chat.push({r:"did",t:["Text sent to "+who]});
+        paintLog();
+      } else {
+        SMS_MSG=(j && (j.error||j.why)) || "Twilio refused that.";
+      }
+      if(VIEW==="home") drawDash();
+    })
+    .catch(function(){
+      SMS_SENDING=false; SMS_MSG="Could not reach the texting service.";
+      if(VIEW==="home") drawDash();
+    });
+}
+
+/* ============================ THE COINS ============================
+   Its own endpoint and its own one-minute cache, because a price is the only
+   thing in the brief that is stale after two minutes. */
+var CRYPTO=null;
+function cryptoPaint(){
+  var host=document.getElementById("tb-cx");
+  if(!host) return;
+  if(!CRYPTO || CRYPTO.error){ host.innerHTML=""; return; }
+  function one(k, nm){
+    var c=CRYPTO[k];
+    if(!c || !isFinite(c.usd)) return "";
+    var ch=c.change24h;
+    var cls = ch===null||ch===undefined ? "" : ch>=0 ? "up" : "dn";
+    var sign = (ch>=0?"+":"");
+    return '<div class="cxp"><b>$'+Math.round(c.usd).toLocaleString()+'</b>'
+      +'<span>'+nm+(cls?' <i class="'+cls+'">'+sign+(ch||0).toFixed(1)+'%</i>':'')
+      +'</span></div>';
+  }
+  host.innerHTML=one("btc","BTC")+one("eth","ETH");
+}
+function cryptoPull(){
+  if(!window.__EXODUS_HOSTED__) return;
+  /* No ticker on screen, no reason to fetch a price for it. This also keeps the
+     poller out of the way of anything else measuring network calls. */
+  if(!document.getElementById("tb-cx")) return;
+  fetch("/api/brief?only=crypto")
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){ if(j&&j.crypto){ CRYPTO=j.crypto; cryptoPaint(); } })
+    .catch(function(){});
+}
+(function wireCrypto(){
+  setTimeout(cryptoPull, 1200);
+  setInterval(cryptoPull, 120000);
+})();
+
+/* ============================ THE MORNING BRIEF ============================
+   "Hello Glen", the weather, what the world is doing, and today's plan read back
+   exactly as he typed it.
+
+   Written in code, not by Claudia, and that is the point. He asked for the
+   schedule word for word; a model asked to repeat text verbatim will quietly
+   improve it. This assembles the sentence from real values and hands the
+   finished thing to her voice.
+
+   Weather and headlines come from /api/brief, which fetches them server-side —
+   no news organisation allows a browser to read its RSS feed directly. When
+   that call fails she says the feed is down. She does not guess a temperature
+   and she does not invent a headline. */
+
+var BRIEF=null, BRIEF_AT=0, BRIEF_BUSY=false;
+var BRIEF_TTL=900000;                    /* 15 minutes — nothing here moves faster */
+
+function briefFresh(){ return !!BRIEF && (Date.now()-BRIEF_AT) < BRIEF_TTL; }
+
+function briefFetch(cb){
+  if(briefFresh()){ cb(BRIEF); return; }
+  if(!window.__EXODUS_HOSTED__){
+    cb({offline:true, why:"The briefing feed only runs on the live site."});
+    return;
+  }
+  if(BRIEF_BUSY){ setTimeout(function(){ briefFetch(cb); },400); return; }
+  BRIEF_BUSY=true;
+  var done=false;
+  function finish(v){ if(done) return; done=true; BRIEF_BUSY=false; cb(v); }
+  setTimeout(function(){ finish({offline:true, why:"The briefing feed did not answer."}); },9000);
+  /* Where he is, if he has ever allowed it. Without a fix the server falls back
+     to New York and says so in locationFrom, so the brief is never quietly
+     telling him about the wrong city. */
+  var g=geoSaved();
+  var q="/api/brief?n=4";
+  if(g) q+="&lat="+g.lat+"&lon="+g.lon+"&tz="+encodeURIComponent(g.tz||"");
+  fetch(q)
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(j){
+      if(!j){ finish({offline:true, why:"The briefing feed returned an error."}); return; }
+      BRIEF=j; BRIEF_AT=Date.now(); finish(j);
+    })
+    .catch(function(){ finish({offline:true, why:"Could not reach the briefing feed."}); });
+}
+
+/* One city, as a sentence rather than a readout. Spoken aloud, "69 and mostly
+   clear, up to 87" is a person talking; "temp: 69F, condition: clear" is not. */
+function briefWx(b, key, label){
+  var w=b && b.weather && b.weather[key];
+  /* The server labels the local card with the real place name — Philadelphia,
+     not "here" — so use its word rather than ours when it has one. */
+  if(w && w.place && label==="Here") label=w.place;
+  if(!w) return "";
+  if(w.error) return label+": weather unavailable.";
+  var t=label+": "+w.now+" and "+w.sky;
+  /* Only when the difference is worth saying out loud. 69 that feels like 74 is
+     just weather; 84 that feels like 93 is a reason to film indoors. */
+  if(isFinite(w.feels) && Math.abs(w.feels-w.now)>=7) t+=", feels like "+w.feels;
+  if(isFinite(w.high)) t+=". High "+w.high+", low "+w.low;
+  if(isFinite(w.rainChance) && w.rainChance>=40) t+=". "+w.rainChance+"% chance of rain";
+  return t+".";
+}
+
+function briefNews(b, max){
+  if(!b || !b.news || !b.news.length) return [];
+  return b.news.slice(0, max||4).map(function(x){ return x.title+" — "+x.src; });
+}
+
+/* Today's plan, exactly as it sits in the box. No trimming beyond whitespace at
+   the ends, no re-wording, no "it looks like you have". If the box is empty it
+   says the box is empty. */
+function todayVerbatim(){
+  var i=new Date().getDay();
+  return (LS("week_plan_"+i)||"").replace(/^\s+|\s+$/g,"");
+}
+function todayLabelNow(){ return dayLabel(new Date().getDay()); }
+
+/* Which tab the top-left card is showing. Remembered, because a man who
+   watches something every evening should not have to click twice for it. */
+var NEWSTAB=(LS("newstab")==="watch") ? "watch" : "news";
+function newsTab(k){
+  NEWSTAB=(k==="watch")?"watch":"news";
+  LS("newstab", NEWSTAB);
+  drawDash();
+}
+
+/* TalentFLX, opened properly rather than embedded.
+
+   An iframe was the obvious thing and it is the wrong thing: a login page
+   inside someone else's frame is blocked by most sites' frame policy, and
+   where it is not blocked it is exactly the shape a phishing page takes. It
+   opens in its own tab, on its own domain, where the address bar says what it
+   is. */
+function watchBox(){
+  return '<div class="watchbox">'
+    +'<a class="wt-go" href="'+TALENTFLX+'" target="_blank" rel="noopener noreferrer">'
+      +'<span class="wt-ic">'
+        +'<svg viewBox="0 0 24 24" aria-hidden="true">'
+        +'<rect x="1.5" y="4" width="17" height="16" rx="2.6" fill="none" '
+          +'stroke="currentColor" stroke-width="1.7"/>'
+        +'<path d="M18.5 10.5 L22.5 7.6 v8.8 l-4-2.9 z" fill="currentColor"/>'
+        +'<path d="M8 9.2 v5.6 l4.6 -2.8 z" fill="currentColor"/>'
+        +'</svg></span>'
+      +'<span class="wt-t"><b>Movies &amp; TV</b><i>talentflx.com &#8599;</i></span>'
+    +'</a>'
+    +'<div class="wt-n">Opens in its own tab so the login is on TalentFLX\'s own '
+      +'address, not inside this page. The screen in the basement theatre goes to '
+      +'the same place.</div>'
+    +'</div>';
+}
+
+/* The headlines, as links. Every one opens the real article at the real
+   publisher — this is a reader, not a rewrite, and nothing here is summarised
+   by anything. If the feed has not been fetched it says so and offers the
+   button rather than showing an empty box that looks broken. */
+function newsList(){
+  if(!briefFresh() || !BRIEF || BRIEF.offline)
+    return '<div class="nw-none">Tap Refresh for the biggest stories right now — '
+      +'BBC, Al Jazeera, NPR, DW and CBC.</div>';
+  var rows=(BRIEF.news||[]);
+  if(!rows.length)
+    return '<div class="nw-none">'+esc(BRIEF.newsError||"No feed answered just now.")+'</div>';
+  return rows.slice(0,6).map(function(x){
+    var href=x.link||"";
+    /* Only ever http(s). A feed is outside content and a javascript: URL in a
+       title field is exactly the shape that attack takes. */
+    if(!/^https?:\/\//i.test(href)) href="";
+    return (href
+      ? '<a class="nw" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'
+      : '<div class="nw">')
+      +'<span class="nw-s">'+esc(x.src)+'</span>'
+      +'<span class="nw-t">'+esc(x.title)+'</span>'
+      +(href?'<span class="nw-go">&#8599;</span>':'')
+      +(href?'</a>':'</div>');
+  }).join("");
+}
+/* The button, and the once-a-day automatic pull. He asked for it fresh every
+   day; the cheapest honest way to do that is to check whenever he opens the
+   dashboard and refetch if what we have is from yesterday. */
+function newsRefresh(){
+  var lab=document.getElementById("news-n");
+  if(lab) lab.textContent="fetching…";
+  BRIEF=null;
+  geoAsk(function(){
+    briefFetch(function(){ if(VIEW==="home") drawDash(); });
+  });
+}
+function newsDaily(){
+  var last=LS("news_day")||"";
+  var today=dkey(new Date());
+  if(last===today && briefFresh()) return;
+  LS("news_day", today);
+  geoAsk(function(){
+    briefFetch(function(){ if(VIEW==="home") drawDash(); });
+  });
+}
+
+/* Which parts he actually asked for. "Weather?" gets weather, not a monologue. */
+function briefIntent(q){
+  var t=String(q||"").toLowerCase().replace(/[^a-z0-9\s']/g," ");
+  var full = /\b(good morning|morning claudia|hello claudia|hi claudia|hey claudia|brief me|briefing|the brief|rundown|run me down|start my day|what s my day|whats my day|catch me up|sitrep)\b/.test(t);
+  if(full) return {hello:true, wx:true, news:true, sport:true, plan:true};
+  var sport= /\b(sports?|scores?|the game|last night s games|espn|who won|nfl|nba|mlb|nhl|premier league)\b/.test(t);
+  var wx   = /\b(weather|forecast|temperature|how hot|how cold|raining|rain today)\b/.test(t);
+  var news = /\b(news|headlines|world news|global news|what s happening in the world|whats happening in the world|going on in the world)\b/.test(t);
+  var plan = /\b(my schedule|today s schedule|todays schedule|my day|today s plan|todays plan|what am i doing today|what s on today|whats on today|read me today|read today)\b/.test(t);
+  if(wx||news||sport||plan)
+    return {hello:false, wx:wx, news:news, sport:sport, plan:plan};
+  /* a bare greeting still gets a greeting */
+  if(/^\s*(hi|hey|hello|yo|morning|sup)\b/.test(t) && t.length<26)
+    return {hello:true, wx:true, news:false, sport:false, plan:true};
+  return null;
+}
+
+/* Assemble it. Returns the exact words she will say. */
+/* The reasons all end in a full stop already, and "the feed did not answer.." is
+   the kind of small wrongness that makes a thing feel unfinished. */
+function briefWhy(b){
+  return String((b && b.why) || "the feed is down").replace(/\.\s*$/, "");
+}
+function briefText(b, want){
+  var d=new Date();
+  var lines=[];
+
+  if(want.hello){
+    var hr=d.getHours();
+    var part = hr<5 ? "You're up late" : hr<12 ? "Good morning"
+             : hr<17 ? "Good afternoon" : "Good evening";
+    lines.push(part+", Glen. It's "+DAYFULL[d.getDay()]+", "
+      +MON[d.getMonth()]+" "+d.getDate()+".");
+  }
+
+  if(want.wx){
+    if(b && b.offline) lines.push("No weather — "+briefWhy(b)+".");
+    else {
+      var a=briefWx(b,"here","Here"), c=briefWx(b,"bangkok","Bangkok");
+      if(a) lines.push(a);
+      if(c) lines.push(c);
+      if(!a && !c) lines.push("No weather came back just now.");
+    }
+  }
+
+  if(want.news){
+    if(b && b.offline) lines.push("No headlines — "+briefWhy(b)+".");
+    else {
+      var hs=briefNews(b,4);
+      if(!hs.length) lines.push("No headlines came back just now.");
+      else {
+        lines.push("Around the world right now:");
+        hs.forEach(function(t){ lines.push("• "+t); });
+      }
+    }
+  }
+
+  if(want.sport){
+    if(b && b.offline) lines.push("No sport — "+briefWhy(b)+".");
+    else {
+      var live=(b.scores||[]).filter(function(x){ return x.live; });
+      var fin =(b.scores||[]).filter(function(x){ return x.done; }).slice(0,4);
+      var soon=(b.scores||[]).filter(function(x){ return !x.live && !x.done; }).slice(0,3);
+      function score(g){
+        var t=(g.teams||[]).map(function(x){ return x.team+" "+(x.score===null?"-":x.score); });
+        return g.league+": "+t.join(", ")+(g.detail?" ("+g.detail+")":"");
+      }
+      if(live.length){
+        lines.push("Live right now:");
+        live.slice(0,4).forEach(function(g){ lines.push("• "+score(g)); });
+      }
+      if(fin.length){
+        lines.push(live.length?"Final:":"Last night:");
+        fin.forEach(function(g){ lines.push("• "+score(g)); });
+      }
+      if(soon.length && !live.length){
+        lines.push("Coming up:");
+        soon.forEach(function(g){
+          lines.push("• "+g.league+": "+g.name+(g.detail?" — "+g.detail:"")); });
+      }
+      var sh=(b.sport||[]).slice(0,2);
+      if(sh.length){
+        lines.push("From ESPN:");
+        sh.forEach(function(x){ lines.push("• "+x.title); });
+      }
+      if(!live.length && !fin.length && !soon.length && !sh.length)
+        lines.push("No sport came back just now.");
+    }
+  }
+
+  if(want.plan){
+    var lab=todayLabelNow(), plan=todayVerbatim();
+    lines.push("Today is "+lab+".");
+    if(plan) lines.push("Word for word, what you wrote: “"+plan+"”");
+    else lines.push("You have not written anything in today's box.");
+
+    var tk=(typeof dtLoad==="function") ? dtLoad() : [];
+    var open=tk.filter(function(x){ return !x.done; });
+    if(open.length)
+      lines.push(open.length+" task"+(open.length>1?"s":"")+" still open: "
+        +open.map(function(x){ return x.b; }).join("; ")+".");
+    else if(tk.length) lines.push("Every task on today's list is ticked off.");
+  }
+
+  return lines.join("\n");
+}
+
+/* Run it and put it in the log. Deliberately does not touch the model: it is
+   instant, it is free, and it cannot get the wording wrong. */
+function briefRun(want, q){
+  if(q){ STATE.chat.push({r:"me",t:q}); SBW.said("claudia","glen",q); }
+  STATE.busy=true; paintLog();
+  ["ci","mci","dk-in"].forEach(function(id){
+    var t=document.getElementById(id); if(t){ t.value=""; t.style.height="auto"; } });
+  briefFetch(function(b){
+    var t=briefText(b, want);
+    STATE.chat.push({r:"ai",t:t});
+    SBW.said("claudia","agent",t);
+    /* Read aloud without the bullet characters — a voice saying "bullet" is
+       the tell that a machine wrote it. */
+    sayAs("claudia", t.replace(/•\s*/g,"").replace(/“|”/g,""));
+    STATE.busy=false; paintLog();
+    if(VIEW==="home") drawDash();
+  });
+}
+/* The button version — no typed question, just the whole thing. */
+function briefNow(){
+  if(!DOCK) DOCK="assistant";
+  /* Ask for his location before fetching, not after — a forecast for the wrong
+     city is worse than a slightly slower brief. */
+  geoAsk(function(){
+    briefRun({hello:true, wx:true, news:true, sport:true, plan:true}, null);
+  });
+}
+
 function ask(q){
   if(!q||STATE.busy)return;
+  /* A greeting, the weather, the news or "read me today" are answered from real
+     values instead of from the model — see briefText(). Verbatim has to mean
+     verbatim, and a headline has to be a headline someone actually published. */
+  var want=briefIntent(q);
+  if(want){ briefRun(want,q); return; }
+
   STATE.chat.push({r:"me",t:q});STATE.busy=true;paintLog();
   ["ci","mci"].forEach(function(id){var t=document.getElementById(id);if(t){t.value="";t.style.height="auto";}});
   var prompt="You are Claudia, Glen's Chief of Staff at Exodus. You are the most senior person in "
@@ -9770,6 +10922,13 @@ function ask(q){
    +"unless a list is genuinely clearest. Never invent a name, a number or a fact — if it is "
    +"missing, say so plainly and tell him how to get it. If he says cut the chat and go business, "
    +"drop the warmth and give him the answer.\n\n"
+   +"# THE ONE THING YOU NEVER PARAPHRASE\n"
+   +"todayPlanVerbatim and weekVerbatim in your context are Glen's own words, typed by "
+   +"him. If he asks what today is, read them back EXACTLY — same words, same order. Do "
+   +"not tidy, summarise or rephrase them. If a day is empty, say it is empty.\n"
+   +"weatherAndNews holds real fetched values. If it says 'not fetched this session', say "
+   +"you do not have it in front of you. NEVER state a temperature or a headline that is "
+   +"not in there — an invented headline is worse than no headline.\n\n"
    +"# RITUAL\n"
    +"A rundown every morning and a proper review every Sunday: reset the job board, send it to the "
    +"email list, follow up warm leads, log the analytics screenshots, reset the seven-day glance.\n\n"
@@ -10030,7 +11189,7 @@ function tabBody(){
     assistant:[aiChat,aiBrief],
     office   :[weekView,execStudents,execCalls,salesOnboard,execMoney,vaultView,notesBox],
     sales    :[jordanChat,salesPipe,salesDir,salesFront,salesCall,dialerView,salesObj,salesTrain,notesBox],
-    content  :[conCommand,conAnalytics,conIdeas,notesBox],
+    content  :[conCommand,conAnalytics,notesBox],
     gym      :[trainerChat,gymView,foodView,consistView,notesBox]
   };
   var fns=map[r]||map.gym;
@@ -10335,6 +11494,24 @@ function weekRoll(){
   }
   return false;
 }
+/* Thursday, thursday, thu and 4 all mean the same day. She should not have to
+   guess which spelling the app accepts, and a brief that lists every accepted
+   form is a brief nobody reads. */
+function dayIndex(v){
+  if(v===null||v===undefined||v==="") return null;
+  if(typeof v==="number" && v>=0 && v<=6) return v|0;
+  var t=String(v).trim().toLowerCase();
+  if(/^[0-6]$/.test(t)) return parseInt(t,10);
+  if(t==="today")     return new Date().getDay();
+  if(t==="tomorrow")  return (new Date().getDay()+1)%7;
+  if(t==="yesterday") return (new Date().getDay()+6)%7;
+  for(var i=0;i<7;i++){
+    var full=DAYFULL[i].toLowerCase();
+    if(t===full || t===full.slice(0,3) || t===DAYS[i].toLowerCase()) return i;
+  }
+  return null;
+}
+
 function dayLabel(i){
   var v=LS("week_lab_"+i);
   if(v!==null&&v!==undefined&&v!=="") return v;
@@ -10826,7 +12003,10 @@ function actLoad(n){ return LJ("act_"+keyOf(n),[]); }
    name inherits a dead lead's notes and stage.
 
    Deliberately not undoable. It asks first. */
-var DEL_ASK=null;          /* the name currently awaiting a confirm */
+var DEL_ASK=null;
+/* True only while salesPipe() is rendering inside a dashboard section rather
+   than as the whole Sales room. */
+var DASH_INLINE=false;          /* the name currently awaiting a confirm */
 
 function leadWipeLocal(name){
   var k=keyOf(name);
@@ -10910,6 +12090,10 @@ function leadCard(){
    +'<label>Phone<input class="cnin" data-n="'+esc(L.name)+'" data-f="p" value="'+esc(ph)+'" placeholder="number"></label>'
    +'<label>Email<input class="cnin" data-n="'+esc(L.name)+'" data-f="e" value="'+esc(em)+'" placeholder="email"></label>'
    +'<label>Instagram<input class="cnin" data-n="'+esc(L.name)+'" data-f="s" value="'+esc(ig)+'" placeholder="@handle"></label>'
+   /* The second number. The Alt button on the pipeline row dials this one, so
+      it has to be editable somewhere — and the full record is that somewhere. */
+   +'<label>Alt Phone<input class="cnin" data-n="'+esc(L.name)+'" data-f="p2" value="'
+   +esc(altPhone(L.name))+'" placeholder="second number"></label>'
    +'</div>';
 
   /* ---- the record: when they came in, what is next, and the detail ---- */
@@ -11608,6 +12792,37 @@ function pgFoldLabel(){
   b.classList.toggle("on", shut);
 }
 
+/* Call, Alt and Text, on the row, next to the notes he is reading.
+
+   Call goes through Twilio: it rings Glen's phone first, then connects the
+   lead, so the number the lead sees is the business number and Glen never has
+   to have theirs. Alt is the second number on the record, dialled the same way.
+   Text opens a draft — the same draft Claudia writes into, with the same rule
+   that nothing sends until he presses Send.
+
+   Buttons that cannot work are disabled rather than hidden: a missing Alt
+   button reads as a bug, a greyed one reads as "no second number on file". */
+function altPhone(name){
+  var o=cnGet(name);
+  return String(o.p2||"").trim();
+}
+function reachBtns(x){
+  var main=(cnGet(x.name).p || x.phone || "");
+  var alt =altPhone(x.name);
+  var mOk =dialable(main).ok, aOk=dialable(alt).ok;
+  return '<div class="rbx">'
+    +'<button class="rb call" data-rcall="'+esc(x.name)+'" data-rtel="'+esc(main)+'"'
+      +(mOk?'':' disabled')+' title="'+(mOk?"Ring "+fmtPhone(main):"No number on file")+'">'
+      +'Call</button>'
+    +'<button class="rb alt" data-rcall="'+esc(x.name)+'" data-rtel="'+esc(alt)+'"'
+      +(aOk?'':' disabled')+' title="'+(aOk?"Ring "+fmtPhone(alt):"No second number on file")+'">'
+      +'Alt</button>'
+    +'<button class="rb txt" data-rtext="'+esc(x.name)+'"'
+      +(mOk?'':' disabled')+' title="'+(mOk?"Write a text":"No number to text")+'">'
+      +'Text</button>'
+    +'</div>';
+}
+
 function salesPipe(){
   if(OPENLEAD) return leadCard();
   if(STATE.err)return '<div class="alert"><b>Drive read failed.</b> '+esc(STATE.err)+'</div>';
@@ -11624,10 +12839,14 @@ function salesPipe(){
      return '<button class="pill'+(FILTER===s?" on":"")+'" data-f="'+esc(s)+'">'+esc(s)+' '+cn[s]+'</button>';}).join("")
    +'<button class="pill'+(FILTER==="noreach"?" on":"")+'" data-f="noreach">Needs a number '+ig+'</button></div>';
 
-  /* money strip — moved here from the office */
+  /* Money strip. On the dashboard the CRM section header is already showing
+     these four figures, so printing them again ten pixels lower is just the
+     same numbers twice — it stays for the full-screen room, where it is the
+     only copy. */
   var mm=money();
   var chaseN=L.filter(function(x){return x.owed>0&&!x.deferred;}).length;
   var contN =L.filter(function(x){return x.contingent>0;}).length;
+  if(!DASH_INLINE)
   h+='<div class="grid3" style="margin-bottom:14px">'
    +'<div class="card dk"><h4>Cash Collected</h4><div class="v" id="collected-total">$'+mm.collected.toLocaleString()+'</div>'
    +'<div class="d">Logged in the office</div></div>'
@@ -11657,6 +12876,7 @@ function salesPipe(){
    +'<label>Phone<input class="wide" id="nl-phone" placeholder="561-307-4077"></label>'
    +'<label>Email<input class="wide" id="nl-email" placeholder="name@gmail.com"></label>'
    +'<label>Handle<input class="wide" id="nl-ig" placeholder="@handle"></label>'
+   +'<label>Alt Phone<input class="wide" id="nl-p2" placeholder="second number"></label>'
    +'<label>Stage<select class="wide" id="nl-stage">'
    +ORD.map(function(st){return '<option'+(st==="New Lead"?" selected":"")+'>'+esc(st)+'</option>';}).join("")
    +'</select></label>'
@@ -11733,7 +12953,7 @@ function salesPipe(){
      +'<th style="width:118px">Phone</th><th style="width:170px">Email</th>'
      +'<th style="width:112px">Handle</th>'
      +'<th style="width:62px">Owed</th><th style="width:124px">Came In</th>'
-     +'<th>Notes</th></tr></thead><tbody>';
+     +'<th>Notes</th><th style="width:132px">Reach</th></tr></thead><tbody>';
     g.rows.forEach(function(x){
     function fld(field,val,ph){
       return '<input class="cn" data-n="'+esc(x.name)+'" data-k="'+field+'" value="'+esc(val||"")
@@ -11778,7 +12998,8 @@ function salesPipe(){
      +'</td>'
      +'<td><textarea class="ntbox" data-n="'+esc(x.name)+'" rows="2" '
      +'placeholder="Notes — type anything">'+esc(x.notes||"")+'</textarea>'
-     +(x.notesSet?'<div class="editedflag">edited</div>':'')+'</td></tr>';});
+     +(x.notesSet?'<div class="editedflag">edited</div>':'')+'</td>'
+     +'<td class="reach">'+reachBtns(x)+'</td></tr>';});
     h+='</tbody></table></div>';
   });
   /* the original spreadsheet, one click away. This is the same sheet the app
@@ -12321,67 +13542,7 @@ function conAnalytics(){
    The same rows the dashboard shows, with room to work: filter by angle, cycle a
    card through idea → filming → posted, write his own, and see WHY each pattern
    travels rather than just the hook. */
-function conIdeas(){
-  var rows=ideaLoad();
-  var h='<div class="ideabar">'
-   +'<div class="ib-n"><b>'+ideaCount("idea")+'</b><i>ideas</i></div>'
-   +'<div class="ib-n"><b style="color:var(--amber)">'+ideaCount("filming")+'</b><i>filming</i></div>'
-   +'<div class="ib-n"><b style="color:var(--green)">'+ideaCount("posted")+'</b><i>posted</i></div>'
-   +'<div class="ib-sp"></div>'
-   +'<button class="btn" id="idea-add">+ Write One</button>'
-   +'</div>';
 
-  h+='<div class="pills" style="margin-top:12px">'
-   +'<button class="pill'+(IDEA_FILTER==="all"?" on":"")+'" data-iaf="all">Everything</button>'
-   +ideaAngles().map(function(a){
-      return '<button class="pill'+(IDEA_FILTER===a?" on":"")+'" data-iaf="'+esc(a)+'">'
-        +esc(a)+'</button>';}).join("")
-   +'</div>';
-
-  var show=rows.filter(function(x){
-    return IDEA_FILTER==="all" || (x.angle||"other")===IDEA_FILTER;
-  });
-  if(!show.length) h+='<div class="empty">Nothing here yet. Write one.</div>';
-  else {
-    h+='<div class="ideas">';
-    show.forEach(function(x){
-      var i2=rows.indexOf(x);
-      var st=x.st||"idea";
-      h+='<div class="idea st-'+esc(st)+'">'
-        +'<div class="i-top">'
-          +'<button class="i-st" data-ist="'+i2+'" title="Tap to move it along">'+esc(st)+'</button>'
-          +(x.angle?'<span class="i-tag">'+esc(x.angle)+'</span>':'')
-          +(x.format?'<span class="i-tag dim">'+esc(x.format)+'</span>':'')
-          +(x.plat&&x.plat!=="all"?'<span class="i-tag dim">'+esc(x.plat)+'</span>':'')
-          +'<button class="i-x" data-ix="'+i2+'" title="Remove">&times;</button>'
-        +'</div>'
-        +'<textarea class="i-hook" data-ih="'+i2+'" rows="2" '
-        +'placeholder="The line he hears in the first second">'+esc(x.hook||"")+'</textarea>'
-        +(x.why?'<div class="i-why">'+esc(x.why)+'</div>':'')
-        +'</div>';
-    });
-    h+='</div>';
-  }
-
-  h+='<div class="card dk" style="margin-top:14px"><h4>Why These Shapes</h4>'
-   +'<div class="d">Hooks land in the first second — cut every half to one and a half '
-   +'seconds through the first five, and put the hook on screen as text, not a title. '
-   +'The formats that travel: exact costs with receipts, "things I wish I knew before", '
-   +'hyper-local food under sixty seconds, before-and-after transitions, and itineraries — '
-   +'because a saved video gets pushed harder than a liked one. Raw handheld beats polished. '
-   +'A journey with a start and an end is what turned Itchy Boots into 2.5 million '
-   +'subscribers, and it is the one thing his Bangkok move gives him for free.</div></div>';
-
-  h+='<div class="card" style="margin-top:11px"><h4>What Already Works For You</h4>'
-   +'<div class="d">Millions of views a month on TikTok, and the free-guide PDF turns DMs '
-   +'into calls. Christopher Fredrick, Kyle Engley, Troy Byrd and Ulus all came through DMs '
-   +'after the guide. That loop is the thing worth scaling.</div></div>';
-  return h;
-}
-
-
-
-/* ============================ GYM ============================ */
 function wkLoad(){try{return JSON.parse(LS("workouts")||"[]");}catch(e){return [];}}
 function wkSave(a){LS("workouts",JSON.stringify(a));SBW.workouts();}
 /* This month's training, plus a weight line. Everything resets its framing on
@@ -13620,6 +14781,7 @@ function folStatus(k){
    The Calendly base is a field he sets once. Every meeting then carries a link he
    can send, and if he has not set one the row still works with a plain Meet link,
    so nothing here depends on a setting being filled in. */
+var MT_DEL=null;    /* which meeting is asking to be deleted, if any */
 function mtLoad(){ try{ return JSON.parse(LS("meetings")||"[]")||[]; }catch(e){ return []; } }
 function mtSave(a){ LS("meetings", JSON.stringify(a)); SBSAVE("meetings"); }
 function calendlyBase(){ return (LS("calendly")||"").trim(); }
@@ -13765,30 +14927,34 @@ function dashView(){
 
     h+='<div class="sec"><div class="sec-h"><h2>Today</h2>'
       +'<span class="sec-s">'+DAYFULL[today]+' &middot; '+MON[now.getMonth()]+' '
-      +now.getDate()+'</span>'
+      +now.getDate()+' &middot; '+esc(lab)+'</span>'
+      +'<button class="sec-b script" id="sc-open">Call Script</button>'
+      +'<button class="sec-b'+(tick?" hot":"")+'" id="d-tick">'
+      +(tick?"&#10003; Day done":"Mark day done")+'</button>'
       +'<button class="sec-b'+(WEEK_EDIT?" hot":"")+'" id="wk-edit">'
       +(WEEK_EDIT?"Done editing":"Edit the week")+'</button></div>';
 
-    h+='<div class="todayrow">';
+    /* Two cards across the top now, both wide: what the world is doing, and
+       what he is doing. The Plan and Needs You came out — the plan is right
+       below in the seven days, and Needs You was repeating the CRM. */
+    h+='<div class="todayrow two">';
 
-    /* the plan for today — read-only unless editing */
-    h+='<div class="tcard'+(isAmz?" amz":"")+(tick?" tick":"")+'">'
-      +'<div class="tc-h"><b>The Plan</b>'
-      +'<span class="dt-tag '+(isAmz?"amz":"off")+'">'+esc(lab)+'</span>'
-      +'<button class="tc-tick'+(tick?" on":"")+'" id="d-tick">'
-      +(tick?"&#10003; Day done":"Mark done")+'</button></div>';
-    if(WEEK_EDIT)
-      h+='<input class="dw-lab-i'+(isAmz?" amz":"")+'" data-dwl="'+today+'" '
-        +'value="'+esc(lab)+'" placeholder="Amazon / Off / Filming">'
-        +'<textarea class="dw-pi big" data-dwp="'+today+'" rows="4" '
-        +'placeholder="What today is for.">'+esc(plan)+'</textarea>';
-    else
-      h+='<div class="tc-plan'+(plan?"":" none")+'">'
-        +(plan?esc(plan):"Nothing written for today. Tap Edit the week, or ask Claudia to plan it.")
-        +'</div>';
-    h+='<div class="tc-act">'
-      +'<button class="dt-tk" id="d-plan">Ask Claudia to plan the week</button></div>';
-    h+='</div>';
+    h+='<div class="tcard news"><div class="tc-h">'
+      +'<span class="ntabs">'
+        +'<button class="ntab'+(NEWSTAB==="news"?" on":"")+'" data-ntab="news">Headlines</button>'
+        +'<button class="ntab'+(NEWSTAB==="watch"?" on":"")+'" data-ntab="watch">Watch</button>'
+      +'</span>'
+      +(NEWSTAB==="news"
+        ? '<span class="tc-n" id="news-n">'
+          +(briefFresh()&&BRIEF.news&&BRIEF.news.length
+             ? BRIEF.news.length+" stories" : "tap refresh")
+          +'</span><button class="tc-seed" id="news-go">Refresh</button>'
+        : '<span class="tc-n">TalentFLX</span>')
+      +'</div>'
+      +(NEWSTAB==="news"
+        ? '<div class="newsbox" id="newsbox">'+newsList()+'</div>'
+        : watchBox())
+      +'</div>';
 
     /* the checklist */
     h+='<div class="tcard list">'
@@ -13815,31 +14981,6 @@ function dashView(){
     }
     h+='<div class="addbar tight"><input id="dt-new" placeholder="Add a task and hit Enter" '
       +'autocomplete="off"><button class="btn" id="dt-add">Add</button></div>';
-    h+='</div>';
-
-    /* what the app noticed by itself */
-    var rows=[];
-    dueNow().slice(0,4).forEach(function(x){
-      rows.push(['#d4736f', x.L.name, x.days<0?Math.abs(x.days)+"d late":"due today"]);
-    });
-    if(m.chase>0) rows.push(['#c9a25c',"$"+m.chase.toLocaleString()+" still to collect",
-      (function(){ var n=(STATE.leads||[]).filter(function(L){
-        return L.owed>0&&!L.deferred; }).length;
-        return n+(n===1?" person":" people"); })()]);
-    /* No post counting anywhere — he asked for it gone and it was never a
-       measurement, only a tally he had to keep himself. */
-    var noPlan=0;
-    for(var c2=today;c2<7;c2++) if(!(LS("week_plan_"+c2)||"").trim()) noPlan++;
-    if(noPlan) rows.push(['#8fb3e8',noPlan+(noPlan===1?" day":" days")+" blank this week","the week"]);
-
-    h+='<div class="tcard alerts"><div class="tc-h"><b>Needs You</b>'
-      +'<span class="tc-n">'+(rows.length?rows.length+" flagged":"all clear")+'</span></div>';
-    if(!rows.length) h+='<div class="tc-empty">Nothing overdue, nothing owed, '
-      +'posted today. Good.</div>';
-    else rows.slice(0,6).forEach(function(r){
-      h+='<div class="dn-row"><span class="dn-dot" style="background:'+r[0]+'"></span>'
-        +'<b>'+esc(r[1])+'</b><i>'+esc(r[2])+'</i></div>';
-    });
     h+='</div>';
 
     h+='</div>';   /* .todayrow */
@@ -13919,9 +15060,12 @@ function dashView(){
     if(sheetHasIt)
       h+='<div class="dp-none">The CRM is open full screen above this.</div>';
     else {
+      /* tells salesPipe() it is a guest here, not the whole room */
+      DASH_INLINE=true;
       try{ h+=salesPipe(); }
       catch(e){ h+='<div class="dp-none">The pipeline hit a snag: '
         +esc((e&&e.message)||e)+'</div>'; }
+      DASH_INLINE=false;
     }
     h+='</div></div></div>';
     h+='</div>';
@@ -13954,7 +15098,15 @@ function dashView(){
             +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
             +'value="'+esc(mtLocalValue(mm.at))+'">'
             +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
-            +'<button class="mt-x" data-mtdel="'+i+'" title="Remove">&times;</button>'
+            /* Booking a call is one tap; unbooking it should not be. The X
+               arms, and only the second, differently-worded button removes it —
+               a meeting deleted by a mis-tap is a meeting he does not know he
+               has lost. */
+            +(MT_DEL===i
+              ? '<span class="mt-del"><em>Delete this meeting?</em>'
+                +'<button class="mt-dy" data-mtdelyes="'+i+'">Delete</button>'
+                +'<button class="mt-dn" data-mtdelno="1">Keep it</button></span>'
+              : '<button class="mt-x" data-mtdel="'+i+'" title="Remove this meeting">&times;</button>')
           +'</div>'
           +'<div class="mt-g">'
             +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(mm.phone||"")+'" placeholder="Phone">'
@@ -13974,82 +15126,7 @@ function dashView(){
     h+='</div>';
   })();
 
-  /* ============ 5. THE SLOWER STUFF ============ */
-  h+='<div class="sec"><div class="sec-h"><h2>Pipeline, Body, Money</h2>'
-    +'<span class="sec-s">the things that do not need watching every hour</span></div>';
-  h+='<div class="dsh-grid">';
-
-  /* pipeline bars */
-  (function(){
-    var sc2=stageCounts(), tot2=0, top2=0;
-    STATUSES.forEach(function(st){ tot2+=sc2[st]||0; top2=Math.max(top2,sc2[st]||0); });
-    h+='<div class="dp"><div class="dp-h"><div class="dp-t">Pipeline<em>'+tot2+' leads</em></div>'
-      +'<button class="dp-go" data-dgo="sales|1">Open</button></div><div class="dp-b">';
-    STATUSES.forEach(function(st){
-      var n=sc2[st]||0;
-      var pct=top2?Math.max(n?6:0, Math.round(n/top2*100)):0;
-      h+='<div class="dstg"><span class="nm">'+esc(st)+'</span>'
-        +'<span class="bar"><span style="width:'+pct+'%;background:'+scol(st).hex+'"></span></span>'
-        +'<span class="n">'+n+'</span></div>';
-    });
-    h+='</div></div>';
-  })();
-
-  /* fitness */
-  (function(){
-    var kcT=0, prT=0;
-    fdToday().forEach(function(mm){
-      kcT+=parseInt(mm.kcal,10)||0; prT+=parseInt(mm.p,10)||0; });
-    var gk=parseInt(LS("goal_kcal")||"2600",10);
-    var gp=parseInt(LS("goal_prot")||"180",10);
-    var mo=sessionsInMonth(new Date()), wkN=sessionsThisWeek();
-    var wt=latestWeight(), nt=nextTrainingDay();
-    h+='<div class="dp"><div class="dp-h"><div class="dp-t">Fitness<em>'
-      +MON[now.getMonth()]+'</em></div>'
-      +'<button class="dp-go" data-dgo="gym|0">Claude S.</button></div><div class="dp-b">'
-      +'<div class="dfacts">'
-      +'<div class="dfact'+(kcT>=gk?" g":kcT?" a":"")+'"><b>'+kcT.toLocaleString()+'</b>'
-        +'<i>kcal &middot; '+(kcT>=gk?"hit":Math.max(0,gk-kcT).toLocaleString()+" short")+'</i></div>'
-      +'<div class="dfact'+(prT>=gp?" g":prT?" a":"")+'"><b>'+prT+'g</b>'
-        +'<i>protein &middot; '+(prT>=gp?"good":Math.max(0,gp-prT)+"g short")+'</i></div>'
-      +'<div class="dfact'+(mo>=8?" g":"")+'"><b>'+mo+'</b><i>sessions this month</i></div>'
-      +'<div class="dfact'+(wkN>=3?" g":wkN?" a":"")+'"><b>'+wkN+'</b><i>trained this week</i></div>'
-      +'<div class="dfact b"><b>'+(wt?esc(wt.label):"&mdash;")+'</b>'
-        +'<i>'+(wt?"current weight":"no weigh-in")+'</i></div>'
-      +'<div class="dfact"><b>'+(nt?esc(nt.when):"&mdash;")+'</b><i>next training day</i></div>'
-      +'</div>'
-      +'<div class="dfood"><input id="dfd-in" placeholder="3 eggs, toast, coffee…" '
-      +'autocomplete="off"><button class="btn" id="dfd-go">Add</button></div>'
-      +'<div class="dfood-p" id="dfd-prev"></div>'
-      +'</div></div>';
-  })();
-
-  /* the safe */
-  h+='<div class="dp"><div class="dp-h"><div class="dp-t">Locked Information'
-    +'<em>the safe</em></div>'
-    +'<button class="dp-go" data-dgo="office|5">Open</button></div><div class="dp-b">';
-  if(!VAULT_OPEN){
-    h+='<div class="dlock"><p>The safe is locked. Open it to see the accounts and '
-      +'what goes out each month.</p>'
-      +'<button class="dt-tk" data-dgo="office|5">Open the safe</button></div>';
-  } else {
-    var accts=vxLoad("accounts");
-    var cash=accts.filter(function(a){return a.kind!=="credit";})
-      .reduce(function(t,a){return t+(parseFloat(a.balance)||0);},0);
-    var owed2=accts.filter(function(a){return a.kind==="credit";})
-      .reduce(function(t,a){return t+(parseFloat(a.balance)||0);},0);
-    var out2=monthlyOut();
-    h+='<div class="dfacts">'
-      +'<div class="dfact b"><b>'+money2(cash)+'</b><i>in the accounts</i></div>'
-      +'<div class="dfact'+(owed2>0?" r":"")+'"><b>'+money2(owed2)+'</b><i>on the cards</i></div>'
-      +'<div class="dfact a"><b>'+money2(out2)+'</b><i>out every month</i></div>'
-      +'<div class="dfact'+((cash-owed2-out2)<0?" r":" g")+'"><b>'+money2(cash-owed2-out2)+'</b>'
-      +'<i>left over</i></div></div>';
-  }
-  h+='</div></div>';
-
-  h+='</div></div>';   /* .dsh-grid .sec */
-
+  h+=smsCard();
   h+=operatorBar();
   return h;
 }
@@ -14087,16 +15164,23 @@ var DOCK=null;              /* which agent's dock is open, or null */
 var DOCK_MIN=false;
 
 function operatorBar(){
-  var h='<div class="opdock" id="opdock">';
+  var h='<div class="opdock" id="opdock">'
+   +'<div class="opdock-h"><b>Your Operators</b>'
+   +'<span>always on &middot; they can change things, not just advise</span>'
+   +'<button class="brf" id="op-brief" title="Hello, the weather, the news and '
+   +'today read back exactly as you typed it">Brief me</button></div>';
 
-  /* the open conversation, above the faces */
+  /* The faces come first now. When this was pinned to a corner the conversation
+     had to open upwards, above them; in the page it reads top to bottom. */
+  h+=opFaces();
+
   if(DOCK){
     var o=null;
     OPERATORS.forEach(function(x){ if(x.k===DOCK) o=x; });
     if(o){
       var n=NPC[o.npc];
       var log=dockLog(DOCK);
-      h+='<div class="dk" style="--oc:'+o.ac+'">'
+      h+='<div class="opchat" style="--oc:'+o.ac+'">'
         +'<div class="dk-h">'
           +'<span class="dk-f">'+(n?n.face():"")+'</span>'
           +'<span class="dk-who"><b>'+esc(o.nm)+'</b><i>'+esc(o.role)+'</i></span>'
@@ -14128,8 +15212,14 @@ function operatorBar(){
     }
   }
 
-  /* the faces themselves */
-  h+='<div class="opfaces">';
+  h+='</div>';
+  return h;
+}
+
+/* The three faces, split out so the bar can put them above the conversation
+   instead of below it. */
+function opFaces(){
+  var h='<div class="opfaces">';
   OPERATORS.forEach(function(o){
     var n=NPC[o.npc];
     h+='<button class="opf'+(DOCK===o.k?" on":"")+'" data-optalk="'+o.k+'" '
@@ -14139,8 +15229,7 @@ function operatorBar(){
       +'<span class="opf-nm">'+esc(o.nm)+'</span>'
       +'</button>';
   });
-  h+='</div></div>';
-  return h;
+  return h+'</div>';
 }
 
 /* One conversation per agent, shared with their room. */
@@ -14235,10 +15324,14 @@ function dashSheet(){
     +'</div></div>';
 }
 
+var NEWS_TRIED=false;
 function drawDash(){
   var host=document.getElementById("dash");
   if(!host) return;
-  try{ host.innerHTML=dashView()+dashSheet(); }
+  /* Once per session, once per day: he asked for it updated every day and the
+     honest way is to check when he arrives, not to promise a cron. */
+  if(!NEWS_TRIED){ NEWS_TRIED=true; setTimeout(function(){ try{ newsDaily(); }catch(e){} },900); }
+  try{ host.innerHTML=dashView()+dashSheet()+scriptSheet(); }
   catch(e){
     host.innerHTML='<div class="dp"><div class="dp-b"><div class="dp-none">'
       +'The dashboard hit a snag: '+esc((e&&e.message)||e)+'</div></div></div>';
@@ -14279,6 +15372,36 @@ function wireDash(){
     var m=DASH_MOD; DASH_MOD=null;
     if(m) dashToFloor(m.room,m.tab);
   };
+  var bf=document.getElementById("op-brief");
+  if(bf) bf.onclick=function(){ briefNow(); };
+  var nrf=document.getElementById("news-go");
+  if(nrf) nrf.onclick=newsRefresh;
+  var nts=document.querySelectorAll("[data-ntab]");
+  for(var t9=0;t9<nts.length;t9++) nts[t9].onclick=function(){
+    newsTab(this.getAttribute("data-ntab")); };
+
+  /* the call script */
+  var sco=document.getElementById("sc-open");
+  if(sco) sco.onclick=function(){ scriptOpen(true); };
+  var scx=document.getElementById("sc-x");
+  if(scx) scx.onclick=function(){ scriptOpen(false); };
+  var scp=document.getElementById("sc-prev");
+  if(scp) scp.onclick=function(){ scSet(Math.max(0, scStep()-1)); };
+  var scn=document.getElementById("sc-next");
+  if(scn) scn.onclick=function(){ scSet(Math.min(scFlat().length-1, scStep()+1)); };
+  var scd=document.querySelectorAll("[data-scgo]");
+  for(var s9=0;s9<scd.length;s9++) scd[s9].onclick=function(){
+    scSet(parseInt(this.getAttribute("data-scgo"),10)||0); };
+  var scw=document.getElementById("scwrap");
+  if(scw) scw.onclick=function(ev){ if(ev.target===scw) scriptOpen(false); };
+
+  var sgo=document.getElementById("sms-go");
+  if(sgo) sgo.onclick=smsSend;
+  var sxx=document.getElementById("sms-x");
+  if(sxx) sxx.onclick=smsDiscard;
+  var sbo=document.getElementById("sms-body");
+  if(sbo) sbo.oninput=function(){ if(SMS_DRAFT) SMS_DRAFT.body=this.value; };
+
   var dts=document.querySelectorAll("[data-dtab]");
   for(var q1=0;q1<dts.length;q1++) dts[q1].onclick=function(){
     dashTab(parseInt(this.getAttribute("data-dtab"),10)||0); };
@@ -14828,50 +15951,7 @@ function redraw(){
      whenever anything is saved — unless he is mid-sentence in it */
   if(VIEW==="home" && !dashBusy()) drawDash();
 }
-function wireIdeas(){
-  var af=document.querySelectorAll("[data-iaf]");
-  for(var a1=0;a1<af.length;a1++) af[a1].onclick=function(){
-    IDEA_FILTER=this.getAttribute("data-iaf"); redraw(); };
 
-  var hooks=document.querySelectorAll("textarea.i-hook");
-  for(var h1=0;h1<hooks.length;h1++) (function(el){
-    el.oninput=function(){
-      var a=ideaLoad(), i=parseInt(el.getAttribute("data-ih"),10);
-      if(!a[i]) return;
-      a[i].hook=el.value; ideaSave(a);
-      el.style.borderColor="var(--green)";
-      setTimeout(function(){ el.style.borderColor=""; },600);
-    };
-  })(hooks[h1]);
-
-  var sts=document.querySelectorAll("[data-ist]");
-  for(var s1=0;s1<sts.length;s1++) sts[s1].onclick=function(){
-    var a=ideaLoad(), i=parseInt(this.getAttribute("data-ist"),10);
-    if(!a[i]) return;
-    a[i].st=ideaNext(a[i].st||"idea");
-    if(a[i].st==="posted" && !a[i].on) a[i].on=dkey(new Date());
-    ideaSave(a); redraw(); };
-
-  var xs=document.querySelectorAll("[data-ix]");
-  for(var x1=0;x1<xs.length;x1++) xs[x1].onclick=function(){
-    var a=ideaLoad(), i=parseInt(this.getAttribute("data-ix"),10);
-    if(i<0||i>=a.length) return;
-    a.splice(i,1); ideaSave(a); redraw(); };
-
-  var ia=document.getElementById("idea-add");
-  if(ia) ia.onclick=function(){
-    var a=ideaLoad();
-    a.unshift({hook:"", angle:IDEA_FILTER==="all"?"":IDEA_FILTER, format:"", plat:"all",
-               why:"", st:"idea"});
-    ideaSave(a); redraw();
-    setTimeout(function(){
-      var f=document.querySelector('textarea.i-hook[data-ih="0"]'); if(f) f.focus();
-    },60);
-  };
-}
-
-/* The meeting rows appear in two places — the dashboard panel and the Calls
-   module — so their handlers live in one function that both call. */
 function wireMeetings(){
   var mf=document.querySelectorAll("[data-mtf]");
   for(var f1=0;f1<mf.length;f1++) (function(el){
@@ -14889,11 +15969,21 @@ function wireMeetings(){
     };
   })(mf[f1]);
 
+  /* first tap arms it */
   var mdel=document.querySelectorAll("[data-mtdel]");
   for(var d6=0;d6<mdel.length;d6++) mdel[d6].onclick=function(){
-    var a=mtLoad(), i=parseInt(this.getAttribute("data-mtdel"),10);
+    MT_DEL=parseInt(this.getAttribute("data-mtdel"),10);
+    redraw(); if(VIEW==="home") drawDash(); };
+  /* second tap, on a button that says the word, does it */
+  var mdy=document.querySelectorAll("[data-mtdelyes]");
+  for(var d7=0;d7<mdy.length;d7++) mdy[d7].onclick=function(){
+    var a=mtLoad(), i=parseInt(this.getAttribute("data-mtdelyes"),10);
+    MT_DEL=null;
     if(i<0||i>=a.length) return;
     a.splice(i,1); mtSave(a); redraw(); if(VIEW==="home") drawDash(); };
+  var mdn=document.querySelectorAll("[data-mtdelno]");
+  for(var d8=0;d8<mdn.length;d8++) mdn[d8].onclick=function(){
+    MT_DEL=null; redraw(); if(VIEW==="home") drawDash(); };
 
   var mdone=document.querySelectorAll("[data-mtdone]");
   for(var o2=0;o2<mdone.length;o2++) mdone[o2].onclick=function(){
@@ -14932,7 +16022,6 @@ function wireMeetings(){
 
 function wire(){
   labelCells();
-  wireIdeas();
   wireMeetings();
   wireStudents();
   wireFields();
@@ -15048,6 +16137,25 @@ function wire(){
     var cur=cameInRaw(nm);
     if(cur) lxPut(nm,"came", want==="month" ? cur.slice(0,7) : (cur.length===7?cur+"-01":cur));
     redraw();
+  };
+
+  /* ---- Call, Alt and Text, on the row ---- */
+  var rcs=document.querySelectorAll("[data-rcall]");
+  for(var r1=0;r1<rcs.length;r1++) rcs[r1].onclick=function(){
+    /* askCall() shows the exact E.164 number and waits for a yes. That
+       confirmation is not decoration and is never skipped. */
+    askCall(this.getAttribute("data-rcall"), this.getAttribute("data-rtel"));
+  };
+  var rts=document.querySelectorAll("[data-rtext]");
+  for(var r2=0;r2<rts.length;r2++) rts[r2].onclick=function(){
+    var nm=this.getAttribute("data-rtext");
+    var L=leadBy(nm);
+    var tel=L ? (cnGet(L.name).p || L.phone || "") : "";
+    if(!dialable(tel).ok) return;
+    smsDraft(L?L.name:nm, tel, "");
+    setTimeout(function(){
+      var b=document.getElementById("sms-body"); if(b) b.focus();
+    },120);
   };
 
   /* ---- folding the stage bands ----
@@ -15226,6 +16334,10 @@ function wire(){
       if(!nm){var e=document.getElementById("nl-name");if(e)e.focus();return;}
       mlAdd({name:nm,phone:v("nl-phone"),email:v("nl-email"),ig:v("nl-ig"),
              stage:v("nl-stage")||"New Lead",source:v("nl-source"),notes:v("nl-notes")});
+      /* the second number lives with the other contact overrides, which is
+         where altPhone() and the Alt button read it from */
+      var p2=v("nl-p2");
+      if(p2) cnPut(nm,"p2",p2);
       var base=STATE.leads.filter(function(x){return !x.manual;});
       STATE.leads=base.concat(mlLoad().map(mlToLead));
       refreshContacts();drawBuilding();
