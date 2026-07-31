@@ -123,8 +123,19 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
   color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
 .syncbar button:disabled{opacity:.6;cursor:default}
 
-/* ---- pipeline: stage bands ---- */
-.pgrp{display:flex;align-items:center;gap:9px;margin:18px 0 8px;padding:0 2px}
+/* ---- pipeline: stage bands, each one foldable ---- */
+.pgrp{display:flex;align-items:center;gap:9px;margin:18px 0 8px;padding:4px 2px;
+  width:100%;background:none;border:0;border-radius:7px;cursor:pointer;
+  font-family:inherit;text-align:left;transition:background .12s}
+.pgrp:hover{background:rgba(255,255,255,.035)}
+.pgrp:focus-visible{outline:2px solid var(--blu);outline-offset:2px}
+/* the chevron: points down when the band is open, right when it is shut */
+.pgrp-c{width:0;height:0;flex:none;margin-right:-2px;
+  border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:6px solid var(--gc);transition:transform .16s;transform-origin:50% 35%}
+.pgrp.shut .pgrp-c{transform:rotate(-90deg)}
+.pgrp.shut b{color:var(--mut)}
+.pgbody.shut{display:none}
 .pgrp:first-child{margin-top:4px}
 .pgrp-d{width:9px;height:9px;border-radius:50%;background:var(--gc);flex:none;
   box-shadow:0 0 0 3px color-mix(in srgb,var(--gc) 22%,transparent)}
@@ -2550,7 +2561,7 @@ textarea.dw-pi.big{min-height:92px}
   .dbtn{width:46px;height:46px;font-size:17px;margin:0}
   .con-g{grid-template-columns:repeat(3,1fr)}
   .con-n b{font-size:20px}
-  .pgrp{margin:16px 0 7px}
+  .pgrp{margin:16px 0 7px;padding:6px 2px}
   .micbar{left:8px;right:8px;transform:none;max-width:none;flex-wrap:wrap}
   .mb-w{flex:1 1 100%;order:3;max-height:60px}
   .dlr{flex-wrap:wrap;padding:13px}
@@ -2889,7 +2900,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-07-30-i">
+<body data-build="2026-07-30-j">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -2963,7 +2974,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-30-i</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-30-j</span></div>
 </div>
 
 <script>
@@ -3467,7 +3478,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-07-30-i";
+var BUILD="2026-07-30-j";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -11519,10 +11530,84 @@ function lsApply(){
     rows[i].style.display=hit?"":"none";
     if(hit) shown++;
   }
+  /* A folded band must never hide a search result — that is how you conclude a
+     lead does not exist and stop chasing them. While there is a query every band
+     is forced open; clearing the box puts them back the way he had them. */
+  var bs=document.querySelectorAll("[data-pgbody]");
+  for(var b1=0;b1<bs.length;b1++){
+    var lab=bs[b1].getAttribute("data-pgbody");
+    bs[b1].classList.toggle("shut", !q && pgIsShut(lab));
+  }
+  var hs=document.querySelectorAll("[data-pgrp]");
+  for(var h1=0;h1<hs.length;h1++){
+    var l2=hs[h1].getAttribute("data-pgrp");
+    hs[h1].classList.toggle("shut", !q && pgIsShut(l2));
+  }
+  try{ pgFoldLabel(); }catch(e){}
+
   var c=document.getElementById("lscount");
   if(c) c.textContent=q?(shown+" of "+rows.length):(rows.length+" leads");
   return shown;
 }
+/* ---- which stage bands are folded shut ----
+   Kept in localStorage rather than in a variable, because "I never want to see
+   Dead Leads" is a standing preference, not a thing to re-do every morning.
+   Keyed by the band's label, which is the stage name. */
+function pgShutLoad(){
+  try{ var o=JSON.parse(LS("pgrp_shut")||"{}"); return (o&&typeof o==="object")?o:{}; }
+  catch(e){ return {}; }
+}
+function pgShutSave(o){ try{ LS("pgrp_shut", JSON.stringify(o)); }catch(e){} }
+function pgIsShut(label){ return !!pgShutLoad()[label]; }
+function pgToggle(label){
+  var o=pgShutLoad();
+  if(o[label]) delete o[label]; else o[label]=1;
+  pgShutSave(o);
+  return !!o[label];
+}
+/* Fold or unfold everything on screen in one go. */
+function pgSetAll(shut){
+  var o=pgShutLoad();
+  var hs=document.querySelectorAll("[data-pgrp]");
+  for(var i=0;i<hs.length;i++){
+    var lab=hs[i].getAttribute("data-pgrp");
+    if(shut) o[lab]=1; else delete o[lab];
+    pgPaint(lab, shut);
+  }
+  pgShutSave(o);
+  pgFoldLabel();
+}
+/* Move the classes. No re-render — see the note at the top of this file. */
+function pgPaint(label, shut){
+  var hs=document.querySelectorAll('[data-pgrp="'+cssq(label)+'"]');
+  for(var i=0;i<hs.length;i++){
+    hs[i].classList.toggle("shut", shut);
+    hs[i].setAttribute("aria-expanded", shut?"false":"true");
+    hs[i].setAttribute("title", shut?"Show these":"Hide these");
+  }
+  var bs=document.querySelectorAll('[data-pgbody="'+cssq(label)+'"]');
+  for(var j=0;j<bs.length;j++) bs[j].classList.toggle("shut", shut);
+}
+/* Stage names are plain words today, but a label with a quote in it would break
+   the selector, so it gets escaped properly rather than hopefully. */
+function cssq(v){
+  return String(v).replace(/["\\]/g, "\\$&");
+}
+/* Are we mostly open or mostly shut? Drives the one button that does both. */
+function pgAllShut(){
+  var hs=document.querySelectorAll("[data-pgrp]");
+  if(!hs.length) return false;
+  for(var i=0;i<hs.length;i++) if(!hs[i].classList.contains("shut")) return false;
+  return true;
+}
+function pgFoldLabel(){
+  var b=document.getElementById("l-fold");
+  if(!b) return;
+  var shut=pgAllShut();
+  b.textContent = shut ? "Open all" : "Collapse all";
+  b.classList.toggle("on", shut);
+}
+
 function salesPipe(){
   if(OPENLEAD) return leadCard();
   if(STATE.err)return '<div class="alert"><b>Drive read failed.</b> '+esc(STATE.err)+'</div>';
@@ -11608,6 +11693,7 @@ function salesPipe(){
    +'<button class="sb-b'+(LGROUP?" on":"")+'" id="l-group">'
    +(LGROUP?"Grouped by stage":"Flat list")+'</button>'
    +(due?'<button class="sb-b due" id="l-due">'+due+' follow-up'+(due>1?"s":"")+' due</button>':'')
+   +'<button class="sb-b" id="l-fold">Collapse all</button>'
    +'<span class="sb-n">'+rows.length+' shown</span></div>';
 
   /* Grouped by stage, New Leads first, because a new lead going cold is the most
@@ -11631,8 +11717,16 @@ function salesPipe(){
 
   h+='<div class="scroll big">';
   groups.forEach(function(g){
-    h+='<div class="pgrp" style="--gc:'+g.hex+'">'
-      +'<span class="pgrp-d"></span><b>'+esc(g.label)+'</b><i>'+g.n+'</i></div>';
+    /* The band header is the control. A whole row of leads is a lot of screen,
+       and Dead Leads is a band he never needs open. */
+    var shut=pgIsShut(g.label);
+    h+='<button class="pgrp'+(shut?" shut":"")+'" data-pgrp="'+esc(g.label)+'" '
+      +'style="--gc:'+g.hex+'" aria-expanded="'+(shut?"false":"true")+'" '
+      +'title="'+(shut?"Show these":"Hide these")+'">'
+      +'<span class="pgrp-c"></span>'
+      +'<span class="pgrp-d"></span><b>'+esc(g.label)+'</b><i>'+g.n+'</i>'
+      +'</button>';
+    h+='<div class="pgbody'+(shut?" shut":"")+'" data-pgbody="'+esc(g.label)+'">';
     h+='<table><thead><tr>'
      +'<th style="width:30px" title="Priority">&#9679;</th>'
      +'<th>Name</th><th style="width:140px">Status</th>'
@@ -11685,7 +11779,7 @@ function salesPipe(){
      +'<td><textarea class="ntbox" data-n="'+esc(x.name)+'" rows="2" '
      +'placeholder="Notes — type anything">'+esc(x.notes||"")+'</textarea>'
      +(x.notesSet?'<div class="editedflag">edited</div>':'')+'</td></tr>';});
-    h+='</tbody></table>';
+    h+='</tbody></table></div>';
   });
   /* the original spreadsheet, one click away. This is the same sheet the app
      reads on every load, so it is the live source and not a copy. */
@@ -14955,6 +15049,19 @@ function wire(){
     if(cur) lxPut(nm,"came", want==="month" ? cur.slice(0,7) : (cur.length===7?cur+"-01":cur));
     redraw();
   };
+
+  /* ---- folding the stage bands ----
+     A click toggles two classes and saves the choice. Nothing re-renders, so
+     whatever is half-typed in a notes box three rows down survives. */
+  var pgh=document.querySelectorAll("[data-pgrp]");
+  for(var pg1=0;pg1<pgh.length;pg1++) pgh[pg1].onclick=function(){
+    var lab=this.getAttribute("data-pgrp");
+    pgPaint(lab, pgToggle(lab));
+    pgFoldLabel();
+  };
+  var fold=document.getElementById("l-fold");
+  if(fold) fold.onclick=function(){ pgSetAll(!pgAllShut()); };
+  try{ pgFoldLabel(); }catch(e){}
 
   /* the sort controls */
   var so=document.getElementById("l-sort");
