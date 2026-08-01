@@ -3224,7 +3224,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-07-31-e">
+<body data-build="2026-08-01-a">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3318,7 +3318,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-07-31-e</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-01-a</span></div>
 </div>
 
 <script>
@@ -3822,7 +3822,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-07-31-e";
+var BUILD="2026-08-01-a";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -10768,7 +10768,7 @@ function cryptoPull(){
    and she does not invent a headline. */
 
 var BRIEF=null, BRIEF_AT=0, BRIEF_BUSY=false;
-var BRIEF_TTL=900000;                    /* 15 minutes — nothing here moves faster */
+var BRIEF_TTL=900000;                    /* what counts as still-current */
 
 function briefFresh(){ return !!BRIEF && (Date.now()-BRIEF_AT) < BRIEF_TTL; }
 
@@ -10881,7 +10881,6 @@ var DESKS=[
   {k:"military", nm:"Military"},
   {k:"thailand", nm:"Thailand"},
   {k:"sport",    nm:"Sport"},
-  {k:"history",  nm:"History"},
   {k:"fitness",  nm:"Health"}
 ];
 var NEWSDESK=LS("newsdesk")||"all";
@@ -10969,6 +10968,16 @@ function newsList(){
   }).join("");
 }
 
+/* How old what he is looking at actually is. A count of stories says nothing
+   about whether they are current, which is the only thing he asked. */
+function newsAge(){
+  if(!briefFresh() || !BRIEF || BRIEF.offline) return "tap refresh";
+  var n2=(BRIEF.headlines||BRIEF.news||[]).length;
+  var mins=Math.floor((Date.now()-BRIEF_AT)/60000);
+  var when = mins<1 ? "just now" : mins===1 ? "1 min ago" : mins+" min ago";
+  return n2+" stories &middot; "+when;
+}
+
 function newsDeskTabs(){
   var counts=(briefFresh()&&BRIEF&&BRIEF.counts)||{};
   return '<div class="ndesks">'+DESKS.map(function(d){
@@ -11001,14 +11010,33 @@ function newsRefresh(){
     briefFetch(function(){ if(VIEW==="home") drawDash(); });
   });
 }
+/* Once a day was wrong. A news panel that is a day old is a newspaper, and he
+   noticed immediately. It pulls on arrival, and then every fifteen minutes for
+   as long as the page is open. The server caches for two minutes, so this costs
+   almost nothing and keeps the panel current. */
 function newsDaily(){
-  var last=LS("news_day")||"";
-  var today=dkey(new Date());
-  if(last===today && briefFresh()) return;
-  LS("news_day", today);
+  if(briefFresh()) return;
   geoAsk(function(){
     briefFetch(function(){ if(VIEW==="home") drawDash(); });
   });
+}
+var NEWS_TIMER=null;
+function newsAuto(){
+  if(NEWS_TIMER) return;
+  NEWS_TIMER=setInterval(function(){
+    /* Do not redraw over him mid-sentence, and do not fetch for a tab nobody
+       is looking at. */
+    if(document.hidden) return;
+    if(typeof dashBusy==="function" && dashBusy()) return;
+    BRIEF=null;
+    briefFetch(function(){ if(VIEW==="home" && !dashBusy()) drawDash(); });
+  }, 900000);
+  /* and catch up the moment he comes back to the tab */
+  try{
+    document.addEventListener("visibilitychange", function(){
+      if(!document.hidden && !briefFresh()) newsDaily();
+    });
+  }catch(e){}
 }
 
 /* Which parts he actually asked for. "Weather?" gets weather, not a monologue. */
@@ -15250,10 +15278,8 @@ function dashView(){
         +'<button class="ntab'+(NEWSTAB==="watch"?" on":"")+'" data-ntab="watch">Watch</button>'
       +'</span>'
       +(NEWSTAB==="news"
-        ? '<span class="tc-n" id="news-n">'
-          +(briefFresh()&&BRIEF&&BRIEF.headlines&&BRIEF.headlines.length
-             ? BRIEF.headlines.length+" stories" : "tap refresh")
-          +'</span><button class="tc-seed" id="news-go">Refresh</button>'
+        ? '<span class="tc-n" id="news-n">'+newsAge()+'</span>'
+          +'<button class="tc-seed" id="news-go">Refresh</button>'
         : '<span class="tc-n">TalentFLX</span>')
       +'</div>'
       +(NEWSTAB==="news"
@@ -15608,7 +15634,8 @@ function drawDash(){
   if(!host) return;
   /* Once per session, once per day: he asked for it updated every day and the
      honest way is to check when he arrives, not to promise a cron. */
-  if(!NEWS_TRIED){ NEWS_TRIED=true; setTimeout(function(){ try{ newsDaily(); }catch(e){} },900); }
+  if(!NEWS_TRIED){ NEWS_TRIED=true;
+    setTimeout(function(){ try{ newsDaily(); newsAuto(); }catch(e){} },900); }
   try{ host.innerHTML=dashView()+dashSheet()+scriptSheet(); }
   catch(e){
     host.innerHTML='<div class="dp"><div class="dp-b"><div class="dp-none">'
