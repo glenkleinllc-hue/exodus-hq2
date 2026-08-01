@@ -1785,66 +1785,55 @@ a.lnk:hover{color:#bfdbfe}
 .crmwrap .legend{opacity:.9}
 
 /* ================= THE SPORTS TICKER =================
-   One band under the banner: a label, then a rail of games that scrolls
-   sideways. Deliberately not an auto-scrolling marquee — a moving target you
-   have to time a click on is a decoration, not a scoreboard. */
+   A rail of small fixed-width cards. Fixed width matters: the cards no longer
+   stretch to fill the rail, which is what pulled their contents apart. */
 .sptick{display:none;min-width:0}
-/* nothing to show is a quiet panel, not a hole in the layout */
 .toprow .sptick:not(.on){display:flex;align-items:center;justify-content:center;
   border-radius:12px;background:rgba(255,255,255,.02);border:1px solid #1b232d}
 .toprow .sptick:not(.on):after{content:"No games right now";font-size:11px;color:#4a5462}
-.sptick.on{display:flex;align-items:stretch;gap:0;margin:0;min-width:0;
+.sptick.on{display:flex;align-items:stretch;margin:0;min-width:0;
   border-radius:12px;overflow:hidden;
   background:linear-gradient(120deg,#0c1219,#0f1620 60%,#0c1219);
   border:1px solid #1f2934}
-.sp-lbl{flex:none;display:flex;align-items:center;padding:0 13px;
-  font-size:8.5px;font-weight:800;letter-spacing:1.6px;color:#66748a;
+.sp-lbl{flex:none;display:flex;align-items:center;padding:0 12px;
+  font-size:8px;font-weight:800;letter-spacing:1.5px;color:#5b6478;
   background:rgba(255,255,255,.025);border-right:1px solid #1f2934}
-/* justify-content keeps a short rail from reading as a wide empty box with one
-   card floating in it — which is exactly what August looked like. */
-.sp-rail{flex:1;display:flex;gap:0;overflow-x:auto;scrollbar-width:thin;
-  justify-content:space-evenly;-webkit-overflow-scrolling:touch}
-/* once there is enough to scroll, pack them left again */
-.sp-rail:has(.sp-g:nth-child(5)){justify-content:flex-start}
+.sp-rail{flex:1;display:flex;overflow-x:auto;scrollbar-width:thin;min-width:0;
+  -webkit-overflow-scrolling:touch}
 .sp-rail::-webkit-scrollbar{height:4px}
 .sp-rail::-webkit-scrollbar-thumb{background:#2a3341;border-radius:3px}
-.sp-g{flex:none;display:flex;align-items:center;gap:9px;padding:9px 15px;
-  border-right:1px solid rgba(255,255,255,.05);text-decoration:none;color:inherit;
-  white-space:nowrap;transition:background .12s}
-a.sp-g:hover{background:rgba(255,255,255,.045)}
-.sp-lgue{font-size:8px;font-weight:800;letter-spacing:1.1px;color:#5b6478}
-.sp-t{display:flex;align-items:center;gap:5px}
-.sp-lg{position:relative;width:22px;height:22px;flex:none;border-radius:5px;
-  background:#39414f;display:flex;align-items:center;justify-content:center;
-  overflow:hidden}
-.sp-lg em{font-style:normal;font-size:7.5px;font-weight:800;color:#fff;
-  letter-spacing:-.2px}
-/* max-* as well as width/height. These are 500px source images; every headless
-   capture I took showed one painting at natural size for a frame, and a hard
-   ceiling costs nothing and removes the possibility entirely. */
-.sp-lg img{position:absolute;inset:0;width:22px;height:22px;
-  max-width:22px;max-height:22px;object-fit:contain;
-  opacity:0;transition:opacity .2s}
-/* only once it has actually loaded does the crest cover the badge */
-.sp-lg.has img{opacity:1}
-.sp-lg.has{background:transparent}
-.sp-lg.has em{opacity:0}
-.sp-t b{font-size:11px;font-weight:800;letter-spacing:.3px;color:#98a4b4}
-.sp-t i{font-style:normal;font-size:13.5px;font-weight:800;color:#dbe3ee;
-  font-variant-numeric:tabular-nums;margin-left:1px}
-.sp-t.win b{color:#dbe3ee}
-.sp-t.win i{color:#fff}
-.sp-v{font-size:9px;font-weight:700;color:#4a5462}
-.sp-st{font-size:8px;font-weight:800;letter-spacing:1px;color:#5b6478}
-.sp-live{font-size:8px;font-weight:800;letter-spacing:1px;color:#5ee3a4;
+
+/* Fixed width, so a card is a card whether the rail holds two or twelve. */
+.sp-g{flex:0 0 138px;display:flex;flex-direction:column;gap:3px;
+  padding:8px 12px;border-right:1px solid rgba(255,255,255,.055);
+  text-decoration:none;color:inherit;transition:background .12s}
+a.sp-g:hover{background:rgba(255,255,255,.05)}
+.sp-g.live{background:rgba(34,197,94,.06)}
+.sp-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;
+  margin-bottom:2px}
+.sp-hd em{font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:1.1px;
+  color:#5b6478}
+.sp-st{font-size:7.5px;font-weight:800;letter-spacing:.8px;color:#5b6478;
+  white-space:nowrap}
+.sp-live{font-size:7.5px;font-weight:800;letter-spacing:.9px;color:#5ee3a4;
   animation:spPulse 2s ease-in-out infinite}
 @keyframes spPulse{0%,100%{opacity:1}50%{opacity:.45}}
-.sp-g.live{background:rgba(34,197,94,.055)}
-.sp-g.done .sp-t i{color:#c3ccd9}
+
+/* One line per side: badge, abbreviation, score hard right. */
+.sp-r{display:flex;align-items:center;gap:7px}
+.sp-lg{flex:none;width:22px;height:17px;border-radius:4px;background:#39414f;
+  display:flex;align-items:center;justify-content:center;
+  font-size:7.5px;font-weight:800;letter-spacing:-.2px;color:#fff}
+.sp-r b{flex:1;min-width:0;font-size:11px;font-weight:700;color:#8d99a8;
+  letter-spacing:.2px}
+.sp-r i{flex:none;font-style:normal;font-size:13.5px;font-weight:800;color:#c3ccd9;
+  font-variant-numeric:tabular-nums;min-width:20px;text-align:right}
+.sp-r.sp-win b{color:#dbe3ee}
+.sp-r.sp-win i{color:#fff}
+
 @media (max-width:640px){
   .sp-lbl{display:none}
-  .sp-g{padding:9px 12px;gap:7px}
-  .sp-t i{font-size:14px}
+  .sp-g{flex:0 0 128px}
 }
 
 /* ================= THE DAY STRIP =================
@@ -1864,6 +1853,91 @@ a.sp-g:hover{background:rgba(255,255,255,.045)}
 
 /* the weather panel is taller now that it carries a strip */
 
+
+/* the exchange, inside the voice overlay */
+.jvpop-in{flex-direction:column;align-items:stretch;gap:0;width:min(520px,calc(100vw - 32px))}
+.jvpop-top{display:flex;align-items:center;gap:14px}
+.jv-say{display:flex;flex-direction:column;gap:7px;margin-top:12px;padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.08);max-height:190px;overflow-y:auto}
+.jv-me{align-self:flex-end;max-width:88%;padding:7px 11px;border-radius:11px;
+  background:rgba(75,123,212,.2);border:1px solid rgba(75,123,212,.34);
+  font-size:12.5px;line-height:1.45;color:#e9eff8}
+.jv-her{align-self:flex-start;max-width:92%;padding:7px 11px;border-radius:11px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
+  font-size:12.5px;line-height:1.5;color:#dbe3ee;white-space:pre-line}
+
+/* the playlist picker */
+.spot-picks{display:flex;flex-direction:column;gap:3px;margin-top:12px;
+  max-height:220px;overflow-y:auto;padding-top:11px;
+  border-top:1px solid rgba(255,255,255,.07)}
+.spot-p{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;
+  background:none;border:0;cursor:pointer;font-family:inherit;text-align:left;
+  transition:background .12s}
+.spot-p:hover{background:rgba(29,185,84,.14)}
+.spot-p img{width:30px;height:30px;border-radius:5px;object-fit:cover;flex:none}
+.spot-p-x{width:30px;height:30px;border-radius:5px;background:#0d1a12;flex:none}
+.spot-p b{flex:1;min-width:0;font-size:12.5px;font-weight:700;color:#dff0e6;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot-p i{font-style:normal;font-size:10px;color:#5f7a6a;flex:none}
+
+/* ================= SPOTIFY =================
+   A slim strip above the day, not a block in the middle of it. One line:
+   artwork, what is playing, transport, progress along the bottom. */
+#spotwrap:empty{display:none}
+.spotbar{display:flex;align-items:center;gap:11px;position:relative;
+  margin:0 0 12px;padding:9px 13px 11px;border-radius:12px;
+  background:linear-gradient(120deg,#0d1710,#0f1c14 60%,#0d1710);
+  border:1px solid #1d3325;overflow:hidden}
+.spotbar.playing{border-color:#1db95466}
+.sb-art{width:34px;height:34px;border-radius:6px;flex:none;object-fit:cover;
+  background:#08130c}
+.sb-art.none{display:flex;align-items:center;justify-content:center}
+.sb-t{flex:1;min-width:0}
+.sb-t b{display:block;font-size:12.5px;font-weight:800;color:#eaf5ee;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-t i{display:block;font-style:normal;font-size:10.5px;color:#6f8f7c;margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-ctl{flex:none;display:flex;align-items:center;gap:5px}
+.sb-b{width:28px;height:28px;border-radius:50%;cursor:pointer;font-family:inherit;
+  font-size:11px;background:rgba(255,255,255,.05);border:1px solid #234030;
+  color:#9dc4ad;display:flex;align-items:center;justify-content:center;transition:.12s}
+.sb-b:hover{background:rgba(29,185,84,.22);color:#fff;border-color:#1db954}
+.sb-b.on{background:rgba(29,185,84,.25);color:#1ed760;border-color:#1db954}
+.sb-b.play{width:34px;height:34px;font-size:13px;background:#1db954;
+  border-color:#1db954;color:#06140b}
+.sb-b.play:hover{background:#1ed760;color:#06140b}
+.sb-x{background:none;border:0;color:#33513f;font-size:16px;line-height:1;
+  cursor:pointer;padding:0 2px;margin-left:3px}
+.sb-x:hover{color:#f0b8b6}
+/* the progress line runs along the very bottom edge of the strip */
+.sb-bar{position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:rgba(255,255,255,.06)}
+.sb-bar i{display:block;height:2px;background:#1db954;transition:width 1s linear}
+.spot-msg.slim{margin:-6px 0 12px;font-size:11px;color:#f0b8b6}
+
+/* the one-time setup card, before he has connected */
+.spot{margin:0 0 12px;padding:14px 16px;border-radius:12px;
+  background:linear-gradient(150deg,#0f1a13,#0c1310);
+  border:1px solid #1e3325;border-left:3px solid #1db954}
+.spot-h{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.spot-h b{font-size:12.5px;font-weight:800;color:#d9eadf}
+.spot-h i{font-style:normal;font-size:10px;color:#5f7a6a}
+.spot-ic{flex:none;display:flex}
+.spot-steps{margin:0 0 13px;padding-left:20px}
+.spot-steps li{font-size:12px;line-height:1.65;color:#b9c9c0;margin-bottom:7px}
+.spot-steps a{color:#1ed760}
+.spot-steps code{display:inline-block;margin-top:3px;padding:3px 8px;border-radius:6px;
+  background:#08130c;border:1px solid #1e3325;font-size:11.5px;color:#8fe0ac;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.spot-in{display:flex;gap:8px}
+.spot-in input{flex:1;min-width:0;padding:9px 12px;border-radius:9px;background:#08130c;
+  border:1px solid #1e3325;color:#dff0e6;font-family:inherit;font-size:12.5px}
+.spot-in input:focus{outline:none;border-color:#1db954}
+.spot-go{flex:none;background:#1db954;border:0;border-radius:9px;padding:9px 20px;
+  color:#06140b;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.spot-go:hover{background:#1ed760}
+.spot-n{margin-top:10px;font-size:10.5px;line-height:1.5;color:#4f6659}
+.spot-msg{margin-top:9px;font-size:11.5px;color:#f0b8b6}
 
 /* the exchange, inside the voice overlay */
 .jvpop-in{flex-direction:column;align-items:stretch;gap:0;width:min(520px,calc(100vw - 32px))}
@@ -3468,7 +3542,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-01-e">
+<body data-build="2026-08-01-f">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3513,6 +3587,10 @@ textarea.dw-pi.big{min-height:92px}
       <div class="wxp" id="wxp"></div>
       <div class="sptick" id="sptick"></div>
     </div>
+
+    <!-- A slim strip, not a block. Once it is connected this is one line:
+         artwork, track, transport. -->
+    <div id="spotwrap"></div>
 
     <!-- The waveform, only while she is actually listening or talking. It is
          an overlay rather than a permanent bar, because a bar that is idle 99%
@@ -3572,7 +3650,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-01-e</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-01-f</span></div>
 </div>
 
 <script>
@@ -4087,7 +4165,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-01-e";
+var BUILD="2026-08-01-f";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -11574,35 +11652,29 @@ function spotCard(){
   var playing=SPOT_ST && !SPOT_ST.paused;
   var art=tr && tr.album && tr.album.images && tr.album.images.length
     ? tr.album.images[tr.album.images.length-1].url : "";
+  var pct=(tr && SPOT_ST && SPOT_ST.duration)
+    ? Math.round(SPOT_ST.position/SPOT_ST.duration*100) : 0;
 
-  var h='<div class="spot'+(playing?" playing":"")+'">'
-    +'<div class="spot-now">'
-      +(art?'<img class="spot-art" src="'+esc(art)+'" alt="">'
-           :'<span class="spot-art none">'+spotMark()+'</span>')
-      +'<div class="spot-t">'
-        +'<b>'+esc(tr?tr.name:(SPOT_READY?"Ready":"Starting…"))+'</b>'
-        +'<i>'+esc(tr?(tr.artists||[]).map(function(a){return a.name;}).join(", ")
-                     :(SPOT_MSG||"Hit play to start"))+'</i>'
-      +'</div>'
-      +'<button class="spot-x" id="spot-out" title="Disconnect Spotify">&times;</button>'
-    +'</div>';
-
-  if(tr && SPOT_ST){
-    var pct=SPOT_ST.duration ? Math.round(SPOT_ST.position/SPOT_ST.duration*100) : 0;
-    h+='<div class="spot-bar"><i style="width:'+pct+'%"></i></div>'
-      +'<div class="spot-time"><span>'+spotMs(SPOT_ST.position)+'</span>'
-      +'<span>'+spotMs(SPOT_ST.duration)+'</span></div>';
-  }
-
-  h+='<div class="spot-ctl">'
-    +'<button class="spot-b'+(SPOT_ST&&SPOT_ST.shuffle?" on":"")+'" id="spot-shuf" '
-      +'title="Shuffle">&#8646;</button>'
-    +'<button class="spot-b" id="spot-prev" title="Previous">&#9198;</button>'
-    +'<button class="spot-b big" id="spot-play" title="'+(playing?"Pause":"Play")+'">'
-      +(playing?"&#9208;":"&#9654;")+'</button>'
-    +'<button class="spot-b" id="spot-next" title="Next">&#9197;</button>'
-    +'<button class="spot-b'+(SPOT_PICK?" on":"")+'" id="spot-list" '
-      +'title="Pick a playlist">&#9776;</button>'
+  /* One line: art, what is playing, transport, progress underneath. It was a
+     block in the middle of the page and he was right that it dominated. */
+  var h='<div class="spotbar'+(playing?" playing":"")+'">'
+    +(art?'<img class="sb-art" src="'+esc(art)+'" alt="">'
+         :'<span class="sb-art none">'+spotMark()+'</span>')
+    +'<span class="sb-t"><b>'+esc(tr?tr.name:(SPOT_READY?"Ready — hit play":"Starting…"))+'</b>'
+    +'<i>'+esc(tr?(tr.artists||[]).map(function(a){return a.name;}).join(", ")
+                 :(SPOT_MSG||"Spotify"))+'</i></span>'
+    +'<span class="sb-ctl">'
+      +'<button class="sb-b'+(SPOT_ST&&SPOT_ST.shuffle?" on":"")+'" id="spot-shuf" '
+        +'title="Shuffle">&#8646;</button>'
+      +'<button class="sb-b" id="spot-prev" title="Previous">&#9198;</button>'
+      +'<button class="sb-b play" id="spot-play" title="'+(playing?"Pause":"Play")+'">'
+        +(playing?"&#9208;":"&#9654;")+'</button>'
+      +'<button class="sb-b" id="spot-next" title="Next">&#9197;</button>'
+      +'<button class="sb-b'+(SPOT_PICK?" on":"")+'" id="spot-list" '
+        +'title="Pick a playlist">&#9776;</button>'
+      +'<button class="sb-x" id="spot-out" title="Disconnect">&times;</button>'
+    +'</span>'
+    +'<span class="sb-bar"><i style="width:'+pct+'%"></i></span>'
     +'</div>';
 
   if(SPOT_PICK){
@@ -11618,14 +11690,9 @@ function spotCard(){
     });
     h+='</div>';
   }
-
-  if(!SPOT_READY)
-    h+='<div class="spot-n">Starting the player… if this stays put, check that '
-      +'nothing else is playing Spotify on another device.</div>';
-  if(SPOT_MSG) h+='<div class="spot-msg">'+esc(SPOT_MSG)+'</div>';
-  return h+'</div>';
+  if(SPOT_MSG) h+='<div class="spot-msg slim">'+esc(SPOT_MSG)+'</div>';
+  return h;
 }
-
 function spotMark(){
   return '<svg viewBox="0 0 16 16" width="17" height="17" aria-hidden="true">'
     +'<circle cx="8" cy="8" r="7.4" fill="#1db954"/>'
@@ -11645,6 +11712,9 @@ function spotPaint(){
   host.innerHTML=spotCard();
   spotWire();
 }
+/* It lives in the shell now rather than inside dashView, so it has to be
+   painted whenever the dashboard is. */
+function spotMount(){ try{ spotPaint(); }catch(e){} }
 function spotWire(){
   function on(id,fn){ var e=document.getElementById(id); if(e) e.onclick=fn; }
   on("spot-connect", function(){
@@ -11697,14 +11767,24 @@ setInterval(function(){
    PNG, and until it loaded the cell was blank. Blank cells look like a bug, and
    he was right to call it one. Now the worst case is three letters on the
    team's own colour — which is a scoreboard. */
+/* Text only. No remote images anywhere in this ticker.
+
+   Three passes were spent trying to make ESPN's crests behave, and his own
+   screenshot showed how that ended: crests floating away from their scores,
+   solid coloured squares where a badge should be, cards stretched apart. Every
+   one of those comes from laying out around 500px PNGs I do not control, which
+   arrive at different times over a connection I cannot see.
+
+   A three-letter badge on the team's own colour renders identically every time,
+   cannot half-load, and reads perfectly at this size. Always right beats
+   sometimes prettier. */
 function spLogo(t){
-  var ab=esc(String(t.team||"?").slice(0,3));
-  var bg=t.color ? ' style="background:'+esc(t.color)+'"' : '';
-  var img=t.logo
-    ? '<img src="'+esc(t.logo)+'" alt="" width="22" height="22" '
-      +'onload="this.parentNode.classList.add(\'has\')">'
-    : '';
-  return '<span class="sp-lg"'+bg+'><em>'+ab+'</em>'+img+'</span>';
+  var ab=String(t.team||"?").slice(0,3).toUpperCase();
+  var c=t.color||"";
+  /* ESPN gives some teams a colour so dark the letters vanish into it. */
+  var dark = c && parseInt(c.replace("#",""),16) < 0x333333;
+  var st = c ? ' style="background:'+esc(c)+(dark?';color:#dfe6f0':'')+'"' : '';
+  return '<span class="sp-lg"'+st+'>'+esc(ab)+'</span>';
 }
 /* A game only renders if it is actually a game: two sides, both with a real
    abbreviation. ESPN's MMA scoreboard returns fighters with none of that, and
@@ -11720,26 +11800,33 @@ function spOk(g){
 }
 
 function spGame(g){
-  var t=g.teams||[];
   if(!spOk(g)) return "";
+  var t=g.teams||[];
   var cls = g.live ? "sp-g live" : g.done ? "sp-g done" : "sp-g";
-  var state = g.live ? '<span class="sp-live">&#9679; LIVE</span>'
+  var state = g.live ? '<span class="sp-live">LIVE</span>'
             : g.done ? '<span class="sp-st">FINAL</span>'
             : '<span class="sp-st">'+esc(spWhen(g.detail))+'</span>';
+
+  /* One row per side, stacked. Two short rows read faster than one long one,
+     and it is how every scoreboard on television does it. */
   function side(x){
     var sc = (x.score===null||x.score===undefined||x.score==="") ? "" : x.score;
-    return '<span class="sp-t'+(x.winner?" win":"")+'">'+spLogo(x)
+    /* NOT "win" — that is the floating-window class in the building view, and
+       it drags anything wearing it out of the flow as a 300px absolute box.
+       Scoped names only inside this ticker. */
+    return '<span class="sp-r'+(x.winner?" sp-win":"")+'">'
+      +spLogo(x)
       +'<b>'+esc(x.team)+'</b>'
-      +(sc!==""&&(g.live||g.done)?'<i>'+esc(sc)+'</i>':'')+'</span>';
+      +'<i>'+esc((g.live||g.done)?sc:"")+'</i></span>';
   }
-  var body=side(t[0])+'<span class="sp-v">'+(g.live||g.done?"":"v")+'</span>'+side(t[1]);
-  var inner='<span class="sp-lgue">'+esc(g.league)+'</span>'+body+state;
+
+  var inner='<span class="sp-hd"><em>'+esc(g.league)+'</em>'+state+'</span>'
+    +side(t[0])+side(t[1]);
   return g.link
     ? '<a class="'+cls+'" href="'+esc(g.link)+'" target="_blank" rel="noopener noreferrer">'
       +inner+'</a>'
     : '<span class="'+cls+'">'+inner+'</span>';
 }
-
 /* "8/6 - 8:00 PM EDT" carries a real date. Read it, so a game in September can
    be told apart from one tonight. The year is not in the string, so it is
    assumed to be this one — and a month well behind us means next year. */
@@ -16672,9 +16759,7 @@ function dashView(){
 
     h+='</div>';   /* .todayrow */
 
-    /* Music sits with the day rather than at the foot of the page — it is one
-       of the first things he reaches for, not one of the last. */
-    h+='<div id="spotwrap">'+spotCard()+'</div>';
+
 
     /* the seven days */
     h+='<div class="dsh-week">';
@@ -16976,7 +17061,14 @@ function drawDash(){
   }
   document.body.classList.toggle("dsheeting", !!DASH_MOD);
   wireDash();
-  try{ wxPaint(); bannerPaint(); spPaint(); wireJarvis(); spotWire(); }catch(e){}
+  /* Separate try blocks on purpose. These shared one, and when spPaint() threw
+     it took the weather, the banner and the music down with it — three things
+     apparently broken, one actual bug. */
+  try{ wxPaint(); }catch(e){}
+  try{ bannerPaint(); }catch(e){}
+  try{ spPaint(); }catch(e){}
+  try{ wireJarvis(); }catch(e){}
+  try{ spotMount(); }catch(e){}
   /* Everything inside the sheet is a real room panel, so it needs the room's own
      handlers — the same wire() the floating windows use. */
   if(DASH_MOD){
