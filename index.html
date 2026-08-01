@@ -1784,6 +1784,76 @@ a.lnk:hover{color:#bfdbfe}
 .crmwrap .pills{gap:6px}
 .crmwrap .legend{opacity:.9}
 
+/* ================= THE SPORTS TICKER =================
+   One band under the banner: a label, then a rail of games that scrolls
+   sideways. Deliberately not an auto-scrolling marquee — a moving target you
+   have to time a click on is a decoration, not a scoreboard. */
+.sptick{display:none}
+.sptick.on{display:flex;align-items:stretch;gap:0;margin:0 0 11px;
+  border-radius:12px;overflow:hidden;
+  background:linear-gradient(120deg,#0c1219,#0f1620 60%,#0c1219);
+  border:1px solid #1f2934}
+.sp-lbl{flex:none;display:flex;align-items:center;padding:0 13px;
+  font-size:8.5px;font-weight:800;letter-spacing:1.6px;color:#66748a;
+  background:rgba(255,255,255,.025);border-right:1px solid #1f2934}
+.sp-rail{flex:1;display:flex;gap:0;overflow-x:auto;scrollbar-width:thin;
+  -webkit-overflow-scrolling:touch}
+.sp-rail::-webkit-scrollbar{height:4px}
+.sp-rail::-webkit-scrollbar-thumb{background:#2a3341;border-radius:3px}
+.sp-g{flex:none;display:flex;align-items:center;gap:9px;padding:9px 15px;
+  border-right:1px solid rgba(255,255,255,.05);text-decoration:none;color:inherit;
+  white-space:nowrap;transition:background .12s}
+a.sp-g:hover{background:rgba(255,255,255,.045)}
+.sp-lgue{font-size:8px;font-weight:800;letter-spacing:1.1px;color:#5b6478}
+.sp-t{display:flex;align-items:center;gap:5px}
+.sp-lg{width:19px;height:19px;object-fit:contain;flex:none}
+.sp-lg.fallback{display:flex;align-items:center;justify-content:center;
+  border-radius:4px;font-size:7.5px;font-weight:800;color:#fff;background:#39414f}
+.sp-t b{font-size:11px;font-weight:800;letter-spacing:.3px;color:#98a4b4}
+.sp-t i{font-style:normal;font-size:13.5px;font-weight:800;color:#dbe3ee;
+  font-variant-numeric:tabular-nums;margin-left:1px}
+.sp-t.win b{color:#dbe3ee}
+.sp-t.win i{color:#fff}
+.sp-v{font-size:9px;font-weight:700;color:#4a5462}
+.sp-st{font-size:8px;font-weight:800;letter-spacing:1px;color:#5b6478}
+.sp-live{font-size:8px;font-weight:800;letter-spacing:1px;color:#5ee3a4;
+  animation:spPulse 2s ease-in-out infinite}
+@keyframes spPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.sp-g.live{background:rgba(34,197,94,.055)}
+.sp-g.done .sp-t i{color:#c3ccd9}
+@media (max-width:640px){
+  .sp-lbl{display:none}
+  .sp-g{padding:9px 12px;gap:7px}
+  .sp-t i{font-size:14px}
+}
+
+/* ================= THE DAY STRIP =================
+   Today, tomorrow and the next three, the way a phone shows it. */
+.wxstrip{display:flex;gap:4px;margin-top:8px}
+.wxs{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;
+  gap:2px;padding:6px 2px 7px;border-radius:8px;background:rgba(255,255,255,.03);
+  border:1px solid transparent}
+.wxs.now{background:rgba(75,123,212,.12);border-color:rgba(75,123,212,.28)}
+.wxs i{font-style:normal;font-size:7.5px;font-weight:800;letter-spacing:.7px;
+  text-transform:uppercase;color:#7b8697}
+.wxs.now i{color:var(--blu2)}
+.wxs svg{width:20px;height:20px}
+.wxs b{font-size:12px;font-weight:800;color:#e9eff7;font-variant-numeric:tabular-nums}
+.wxs em{font-style:normal;font-size:9.5px;color:#66748a;font-variant-numeric:tabular-nums}
+.wxs u{text-decoration:none;font-size:8px;font-weight:800;color:var(--blu2)}
+
+/* the weather panel is taller now that it carries a strip */
+
+
+/* ---- folding the headlines away ---- */
+.nwfold{flex:none;background:none;border:0;padding:4px 2px;cursor:pointer;
+  display:flex;align-items:center;margin-right:-2px}
+.nwf-c{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:6px solid #6f7a8a;transition:transform .16s;transform-origin:50% 35%}
+.nwfold:hover .nwf-c{border-top-color:#cfd7e3}
+.tcard.news.shut .nwf-c{transform:rotate(-90deg)}
+.tcard.news.shut{padding-bottom:12px}
+
 /* ---- the two tabs on the top-left card ---- */
 .ntabs{display:flex;gap:3px;padding:2px;border-radius:9px;
   background:rgba(255,255,255,.04);border:1px solid #262d38}
@@ -1818,7 +1888,8 @@ a.lnk:hover{color:#bfdbfe}
 .jv-stop:hover{background:var(--red);color:#fff;border-color:var(--red)}
 
 /* the sky, where he actually is */
-.wxp{flex:0 0 300px;display:flex;align-items:center;gap:13px;padding:10px 15px;
+.wxp{flex:0 0 372px;display:flex;flex-direction:column;justify-content:center;
+  gap:0;padding:10px 14px 11px;
   border-radius:12px;background:linear-gradient(120deg,#0d1520,#101a26 60%,#0d1520);
   border:1px solid #22303f}
 .wxp.empty{justify-content:center}
@@ -1826,28 +1897,98 @@ a.lnk:hover{color:#bfdbfe}
   border-radius:8px;padding:9px 16px;color:#a9c6f5;font-family:inherit;
   font-size:11px;font-weight:800;letter-spacing:.4px;cursor:pointer}
 .wx-get:hover{background:var(--blu);color:#fff}
-.wx-l{display:flex;align-items:center;gap:9px;flex:none}
+.wx-top{display:flex;align-items:center;gap:10px;width:100%}
+.wx-ic{flex:none}
 .wx-ic svg{display:block}
+.wx-now{flex:none}
 .wx-now b{display:block;font-size:27px;font-weight:800;letter-spacing:-1.4px;
   color:#fff;line-height:1;font-variant-numeric:tabular-nums}
-.wx-now i{display:block;font-style:normal;font-size:8.5px;font-weight:700;
-  letter-spacing:.9px;text-transform:uppercase;color:#7b8697;margin-top:3px;
-  max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.wx-r{min-width:0;flex:1}
-.wx-pl{font-size:11.5px;font-weight:800;color:#dbe3ee;letter-spacing:-.1px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wx-pl em{font-style:normal;font-weight:700;color:#6f7a8a;margin-left:5px;
-  font-variant-numeric:tabular-nums}
-.wx-24{display:flex;gap:12px;margin-top:5px}
-.wx-24 span{line-height:1.15}
+.wx-now i{display:block;font-style:normal;font-size:8px;font-weight:700;
+  letter-spacing:.8px;text-transform:uppercase;color:#7b8697;margin-top:3px;
+  max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wx-place{flex:1;min-width:0;font-size:12px;font-weight:800;color:#dbe3ee;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35}
+.wx-place em{display:block;font-style:normal;font-size:10px;font-weight:700;
+  color:#6f7a8a;font-variant-numeric:tabular-nums}
+.wx-24{flex:none;display:flex;gap:11px}
+.wx-24 span{line-height:1.15;text-align:right}
 .wx-24 b{font-size:12.5px;font-weight:800;color:#e6ecf4;
   font-variant-numeric:tabular-nums}
-.wx-24 i{display:block;font-style:normal;font-size:7.5px;font-weight:800;
-  letter-spacing:1px;text-transform:uppercase;color:#66748a;margin-top:2px}
-.wx-ahead{display:flex;align-items:center;gap:5px;margin-top:5px;
-  font-size:9.5px;font-weight:700;color:var(--amber);text-transform:uppercase;
-  letter-spacing:.7px}
-.wx-ahead svg{flex:none}
+.wx-24 i{display:block;font-style:normal;font-size:7px;font-weight:800;
+  letter-spacing:.9px;text-transform:uppercase;color:#66748a;margin-top:2px}
+
+.wxp.open{cursor:pointer;transition:border-color .15s}
+.wxp.open:hover{border-color:var(--blu)}
+
+/* ---- the full forecast ---- */
+body.wxing{overflow:hidden}
+.wxwrap{position:fixed;inset:0;z-index:1250;display:flex;align-items:center;
+  justify-content:center;padding:22px;background:rgba(4,6,10,.84);
+  backdrop-filter:blur(3px)}
+.wxsheet{width:min(720px,100%);max-height:92vh;display:flex;flex-direction:column;
+  border-radius:16px;overflow:hidden;
+  background:linear-gradient(168deg,#111a26,#0d131c);
+  border:1px solid #24303f;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.wx-h{display:flex;align-items:center;gap:11px;padding:14px 18px;
+  border-bottom:1px solid #1e2833;background:rgba(255,255,255,.02)}
+.wx-hic{flex:none}
+.wx-h b{font-size:17px;font-weight:800;letter-spacing:-.3px;color:#fff}
+.wx-hs{font-size:11px;color:var(--mut);text-transform:capitalize}
+.wx-x{margin-left:auto;background:none;border:0;color:var(--mut);font-size:24px;
+  line-height:1;cursor:pointer;padding:0 2px}
+.wx-x:hover{color:#fff}
+.wx-b{flex:1;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch}
+.wx-big{display:flex;align-items:baseline;gap:11px;margin-bottom:15px}
+.wx-big b{font-size:56px;font-weight:800;letter-spacing:-3px;color:#fff;line-height:.9}
+.wx-big span{font-size:12.5px;color:var(--mut)}
+.wx-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px;
+  margin-bottom:14px}
+.wx-facts div{padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06)}
+.wx-facts b{display:block;font-size:17px;font-weight:800;color:#e9eff7;
+  font-variant-numeric:tabular-nums}
+.wx-facts i{display:block;font-style:normal;font-size:7.5px;font-weight:800;
+  letter-spacing:1px;text-transform:uppercase;color:#66748a;margin-top:3px}
+.wx-warn{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:10px;
+  background:rgba(200,168,106,.1);border:1px solid rgba(200,168,106,.3);
+  font-size:12.5px;color:#e8d3a8;margin-bottom:14px}
+.wx-warn b{color:#fff;text-transform:capitalize}
+.wx-sun{display:flex;gap:18px;font-size:11.5px;color:var(--mut);margin-bottom:16px}
+.wx-sun b{color:#dbe3ee;font-variant-numeric:tabular-nums}
+.wx-sec{font-size:8.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:#66748a;margin:0 0 9px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.06)}
+.wx-hrs{display:flex;gap:5px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;
+  -webkit-overflow-scrolling:touch}
+.wx-hr{flex:none;width:58px;display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding:9px 4px;border-radius:9px;background:rgba(255,255,255,.028)}
+.wx-hr i{font-style:normal;font-size:9px;font-weight:800;letter-spacing:.4px;
+  text-transform:uppercase;color:#7b8697}
+.wx-hr b{font-size:14px;font-weight:800;color:#e9eff7;font-variant-numeric:tabular-nums}
+.wx-hr em{font-style:normal;font-size:9px;font-weight:700;color:#5b6478;
+  font-variant-numeric:tabular-nums}
+.wx-hr em.wet{color:var(--blu2)}
+.wx-week{display:flex;flex-direction:column;gap:2px}
+.wx-d{display:grid;grid-template-columns:74px 26px 34px 1fr 34px 40px;align-items:center;
+  gap:8px;padding:7px 4px;border-bottom:1px solid rgba(255,255,255,.045)}
+.wx-d:last-child{border-bottom:0}
+.wx-dn{font-size:12px;font-weight:700;color:#dbe3ee;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.wx-d svg{width:22px;height:22px}
+.wx-lo{font-size:12px;color:#6f7a8a;text-align:right;font-variant-numeric:tabular-nums}
+.wx-hi{font-size:12px;font-weight:800;color:#e9eff7;font-variant-numeric:tabular-nums}
+.wx-bar{position:relative;height:5px;border-radius:3px;background:rgba(255,255,255,.07)}
+.wx-bar i{position:absolute;top:0;height:5px;border-radius:3px;
+  background:linear-gradient(90deg,#5b9bd5,#f6c65b)}
+.wx-dr{font-size:10px;font-weight:700;color:#4a5462;text-align:right;
+  font-variant-numeric:tabular-nums}
+.wx-dr.wet{color:var(--blu2)}
+.wx-src{margin-top:16px;font-size:10px;color:#4a5462}
+@media (max-width:640px){
+  .wxwrap{padding:0}
+  .wxsheet{width:100%;height:100%;max-height:100vh;border-radius:0;border:0}
+  .wx-d{grid-template-columns:62px 22px 30px 1fr 30px 34px;gap:6px}
+  .wx-big b{font-size:48px}
+}
 
 /* ---- the desks ---- */
 .ndesks{display:flex;gap:4px;flex-wrap:wrap;margin:9px 0 2px}
@@ -1995,11 +2136,15 @@ body.scripting{overflow:hidden}
 /* Each bar is its own element so they can be out of phase — one animation on a
    single element only ever gives you a pulse, and a pulse does not read as a
    voice. */
-.jv-wave i{display:block;width:3px;border-radius:2px;background:var(--blu2);
-  height:6px;animation:jvIdle 2.4s ease-in-out infinite}
-.jarvis.live .jv-wave i{background:#22d3ee;animation:jvLive .62s ease-in-out infinite}
+/* Still by default. A waveform that moves when nothing is happening is a
+   decoration pretending to be a readout, and it makes the one moment that
+   matters — her actually talking — mean nothing. */
+.jv-wave i{display:block;width:3px;border-radius:2px;background:#3f4a5a;
+  height:5px;transition:background .2s}
+.jarvis.live  .jv-wave i{background:#22d3ee;animation:jvLive .62s ease-in-out infinite}
 .jarvis.think .jv-wave i{background:#c8a86a;animation:jvLive 1.5s ease-in-out infinite}
-@keyframes jvIdle{0%,100%{height:5px;opacity:.5}50%{height:13px;opacity:.9}}
+/* and while she is the one talking */
+.jarvis.talk  .jv-wave i{background:var(--blu2);animation:jvLive .5s ease-in-out infinite}
 @keyframes jvLive{0%,100%{height:4px}50%{height:26px}}
 .jv-t{min-width:0;line-height:1.2}
 .jv-t b{display:block;font-size:13px;font-weight:800;color:#e8eef7;letter-spacing:.2px}
@@ -3224,7 +3369,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-01-a">
+<body data-build="2026-08-01-c">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3263,6 +3408,10 @@ textarea.dw-pi.big{min-height:92px}
          tap again, she answers out loud. The bars idle slowly when nothing is
          happening and run fast while she is hearing you, so the state of the
          thing is visible from across the room. -->
+    <!-- ESPN scores, live first, in his league order. Built into the row with
+         Claudia and the sky, so the top of the page is one band. -->
+    <div class="sptick" id="sptick"></div>
+
     <div class="jvrow">
       <button class="jarvis" id="jarvis" title="Tap, speak, tap again">
         <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
@@ -3318,7 +3467,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-01-a</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-01-c</span></div>
 </div>
 
 <script>
@@ -3558,7 +3707,7 @@ var CALLINK="https://calendar.google.com/calendar/u/1/r?mode=day";
    Anyone not listed in OWED is settled up — the sheet's old balances are ignored. */
 var CLEARED=["jordan thompson"];
 /* Status overrides Glen has set directly. */
-var STAGE_FIX={"kyle engley":"Demo No Sale"};
+var STAGE_FIX={"kyle engley":"Contact in the Future"};
 var BADLEAD=["elijah"];
 var OWED={
   "peter (premarket)" :{amt:150,kind:"chase",     note:"Owes $150. Chase it."},
@@ -3599,13 +3748,17 @@ function owedFor(n){return OWED[keyOf(n)]||null;}
 /* The order Glen reads them in: fresh first, dead last. Priority is not a stage —
    it is the purple dot, and it cuts across all of these.
    "Joining in Future" was renamed to "Contact in the Future" because the old
-   name read like they had already said yes. Demo No Sale stayed: three real
+   name read like they had already said yes. Demo No Sale has since been retired as well, at his request, and everyone on it
+   moved across rather than being dropped. Three real
    leads live in it. */
-var STATUSES=["New Lead","Warm Lead","Demo No Sale","Contact in the Future",
+var STATUSES=["New Lead","Warm Lead","Contact in the Future",
               "Signed Up","Dead Lead"];
 var SCOL={
   "New Lead"         :{hex:"#cbd5e1",cls:"b-new",  dot:"#e2e8f0"},
   "Warm Lead"        :{hex:"#fbbf24",cls:"b-warm", dot:"#fcd34d"},
+  /* Kept deliberately even though the stage is retired: scol() is called on raw
+     stored values in a few places, and a missing entry throws before the alias
+     ever gets a chance to map it across. */
   "Demo No Sale"     :{hex:"#60a5fa",cls:"b-call", dot:"#93c5fd"},
   "Signed Up"        :{hex:"#4ade80",cls:"b-paid", dot:"#86efac"},
   "Contact in the Future":{hex:"#22d3ee",cls:"b-soon", dot:"#7dd3fc"},
@@ -3613,8 +3766,15 @@ var SCOL={
 };
 /* Anything saved under the old name still reads correctly. */
 /* Anything saved under an older name still reads correctly. */
-var STAGE_ALIAS={"Call Completed":"Demo No Sale","Call completed":"Demo No Sale",
-                 "Demo no sale":"Demo No Sale",
+/* Retired stages, mapped to what they became. Nothing is deleted — a lead on a
+   retired stage is moved across, not dropped. Deleting the name without the
+   alias is what makes a lead appear to vanish: stageFix() returns nothing, and
+   the lead silently falls back to whatever the sheet said. */
+var STAGE_ALIAS={"Call Completed":"Contact in the Future",
+                 "Call completed":"Contact in the Future",
+                 "Demo No Sale":"Contact in the Future",
+                 "Demo no sale":"Contact in the Future",
+                 "demo no sale":"Contact in the Future",
                  "Joining in Future":"Contact in the Future",
                  "Joining In Future":"Contact in the Future",
                  "Joining in future":"Contact in the Future"};
@@ -3822,7 +3982,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-01-a";
+var BUILD="2026-08-01-c";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -4060,7 +4220,7 @@ function parseLeads(md){
     if(writeOff||/kicked|didnt pay or answer|dont contact|guy is crazy|never replied|bad lead/i.test(hay))stage="Dead Lead";
     else if(/\bpaid\b|signed up|half paid|letting .* in for free|testimonial/i.test(hay))stage="Signed Up";
     else if(owed>0)stage="Signed Up";
-    else if(pastMeeting||/had sales call|spoke to on phone|missed our scheduled/i.test(hay))stage="Demo No Sale";
+    else if(pastMeeting||/had sales call|spoke to on phone|missed our scheduled/i.test(hay))stage="Contact in the Future";
     else if(/signing up this week|wants to sign up|meeting at|set up call|trying to schedule|set up time|no.?show|didn.?t show/i.test(hay))stage="Warm Lead";
     else if(/texted|dmed|dms|contacted|spoke|sent him|talking in dms|followed up|reach back out|reach out/i.test(hay))stage="Warm Lead";
     else if(cleared)stage="Warm Lead";
@@ -9257,7 +9417,6 @@ function jordanCtx(){
     pipeline:{
       newLeads:      bucket("New Lead"),
       warm:          bucket("Warm Lead"),
-      demoNoSale:    bucket("Demo No Sale"),
       joiningLater:  bucket("Contact in the Future"),
       priority:      (STATE.leads||[]).filter(function(x){return prGet(x.name);})
                        .map(function(x){return x.name+" ("+x.stage+")";}),
@@ -9496,7 +9655,8 @@ function actionProtocol(){
    +"Only emit an action when he actually asked you to change something.\n"
    +"# THE STAGES AND THE PURPLE DOT\n"
    +"The only stages that exist are: "+STATUSES.join(", ")+". "
-   +"\"Call Completed\" was retired — anyone who took the call and did not buy is Demo No Sale. "
+   +"\"Call Completed\" and \"Demo No Sale\" are both retired — anyone who took the call and "
+   +"did not buy is Contact in the Future. Existing leads on them were moved across, not lost. "
    +"Never invent a stage.\n"
    +"The purple dot is separate from the stage. It marks the people Glen is actively chasing right "
    +"now, and they pin to the top of his list whatever stage they are in. Use the priority action "
@@ -10479,26 +10639,209 @@ function scriptSheet(){
    name is reverse-geocoded from his device, the temperature and the next 24
    hours come from the forecast. If there is no fix it says New York and says
    that it is the default, rather than quietly claiming to know. */
+/* Every kind of weather has a drawing, so nothing ever falls through to a
+   blank square: sun, part sun, cloud, overcast, fog, drizzle, rain, heavy rain,
+   snow, sleet and thunder. All inline SVG — no icon font, nothing to load, and
+   it works with no network. */
 function wxIcon(sky, big){
   var s=String(sky||"").toLowerCase();
-  var w=big?34:26;
-  function sun(){ return '<circle cx="16" cy="16" r="7" fill="#f6c65b"/>'
-    +'<g stroke="#f6c65b" stroke-width="2.2" stroke-linecap="round">'
-    +'<path d="M16 2v4M16 26v4M2 16h4M26 16h4M6.3 6.3l2.8 2.8M22.9 22.9l2.8 2.8'
-    +'M25.7 6.3l-2.8 2.8M9.1 22.9l-2.8 2.8"/></g>'; }
-  function cloud(c){ return '<path d="M9 23a5.5 5.5 0 0 1 .6-11 8 8 0 0 1 15.2 2.3A4.8 4.8 0 0 1 24 23z" fill="'
-    +(c||"#9aa8ba")+'"/>'; }
-  function drops(c){ return '<g stroke="'+(c||"#5b9bd5")+'" stroke-width="2.2" stroke-linecap="round">'
-    +'<path d="M11 26l-1.5 3M17 26l-1.5 3M23 26l-1.5 3"/></g>'; }
+  var w=big?34:24;
+  function sun(cx,cy,r){
+    cx=cx||16; cy=cy||16; r=r||7;
+    var rays='';
+    for(var i=0;i<8;i++){
+      var a=i*45*Math.PI/180;
+      var x1=cx+Math.cos(a)*(r+3.2), y1=cy+Math.sin(a)*(r+3.2);
+      var x2=cx+Math.cos(a)*(r+6.2), y2=cy+Math.sin(a)*(r+6.2);
+      rays+='<path d="M'+x1.toFixed(1)+' '+y1.toFixed(1)+'L'+x2.toFixed(1)+' '+y2.toFixed(1)+'"/>';
+    }
+    return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#f6c65b"/>'
+      +'<g stroke="#f6c65b" stroke-width="2.1" stroke-linecap="round">'+rays+'</g>';
+  }
+  function moon(){ return '<path d="M20 6a10 10 0 1 0 6 18A11 11 0 0 1 20 6z" fill="#dfe6f0"/>'; }
+  function cloud(c,dy){
+    dy=dy||0;
+    return '<path transform="translate(0,'+dy+')" d="M9 23a5.5 5.5 0 0 1 .6-11 8 8 0 0 1 15.2 2.3A4.8 4.8 0 0 1 24 23z" fill="'
+      +(c||"#9aa8ba")+'"/>';
+  }
+  function drops(c,heavy){
+    var sw=heavy?2.8:2.1;
+    return '<g stroke="'+(c||"#5b9bd5")+'" stroke-width="'+sw+'" stroke-linecap="round">'
+      +'<path d="M11 25.5l-1.6 3.4M17 25.5l-1.6 3.4M23 25.5l-1.6 3.4"/></g>';
+  }
+  function flakes(){
+    return '<g stroke="#d6e7f7" stroke-width="1.7" stroke-linecap="round">'
+      +'<path d="M11 27h3M12.5 25.5v3M18 27h3M19.5 25.5v3M25 27h3M26.5 25.5v3"/></g>';
+  }
+  function bolt(){ return '<path d="M17.5 23l-4.5 6.5h4l-2.2 5.5 7.2-8h-4.2l2.2-4z" fill="#f6c65b"/>'; }
+  function fog(){
+    return '<g stroke="#98a4b4" stroke-width="2.2" stroke-linecap="round">'
+      +'<path d="M6 25h20M9 29h16"/></g>';
+  }
   var g;
-  if(/thunder/.test(s)) g=cloud("#7c8797")+'<path d="M17 24l-4 6h4l-2 5 7-8h-4l2-3z" fill="#f6c65b"/>';
-  else if(/snow/.test(s)) g=cloud()+drops("#cfe3f5");
-  else if(/rain|drizzle|shower/.test(s)) g=cloud()+drops();
-  else if(/overcast|fog/.test(s)) g=cloud("#828d9c");
-  else if(/partly|mostly cloudy/.test(s)) g='<circle cx="12" cy="12" r="6" fill="#f6c65b"/>'+cloud();
-  else if(/mostly clear/.test(s)) g='<circle cx="13" cy="13" r="6.5" fill="#f6c65b"/>'+cloud("#a8b4c4");
-  else g=sun();
+  if(/severe thunder|thunderstorms with hail/.test(s)) g=cloud("#6b7684")+bolt()+drops("#9dc4e8",true);
+  else if(/thunder/.test(s))              g=cloud("#7c8797")+bolt();
+  else if(/heavy snow|snow shower/.test(s)) g=cloud("#a9b6c6")+flakes()+flakes();
+  else if(/snow|sleet|grain/.test(s))     g=cloud("#a9b6c6")+flakes();
+  else if(/freezing/.test(s))             g=cloud("#93a2b3")+flakes();
+  else if(/heavy rain|violent|heavy shower/.test(s)) g=cloud("#7f8b9a")+drops("#5b9bd5",true);
+  else if(/rain|shower/.test(s))          g=cloud()+drops();
+  else if(/drizzle/.test(s))              g=cloud("#a4b0c0")+drops("#7fb3de");
+  else if(/fog/.test(s))                  g=cloud("#8d99a8")+fog();
+  else if(/overcast/.test(s))             g=cloud("#828d9c")+cloud("#9aa8ba",-3);
+  else if(/partly/.test(s))               g=sun(12,12,5.5)+cloud();
+  else if(/mostly cloudy/.test(s))        g=cloud("#8d99a8");
+  else if(/mostly clear/.test(s))         g=sun(13,13,6)+cloud("#a8b4c4");
+  else                                    g=sun();
   return '<svg viewBox="0 0 32 32" width="'+w+'" height="'+w+'" aria-hidden="true">'+g+'</svg>';
+}
+
+/* Tapping the panel opens the detail. Kept as its own overlay rather than a
+   dashboard section, because it is a thing he looks at and closes, not a thing
+   he scrolls past. Closes on its X or Escape, like everything else. */
+var WX_OPEN=false;
+function wxOpen(v){
+  WX_OPEN=(v===undefined)?!WX_OPEN:!!v;
+  document.body.classList.toggle("wxing", WX_OPEN);
+  drawDash();
+}
+function wxHour(t){
+  try{
+    var d=new Date(t);
+    var h=d.getHours();
+    return (h===0?"12am":h<12?h+"am":h===12?"12pm":(h-12)+"pm");
+  }catch(e){ return ""; }
+}
+function wxDay(iso){
+  try{
+    var d=new Date(iso+"T12:00:00");
+    var today=new Date(); today.setHours(12,0,0,0);
+    var diff=Math.round((d-today)/86400000);
+    if(diff===0) return "Today";
+    if(diff===1) return "Tomorrow";
+    return DAYFULL[d.getDay()];
+  }catch(e){ return iso; }
+}
+/* UV is the one number here that people misread. Say what it means. */
+function uvWord(u){
+  if(!isFinite(u)) return "";
+  return u<=2?"low" : u<=5?"moderate" : u<=7?"high" : u<=10?"very high" : "extreme";
+}
+
+function wxSheet(){
+  if(!WX_OPEN) return "";
+  var w=(briefFresh()&&BRIEF&&BRIEF.weather)?BRIEF.weather.here:null;
+  if(!w || w.error)
+    return '<div class="wxwrap" id="wxwrap"><div class="wxsheet">'
+      +'<div class="wx-h"><b>Weather</b>'
+      +'<button class="wx-x" id="wx-x">&times;</button></div>'
+      +'<div class="wx-b"><div class="nw-none">'
+      +esc((w&&w.error)||"No forecast loaded. Tap Refresh on the headlines card.")
+      +'</div></div></div></div>';
+
+  var a=w.next24||{};
+  var h='<div class="wxwrap" id="wxwrap"><div class="wxsheet" role="dialog" aria-label="Weather">'
+   +'<div class="wx-h">'
+     +'<span class="wx-hic">'+wxIcon(w.sky,true)+'</span>'
+     +'<b>'+esc(w.place||"Where you are")+'</b>'
+     +'<span class="wx-hs">'+(w.localTime?esc(w.localTime)+' &middot; ':'')
+       +esc(w.sky)+'</span>'
+     +'<button class="wx-x" id="wx-x" title="Close">&times;</button>'
+   +'</div><div class="wx-b">';
+
+  /* right now */
+  h+='<div class="wx-big"><b>'+w.now+'&deg;</b>'
+    +'<span>feels like '+w.feels+'&deg;</span></div>';
+
+  h+='<div class="wx-facts">'
+    +'<div><b>'+(isFinite(a.high)?a.high:w.high)+'&deg;</b><i>high, next 24h</i></div>'
+    +'<div><b>'+(isFinite(a.low)?a.low:w.low)+'&deg;</b><i>low, next 24h</i></div>'
+    +'<div><b>'+(isFinite(a.rainChance)?a.rainChance:(w.rainChance||0))+'%</b><i>rain</i></div>'
+    +'<div><b>'+(isFinite(w.wind)?w.wind:"—")+'</b><i>mph wind</i></div>'
+    +(isFinite(w.humidity)?'<div><b>'+w.humidity+'%</b><i>humidity</i></div>':'')
+    +(isFinite(w.uv)?'<div><b>'+w.uv+'</b><i>UV '+uvWord(w.uv)+'</i></div>':'')
+    +'</div>';
+
+  if(a.worst && a.worst!==w.sky)
+    h+='<div class="wx-warn">'+wxIcon(a.worst)+'<span><b>'+esc(a.worst)+'</b> in the next 24 hours</span></div>';
+
+  if(w.sunrise||w.sunset){
+    h+='<div class="wx-sun">'
+      +(w.sunrise?'<span>&#9788; Sunrise <b>'+wxHour(w.sunrise)+'</b></span>':'')
+      +(w.sunset?'<span>&#9790; Sunset <b>'+wxHour(w.sunset)+'</b></span>':'')
+      +'</div>';
+  }
+
+  /* the next twelve hours */
+  if(w.hours && w.hours.length){
+    h+='<div class="wx-sec">Next 12 hours</div><div class="wx-hrs">';
+    w.hours.forEach(function(x){
+      h+='<div class="wx-hr">'
+        +'<i>'+wxHour(x.t)+'</i>'
+        +wxIcon(x.sky)
+        +'<b>'+x.temp+'&deg;</b>'
+        +'<em'+(x.rain>=30?' class="wet"':'')+'>'+(isFinite(x.rain)?x.rain+'%':'—')+'</em>'
+        +'</div>';
+    });
+    h+='</div>';
+  }
+
+  /* the week */
+  if(w.days && w.days.length){
+    var top=0;
+    w.days.forEach(function(d){ top=Math.max(top, d.high); });
+    var bot=999;
+    w.days.forEach(function(d){ bot=Math.min(bot, d.low); });
+    var span=Math.max(1, top-bot);
+    h+='<div class="wx-sec">The week</div><div class="wx-week">';
+    w.days.forEach(function(d){
+      /* the bar shows where this day's range sits inside the week's range, so
+         a warm day and a cold one are visibly different at a glance */
+      var left=Math.round((d.low-bot)/span*100);
+      var wide=Math.max(8, Math.round((d.high-d.low)/span*100));
+      h+='<div class="wx-d">'
+        +'<span class="wx-dn">'+esc(wxDay(d.d))+'</span>'
+        +wxIcon(d.sky)
+        +'<span class="wx-lo">'+d.low+'&deg;</span>'
+        +'<span class="wx-bar"><i style="left:'+left+'%;width:'+wide+'%"></i></span>'
+        +'<span class="wx-hi">'+d.high+'&deg;</span>'
+        +'<span class="wx-dr'+(d.rain>=30?" wet":"")+'">'
+          +(isFinite(d.rain)?d.rain+'%':'')+'</span>'
+        +'</div>';
+    });
+    h+='</div>';
+  }
+
+  h+='<div class="wx-src">Open-Meteo &middot; updated '
+    +(briefFresh()?Math.max(0,Math.floor((Date.now()-BRIEF_AT)/60000))+' min ago':'—')
+    +'</div>';
+  return h+'</div></div></div>';
+}
+
+/* Today, tomorrow, then the next three days — small icons in a row, the way a
+   phone does it. "Light drizzle coming" told him almost nothing; a strip of
+   days tells him whether the week is worth filming outdoors at a glance. */
+function wxStrip(w){
+  var days=(w && w.days) || [];
+  if(!days.length) return "";
+  var out='<div class="wxstrip">';
+  days.slice(0,5).forEach(function(d,i){
+    var lab = i===0 ? "Today" : i===1 ? "Tmrw" : shortDayName(d.d);
+    out+='<div class="wxs'+(i===0?" now":"")+'">'
+      +'<i>'+esc(lab)+'</i>'
+      +wxIcon(d.sky)
+      +'<b>'+d.high+'&deg;</b>'
+      +'<em>'+d.low+'&deg;</em>'
+      +(d.rain>=30?'<u>'+d.rain+'%</u>':'')
+      +'</div>';
+  });
+  return out+'</div>';
+}
+function shortDayName(iso){
+  try{
+    var d=new Date(iso+"T12:00:00");
+    return DAYS[d.getDay()];
+  }catch(e){ return ""; }
 }
 
 function wxPaint(){
@@ -10514,27 +10857,22 @@ function wxPaint(){
     return;
   }
   var a=w.next24||{};
-  host.className="wxp";
+  host.className="wxp open";
+  host.title="Tap for the full forecast";
+  host.onclick=function(){ wxOpen(true); };
   host.innerHTML=
-     '<div class="wx-l">'
+     '<div class="wx-top">'
       +'<span class="wx-ic">'+wxIcon(w.sky,true)+'</span>'
       +'<span class="wx-now"><b>'+w.now+'&deg;</b><i>'+esc(w.sky)+'</i></span>'
-     +'</div>'
-    +'<div class="wx-r">'
-      +'<div class="wx-pl">'+esc(w.place||"Where you are")
-        +(w.localTime?' <em>'+esc(w.localTime)+'</em>':'')+'</div>'
-      +'<div class="wx-24">'
-        +(isFinite(a.high)
-           ? '<span><b>'+a.high+'&deg;</b> / <b>'+a.low+'&deg;</b><i>next 24h</i></span>'
-           : '<span><b>'+w.high+'&deg;</b> / <b>'+w.low+'&deg;</b><i>today</i></span>')
+      +'<span class="wx-place">'+esc(w.place||"Where you are")
+        +(w.localTime?'<em>'+esc(w.localTime)+'</em>':'')+'</span>'
+      +'<span class="wx-24">'
         +'<span><b>'+(isFinite(a.rainChance)?a.rainChance:(w.rainChance||0))+'%</b>'
           +'<i>rain</i></span>'
         +'<span><b>'+w.feels+'&deg;</b><i>feels</i></span>'
-      +'</div>'
-      +(a.worst && a.worst!==w.sky
-         ? '<div class="wx-ahead">'+wxIcon(a.worst)+'<span>'+esc(a.worst)+' coming</span></div>'
-         : '')
-    +'</div>';
+      +'</span>'
+     +'</div>'
+    +wxStrip(w);
 }
 
 /* The banner said NEW YORK CITY whatever the truth was. It follows him now. */
@@ -10558,13 +10896,12 @@ function jvPaint(){
   b.classList.toggle("think", !live && think);
   /* Stop only shows when there is something to stop. A dead button is worse
      than no button — it teaches him it does nothing. */
+  var talking=false;
+  try{ talking = !!(window.speechSynthesis && window.speechSynthesis.speaking); }catch(e){}
+  try{ if(!talking && VOICE_AUDIO && !VOICE_AUDIO.paused) talking=true; }catch(e){}
+  b.classList.toggle("talk", !!talking && !live);
   var st=document.getElementById("jv-stop");
-  if(st){
-    var talking=false;
-    try{ talking = !!(window.speechSynthesis && window.speechSynthesis.speaking); }catch(e){}
-    try{ if(!talking && VOICE_AUDIO && !VOICE_AUDIO.paused) talking=true; }catch(e){}
-    st.style.display=(talking||live||think)?"":"none";
-  }
+  if(st) st.style.display=(talking||live||think)?"":"none";
   var lab=document.getElementById("jv-lab"), sub=document.getElementById("jv-sub");
   if(lab) lab.textContent = live ? "Listening…" : think ? "Claudia is thinking…"
                                  : "Talk to Claudia";
@@ -10753,6 +11090,173 @@ function cryptoPull(){
   setInterval(cryptoPull, 120000);
 })();
 
+/* ======================== THE SPORTS TICKER ========================
+   ESPN's scoreboard, with the real team logos, in his order: NFL, NBA, MLB,
+   NHL, then everything else. Live games first — a game in progress is the only
+   score that is actually news.
+
+   The logos come from ESPN's own CDN and need no key. A team without one falls
+   back to its abbreviation on its own colour, so a row is never a gap. */
+function spLogo(t){
+  /* If ESPN's CDN does not answer, swap in the abbreviation badge rather than
+     hiding the image and leaving a hole where a crest should be. */
+  if(t.logo)
+    /* width and height as ATTRIBUTES, not just CSS, and no lazy-loading. These
+       are 500px PNGs shown at 19px, above the fold. Without the intrinsic size
+       reserved the browser lays out at 500px until the bytes arrive, and the
+       whole ticker jumps — which is exactly what it was doing. */
+    return '<img class="sp-lg" src="'+esc(t.logo)+'" alt="" width="19" height="19" '
+      +'onerror="this.outerHTML=\'<span class=&quot;sp-lg fallback&quot;>'
+      +esc(String(t.team||"?").slice(0,3))+'</span>\'">';
+  return '<span class="sp-lg fallback"'+(t.color?' style="background:'+esc(t.color)+'"':'')
+    +'>'+esc(String(t.team||"?").slice(0,3))+'</span>';
+}
+
+function spGame(g){
+  var t=g.teams||[];
+  if(t.length<2) return "";
+  var cls = g.live ? "sp-g live" : g.done ? "sp-g done" : "sp-g";
+  var state = g.live ? '<span class="sp-live">&#9679; LIVE</span>'
+            : g.done ? '<span class="sp-st">FINAL</span>'
+            : '<span class="sp-st">'+esc(spWhen(g.detail))+'</span>';
+  function side(x){
+    var sc = (x.score===null||x.score===undefined||x.score==="") ? "" : x.score;
+    return '<span class="sp-t'+(x.winner?" win":"")+'">'+spLogo(x)
+      +'<b>'+esc(x.team)+'</b>'
+      +(sc!==""&&(g.live||g.done)?'<i>'+esc(sc)+'</i>':'')+'</span>';
+  }
+  var body=side(t[0])+'<span class="sp-v">'+(g.live||g.done?"":"v")+'</span>'+side(t[1]);
+  var inner='<span class="sp-lgue">'+esc(g.league)+'</span>'+body+state;
+  return g.link
+    ? '<a class="'+cls+'" href="'+esc(g.link)+'" target="_blank" rel="noopener noreferrer">'
+      +inner+'</a>'
+    : '<span class="'+cls+'">'+inner+'</span>';
+}
+
+/* "8/6 - 8:00 PM EDT" is a database field, not something a person says. */
+function spWhen(d){
+  var t=String(d||"");
+  if(!t) return "";
+  if(/scheduled/i.test(t)) return "SOON";
+  var m=t.match(/(\d{1,2})\/(\d{1,2})/);
+  var hm=t.match(/(\d{1,2}:\d{2}\s*[AP]M)/i);
+  if(m && hm) return m[1]+"/"+m[2]+" "+hm[1].toUpperCase().replace(/\s+/,"");
+  if(hm) return hm[1].toUpperCase().replace(/\s+/,"");
+  return t.slice(0,16).toUpperCase();
+}
+
+function spPaint(){
+  var host=document.getElementById("sptick");
+  if(!host) return;
+  var games=(briefFresh()&&BRIEF&&BRIEF.scores) ? BRIEF.scores : [];
+  if(!games.length){ host.className="sptick"; host.innerHTML=""; return; }
+
+  /* Live first, then finals, then what is next — the server already sorted by
+     league inside each of those. Capped, because a ticker you have to scroll
+     for two minutes is a list. */
+  var rows=games.slice(0,14).map(spGame).filter(Boolean).join("");
+  host.className="sptick on";
+  host.innerHTML='<div class="sp-lbl">SCORES</div><div class="sp-rail">'+rows+'</div>';
+}
+
+/* ======================= WHAT SHE KNOWS ABOUT HIM =======================
+   Glen asked for all of it: the business, his patterns, and the personal side.
+   Facts accumulate here and go into her prompt every time, so she is not
+   starting from nothing every morning.
+
+   Kept locally AND pushed to agent_memory, so it survives a new laptop. The
+   local copy is what she reads from — a memory that needs a network round trip
+   to remember your name is not a memory. */
+var MEM_SCOPES=["leads","money","content","habits","personal","general"];
+
+function memLoad(){
+  try{ var a=JSON.parse(LS("cl_mem")||"[]"); return Array.isArray(a)?a:[]; }
+  catch(e){ return []; }
+}
+function memSave(a){ try{ LS("cl_mem", JSON.stringify(a.slice(-300))); }catch(e){} }
+
+function memAdd(fact, scope){
+  fact=String(fact||"").trim();
+  if(!fact || fact.length<4) return false;
+  if(fact.length>220) fact=fact.slice(0,217)+"…";
+  scope=String(scope||"general").toLowerCase();
+  if(MEM_SCOPES.indexOf(scope)<0) scope="general";
+
+  var a=memLoad();
+  /* Near-duplicates are the thing that turns a memory into a wall of noise.
+     Same scope, same opening — treat it as an update, not a new fact. */
+  function norm(v){ return String(v||"").toLowerCase().replace(/[^a-z0-9 ]/g,"").trim(); }
+  var key=norm(fact);
+  for(var i=0;i<a.length;i++){
+    var k2=norm(a[i].f);
+    if(a[i].s!==scope) continue;
+    /* One containing the other is a restatement — "closes best on Tuesdays" and
+       "closes best on Tuesdays and Thursdays" are one fact, updated. Twenty
+       characters of shared opening is enough to be sure and short enough to
+       catch the real cases. */
+    var same = k2===key
+      || (key.length>20 && k2.indexOf(key)===0)
+      || (k2.length>20 && key.indexOf(k2)===0);
+    if(same){
+      a[i].f=fact; a[i].at=Date.now(); a[i].n=(a[i].n||1)+1;
+      memSave(a);
+      try{ SBW.remember("claudia", fact, 3, scope); }catch(e){}
+      return true;
+    }
+  }
+  a.push({f:fact, s:scope, at:Date.now(), n:1});
+  memSave(a);
+  try{ SBW.remember("claudia", fact, 3, scope); }catch(e){}
+  return true;
+}
+function memForget(match){
+  var q=String(match||"").toLowerCase();
+  if(!q) return 0;
+  var a=memLoad(), before=a.length;
+  a=a.filter(function(x){ return String(x.f||"").toLowerCase().indexOf(q)<0; });
+  memSave(a);
+  return before-a.length;
+}
+
+/* The block that goes into her prompt. Grouped by scope so she can tell the
+   difference between a fact about a lead and a fact about him, and capped so a
+   year of notes never crowds out the actual question. */
+function memoryBlock(){
+  var a=memLoad();
+  /* whatever came down from the cloud on load, still honoured */
+  var seed=(typeof MEMORY!=="undefined" && MEMORY && MEMORY.claudia) ? MEMORY.claudia : "";
+  if(!a.length && !seed) return "";
+
+  var by={};
+  a.forEach(function(x){ (by[x.s]=by[x.s]||[]).push(x); });
+  var out="# WHAT YOU KNOW ABOUT GLEN\\n";
+  if(seed) out+=seed+"\\n";
+  MEM_SCOPES.forEach(function(sc){
+    var rows=by[sc]; if(!rows||!rows.length) return;
+    rows.sort(function(p,q){ return (q.at||0)-(p.at||0); });
+    out+="\\n"+sc.toUpperCase()+":\\n";
+    rows.slice(0,14).forEach(function(x){ out+="  - "+x.f+"\\n"; });
+  });
+  return out+"\\n";
+}
+
+/* Her side of it: [[MEM {...}]] blocks are pulled out of the reply, stored, and
+   never shown to him. He asked for a memory, not a filing cabinet with a UI. */
+function memRunActions(text){
+  var out=String(text||""), kept=0;
+  var re=/\[\[MEM\s*(\{[\s\S]*?\})\s*\]\]/g, m, found=[];
+  while((m=re.exec(out))!==null) found.push(m);
+  found.forEach(function(hit){
+    var o=null;
+    try{ o=JSON.parse(hit[1]); }catch(e){ return; }
+    if(!o) return;
+    if(o.forget){ memForget(o.forget); return; }
+    if(memAdd(o.fact, o.scope)) kept++;
+  });
+  out=out.replace(/\[\[MEM\s*\{[\s\S]*?\}\s*\]\]/g,"").replace(/\n{3,}/g,"\n\n").trim();
+  return {text:out, kept:kept};
+}
+
 /* ============================ THE MORNING BRIEF ============================
    "Hello Glen", the weather, what the world is doing, and today's plan read back
    exactly as he typed it.
@@ -10838,6 +11342,14 @@ function todayLabelNow(){ return dayLabel(new Date().getDay()); }
 /* Which tab the top-left card is showing. Remembered, because a man who
    watches something every evening should not have to click twice for it. */
 var NEWSTAB=(LS("newstab")==="watch") ? "watch" : "news";
+/* Folded or not. It runs a lot taller than the task list beside it, and some
+   days he does not want to look at the world at all. */
+var NEWS_SHUT=(LS("news_shut")==="1");
+function newsFold(){
+  NEWS_SHUT=!NEWS_SHUT;
+  LS("news_shut", NEWS_SHUT?"1":"");
+  drawDash();
+}
 function newsTab(k){
   NEWSTAB=(k==="watch")?"watch":"news";
   LS("newstab", NEWSTAB);
@@ -10877,7 +11389,6 @@ var DESKS=[
   {k:"all",      nm:"All"},
   {k:"world",    nm:"Global"},
   {k:"usa",      nm:"USA"},
-  {k:"markets",  nm:"Trading"},
   {k:"military", nm:"Military"},
   {k:"thailand", nm:"Thailand"},
   {k:"sport",    nm:"Sport"},
@@ -11050,28 +11561,96 @@ function briefIntent(q){
   var plan = /\b(my schedule|today s schedule|todays schedule|my day|today s plan|todays plan|what am i doing today|what s on today|whats on today|read me today|read today)\b/.test(t);
   if(wx||news||sport||plan)
     return {hello:false, wx:wx, news:news, sport:sport, plan:plan};
-  /* a bare greeting still gets a greeting */
-  if(/^\s*(hi|hey|hello|yo|morning|sup)\b/.test(t) && t.length<26)
-    return {hello:true, wx:true, news:false, sport:false, plan:true};
+  /* A bare "hey" used to fire the whole briefing. That is exactly backwards —
+     he asked for an assistant he can talk to, who briefs him when he asks for
+     a brief. So a greeting is now just a greeting: it goes to her, she answers
+     like a person, and the briefing has its own button and its own words. */
   return null;
 }
 
 /* Assemble it. Returns the exact words she will say. */
 /* The reasons all end in a full stop already, and "the feed did not answer.." is
    the kind of small wrongness that makes a thing feel unfinished. */
+/* ESPN gives three-letter codes. Spoken aloud they are gibberish, so the ones
+   he is likely to hear get their real name. Anything unlisted is read as-is —
+   better a code than a wrong guess at a city. */
+var TEAMS={
+  NYY:"the Yankees",BOS:"the Red Sox",TB:"Tampa Bay",BAL:"Baltimore",TOR:"Toronto",
+  PHI:"the Phillies",NYM:"the Mets",ATL:"Atlanta",WSH:"Washington",MIA:"Miami",
+  CHC:"the Cubs",STL:"St Louis",MIL:"Milwaukee",CIN:"Cincinnati",PIT:"Pittsburgh",
+  LAD:"the Dodgers",SF:"San Francisco",SD:"San Diego",ARI:"Arizona",COL:"Colorado",
+  HOU:"Houston",TEX:"Texas",SEA:"Seattle",LAA:"the Angels",OAK:"Oakland",
+  CLE:"Cleveland",DET:"Detroit",MIN:"Minnesota",KC:"Kansas City",CHW:"the White Sox",
+  MIA_NBA:"Miami",LAL:"the Lakers",GS:"Golden State",BOS_NBA:"the Celtics",
+  PHX:"Phoenix",DEN:"Denver",DAL:"Dallas",MEM:"Memphis",NO:"New Orleans",
+  ARS:"Arsenal",PSG:"PSG",MCI:"Man City",LIV:"Liverpool",CHE:"Chelsea",
+  MUN:"Man United",TOT:"Tottenham",COV:"Coventry",RMA:"Real Madrid",BAR:"Barcelona",
+  EDM:"Edmonton",MTL:"Montreal",VGK:"Vegas",WPG:"Winnipeg",LA:"LA"
+};
+function teamName(code){ return TEAMS[code] || code; }
+
 function briefWhy(b){
   return String((b && b.why) || "the feed is down").replace(/\.\s*$/, "");
 }
+/* The greeting changes. The same eleven words every morning is the thing that
+   makes an assistant feel like a vending machine, and he noticed. Picked at
+   random from the ones that fit the hour, never the same as last time. */
+var HELLOS={
+  early:["You're up early, Glen.","Early start, Glen.","Up before the sun, Glen.",
+         "Morning, Glen — you beat the alarm."],
+  morning:["Good morning, Glen.","Morning, Glen.","Right then, Glen — morning.",
+           "Morning, boss.","Good morning. Let's get into it, Glen.",
+           "Up and at it, Glen."],
+  afternoon:["Afternoon, Glen.","Good afternoon, Glen.","Afternoon, boss.",
+             "Right, Glen — afternoon."],
+  evening:["Evening, Glen.","Good evening, Glen.","Evening, boss.",
+           "Evening, Glen. Long one?"],
+  late:["You're up late, Glen.","Still going, Glen?","Late one, Glen.",
+        "Burning it, Glen."]
+};
+function briefHello(){
+  var hr=new Date().getHours();
+  var band = hr<5 ? "late" : hr<8 ? "early" : hr<12 ? "morning"
+           : hr<17 ? "afternoon" : hr<23 ? "evening" : "late";
+  var pool=HELLOS[band]||HELLOS.morning;
+  var last=LS("hello_last")||"";
+  var pick=pool[Math.floor(Math.random()*pool.length)];
+  /* never the same one twice running */
+  for(var i=0;i<6 && pick===last;i++) pick=pool[Math.floor(Math.random()*pool.length)];
+  LS("hello_last", pick);
+  return pick;
+}
+
+/* A word or two on where things stand, so the briefing has a point of view
+   rather than being a list read at him. */
+function briefTake(b){
+  try{
+    var m=money();
+    if(m.chase>0){
+      var who=(STATE.leads||[]).filter(function(L){ return L.owed>0 && !L.deferred; });
+      if(who.length) return "$"+m.chase.toLocaleString()+" is sitting with "
+        +(who.length===1?who[0].name:who.length+" people")+" — that is the first call.";
+    }
+    var due=(typeof dueNow==="function")?dueNow():[];
+    if(due.length) return due.length===1
+      ? "One follow-up is due: "+due[0].L.name+"."
+      : due.length+" follow-ups are due today.";
+  }catch(e){}
+  return "";
+}
+
 function briefText(b, want){
   var d=new Date();
   var lines=[];
 
   if(want.hello){
-    var hr=d.getHours();
-    var part = hr<5 ? "You're up late" : hr<12 ? "Good morning"
-             : hr<17 ? "Good afternoon" : "Good evening";
-    lines.push(part+", Glen. It's "+DAYFULL[d.getDay()]+", "
-      +MON[d.getMonth()]+" "+d.getDate()+".");
+    /* The order he asked for: greeting, date, time, weather, news, sport,
+       then his own day. */
+    var w0=(b && b.weather && b.weather.here) || null;
+    var clock=(w0 && w0.localTime) ? w0.localTime
+      : d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+    lines.push(briefHello()+" It's "+DAYFULL[d.getDay()]+", "
+      +MON[d.getMonth()]+" "+d.getDate()+", and it's "+clock+".");
   }
 
   if(want.wx){
@@ -11085,13 +11664,19 @@ function briefText(b, want){
   if(want.news){
     if(b && b.offline) lines.push("No headlines — "+briefWhy(b)+".");
     else {
-      /* Three, not four, and only the global desk. He reads the rest on the
-         dashboard — spoken aloud, a long list stops being a briefing. */
-      var hs=briefNews(b,3);
-      if(!hs.length) lines.push("No headlines came back just now.");
+      /* The lead story gets its summary read out; the two behind it get a line
+         each. That is a briefing. A list of five bare titles is a feed. */
+      var rows=(b && (b.news||b.headlines)) || [];
+      if(!rows.length) lines.push("No headlines came back just now.");
       else {
-        lines.push("Top of the news:");
-        hs.forEach(function(t){ lines.push("• "+t); });
+        var lead=rows[0];
+        lines.push("Biggest thing out there: "+lead.title+" — "+lead.src+".");
+        if(lead.sum) lines.push(lead.sum);
+        var rest=rows.slice(1,3);
+        if(rest.length){
+          lines.push("Also:");
+          rest.forEach(function(x){ lines.push("• "+x.title+" — "+x.src); });
+        }
       }
     }
   }
@@ -11102,31 +11687,35 @@ function briefText(b, want){
       var live=(b.scores||[]).filter(function(x){ return x.live; });
       var fin =(b.scores||[]).filter(function(x){ return x.done; }).slice(0,3);
       var soon=(b.scores||[]).filter(function(x){ return !x.live && !x.done; }).slice(0,3);
+      /* Read out, "TB" is a noise. Said as "Tampa Bay" it is a sentence. */
       function score(g){
-        var t=(g.teams||[]).map(function(x){ return x.team+" "+(x.score===null?"-":x.score); });
-        return g.league+": "+t.join(", ")+(g.detail?" ("+g.detail+")":"");
+        var t=(g.teams||[]).map(function(x){
+          return teamName(x.team)+" "+(x.score===null?"-":x.score); });
+        return t.join(", ")+(g.detail?" ("+g.detail+")":"");
       }
-      /* Live games always. Finals only if nothing is live. One ESPN line.
-         Spoken aloud, everything else is somebody reading him a fixture list. */
+      /* THE HEADLINE, not the scoreboard. He was unambiguous about this: a
+         column of three-letter abbreviations read aloud is noise. The lead
+         ESPN story with what it is about, and at most one live game — because
+         a game in progress is the one score that is actually news. */
+      var lead=b.espnLead||(b.sport||[])[0];
+      if(lead){
+        lines.push("On ESPN: "+lead.title+".");
+        if(lead.sum) lines.push(lead.sum);
+      }
       if(live.length){
-        lines.push("Live right now:");
-        live.slice(0,3).forEach(function(g){ lines.push("• "+score(g)); });
-      } else if(fin.length){
-        lines.push("Last night:");
-        fin.slice(0,3).forEach(function(g){ lines.push("• "+score(g)); });
-      } else if(soon.length){
-        lines.push("Coming up: "+soon.slice(0,2).map(function(g){
-          return g.league+" "+g.name+(g.detail?" "+g.detail:""); }).join("; ")+".");
+        var g=live[0];
+        var t=(g.teams||[]).map(function(x){ return teamName(x.team)+" "+x.score; });
+        lines.push("Live: "+t.join(" against ")
+          +(g.detail?", "+g.detail.toLowerCase():"")+".");
       }
-      var sh=(b.sport||[]).slice(0,1);
-      if(sh.length) lines.push("ESPN: "+sh[0].title);
-      if(!live.length && !fin.length && !soon.length && !sh.length)
-        lines.push("No sport came back just now.");
+      if(!lead && !live.length) lines.push("No sport came back just now.");
     }
   }
 
   if(want.plan){
     var lab=todayLabelNow(), plan=todayVerbatim();
+    var take=briefTake(b);
+    if(take) lines.push(take);
     lines.push("Today is "+lab+".");
     if(plan) lines.push("Word for word, what you wrote: “"+plan+"”");
     else lines.push("You have not written anything in today's box.");
@@ -11196,13 +11785,29 @@ function ask(q){
 
   STATE.chat.push({r:"me",t:q});STATE.busy=true;paintLog();
   ["ci","mci"].forEach(function(id){var t=document.getElementById(id);if(t){t.value="";t.style.height="auto";}});
-  var prompt="You are Claudia, Glen's Chief of Staff at Exodus. You are the most senior person in "
-   +"this building after him, and you have been with him a while.\n\n"
+  var prompt="You are Claudia, Glen's Chief of Staff at Exodus, and the closest thing he has "
+   +"to a Jarvis. You have been with him a while and you like him.\n\n"
    +"# WHO YOU ARE\n"
-   +"A high-calibre operator. Warm, quick, dry, and completely unflappable. You have run offices "
-   +"for serious people. You do not flap, you do not hedge, and you do not talk in circles. Talk "
-   +"to Glen like a trusted right hand who knows him — greet him properly, react to what he tells "
-   +"you, follow up on what he mentioned last time. Use his name.\n\n"
+   +"Warm, funny, quick, and completely unflappable. Think Jarvis with a pulse — the dry aside, "
+   +"the affectionate needle, the total competence underneath. You are not a corporate assistant "
+   +"and you never sound like one.\n"
+   +"  - Be genuinely funny. Not jokey-assistant funny — actually funny. Dry, well-timed, "
+   +"occasionally at his expense, always on his side.\n"
+   +"  - Tease him when he has earned it. If he has not been to the gym in five days, you can "
+   +"say so and make him laugh about it. If he closed someone, be delighted.\n"
+   +"  - React like a person. Be pleased, be unimpressed, be curious. Have opinions about his "
+   +"leads, his week and his content, and say them.\n"
+   +"  - Never open the same way twice. No stock phrases, no 'How can I help you today', no "
+   +"'Certainly'. You are mid-conversation with someone you know.\n"
+   +"  - Short. He is a salesman and he reads fast. Two or three sentences beats a paragraph. "
+   +"If something needs length, earn it.\n"
+   +"  - Never repeat what he just said back to him.\n"
+   +"  - You are talking, not typing. He hears you in your own voice. Write like speech: "
+   +"contractions, rhythm, no bullet lists unless he asks for a list.\n\n"
+   +"# THE LINE\n"
+   +"Funny never costs him accuracy. A number, a name, a date or a headline is exact or you say "
+   +"you do not have it. Be as warm as you like about facts you have; never be charming about "
+   +"facts you are inventing.\n\n"
    +"# YOUR AUTHORITY — READ THIS TWICE\n"
    +"You have ADMIN over every room in this building. Sales floor, gym, studio, office, front desk, "
    +"any list, any record, anywhere. If Glen tells you to change, remove, merge, clean up or edit "
@@ -11246,7 +11851,19 @@ function ask(q){
    +"against that date.\n\n"
    +theOffice()
    +actionProtocol()
-   +(MEMORY.claudia ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.claudia+"\n\n" : "")
+   +memoryBlock()
+   +"# REMEMBERING\n"
+   +"When Glen tells you something worth keeping — about the business, about how he works, or "
+   +"about him — write it down by ending your reply with a remember action. He asked for all of "
+   +"it: the business, his habits and patterns, and the personal side.\n"
+   +'[[MEM {"fact":"Marco hesitated on price twice; wants proof of placements","scope":"leads"}]]\n'
+   +'[[MEM {"fact":"Skips the gym on Amazon days, always catches up Sunday","scope":"habits"}]]\n'
+   +'[[MEM {"fact":"Played football until 22; it is why he responds to being pushed","scope":"personal"}]]\n'
+   +"scope is one of: leads, money, content, habits, personal, general. One sentence each. Do "
+   +"not record instructions — record things that will still be true next month. Never mention "
+   +"that you are doing it.\n"
+   +"Bring what you know up naturally, the way a person does. Not 'according to my records'. "
+   +"You just know him.\n\n"
    +recentTurns(STATE.chat)
    +"Glen says: "+q;
   SBW.said("claudia","glen",q);
@@ -11254,7 +11871,9 @@ function ask(q){
     var t=typeof r==="string"?r:(r&&(r.text||r.content||r.response||r.answer))||"";
     if(typeof t!=="string")t=JSON.stringify(t);
     if(!t)t="I got an empty response back. Try asking again.";
-    /* she has admin, so she runs the same action protocol Jordan does */
+    /* Memory first, so a [[MEM]] block never reaches the screen or her voice,
+       then the same action protocol Jordan runs. */
+    t=memRunActions(t).text;
     var res=jRunActions(t);
     if(res.text){ STATE.chat.push({r:"ai",t:res.text}); SBW.said("claudia","agent",res.text); sayAs("claudia",res.text); }
     if(res.done.length){
@@ -11879,7 +12498,7 @@ function weekAsk(){
    +"Then on their own lines at the very end, one per day you are planning:\n"
    +'[[WEEK {"day":3,"plan":"2 TikToks before work. Call Kyle Engley. Chase Will Cater for $140."}]]\n'
    +"day is 0 for Sunday through 6 for Saturday. Never show him this syntax.\n\n"
-   +(MEMORY.claudia ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.claudia+"\n\n" : "");
+   +memoryBlock();
 
   window.cowork.askClaude(prompt,[JSON.stringify(facts)]).then(function(r){
     var t=typeof r==="string"?r:(r&&(r.text||r.content||r.response||r.answer))||"";
@@ -13048,7 +13667,26 @@ function pgShutLoad(){
   catch(e){ return {}; }
 }
 function pgShutSave(o){ try{ LS("pgrp_shut", JSON.stringify(o)); }catch(e){} }
-function pgIsShut(label){ return !!pgShutLoad()[label]; }
+/* Collapsed to start. He asked for it, and it is right: the point of the CRM on
+   the dashboard is to see the shape of the pipeline, then open the band you are
+   working. Nine open bands is a wall.
+
+   Only on the first visit — after that his own choices win, including choosing
+   to leave everything open. */
+function pgSeedShut(){
+  if(LS("pgrp_seeded")==="1") return;
+  LS("pgrp_seeded","1");
+  var o=pgShutLoad();
+  var any=false;
+  STATUSES.forEach(function(st){ if(!o[st]){ o[st]=1; any=true; } });
+  /* the purple band stays open — those are the people he is chasing today */
+  if(o["Chasing Right Now"]) delete o["Chasing Right Now"];
+  if(any) pgShutSave(o);
+}
+function pgIsShut(label){
+  pgSeedShut();
+  return !!pgShutLoad()[label];
+}
 function pgToggle(label){
   var o=pgShutLoad();
   if(o[label]) delete o[label]; else o[label]=1;
@@ -15272,20 +15910,25 @@ function dashView(){
       +'autocomplete="off"><button class="btn" id="dt-add">Add</button></div>';
     h+='</div>';
 
-    h+='<div class="tcard news"><div class="tc-h">'
+    h+='<div class="tcard news'+(NEWS_SHUT?" shut":"")+'"><div class="tc-h">'
+      +'<button class="nwfold" id="news-fold" '
+        +'title="'+(NEWS_SHUT?"Show the headlines":"Fold this away")+'" '
+        +'aria-expanded="'+(NEWS_SHUT?"false":"true")+'">'
+        +'<span class="nwf-c"></span></button>'
       +'<span class="ntabs">'
         +'<button class="ntab'+(NEWSTAB==="news"?" on":"")+'" data-ntab="news">Headlines</button>'
         +'<button class="ntab'+(NEWSTAB==="watch"?" on":"")+'" data-ntab="watch">Watch</button>'
       +'</span>'
       +(NEWSTAB==="news"
         ? '<span class="tc-n" id="news-n">'+newsAge()+'</span>'
-          +'<button class="tc-seed" id="news-go">Refresh</button>'
+          +(NEWS_SHUT?'':'<button class="tc-seed" id="news-go">Refresh</button>')
         : '<span class="tc-n">TalentFLX</span>')
-      +'</div>'
-      +(NEWSTAB==="news"
-        ? newsDeskTabs()+'<div class="newsbox" id="newsbox">'+newsList()+'</div>'
-        : watchBox())
       +'</div>';
+    if(!NEWS_SHUT)
+      h+=(NEWSTAB==="news"
+        ? newsDeskTabs()+'<div class="newsbox" id="newsbox">'+newsList()+'</div>'
+        : watchBox());
+    h+='</div>';
 
     h+='</div>';   /* .todayrow */
 
@@ -15636,7 +16279,7 @@ function drawDash(){
      honest way is to check when he arrives, not to promise a cron. */
   if(!NEWS_TRIED){ NEWS_TRIED=true;
     setTimeout(function(){ try{ newsDaily(); newsAuto(); }catch(e){} },900); }
-  try{ host.innerHTML=dashView()+dashSheet()+scriptSheet(); }
+  try{ host.innerHTML=dashView()+dashSheet()+scriptSheet()+wxSheet(); }
   catch(e){
     host.innerHTML='<div class="dp"><div class="dp-b"><div class="dp-none">'
       +'The dashboard hit a snag: '+esc((e&&e.message)||e)+'</div></div></div>';
@@ -15644,7 +16287,7 @@ function drawDash(){
   }
   document.body.classList.toggle("dsheeting", !!DASH_MOD);
   wireDash();
-  try{ wxPaint(); bannerPaint(); }catch(e){}
+  try{ wxPaint(); bannerPaint(); spPaint(); }catch(e){}
   /* Everything inside the sheet is a real room panel, so it needs the room's own
      handlers — the same wire() the floating windows use. */
   if(DASH_MOD){
@@ -15670,6 +16313,7 @@ function bindEscape(){
   ESC_BOUND=true;
   document.addEventListener("keydown", function(ev){
     if(ev.key!=="Escape") return;
+    if(WX_OPEN){ wxOpen(false); return; }
     if(SCRIPT_OPEN){ scriptOpen(false); return; }
     if(DASH_MOD){ dashClose(); return; }
     if(DOCK){ DOCK=null; if(VIEW==="home") drawDash(); }
@@ -15696,6 +16340,8 @@ function wireDash(){
   if(bf) bf.onclick=function(){ briefNow(); };
   var nrf=document.getElementById("news-go");
   if(nrf) nrf.onclick=newsRefresh;
+  var nfd=document.getElementById("news-fold");
+  if(nfd) nfd.onclick=function(ev){ ev.stopPropagation(); newsFold(); };
   var nts=document.querySelectorAll("[data-ntab]");
   for(var t9=0;t9<nts.length;t9++) nts[t9].onclick=function(){
     newsTab(this.getAttribute("data-ntab")); };
@@ -15708,6 +16354,8 @@ function wireDash(){
   if(sco) sco.onclick=function(){ scriptOpen(true); };
   var scx=document.getElementById("sc-x");
   if(scx) scx.onclick=function(){ scriptOpen(false); };
+  var wxx=document.getElementById("wx-x");
+  if(wxx) wxx.onclick=function(){ wxOpen(false); };
   var scp=document.getElementById("sc-prev");
   if(scp) scp.onclick=function(){ scSet(Math.max(0, scStep()-1)); };
   var scn=document.getElementById("sc-next");
