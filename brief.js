@@ -1,9 +1,8 @@
-
 /* ==========================================================================
    /api/brief  —  everything Claudia cannot know on her own
    --------------------------------------------------------------------------
    Weather where he is, and eight desks of headlines — world, USA, markets,
-   military, Thailand, sport, history and men's health — plus the two coins. Fetched server-side and handed to her as facts. She is told, in her
+   military, Thailand, sport and men's health — plus the two coins. Fetched server-side and handed to her as facts. She is told, in her
    own brief, never to state one of these that is not in here. An invented
    headline is worse than no headline.
 
@@ -171,12 +170,6 @@ const DESKS = {
     { src: "War on the Rocks", url: "https://warontherocks.com/feed/" },
     { src: "Breaking Defense", url: "https://breakingdefense.com/feed/" },
     { src: "Task & Purpose",   url: "https://taskandpurpose.com/feed/" }
-  ],
-  history: [
-    { src: "Smithsonian",     url: "https://www.smithsonianmag.com/rss/history/" },
-    { src: "History Today",   url: "https://www.historytoday.com/feed/rss.xml" },
-    { src: "Ancient Origins", url: "https://www.ancient-origins.net/rss.xml" },
-    { src: "Live Science",    url: "https://www.livescience.com/feeds/all" }
   ],
   sport: [
     { src: "ESPN",       url: "https://www.espn.com/espn/rss/news" },
@@ -393,8 +386,8 @@ export default async function handler(req, res) {
 
   /* Every desk at once. They run in parallel and each feed has its own 7s
      timeout, so a slow masthead costs nothing but its own slot. */
-  const CATS = ["world", "usa", "markets", "military", "thailand", "sport", "history", "fitness"];
-  const smaller = { history: 8, fitness: 8, thailand: 8, military: 8 };
+  const CATS = ["world", "usa", "markets", "military", "thailand", "sport", "fitness"];
+  const smaller = { fitness: 8, thailand: 8, military: 8 };
   const [wHere, sc, coins, ...desks] = await Promise.all([
     weatherAt(here),
     scores(),
@@ -423,6 +416,9 @@ export default async function handler(req, res) {
   if (!news.length) out.newsError = "No news feed answered just now.";
   if (!sport.length && !sc.length) out.sportError = "No sports feed answered just now.";
 
-  res.setHeader("Cache-Control", "public, s-maxage=240, stale-while-revalidate=900");
+  /* Two minutes. Long enough that a chatty morning is a handful of fetches,
+     short enough that "Refresh" during a breaking story actually brings
+     something new rather than the same cached page. */
+  res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=600");
   res.status(200).json(out);
 }
