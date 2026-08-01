@@ -1,8 +1,8 @@
 /* ==========================================================================
    /api/brief  —  everything Claudia cannot know on her own
    --------------------------------------------------------------------------
-   Weather where he is, and eight desks of headlines — world, USA, markets,
-   military, Thailand, sport and men's health — plus the two coins. Fetched server-side and handed to her as facts. She is told, in her
+   Weather where he is, and eight desks of headlines — world, USA, military,
+   Thailand, sport and men's health — plus the two coins. Fetched server-side and handed to her as facts. She is told, in her
    own brief, never to state one of these that is not in here. An invented
    headline is worse than no headline.
 
@@ -185,15 +185,6 @@ const DESKS = {
     { src: "CBC",        url: "https://www.cbc.ca/webfeed/rss/rss-world" },
     { src: "ToI",        url: "https://www.timesofisrael.com/feed/" }
   ],
-  markets: [
-    { src: "CNBC",       url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258" },
-    { src: "CNBC",       url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114" },
-    { src: "MarketWatch",url: "https://feeds.content.dowjones.io/public/rss/mw_topstories" },
-    { src: "Yahoo Fin",  url: "https://finance.yahoo.com/news/rssindex" },
-    { src: "Investing",  url: "https://www.investing.com/rss/news.rss" },
-    { src: "CoinDesk",   url: "https://www.coindesk.com/arc/outboundfeeds/rss/" },
-    { src: "Cointelegraph", url: "https://cointelegraph.com/rss" }
-  ],
   usa: [
     { src: "AP",      gn: 1, url: "https://news.google.com/rss/search?q=site:apnews.com+US+when:1d&hl=en-US&gl=US&ceid=US:en" },
     { src: "NPR",     url: "https://feeds.npr.org/1003/rss.xml" },
@@ -349,13 +340,16 @@ async function pullDesk(feeds, limit) {
 }
 
 /* ---------------- live scores ---------------- */
+/* His order, and the ticker keeps it: NFL, NBA, MLB, NHL, then the rest. */
 const LEAGUES = [
   { k: "NFL",  path: "football/nfl" },
   { k: "NBA",  path: "basketball/nba" },
   { k: "MLB",  path: "baseball/mlb" },
   { k: "NHL",  path: "hockey/nhl" },
+  { k: "NCAAF",path: "football/college-football" },
   { k: "EPL",  path: "soccer/eng.1" },
-  { k: "UCL",  path: "soccer/uefa.champions" }
+  { k: "UCL",  path: "soccer/uefa.champions" },
+  { k: "UFC",  path: "mma/ufc" }
 ];
 
 async function scores() {
@@ -379,15 +373,24 @@ async function scores() {
           done: st.completed === true,
           teams: (comp.competitors || []).map((c) => ({
             team: (c.team && (c.team.abbreviation || c.team.shortDisplayName)) || "?",
+            name: (c.team && (c.team.shortDisplayName || c.team.displayName)) || "",
+            /* ESPN serves these from its own CDN, no key, no referrer check */
+            logo: (c.team && c.team.logo) || "",
+            color: (c.team && c.team.color) ? "#" + c.team.color : "",
             score: c.score === undefined ? null : c.score,
-            home: c.homeAway === "home"
+            home: c.homeAway === "home",
+            winner: c.winner === true
           }))
         });
       });
     } catch { /* one league down does not take the section */ }
   }));
+  /* Live first, then finals, then fixtures — and inside each of those, his
+     league order. A live NHL game still beats an NFL fixture next Thursday. */
   const rank = (x) => x.live ? 0 : x.done ? 1 : 2;
-  out.sort((a, b) => rank(a) - rank(b));
+  const lg = (x) => { const i = LEAGUES.findIndex(l => l.k === x.league);
+                      return i < 0 ? 99 : i; };
+  out.sort((a, b) => (rank(a) - rank(b)) || (lg(a) - lg(b)));
   return out;
 }
 
@@ -449,7 +452,7 @@ export default async function handler(req, res) {
 
   /* Every desk at once. They run in parallel and each feed has its own 7s
      timeout, so a slow masthead costs nothing but its own slot. */
-  const CATS = ["world", "usa", "markets", "military", "thailand", "sport", "fitness"];
+  const CATS = ["world", "usa", "military", "thailand", "sport", "fitness"];
   const smaller = { fitness: 8, thailand: 8, military: 8 };
   const [wHere, sc, coins, ...desks] = await Promise.all([
     weatherAt(here),
