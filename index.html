@@ -1800,8 +1800,12 @@ a.lnk:hover{color:#bfdbfe}
 .sp-lbl{flex:none;display:flex;align-items:center;padding:0 13px;
   font-size:8.5px;font-weight:800;letter-spacing:1.6px;color:#66748a;
   background:rgba(255,255,255,.025);border-right:1px solid #1f2934}
+/* justify-content keeps a short rail from reading as a wide empty box with one
+   card floating in it — which is exactly what August looked like. */
 .sp-rail{flex:1;display:flex;gap:0;overflow-x:auto;scrollbar-width:thin;
-  -webkit-overflow-scrolling:touch}
+  justify-content:space-evenly;-webkit-overflow-scrolling:touch}
+/* once there is enough to scroll, pack them left again */
+.sp-rail:has(.sp-g:nth-child(5)){justify-content:flex-start}
 .sp-rail::-webkit-scrollbar{height:4px}
 .sp-rail::-webkit-scrollbar-thumb{background:#2a3341;border-radius:3px}
 .sp-g{flex:none;display:flex;align-items:center;gap:9px;padding:9px 15px;
@@ -1861,6 +1865,32 @@ a.sp-g:hover{background:rgba(255,255,255,.045)}
 /* the weather panel is taller now that it carries a strip */
 
 
+/* the exchange, inside the voice overlay */
+.jvpop-in{flex-direction:column;align-items:stretch;gap:0;width:min(520px,calc(100vw - 32px))}
+.jvpop-top{display:flex;align-items:center;gap:14px}
+.jv-say{display:flex;flex-direction:column;gap:7px;margin-top:12px;padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.08);max-height:190px;overflow-y:auto}
+.jv-me{align-self:flex-end;max-width:88%;padding:7px 11px;border-radius:11px;
+  background:rgba(75,123,212,.2);border:1px solid rgba(75,123,212,.34);
+  font-size:12.5px;line-height:1.45;color:#e9eff8}
+.jv-her{align-self:flex-start;max-width:92%;padding:7px 11px;border-radius:11px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
+  font-size:12.5px;line-height:1.5;color:#dbe3ee;white-space:pre-line}
+
+/* the playlist picker */
+.spot-picks{display:flex;flex-direction:column;gap:3px;margin-top:12px;
+  max-height:220px;overflow-y:auto;padding-top:11px;
+  border-top:1px solid rgba(255,255,255,.07)}
+.spot-p{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;
+  background:none;border:0;cursor:pointer;font-family:inherit;text-align:left;
+  transition:background .12s}
+.spot-p:hover{background:rgba(29,185,84,.14)}
+.spot-p img{width:30px;height:30px;border-radius:5px;object-fit:cover;flex:none}
+.spot-p-x{width:30px;height:30px;border-radius:5px;background:#0d1a12;flex:none}
+.spot-p b{flex:1;min-width:0;font-size:12.5px;font-weight:700;color:#dff0e6;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot-p i{font-style:normal;font-size:10px;color:#5f7a6a;flex:none}
+
 /* ================= SPOTIFY =================
    Sits beside the operators, because it belongs with the things that are
    always on rather than with the work. */
@@ -1916,6 +1946,16 @@ a.sp-g:hover{background:rgba(255,255,255,.045)}
 .spot-b.big{width:46px;height:46px;font-size:17px;background:#1db954;
   border-color:#1db954;color:#06140b}
 .spot-b.big:hover{background:#1ed760;color:#06140b}
+
+/* Tasks and meetings share the left column; the headlines are the right one.
+   align-items:start on the row, so a short left column does not stretch — but
+   the two cards inside it stack tight and close the gap that used to sit
+   beside the headlines. */
+.tcol{display:flex;flex-direction:column;gap:11px;min-width:0}
+.tcard.mt .tc-h{flex-wrap:wrap}
+.tcard.list.shut,.tcard.mt.shut,.tcard.news.shut{padding-bottom:13px}
+.tcard.list.shut .nwf-c,.tcard.mt.shut .nwf-c{transform:rotate(-90deg)}
+.tcard.mt .mts{margin-top:9px}
 
 /* ---- folding the headlines away ---- */
 .nwfold{flex:none;background:none;border:0;padding:4px 2px;cursor:pointer;
@@ -3428,7 +3468,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-01-d">
+<body data-build="2026-08-01-e">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3479,10 +3519,13 @@ textarea.dw-pi.big{min-height:92px}
          of the time is furniture. -->
     <div class="jvpop" id="jvpop" hidden>
       <div class="jvpop-in">
-        <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
-        <span class="jv-t"><b id="jv-lab">Listening…</b>
-          <i id="jv-sub">tap again when you are done</i></span>
-        <button class="jv-stop" id="jv-stop" title="Stop">Stop</button>
+        <div class="jvpop-top">
+          <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
+          <span class="jv-t"><b id="jv-lab">Listening…</b>
+            <i id="jv-sub">tap again when you are done</i></span>
+          <button class="jv-stop" id="jv-stop" title="Stop">Stop</button>
+        </div>
+        <div class="jv-say" id="jv-say" style="display:none"></div>
       </div>
     </div>
 
@@ -3529,7 +3572,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-01-d</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-01-e</span></div>
 </div>
 
 <script>
@@ -4044,7 +4087,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-01-d";
+var BUILD="2026-08-01-e";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -10977,6 +11020,27 @@ function jvPaint(){
     if(lab) lab.textContent = live ? "Listening…" : talking ? "Claudia" : "Thinking…";
     if(sub) sub.textContent = live ? "tap the button again when you are done"
           : talking ? "tap stop to cut her off" : "one moment";
+
+    /* What she heard, and what she said. The whole exchange in this one panel,
+       so there is never a second window open behind it. */
+    var log=document.getElementById("jv-say");
+    if(log){
+      var rows=(STATE&&STATE.chat)||[];
+      var mine="", hers="";
+      for(var i=rows.length-1;i>=0 && (!mine||!hers);i--){
+        var r=rows[i];
+        var body=(typeof r.t==="string") ? r.t
+               : Array.isArray(r.t) ? r.t.join(" \u00b7 ") : "";
+        if(!body) continue;
+        if(!hers && r.r==="ai") hers=body;
+        else if(!mine && r.r==="me") mine=body;
+      }
+      var h2="";
+      if(mine) h2+='<span class="jv-me">'+esc(mine)+'</span>';
+      if(hers && !live) h2+='<span class="jv-her">'+esc(hers)+'</span>';
+      log.innerHTML=h2;
+      log.style.display=h2?"":"none";
+    }
   }
 }
 function jvTap(){
@@ -11391,22 +11455,80 @@ function spotApi(path, method, body){
 }
 
 /* Move playback onto this tab and start the playlist. */
-var SPOT_PLAYLIST="37i9dQZF1CKP6BedYNZqyO";
-function spotPlayHere(){
-  if(!SPOT_DEV){ SPOT_MSG="The player is still starting."; drawDash(); return; }
-  spotApi("/me/player","PUT",{device_ids:[SPOT_DEV], play:false})
-    .then(function(){
-      return spotApi("/me/player/play?device_id="+encodeURIComponent(SPOT_DEV),"PUT",
-        {context_uri:"spotify:playlist:"+SPOT_PLAYLIST});
-    })
-    .catch(function(e){
-      /* An empty playlist or a region block is a real answer, not a crash. */
-      SPOT_MSG=String(e.message||e); if(VIEW==="home") drawDash();
-    });
+/* His last choice, or the one he originally gave me. That original is one of
+   Spotify's algorithmic playlists, which the API will not start — so the picker
+   exists and this is only a starting point. */
+var SPOT_PLAYLIST=(LS("spot_list")||"37i9dQZF1CKP6BedYNZqyO");
+/* THE MISSING PIECE.
+
+   The SDK will not emit audio until activateElement() has run inside a genuine
+   user gesture. Connecting is not enough — the browser needs a tap it can
+   attribute the sound to. Every control calls this first, and it is a no-op
+   after the first time.
+
+   This is why it connected and then sat there silent. */
+var SPOT_ACTIVE=false;
+function spotActivate(){
+  if(SPOT_ACTIVE || !SPOT) return Promise.resolve();
+  SPOT_ACTIVE=true;
+  try{
+    var r=SPOT.activateElement && SPOT.activateElement();
+    return (r && r.then) ? r.catch(function(){}) : Promise.resolve();
+  }catch(e){ return Promise.resolve(); }
 }
-function spotToggle(){ if(SPOT) SPOT.togglePlay().catch(function(){}); }
-function spotNext(){ if(SPOT) SPOT.nextTrack().catch(function(){}); }
-function spotPrev(){ if(SPOT) SPOT.previousTrack().catch(function(){}); }
+
+function spotPlayHere(uri){
+  if(!SPOT_DEV){ SPOT_MSG="The player is still starting — give it a second."; drawDash(); return; }
+  var ctx = uri || (SPOT_PLAYLIST ? "spotify:playlist:"+SPOT_PLAYLIST : "");
+  SPOT_MSG="";
+  spotActivate().then(function(){
+    return spotApi("/me/player","PUT",{device_ids:[SPOT_DEV], play:false});
+  }).then(function(){
+    var body = ctx ? {context_uri:ctx} : undefined;
+    return spotApi("/me/player/play?device_id="+encodeURIComponent(SPOT_DEV),"PUT",body);
+  }).catch(function(e){
+    /* Spotify's own words, not a shrug. The one he will hit most is a
+       Spotify-owned algorithmic playlist, which cannot be started this way —
+       so say that, and point him at his own. */
+    var m=String(e.message||e);
+    if(/not found|restricted|invalid/i.test(m))
+      m="Spotify would not start that playlist. Their own algorithmic playlists "
+       +"cannot be played through the API — pick one of yours below.";
+    SPOT_MSG=m;
+    if(VIEW==="home") drawDash();
+  });
+}
+
+/* His own playlists, so he is not stuck on one hard-coded id. */
+var SPOT_LISTS=null;
+function spotLoadLists(){
+  if(SPOT_LISTS) return;
+  SPOT_LISTS=[];
+  spotApi("/me/playlists?limit=30").then(function(j){
+    SPOT_LISTS=((j&&j.items)||[]).map(function(p){
+      return {id:p.id, uri:p.uri, name:p.name,
+              art:(p.images&&p.images.length)?p.images[p.images.length-1].url:"",
+              n:(p.tracks&&p.tracks.total)||0};
+    });
+    if(VIEW==="home") spotPaint();
+  }).catch(function(){ SPOT_LISTS=[]; });
+}
+function spotPick(uri, id, name){
+  SPOT_PLAYLIST=id||"";
+  LS("spot_list", id||""); LS("spot_list_nm", name||"");
+  SPOT_PICK=false;
+  spotPlayHere(uri);
+}
+var SPOT_PICK=false;
+/* Every control activates first — the browser needs the gesture attributed to
+   it, and after the first time it costs nothing. */
+function spotToggle(){
+  if(!SPOT) return;
+  spotActivate().then(function(){ return SPOT.togglePlay(); })
+    .catch(function(e){ SPOT_MSG=String(e.message||e); if(VIEW==="home") spotPaint(); });
+}
+function spotNext(){ if(SPOT) spotActivate().then(function(){ return SPOT.nextTrack(); }).catch(function(){}); }
+function spotPrev(){ if(SPOT) spotActivate().then(function(){ return SPOT.previousTrack(); }).catch(function(){}); }
 function spotShuffle(){
   var on=!(SPOT_ST && SPOT_ST.shuffle);
   spotApi("/me/player/shuffle?state="+(on?"true":"false")
@@ -11479,8 +11601,27 @@ function spotCard(){
     +'<button class="spot-b big" id="spot-play" title="'+(playing?"Pause":"Play")+'">'
       +(playing?"&#9208;":"&#9654;")+'</button>'
     +'<button class="spot-b" id="spot-next" title="Next">&#9197;</button>'
-    +'<button class="spot-b" id="spot-here" title="Play my playlist here">&#9835;</button>'
+    +'<button class="spot-b'+(SPOT_PICK?" on":"")+'" id="spot-list" '
+      +'title="Pick a playlist">&#9776;</button>'
     +'</div>';
+
+  if(SPOT_PICK){
+    h+='<div class="spot-picks">';
+    if(SPOT_LISTS===null || !SPOT_LISTS.length)
+      h+='<div class="spot-n">'+(SPOT_LISTS===null?"Loading your playlists…"
+        :"No playlists came back from Spotify.")+'</div>';
+    else SPOT_LISTS.forEach(function(p){
+      h+='<button class="spot-p" data-spuri="'+esc(p.uri)+'" data-spid="'+esc(p.id)+'" '
+        +'data-spnm="'+esc(p.name)+'">'
+        +(p.art?'<img src="'+esc(p.art)+'" alt="">':'<span class="spot-p-x"></span>')
+        +'<b>'+esc(p.name)+'</b><i>'+p.n+'</i></button>';
+    });
+    h+='</div>';
+  }
+
+  if(!SPOT_READY)
+    h+='<div class="spot-n">Starting the player… if this stays put, check that '
+      +'nothing else is playing Spotify on another device.</div>';
   if(SPOT_MSG) h+='<div class="spot-msg">'+esc(SPOT_MSG)+'</div>';
   return h+'</div>';
 }
@@ -11516,7 +11657,17 @@ function spotWire(){
   on("spot-next", spotNext);
   on("spot-prev", spotPrev);
   on("spot-shuf", spotShuffle);
-  on("spot-here", spotPlayHere);
+  on("spot-list", function(){
+    SPOT_PICK=!SPOT_PICK;
+    if(SPOT_PICK) spotLoadLists();
+    spotPaint();
+  });
+  var ps=document.querySelectorAll("[data-spuri]");
+  for(var i=0;i<ps.length;i++) ps[i].onclick=function(){
+    spotPick(this.getAttribute("data-spuri"),
+             this.getAttribute("data-spid"),
+             this.getAttribute("data-spnm"));
+  };
   var box=document.getElementById("spot-id");
   if(box) box.onkeydown=function(ev){ if(ev.key==="Enter"){
     spotIdSet(this.value); spotConnect(); } };
@@ -11555,9 +11706,22 @@ function spLogo(t){
     : '';
   return '<span class="sp-lg"'+bg+'><em>'+ab+'</em>'+img+'</span>';
 }
+/* A game only renders if it is actually a game: two sides, both with a real
+   abbreviation. ESPN's MMA scoreboard returns fighters with none of that, and
+   they were being drawn as half-empty cells. */
+function spOk(g){
+  var t=g.teams||[];
+  if(t.length!==2) return false;
+  for(var i=0;i<2;i++){
+    var a=String(t[i].team||"").trim();
+    if(!a || a==="?" || a.length>5) return false;
+  }
+  return true;
+}
+
 function spGame(g){
   var t=g.teams||[];
-  if(t.length<2) return "";
+  if(!spOk(g)) return "";
   var cls = g.live ? "sp-g live" : g.done ? "sp-g done" : "sp-g";
   var state = g.live ? '<span class="sp-live">&#9679; LIVE</span>'
             : g.done ? '<span class="sp-st">FINAL</span>'
@@ -11608,18 +11772,51 @@ function spPaint(){
   var all=(briefFresh()&&BRIEF&&BRIEF.scores) ? BRIEF.scores : [];
 
   /* Only scores he can actually use. A fixture seven weeks out is not a score,
-     and out of season most of what ESPN returns is exactly that — which is why
-     the rail was padded with rows that meant nothing. Live and finished always;
-     upcoming only inside the next three days. */
-  var soon=Date.now()+3*86400000;
+     and out of season most of what ESPN returns is exactly that. Live and
+     finished always; upcoming inside the next week — three days was too tight
+     and left August showing nothing but baseball. */
+  var soon=Date.now()+7*86400000;
   var games=all.filter(function(g){
+    if(!spOk(g)) return false;
     if(g.live || g.done) return true;
     var d=spDate(g.detail);
     return d ? d.getTime() < soon : false;
   });
+
+  /* College football alone returns 99 fixtures, so a flat cap is needed — but a
+     flat TWO per league was worse: in August the other leagues are dark and he
+     was left looking at one lonely baseball card in a wide panel, which is what
+     he saw and called glitched.
+
+     So: round-robin across the leagues, taking one from each in turn until the
+     rail is full. Four sports on and he gets a spread; one sport on and it
+     fills the rail rather than leaving a gap. Live games jump the queue. */
+  var WANT=10;
+  var byLg={}, order=[];
+  games.forEach(function(g){
+    var k=g.league||"?";
+    if(!byLg[k]){ byLg[k]=[]; order.push(k); }
+    byLg[k].push(g);
+  });
+  var picked=games.filter(function(g){ return g.live; });
+  var seen={};
+  picked.forEach(function(g){ seen[g.league+"|"+g.name]=1; });
+  for(var round=0; picked.length<WANT && round<12; round++){
+    var added=false;
+    for(var oi=0; oi<order.length && picked.length<WANT; oi++){
+      var g2=byLg[order[oi]][round];
+      if(!g2) continue;
+      var key=g2.league+"|"+g2.name;
+      if(seen[key]) continue;
+      seen[key]=1; picked.push(g2); added=true;
+    }
+    if(!added) break;
+  }
+  games=picked;
   if(!games.length){ host.className="sptick"; host.innerHTML=""; return; }
 
-  var rows=games.slice(0,12).map(spGame).filter(Boolean).join("");
+  var rows=games.map(spGame).filter(Boolean).join("");
+  if(!rows){ host.className="sptick"; host.innerHTML=""; return; }
   host.className="sptick on";
   host.innerHTML='<div class="sp-lbl">SCORES</div><div class="sp-rail">'+rows+'</div>';
 }
@@ -11810,6 +12007,12 @@ var NEWSTAB=(LS("newstab")==="watch") ? "watch" : "news";
 /* Folded or not. It runs a lot taller than the task list beside it, and some
    days he does not want to look at the world at all. */
 var NEWS_SHUT=(LS("news_shut")==="1");
+/* The two cards in the left column fold as well, so he can shut whichever he
+   is not using and the column still closes off against the headlines. */
+var TASK_SHUT=(LS("task_shut")==="1");
+var MT_SHUT=(LS("mt_shut")==="1");
+function taskFold(){ TASK_SHUT=!TASK_SHUT; LS("task_shut", TASK_SHUT?"1":""); drawDash(); }
+function mtFold(){ MT_SHUT=!MT_SHUT; LS("mt_shut", MT_SHUT?"1":""); drawDash(); }
 function newsFold(){
   NEWS_SHUT=!NEWS_SHUT;
   LS("news_shut", NEWS_SHUT?"1":"");
@@ -16349,15 +16552,20 @@ function dashView(){
     /* Two cards across the top now, both wide: what the world is doing, and
        what he is doing. The Plan and Needs You came out — the plan is right
        below in the seven days, and Needs You was repeating the CRM. */
-    h+='<div class="todayrow two">';
+    h+='<div class="todayrow two"><div class="tcol">';
 
     /* the checklist */
-    h+='<div class="tcard list">'
-      +'<div class="tc-h"><b>Today&rsquo;s Tasks</b>'
+    h+='<div class="tcard list'+(TASK_SHUT?" shut":"")+'">'
+      +'<div class="tc-h">'
+      +'<button class="nwfold" id="task-fold" '
+        +'title="'+(TASK_SHUT?"Show today\u2019s tasks":"Fold this away")+'" '
+        +'aria-expanded="'+(TASK_SHUT?"false":"true")+'"><span class="nwf-c"></span></button>'
+      +'<b>Today&rsquo;s Tasks</b>'
       +'<span class="tc-n">'+(tasks.length?done2+" of "+tasks.length+" done":"nothing yet")+'</span>'
       +(!tasks.length&&plan?'<button class="tc-seed" id="dt-seed">Use the plan</button>':'')
       +'</div>';
-    if(!tasks.length)
+    if(TASK_SHUT){ /* folded — the header alone */ }
+    else if(!tasks.length)
       h+='<div class="tc-empty">Add what has to happen today. Tick it off as you go — '
         +'Claudia can tick them for you too.</div>';
     else {
@@ -16374,10 +16582,73 @@ function dashView(){
       });
       h+='</div>';
     }
-    h+='<div class="addbar tight"><input id="dt-new" placeholder="Add a task and hit Enter" '
-      +'autocomplete="off"><button class="btn" id="dt-add">Add</button></div>';
+    if(!TASK_SHUT)
+      h+='<div class="addbar tight"><input id="dt-new" placeholder="Add a task and hit Enter" '
+        +'autocomplete="off"><button class="btn" id="dt-add">Add</button></div>';
     h+='</div>';
 
+  /* ---- meetings, stacked under the tasks ---- */
+  (function(){
+    var ms=mtSorted().filter(function(x){ return !x.m.done; });
+    h+='<div class="tcard mt'+(MT_SHUT?" shut":"")+'"><div class="tc-h">'
+      +'<button class="nwfold" id="mt-fold" '
+        +'title="'+(MT_SHUT?"Show meetings":"Fold this away")+'" '
+        +'aria-expanded="'+(MT_SHUT?"false":"true")+'"><span class="nwf-c"></span></button>'
+      +'<b>Meetings &amp; Calls</b>'
+      +'<span class="tc-n">'+(ms.length?ms.length+" booked":"none booked")+'</span>'
+      +'<button class="tc-seed" id="mt-new">+ New</button>'
+      +'<button class="tc-seed" data-dgo="office|2">Calendar</button></div>';
+    if(!MT_SHUT){
+    if(!calendlyLink())
+      h+='<div class="mt-cal"><span>Set your Calendly once and every new meeting '
+        +'carries a link you can send.</span>'
+        +'<input id="mt-cly" placeholder="calendly.com/glenklein/30min" '
+        +'value="'+esc(calendlyBase())+'"></div>';
+    if(!ms.length)
+      h+='<div class="dp"><div class="dp-b"><div class="dp-none">Nothing booked. '
+        +'New Meeting adds it here and in the Calls module.</div></div></div>';
+    else {
+      h+='<div class="mts">';
+      ms.forEach(function(row){
+        var i=row.i, mm=row.m, past=mtIsPast(mm);
+        var can=dialable(mm.phone||"").ok;
+        h+='<div class="mt'+(past?" past":"")+'">'
+          +'<div class="mt-top">'
+            +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" '
+            +'value="'+esc(mm.name||"")+'" placeholder="Who">'
+            +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
+            +'value="'+esc(mtLocalValue(mm.at))+'">'
+            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
+            /* Booking a call is one tap; unbooking it should not be. The X
+               arms, and only the second, differently-worded button removes it —
+               a meeting deleted by a mis-tap is a meeting he does not know he
+               has lost. */
+            +(MT_DEL===i
+              ? '<span class="mt-del"><em>Delete this meeting?</em>'
+                +'<button class="mt-dy" data-mtdelyes="'+i+'">Delete</button>'
+                +'<button class="mt-dn" data-mtdelno="1">Keep it</button></span>'
+              : '<button class="mt-x" data-mtdel="'+i+'" title="Remove this meeting">&times;</button>')
+          +'</div>'
+          +'<div class="mt-g">'
+            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(mm.phone||"")+'" placeholder="Phone">'
+            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(mm.email||"")+'" placeholder="Email">'
+            +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(mm.link||"")+'" placeholder="Meeting link">'
+          +'</div>'
+          +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
+          +'placeholder="What this call is about.">'+esc(mm.notes||"")+'</textarea>'
+          +'<div class="mt-act">'
+            +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
+            +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
+            +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
+          +'</div></div>';
+      });
+      h+='</div>';
+      }
+    }
+    h+='</div>';
+  })();
+
+    h+='</div>';   /* .tcol — tasks and meetings share the left column */
     h+='<div class="tcard news'+(NEWS_SHUT?" shut":"")+'"><div class="tc-h">'
       +'<button class="nwfold" id="news-fold" '
         +'title="'+(NEWS_SHUT?"Show the headlines":"Fold this away")+'" '
@@ -16398,7 +16669,12 @@ function dashView(){
         : watchBox());
     h+='</div>';
 
+
     h+='</div>';   /* .todayrow */
+
+    /* Music sits with the day rather than at the foot of the page — it is one
+       of the first things he reaches for, not one of the last. */
+    h+='<div id="spotwrap">'+spotCard()+'</div>';
 
     /* the seven days */
     h+='<div class="dsh-week">';
@@ -16486,63 +16762,7 @@ function dashView(){
     h+='</div>';
   })();
 
-  /* ============ 4. MEETINGS ============ */
-  (function(){
-    var ms=mtSorted().filter(function(x){ return !x.m.done; });
-    h+='<div class="sec"><div class="sec-h"><h2>Meetings &amp; Calls</h2>'
-      +'<span class="sec-s">'+ms.length+' booked</span>'
-      +'<button class="sec-b" id="mt-new">+ New Meeting</button>'
-      +'<button class="sec-b" data-dgo="office|2">Calendar</button></div>';
-    if(!calendlyLink())
-      h+='<div class="mt-cal"><span>Set your Calendly once and every new meeting '
-        +'carries a link you can send.</span>'
-        +'<input id="mt-cly" placeholder="calendly.com/glenklein/30min" '
-        +'value="'+esc(calendlyBase())+'"></div>';
-    if(!ms.length)
-      h+='<div class="dp"><div class="dp-b"><div class="dp-none">Nothing booked. '
-        +'New Meeting adds it here and in the Calls module.</div></div></div>';
-    else {
-      h+='<div class="mts">';
-      ms.forEach(function(row){
-        var i=row.i, mm=row.m, past=mtIsPast(mm);
-        var can=dialable(mm.phone||"").ok;
-        h+='<div class="mt'+(past?" past":"")+'">'
-          +'<div class="mt-top">'
-            +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" '
-            +'value="'+esc(mm.name||"")+'" placeholder="Who">'
-            +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
-            +'value="'+esc(mtLocalValue(mm.at))+'">'
-            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
-            /* Booking a call is one tap; unbooking it should not be. The X
-               arms, and only the second, differently-worded button removes it —
-               a meeting deleted by a mis-tap is a meeting he does not know he
-               has lost. */
-            +(MT_DEL===i
-              ? '<span class="mt-del"><em>Delete this meeting?</em>'
-                +'<button class="mt-dy" data-mtdelyes="'+i+'">Delete</button>'
-                +'<button class="mt-dn" data-mtdelno="1">Keep it</button></span>'
-              : '<button class="mt-x" data-mtdel="'+i+'" title="Remove this meeting">&times;</button>')
-          +'</div>'
-          +'<div class="mt-g">'
-            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(mm.phone||"")+'" placeholder="Phone">'
-            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(mm.email||"")+'" placeholder="Email">'
-            +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(mm.link||"")+'" placeholder="Meeting link">'
-          +'</div>'
-          +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
-          +'placeholder="What this call is about.">'+esc(mm.notes||"")+'</textarea>'
-          +'<div class="mt-act">'
-            +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
-            +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
-            +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
-          +'</div></div>';
-      });
-      h+='</div>';
-    }
-    h+='</div>';
-  })();
-
   h+=smsCard();
-  h+='<div id="spotwrap">'+spotCard()+'</div>';
   h+=operatorBar();
   return h;
 }
@@ -16811,6 +17031,10 @@ function wireDash(){
   if(nrf) nrf.onclick=newsRefresh;
   var nfd=document.getElementById("news-fold");
   if(nfd) nfd.onclick=function(ev){ ev.stopPropagation(); newsFold(); };
+  var tfd=document.getElementById("task-fold");
+  if(tfd) tfd.onclick=function(ev){ ev.stopPropagation(); taskFold(); };
+  var mfd=document.getElementById("mt-fold");
+  if(mfd) mfd.onclick=function(ev){ ev.stopPropagation(); mtFold(); };
   var nts=document.querySelectorAll("[data-ntab]");
   for(var t9=0;t9<nts.length;t9++) nts[t9].onclick=function(){
     newsTab(this.getAttribute("data-ntab")); };
