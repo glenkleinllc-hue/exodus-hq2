@@ -1,30 +1,31 @@
 /* ==========================================================================
    /api/brief  —  everything Claudia cannot know on her own
    --------------------------------------------------------------------------
-   Weather, world news, sport and the two coins, fetched server-side and handed
-   to her as facts. She is told, in her own brief, never to state one of these
-   that is not in here. An invented headline is worse than no headline.
+   Weather where he is, and eight desks of headlines — world, USA, markets,
+   military, Thailand, sport and men's health — plus the two coins. Fetched server-side and handed to her as facts. She is told, in her
+   own brief, never to state one of these that is not in here. An invented
+   headline is worse than no headline.
 
-   Why server-side rather than from the page: no news organisation sets an
-   Access-Control-Allow-Origin header on its RSS feed, so a browser fetch is
-   blocked before it starts. Same for ESPN's feeds.
+   Why server-side: no news organisation sets an Access-Control-Allow-Origin
+   header on its RSS feed, so a browser fetch is blocked before it starts.
 
-   No API keys anywhere in this file. Every source below is free and open.
+   No API keys anywhere in this file.
 
-     GET /api/brief                      the lot, for the morning brief
-     GET /api/brief?lat=&lon=&tz=        weather for wherever he actually is
-     GET /api/brief?only=crypto          just the coins — what the banner polls
-     GET /api/brief?only=sports          just sport
-     GET /api/brief?n=6                  more headlines
+     GET /api/brief                  the lot
+     GET /api/brief?lat=&lon=&tz=    weather for wherever he actually is
+     GET /api/brief?only=crypto      just the coins — what the banner polls
+     GET /api/brief?only=sports      just sport
+     GET /api/brief?cat=markets      one category of headlines
+     GET /api/brief?n=14             how many per category (default 12)
 
-   If one source is down its section comes back with an error and everything
-   else still arrives. One bad feed never takes the brief with it.
+   Every source below was tested from the server before it went in. AP and
+   Reuters killed their public feeds and France 24's returns an empty document,
+   so those three come through Google News search instead, which does work and
+   whose links resolve to the publisher's own site.
    ========================================================================== */
 
 const HOME = { name: "New York", lat: 40.7128, lon: -74.0060, tz: "America/New_York" };
-const AWAY = { name: "Bangkok",  lat: 13.7563, lon: 100.5018, tz: "Asia/Bangkok" };
 
-/* WMO codes in the words a person says out loud, because she reads this aloud. */
 const SKY = {
   0: "clear", 1: "mostly clear", 2: "partly cloudy", 3: "overcast",
   45: "foggy", 48: "freezing fog",
@@ -38,20 +39,104 @@ const SKY = {
   95: "thunderstorms", 96: "thunderstorms with hail", 99: "severe thunderstorms"
 };
 
+/* Hourly as well as daily, because "what is it doing tonight" is the question
+   he actually has, and a daily high does not answer it. */
 async function weatherAt(place) {
   const u = "https://api.open-meteo.com/v1/forecast"
     + "?latitude=" + place.lat + "&longitude=" + place.lon
     + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m"
-    + "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max"
+    + "&current=relative_humidity_2m,uv_index,is_day"
+    + "&hourly=temperature_2m,weather_code,precipitation_probability,apparent_temperature,wind_speed_10m"
+    + "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,"
+    + "sunrise,sunset,weather_code,wind_speed_10m_max,uv_index_max"
     + "&temperature_unit=fahrenheit&wind_speed_unit=mph"
-    + "&timezone=" + encodeURIComponent(place.tz || "auto") + "&forecast_days=1";
+    + "&timezone=" + encodeURIComponent(place.tz || "auto") + "&forecast_days=7";
   try {
     const r = await fetch(u);
     if (!r.ok) return { place: place.name, error: "Weather service returned " + r.status };
     const j = await r.json();
-    const c = j.current || {}, d = j.daily || {};
+    const c = j.current || {}, d = j.daily || {}, h = j.hourly || {};
+
+    /* The next 24 hours, condensed to the three things worth saying out loud:
+       how warm it gets, how cold it gets, and whether it rains. Read from the
+       hour after now, not from midnight — a "daily low" that already happened
+       at 5am this morning is not useful at 9pm. */
+    let ahead = null;
+    if (Array.isArray(h.time) && h.time.length) {
+      const now = new Date();
+      let i0 = h.time.findIndex(t => new Date(t) > now);
+      if (i0 < 0) i0 = 0;
+      const slice = (a) => Array.isArray(a) ? a.slice(i0, i0 + 24) : [];
+      const temps = slice(h.temperature_2m).filter(Number.isFinite);
+      const rain = slice(h.precipitation_probability).filter(Number.isFinite);
+      const codes = slice(h.weather_code).filter(Number.isFinite);
+      if (temps.length) {
+        /* the worst weather coming, not the average — that is the bit that
+           changes whether he films outside */
+        const worst = codes.length ? Math.max.apply(null, codes) : null;
+        ahead = {
+          high: Math.round(Math.max.apply(null, temps)),
+          low: Math.round(Math.min.apply(null, temps)),
+          rainChance: rain.length ? Math.max.apply(null, rain) : null,
+          worst: worst === null ? null
+               : (SKY[worst] !== undefined ? SKY[worst] : "unsettled")
+        };
+      }
+    }
+
+    /* His local clock, from the timezone the forecast was computed in, so the
+       brief can say "it is 9:14pm where you are" without guessing. */
+    let localTime = null;
+    try {
+      localTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: j.timezone || place.tz, hour: "numeric", minute: "2-digit"
+      }).format(new Date());
+    } catch { /* an unknown zone is not worth failing the forecast over */ }
+
+    /* The next twelve hours, hour by hour, for the panel he opens. A single
+       "high today" cannot answer "is it worth filming at four". */
+    let hours = [];
+    if (Array.isArray(h.time) && h.time.length) {
+      const now2 = new Date();
+      let k0 = h.time.findIndex(t => new Date(t) > now2);
+      if (k0 < 0) k0 = 0;
+      for (let k = k0; k < Math.min(k0 + 12, h.time.length); k++) {
+        hours.push({
+          t: h.time[k],
+          temp: Math.round(h.temperature_2m[k]),
+          feels: Math.round((h.apparent_temperature || [])[k]),
+          rain: (h.precipitation_probability || [])[k],
+          wind: Math.round((h.wind_speed_10m || [])[k]),
+          sky: SKY[(h.weather_code || [])[k]] !== undefined
+             ? SKY[h.weather_code[k]] : "unsettled"
+        });
+      }
+    }
+
+    /* The week, for the same panel. */
+    let days = [];
+    if (Array.isArray(d.time)) {
+      for (let k = 0; k < d.time.length; k++) {
+        days.push({
+          d: d.time[k],
+          high: Math.round(d.temperature_2m_max[k]),
+          low: Math.round(d.temperature_2m_min[k]),
+          rain: (d.precipitation_probability_max || [])[k],
+          wind: Math.round((d.wind_speed_10m_max || [])[k]),
+          uv: Math.round((d.uv_index_max || [])[k]),
+          sky: SKY[(d.weather_code || [])[k]] !== undefined
+             ? SKY[d.weather_code[k]] : "unsettled"
+        });
+      }
+    }
+
     return {
       place: place.name,
+      humidity: c.relative_humidity_2m,
+      uv: c.uv_index === undefined ? null : Math.round(c.uv_index),
+      isDay: c.is_day === 1,
+      sunrise: (d.sunrise || [])[0] || null,
+      hours, days,
       now: Math.round(c.temperature_2m),
       feels: Math.round(c.apparent_temperature),
       sky: SKY[c.weather_code] !== undefined ? SKY[c.weather_code] : "unsettled",
@@ -59,6 +144,10 @@ async function weatherAt(place) {
       high: Math.round((d.temperature_2m_max || [])[0]),
       low: Math.round((d.temperature_2m_min || [])[0]),
       rainChance: (d.precipitation_probability_max || [])[0],
+      sunset: (d.sunset || [])[0] || null,
+      next24: ahead,
+      localTime,
+      tz: j.timezone || place.tz,
       unit: "F"
     };
   } catch (e) {
@@ -66,11 +155,6 @@ async function weatherAt(place) {
   }
 }
 
-/* Turn coordinates into a place name, so the brief says "Philadelphia" and not
-   "39.95, -75.16". Open-Meteo's geocoder has no reverse lookup, so this uses
-   BigDataCloud's free client endpoint, which needs no key. If it does not
-   answer, the coordinates still give correct weather — only the label is lost,
-   and a nameless correct forecast beats a named wrong one. */
 async function placeName(lat, lon) {
   try {
     const r = await fetch("https://api.bigdatacloud.net/data/reverse-geocode-client"
@@ -81,30 +165,95 @@ async function placeName(lat, lon) {
   } catch { return null; }
 }
 
-/* ---------------- the wires ----------------
-   Five desks in five countries: London, Doha, Washington, Berlin, Toronto.
-   Glen asked for sources that are not all pulling the same way, and that is
-   what this is — not a claim that any one of them is neutral, but a spread wide
-   enough that a story only pushed by one of them is visibly only in one.
+/* ==================== THE DESKS ====================
+   Four categories, because those are the four things he reads: what is
+   happening in the world, what it is doing to the markets, sport, and staying
+   in shape. Spread across a lot of mastheads on purpose — a story only one of
+   them is pushing is then visibly only in one.
 
-   AP returns 401 to a plain fetch, Reuters retired its public feed and France
-   24's returns an empty document. All three were tested and dropped rather than
-   left in to fail silently every morning. */
-const NEWS_FEEDS = [
-  { src: "BBC",        url: "https://feeds.bbci.co.uk/news/world/rss.xml" },
-  { src: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
-  { src: "NPR",        url: "https://feeds.npr.org/1004/rss.xml" },
-  { src: "DW",         url: "https://rss.dw.com/rdf/rss-en-world" },
-  { src: "CBC",        url: "https://www.cbc.ca/webfeed/rss/rss-world" }
-];
+   `gn` marks a Google News search feed. Those carry a <source> element with
+   the real publisher, so the badge says Reuters, not Google. */
+const DESKS = {
+  world: [
+    { src: "BBC",        url: "https://feeds.bbci.co.uk/news/world/rss.xml" },
+    { src: "Reuters",    gn: 1, url: "https://news.google.com/rss/search?q=site:reuters.com+when:1d&hl=en-US&gl=US&ceid=US:en" },
+    { src: "AP",         gn: 1, url: "https://news.google.com/rss/search?q=site:apnews.com+when:1d&hl=en-US&gl=US&ceid=US:en" },
+    { src: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { src: "Guardian",   url: "https://www.theguardian.com/world/rss" },
+    { src: "DW",         url: "https://rss.dw.com/rdf/rss-en-world" },
+    { src: "NPR",        url: "https://feeds.npr.org/1004/rss.xml" },
+    { src: "CBC",        url: "https://www.cbc.ca/webfeed/rss/rss-world" },
+    { src: "ToI",        url: "https://www.timesofisrael.com/feed/" }
+  ],
+  markets: [
+    { src: "CNBC",       url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258" },
+    { src: "CNBC",       url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114" },
+    { src: "MarketWatch",url: "https://feeds.content.dowjones.io/public/rss/mw_topstories" },
+    { src: "Yahoo Fin",  url: "https://finance.yahoo.com/news/rssindex" },
+    { src: "Investing",  url: "https://www.investing.com/rss/news.rss" },
+    { src: "CoinDesk",   url: "https://www.coindesk.com/arc/outboundfeeds/rss/" },
+    { src: "Cointelegraph", url: "https://cointelegraph.com/rss" }
+  ],
+  usa: [
+    { src: "AP",      gn: 1, url: "https://news.google.com/rss/search?q=site:apnews.com+US+when:1d&hl=en-US&gl=US&ceid=US:en" },
+    { src: "NPR",     url: "https://feeds.npr.org/1003/rss.xml" },
+    { src: "CBS",     url: "https://www.cbsnews.com/latest/rss/us" },
+    { src: "ABC",     url: "https://feeds.abcnews.com/abcnews/usheadlines" },
+    { src: "The Hill",url: "https://thehill.com/news/feed/" }
+  ],
+  /* Where he is moving. Bangkok Post and the Thaiger are the two English
+     mastheads people there actually read; the Google News sweep catches the
+     wires when something big happens. */
+  thailand: [
+    { src: "Bangkok Post", url: "https://www.bangkokpost.com/rss/data/topstories.xml" },
+    { src: "Thaiger",      url: "https://thethaiger.com/feed" },
+    { src: "Thailand",     gn: 1, url: "https://news.google.com/rss/search?q=Thailand+when:2d&hl=en-US&gl=US&ceid=US:en" }
+  ],
+  military: [
+    { src: "Defense News",     url: "https://www.defensenews.com/arc/outboundfeeds/rss/" },
+    { src: "War on the Rocks", url: "https://warontherocks.com/feed/" },
+    { src: "Breaking Defense", url: "https://breakingdefense.com/feed/" },
+    { src: "Task & Purpose",   url: "https://taskandpurpose.com/feed/" }
+  ],
+  sport: [
+    { src: "ESPN",       url: "https://www.espn.com/espn/rss/news" },
+    { src: "ESPN NFL",   url: "https://www.espn.com/espn/rss/nfl/news" },
+    { src: "ESPN NBA",   url: "https://www.espn.com/espn/rss/nba/news" },
+    { src: "ESPN MLB",   url: "https://www.espn.com/espn/rss/mlb/news" },
+    { src: "ESPN Soccer",url: "https://www.espn.com/espn/rss/soccer/news" },
+    { src: "BBC Sport",  url: "https://feeds.bbci.co.uk/sport/rss.xml" }
+  ],
+  fitness: [
+    /* Men's Health's all.xml carries film reviews and celebrity pieces — the
+       section feeds are the ones actually about training. */
+    { src: "Men's Health", url: "https://www.menshealth.com/rss/fitness.xml/" },
+    { src: "Men's Health", url: "https://www.menshealth.com/rss/nutrition.xml/" },
+    { src: "Men's Health", url: "https://www.menshealth.com/rss/health.xml/" },
+    { src: "M&F",          url: "https://www.muscleandfitness.com/feed/" },
+    { src: "Stronger by Science", url: "https://www.strongerbyscience.com/feed/" },
+    { src: "Runner's World", url: "https://www.runnersworld.com/rss/all.xml/" },
+    { src: "Outside",      url: "https://www.outsideonline.com/feed/" },
+    { src: "Healthline",   url: "https://www.healthline.com/rss/health-news" },
+    { src: "NYT Well",     url: "https://rss.nytimes.com/services/xml/rss/nyt/Well.xml" }
+  ]
+};
 
-const SPORT_FEEDS = [
-  { src: "ESPN",     url: "https://www.espn.com/espn/rss/news" },
-  { src: "ESPN NFL", url: "https://www.espn.com/espn/rss/nfl/news" },
-  { src: "ESPN NBA", url: "https://www.espn.com/espn/rss/nba/news" }
-];
+/* Google News hands back a bare domain for some publishers. A badge that says
+   "apnews.com" looks like a bug; one that says "AP" looks like a newspaper. */
+const TIDY = {
+  "apnews.com": "AP", "associated press": "AP",
+  "reuters.com": "Reuters", "reuters": "Reuters",
+  "bbc.com": "BBC", "bbc.co.uk": "BBC",
+  "cnbc.com": "CNBC", "theguardian.com": "Guardian",
+  "aljazeera.com": "Al Jazeera", "npr.org": "NPR",
+  "espn.com": "ESPN", "cnn.com": "CNN", "nytimes.com": "NYT",
+  "wsj.com": "WSJ", "bloomberg.com": "Bloomberg", "ft.com": "FT"
+};
 
 function unxml(s) {
+  /* Tags are stripped TWICE, before and after entity decoding. Several feeds —
+     the Guardian's especially — escape their HTML, so &lt;p&gt; only becomes a
+     <p> after decoding, and a single pass leaves the markup in the text. */
   return String(s)
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
     .replace(/<[^>]*>/g, "")
@@ -113,20 +262,35 @@ function unxml(s) {
     .replace(/&quot;/g, '"').replace(/&apos;/g, "'")
     .replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
+    .replace(/<[^>]*>/g, "")
     .replace(/\s+/g, " ").trim();
 }
 
-/* A regex, not an XML parser. These are eight known feeds and we want two
-   fields from each; adding a dependency to a serverless function to read a
-   <title> tag is not a trade worth making. */
-function parseFeed(xml, src, want) {
+function parseFeed(xml, feed, want) {
   const out = [];
   const items = xml.split(/<item[\s>]|<entry[\s>]/i).slice(1);
   for (const raw of items) {
     const t = raw.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     if (!t) continue;
-    const title = unxml(t[1]);
+    let title = unxml(t[1]);
     if (!title || title.length < 12) continue;
+
+    let src = feed.src;
+    if (feed.gn) {
+      /* Google News appends " - Publisher" to the title and repeats it in a
+         <source> element. Use the element, and strip the suffix, so the badge
+         is right and the headline is not printing its own byline. */
+      const sm = raw.match(/<source[^>]*>([\s\S]*?)<\/source>/i);
+      if (sm) {
+        const pub = unxml(sm[1]);
+        if (pub) {
+          src = TIDY[pub.toLowerCase()] || pub.replace(/\s*\(.*\)$/, "");
+          const tail = new RegExp("\\s*[-–—]\\s*" + pub.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*$", "i");
+          title = title.replace(tail, "");
+        }
+      }
+    }
+
     let link = "";
     const l = raw.match(/<link[^>]*>([\s\S]*?)<\/link>/i);
     if (l && l[1].trim()) link = unxml(l[1]);
@@ -134,21 +298,39 @@ function parseFeed(xml, src, want) {
       const h = raw.match(/<link[^>]*href="([^"]+)"/i);
       if (h) link = h[1];
     }
-    out.push({ title, link, src });
+
+    /* The standfirst. <description> in RSS, <summary> or <content> in Atom.
+       Without this Claudia can only read titles aloud, which is exactly what
+       made the brief feel like a list rather than a briefing. */
+    let sum = "";
+    const dm = raw.match(/<(?:description|summary|content)[^>]*>([\s\S]*?)<\/(?:description|summary|content)>/i);
+    if (dm) sum = unxml(dm[1]);
+    /* Google News packs a block of related-article HTML into description; once
+       the tags are stripped it is a run-on of other headlines, not a summary. */
+    if (feed.gn) sum = "";
+    if (sum) {
+      if (sum.toLowerCase().startsWith(title.toLowerCase().slice(0, 30))) sum = "";
+      else if (sum.length > 400) sum = sum.slice(0, 397).replace(/\s+\S*$/, "") + "…";
+    }
+
+    out.push({ title, link, src, sum });
     if (out.length >= want) break;
   }
   return out;
 }
 
-/* Interleave rather than concatenate. Concatenated, the first feed fills every
-   slot and the list is one newsroom wearing five badges. */
-async function pullFeeds(feeds, limit) {
-  const per = Math.max(2, Math.ceil(limit / feeds.length) + 1);
+/* Interleave. Concatenated, the first feed fills every slot and the list is
+   one newsroom wearing nine badges. */
+async function pullDesk(feeds, limit) {
+  const per = Math.max(3, Math.ceil(limit / feeds.length) + 2);
   const got = await Promise.all(feeds.map(async (f) => {
     try {
-      const r = await fetch(f.url, { headers: { "user-agent": "ExodusHQ/1.0 (brief)" } });
+      const r = await fetch(f.url, {
+        headers: { "user-agent": "Mozilla/5.0 (compatible; ExodusHQ/1.0)" },
+        signal: AbortSignal.timeout(7000)
+      });
       if (!r.ok) return [];
-      return parseFeed(await r.text(), f.src, per);
+      return parseFeed(await r.text(), f, per);
     } catch { return []; }
   }));
   const rows = [], seen = new Set();
@@ -166,10 +348,7 @@ async function pullFeeds(feeds, limit) {
   return rows;
 }
 
-/* ---------------- live scores ----------------
-   ESPN's scoreboard endpoint is public and needs no key. It returns whatever is
-   on today for each league, so "up to date" here means genuinely today's games
-   with their current state, not a headline about them. */
+/* ---------------- live scores ---------------- */
 const LEAGUES = [
   { k: "NFL",  path: "football/nfl" },
   { k: "NBA",  path: "basketball/nba" },
@@ -184,44 +363,39 @@ async function scores() {
   await Promise.all(LEAGUES.map(async (lg) => {
     try {
       const r = await fetch("https://site.api.espn.com/apis/site/v2/sports/"
-        + lg.path + "/scoreboard");
+        + lg.path + "/scoreboard", { signal: AbortSignal.timeout(7000) });
       if (!r.ok) return;
       const j = await r.json();
       (j.events || []).slice(0, 6).forEach((e) => {
         const st = (e.status && e.status.type) || {};
         const comp = (e.competitions && e.competitions[0]) || {};
-        const teams = (comp.competitors || []).map((c) => ({
-          team: (c.team && (c.team.abbreviation || c.team.shortDisplayName)) || "?",
-          score: c.score === undefined ? null : c.score,
-          home: c.homeAway === "home"
-        }));
         out.push({
           league: lg.k,
           name: e.shortName || e.name,
-          state: st.state || "",            /* pre | in | post */
+          link: (e.links && e.links[0] && e.links[0].href) || "",
+          state: st.state || "",
           detail: st.shortDetail || "",
           live: st.state === "in",
           done: st.completed === true,
-          teams
+          teams: (comp.competitors || []).map((c) => ({
+            team: (c.team && (c.team.abbreviation || c.team.shortDisplayName)) || "?",
+            score: c.score === undefined ? null : c.score,
+            home: c.homeAway === "home"
+          }))
         });
       });
     } catch { /* one league down does not take the section */ }
   }));
-  /* What is happening now first, then what already finished, then what is next.
-     That is the order a person cares about them in. */
   const rank = (x) => x.live ? 0 : x.done ? 1 : 2;
   out.sort((a, b) => rank(a) - rank(b));
   return out;
 }
 
-/* ---------------- the two coins ----------------
-   CoinGecko's simple/price endpoint, free and keyless. Kept in its own section
-   with its own short cache because a price is the one thing here that is stale
-   after two minutes. */
 async function crypto() {
   try {
     const r = await fetch("https://api.coingecko.com/api/v3/simple/price"
-      + "?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true");
+      + "?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true",
+      { signal: AbortSignal.timeout(7000) });
     if (!r.ok) return { error: "CoinGecko returned " + r.status };
     const j = await r.json();
     const one = (o) => o ? {
@@ -239,23 +413,31 @@ export default async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "GET" });
   const q = req.query || {};
   const only = String(q.only || "").toLowerCase();
+  const limit = Math.min(20, Math.max(4, parseInt(q.n, 10) || 12));
 
-  /* The banner polls this every couple of minutes and nothing else. Sixty
-     seconds of cache keeps it honest without hammering CoinGecko. */
   if (only === "crypto") {
     const c = await crypto();
     res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=120");
     return res.status(200).json({ ok: true, at: new Date().toISOString(), crypto: c });
   }
   if (only === "sports") {
-    const [head, sc] = await Promise.all([pullFeeds(SPORT_FEEDS, 4), scores()]);
+    const [head, sc] = await Promise.all([pullDesk(DESKS.sport, limit), scores()]);
     res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=300");
     return res.status(200).json({ ok: true, at: new Date().toISOString(),
       sport: head, scores: sc });
   }
 
-  /* Where he actually is. The page sends coordinates when he has allowed it;
-     without them this falls back to New York, which is where he is anyway. */
+  /* one desk on its own */
+  const cat = String(q.cat || "").toLowerCase();
+  if (DESKS[cat]) {
+    const rows = await pullDesk(DESKS[cat], limit);
+    res.setHeader("Cache-Control", "public, s-maxage=240, stale-while-revalidate=600");
+    return res.status(200).json({ ok: true, at: new Date().toISOString(),
+      cat, headlines: rows });
+  }
+
+  /* Where he is. Without a fix this falls back to New York and says so, so the
+     brief is never quietly describing the wrong city. */
   const lat = parseFloat(q.lat), lon = parseFloat(q.lon);
   const haveFix = isFinite(lat) && isFinite(lon)
     && Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
@@ -265,31 +447,46 @@ export default async function handler(req, res) {
     : HOME;
   if (haveFix && !here.name) here.name = (await placeName(lat, lon)) || "Where you are";
 
-  const limit = Math.min(10, Math.max(1, parseInt(q.n, 10) || 4));
-
-  const [wHere, wAway, news, sport, sc, coins] = await Promise.all([
+  /* Every desk at once. They run in parallel and each feed has its own 7s
+     timeout, so a slow masthead costs nothing but its own slot. */
+  const CATS = ["world", "usa", "markets", "military", "thailand", "sport", "fitness"];
+  const smaller = { fitness: 8, thailand: 8, military: 8 };
+  const [wHere, sc, coins, ...desks] = await Promise.all([
     weatherAt(here),
-    weatherAt(AWAY),
-    pullFeeds(NEWS_FEEDS, limit),
-    pullFeeds(SPORT_FEEDS, 3),
     scores(),
-    crypto()
+    crypto(),
+    ...CATS.map(c => pullDesk(DESKS[c], smaller[c] || limit))
   ]);
+
+  const tag = (rows, c) => rows.map(r => Object.assign({ cat: c }, r));
+  const byCat = {}, counts = {};
+  CATS.forEach((c, i) => { byCat[c] = desks[i] || []; counts[c] = byCat[c].length; });
+
+  const world = byCat.world, sport = byCat.sport;
+  const news = tag(world, "world");
+
+  /* The single biggest thing on ESPN right now, with what it is about. He asked
+     for the headline, not the scoreboard — "dont give me abbreviated scores" was
+     about as clear as feedback gets. */
+  const espnLead = sport.find(x => /^ESPN$/.test(x.src)) || sport[0] || null;
 
   const out = {
     ok: true,
     at: new Date().toISOString(),
     locationFrom: haveFix ? "device" : "default (New York)",
-    weather: { here: wHere, bangkok: wAway },
-    news, sport, scores: sc, crypto: coins
+    weather: { here: wHere },
+    news,
+    headlines: CATS.reduce((a, c) => a.concat(tag(byCat[c], c)), []),
+    counts,
+    cats: CATS,
+    sport, espnLead, scores: sc, crypto: coins
   };
-  /* Say it plainly rather than leaving an empty array to be filled in by
-     imagination. She is instructed to read these lines out as they are. */
-  if (!news.length)  out.newsError  = "No news feed answered just now.";
+  if (!news.length) out.newsError = "No news feed answered just now.";
   if (!sport.length && !sc.length) out.sportError = "No sports feed answered just now.";
 
-  /* Five minutes. Weather and the wires do not move faster than that, and it
-     keeps a chatty morning down to one round of fetches. */
-  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=900");
+  /* Two minutes. Long enough that a chatty morning is a handful of fetches,
+     short enough that "Refresh" during a breaking story actually brings
+     something new rather than the same cached page. */
+  res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=600");
   res.status(200).json(out);
 }
