@@ -206,6 +206,15 @@ const DESKS = {
     { src: "Breaking Defense", url: "https://breakingdefense.com/feed/" },
     { src: "Task & Purpose",   url: "https://taskandpurpose.com/feed/" }
   ],
+  /* His city. Under the scores in the ticker, because a scoreboard with two
+     games on it leaves a lot of empty panel and Philadelphia sport is what he
+     would put there. */
+  philly: [
+    { src: "Inquirer",      url: "https://www.inquirer.com/arc/outboundfeeds/rss/category/sports/?outputType=xml" },
+    { src: "Bleeding Green",url: "https://www.bleedinggreennation.com/rss/current.xml" },
+    { src: "Crossing Broad",url: "https://crossingbroad.com/feed" },
+    { src: "Philly",        gn: 1, url: "https://news.google.com/rss/search?q=(Eagles+OR+Phillies+OR+Sixers+OR+Flyers)+when:2d&hl=en-US&gl=US&ceid=US:en" }
+  ],
   sport: [
     { src: "ESPN",       url: "https://www.espn.com/espn/rss/news" },
     { src: "ESPN NFL",   url: "https://www.espn.com/espn/rss/nfl/news" },
@@ -452,8 +461,8 @@ export default async function handler(req, res) {
 
   /* Every desk at once. They run in parallel and each feed has its own 7s
      timeout, so a slow masthead costs nothing but its own slot. */
-  const CATS = ["world", "usa", "military", "thailand", "sport", "fitness"];
-  const smaller = { fitness: 8, thailand: 8, military: 8 };
+  const CATS = ["world", "usa", "military", "thailand", "sport", "philly", "fitness"];
+  const smaller = { fitness: 8, thailand: 8, military: 8, philly: 6 };
   const [wHere, sc, coins, ...desks] = await Promise.all([
     weatherAt(here),
     scores(),
@@ -482,7 +491,8 @@ export default async function handler(req, res) {
     headlines: CATS.reduce((a, c) => a.concat(tag(byCat[c], c)), []),
     counts,
     cats: CATS,
-    sport, espnLead, scores: sc, crypto: coins
+    sport, espnLead, philly: byCat.philly || [],
+    scores: sc, crypto: coins
   };
   if (!news.length) out.newsError = "No news feed answered just now.";
   if (!sport.length && !sc.length) out.sportError = "No sports feed answered just now.";
