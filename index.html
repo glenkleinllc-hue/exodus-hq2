@@ -184,6 +184,14 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
   color:var(--mut);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
 .sb-b:hover{color:var(--ink);border-color:#3d4552}
 .sb-b.on{border-color:var(--blu);color:#cfe0ff;background:rgba(75,123,212,.14)}
+/* the segmented grouping control */
+.sb-seg{display:inline-flex;padding:2px;border-radius:8px;
+  background:rgba(255,255,255,.04);border:1px solid #262d38}
+.sb-sg{background:none;border:0;border-radius:6px;padding:5px 11px;cursor:pointer;
+  font-family:inherit;font-size:10px;font-weight:800;letter-spacing:.6px;
+  color:#7b8697;transition:.12s}
+.sb-sg:hover{color:#cfd7e3}
+.sb-sg.on{background:var(--blu);color:#fff}
 .sb-b.due{border-color:rgba(212,115,111,.5);color:#e6a5a2;background:rgba(212,115,111,.12)}
 .sb-n{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
   color:var(--mut);font-variant-numeric:tabular-nums}
@@ -1791,10 +1799,28 @@ a.lnk:hover{color:#bfdbfe}
 .toprow .sptick:not(.on){display:flex;align-items:center;justify-content:center;
   border-radius:12px;background:rgba(255,255,255,.02);border:1px solid #1b232d}
 .toprow .sptick:not(.on):after{content:"No games right now";font-size:11px;color:#4a5462}
-.sptick.on{display:flex;align-items:stretch;margin:0;min-width:0;
+.sptick.on{display:flex;flex-direction:column;margin:0;min-width:0;
   border-radius:12px;overflow:hidden;
   background:linear-gradient(120deg,#0c1219,#0f1620 60%,#0c1219);
   border:1px solid #1f2934}
+/* the scores row sits across the top of the panel */
+.sp-top{display:flex;align-items:stretch;flex:none;
+  border-bottom:1px solid rgba(255,255,255,.06)}
+/* Philadelphia sport underneath, filling the height beside the weather */
+.sp-phl{flex:none;padding:7px 12px 3px}
+.sp-phl span{font-size:7.5px;font-weight:800;letter-spacing:1.5px;color:#5b6478}
+.ph-list{flex:1;display:flex;flex-direction:column;min-height:0;overflow-y:auto;
+  padding:0 10px 8px}
+.ph-r{display:flex;align-items:baseline;gap:8px;padding:5px 4px;border-radius:6px;
+  text-decoration:none;color:inherit;transition:background .12s}
+a.ph-r:hover{background:rgba(255,255,255,.05)}
+.ph-s{flex:none;width:74px;font-size:7px;font-weight:800;letter-spacing:.8px;
+  text-transform:uppercase;color:#7a8ea8;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.ph-t{flex:1;min-width:0;font-size:11.5px;line-height:1.35;color:#b9c6d6;
+  font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a.ph-r:hover .ph-t{color:#fff}
+
 .sp-lbl{flex:none;display:flex;align-items:center;padding:0 12px;
   font-size:8px;font-weight:800;letter-spacing:1.5px;color:#5b6478;
   background:rgba(255,255,255,.025);border-right:1px solid #1f2934}
@@ -1804,7 +1830,13 @@ a.lnk:hover{color:#bfdbfe}
 .sp-rail::-webkit-scrollbar-thumb{background:#2a3341;border-radius:3px}
 
 /* Fixed width, so a card is a card whether the rail holds two or twelve. */
-.sp-g{flex:0 0 138px;display:flex;flex-direction:column;gap:3px;
+/* box-sizing and min-width:0 both matter here. flex-basis is the CONTENT box,
+   so 138px plus 24px of padding was already 162 — and a flex item defaults to
+   min-width:auto, which refuses to shrink below its text, so a long team name
+   pushed the card wider still. That is why the cards came out 176, 193, 205
+   instead of all the same. */
+.sp-g{flex:0 0 auto;width:150px;box-sizing:border-box;min-width:0;overflow:hidden;
+  display:flex;flex-direction:column;gap:3px;
   padding:8px 12px;border-right:1px solid rgba(255,255,255,.055);
   text-decoration:none;color:inherit;transition:background .12s}
 a.sp-g:hover{background:rgba(255,255,255,.05)}
@@ -1824,7 +1856,7 @@ a.sp-g:hover{background:rgba(255,255,255,.05)}
 .sp-lg{flex:none;width:22px;height:17px;border-radius:4px;background:#39414f;
   display:flex;align-items:center;justify-content:center;
   font-size:7.5px;font-weight:800;letter-spacing:-.2px;color:#fff}
-.sp-r b{flex:1;min-width:0;font-size:11px;font-weight:700;color:#8d99a8;
+.sp-r b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:700;color:#8d99a8;
   letter-spacing:.2px}
 .sp-r i{flex:none;font-style:normal;font-size:13.5px;font-weight:800;color:#c3ccd9;
   font-variant-numeric:tabular-nums;min-width:20px;text-align:right}
@@ -1833,7 +1865,7 @@ a.sp-g:hover{background:rgba(255,255,255,.05)}
 
 @media (max-width:640px){
   .sp-lbl{display:none}
-  .sp-g{flex:0 0 128px}
+  .sp-g{width:136px}
 }
 
 /* ================= THE DAY STRIP =================
@@ -3542,7 +3574,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-01-f">
+<body data-build="2026-08-02-a">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3650,7 +3682,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-01-f</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-02-a</span></div>
 </div>
 
 <script>
@@ -4165,7 +4197,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-01-f";
+var BUILD="2026-08-02-a";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -8800,7 +8832,8 @@ function drawBasement(){
      the whole west side now — the trading floor that used to sit above it is
      gone and the room grew into the space. */
   (function(){
-    var TH={x:56,y:206,w:612,h:754};
+    /* Two tiers and out. The floor below belongs to the studio now. */
+    var TH={x:56,y:206,w:612,h:392};
     var FLOORC="#08090b", WALLC="#101216", TRIM="#1b1f26";
 
     /* the shell */
@@ -8856,7 +8889,9 @@ function drawBasement(){
         +'<path d="M-28 -37 q28 -5 56 0" stroke="#3b424e" stroke-width="1.6" fill="none" opacity=".7"/>'
         +'</g>';}
 
-    var rows=[{y:TH.y+272,sc:0.95},{y:TH.y+400,sc:1.05},{y:TH.y+540,sc:1.15},{y:TH.y+690,sc:1.26}];
+    /* Two tiers, ten seats. The back two rows became studio floor — he asked
+       for the space and a ten-seat private cinema is still a private cinema. */
+    var rows=[{y:TH.y+226,sc:0.95},{y:TH.y+318,sc:1.06}];
     rows.forEach(function(r,ri){
       if(ri>0){
         s+='<rect x="'+(TH.x+24)+'" y="'+(r.y-50)+'" width="'+(TH.w-48)+'" height="7" rx="3" fill="#12141a"/>';
@@ -8868,27 +8903,27 @@ function drawBasement(){
 
     /* ---- floor lighting, cool, down both walls ---- */
     [TH.x+32, TH.x+TH.w-32].forEach(function(lx){
-      for(var ly=TH.y+250; ly<TH.y+TH.h-26; ly+=58){
+      for(var ly=TH.y+250; ly<TH.y+TH.h-40; ly+=58){
         s+='<circle cx="'+lx+'" cy="'+ly+'" r="9" fill="url(#stepG)"/>';
         s+='<rect x="'+(lx-3)+'" y="'+(ly-1.4)+'" width="6" height="2.8" rx="1.4" fill="#7dd3fc" opacity=".7"/>';
       }
     });
 
     /* ---- projector on a ceiling mount at the back ---- */
-    var PX=TH.x+TH.w/2;
-    s+='<rect x="'+(PX-26)+'" y="'+(TH.y+TH.h-42)+'" width="52" height="22" rx="5" fill="#15181e"/>';
-    s+='<rect x="'+(PX-26)+'" y="'+(TH.y+TH.h-42)+'" width="52" height="7" rx="3.5" fill="#20242c"/>';
-    s+='<circle cx="'+PX+'" cy="'+(TH.y+TH.h-31)+'" r="6" fill="#0a0c0f"/>';
-    s+='<circle cx="'+PX+'" cy="'+(TH.y+TH.h-31)+'" r="2.6" fill="#7dd3fc" opacity=".8"/>';
+    var PX=TH.x+TH.w/2, PB=TH.y+352;
+    s+='<rect x="'+(PX-26)+'" y="'+PB+'" width="52" height="22" rx="5" fill="#15181e"/>';
+    s+='<rect x="'+(PX-26)+'" y="'+PB+'" width="52" height="7" rx="3.5" fill="#20242c"/>';
+    s+='<circle cx="'+PX+'" cy="'+(PB+11)+'" r="6" fill="#0a0c0f"/>';
+    s+='<circle cx="'+PX+'" cy="'+(PB+11)+'" r="2.6" fill="#7dd3fc" opacity=".8"/>';
 
-    s+='<text x="'+PX+'" y="'+(TH.y+TH.h-7)+'" text-anchor="middle" font-size="8.5" font-weight="800" letter-spacing="6" fill="#4b5563">THE THEATRE &middot; SEATS 20</text>';
+    s+='<text x="'+PX+'" y="'+(TH.y+TH.h-9)+'" text-anchor="middle" font-size="8.5" font-weight="800" letter-spacing="6" fill="#4b5563">THE THEATRE &middot; SEATS 10</text>';
   })();
 
   /* ---------------- THE EAST SIDE ----------------
      The reef tank lived here. Glen wanted it gone, so the whole east side is
      open floor again — two chairs and space for whatever comes next. */
   (function(){
-    var LG={x:700,y:206,w:556,h:754};
+    var LG={x:700,y:206,w:556,h:392};
     s+='<rect x="'+LG.x+'" y="'+LG.y+'" width="'+LG.w+'" height="'+LG.h+'" rx="9" fill="#0c0e12"/>';
     s+='<rect x="'+LG.x+'" y="'+LG.y+'" width="'+LG.w+'" height="'+LG.h+'" rx="9" fill="none" stroke="#1b2028" stroke-width="2"/>';
 
@@ -9027,72 +9062,252 @@ function drawBasement(){
         +'font-weight="800" letter-spacing="3.4" fill="#c77dff">THE GROW</text>';
     })();
 
-    /* a corridor line between these two rooms and the garage below */
+    /* a corridor line between these two rooms and the back of house below */
     s+='<rect x="'+(LG.x+10)+'" y="'+(RY+RH+8)+'" width="'+(LG.w-20)+'" height="2" rx="1" fill="#2f3540"/>';
 
-    /* ---- the garage: the cars came down from the gym, all black now,
-           plus a pair of superbikes ---- */
-    var GB={x:LG.x+34,y:LG.y+236,w:LG.w-68,h:410};
-    s+='<rect x="'+GB.x+'" y="'+GB.y+'" width="'+GB.w+'" height="'+GB.h+'" rx="7" fill="#16191f"/>';
-    /* poured floor with expansion lines */
-    for(var gl=1;gl*46<GB.h;gl++)
-      s+='<line x1="'+GB.x+'" y1="'+(GB.y+gl*46)+'" x2="'+(GB.x+GB.w)+'" y2="'+(GB.y+gl*46)+'" stroke="#1e232b" stroke-width="1.3"/>';
-    s+='<rect x="'+GB.x+'" y="'+GB.y+'" width="'+GB.w+'" height="'+GB.h+'" rx="7" fill="none" stroke="#2f3540" stroke-width="1.6"/>';
-    /* bay markings */
-    [0,1,2].forEach(function(bi){
-      var bx=GB.x+22+bi*152;
-      s+='<rect x="'+bx+'" y="'+(GB.y+16)+'" width="128" height="196" rx="4" fill="none" '
-        +'stroke="#c9a25c" stroke-width="1.6" opacity=".3" stroke-dasharray="10 8"/>';});
+    /* ---- back of house: the edit suite and the green room ----
+       The garage used to fill this. It belongs to the studio now: the room
+       where the packages get cut, and the room where guests wait. */
+    (function(){
+      var BY=RY+RH+22, BH=LG.y+LG.h-BY-14, BW=(LG.w-44)/2;
 
-  function lambo(cx,cy,body,dark,accent){
-    var g='<g transform="translate('+cx+','+cy+')">';
-    g+='<ellipse cx="0" cy="6" rx="34" ry="56" fill="#000" opacity=".45"/>';
-    /* low wide wedge silhouette */
-    g+='<path d="M0 -58 L18 -44 L26 -14 L28 22 L22 48 L10 56 L-10 56 L-22 48 L-28 22 L-26 -14 L-18 -44 Z" fill="'+body+'"/>';
-    /* sharp nose vents */
-    g+='<path d="M-13 -50 L-4 -55 L-4 -46 Z" fill="'+dark+'"/>';
-    g+='<path d="M13 -50 L4 -55 L4 -46 Z" fill="'+dark+'"/>';
-    /* headlights: angular Y */
-    g+='<path d="M-19 -41 l10 4 l-2 4 l-9 -4 z" fill="#eaf4ff" opacity=".95"/>';
-    g+='<path d="M19 -41 l-10 4 l2 4 l9 -4 z" fill="#eaf4ff" opacity=".95"/>';
-    /* windscreen + cabin glass, hexagon roof */
-    g+='<path d="M-16 -22 L16 -22 L19 2 L14 20 L-14 20 L-19 2 Z" fill="'+dark+'"/>';
-    g+='<path d="M-13 -18 L13 -18 L15 -1 L-15 -1 Z" fill="#8fc4e8" opacity=".3"/>';
-    g+='<path d="M-13 4 L13 4 L11 16 L-11 16 Z" fill="#8fc4e8" opacity=".2"/>';
-    /* roof scoop + engine cover slats */
-    g+='<rect x="-4" y="-24" width="8" height="8" rx="2" fill="'+dark+'"/>';
-    for(var sl=0;sl<4;sl++)
-      g+='<rect x="-13" y="'+(22+sl*5)+'" width="26" height="2.6" rx="1.3" fill="'+dark+'" opacity=".85"/>';
-    /* side blades / air intakes */
-    g+='<path d="M-27 -6 l-6 10 l6 8 z" fill="'+dark+'"/>';
-    g+='<path d="M27 -6 l6 10 l-6 8 z" fill="'+dark+'"/>';
-    /* mirrors on thin stalks */
-    g+='<rect x="-33" y="-20" width="8" height="4" rx="2" fill="'+body+'"/>';
-    g+='<rect x="25" y="-20" width="8" height="4" rx="2" fill="'+body+'"/>';
-    /* rear wing + quad exhaust + tail bar */
-    g+='<rect x="-22" y="44" width="44" height="4" rx="2" fill="'+dark+'"/>';
-    g+='<rect x="-20" y="49" width="40" height="4" rx="2" fill="'+accent+'" opacity=".95"/>';
-    [-11,-4,4,11].forEach(function(ex){
-      g+='<rect x="'+(ex-2)+'" y="53" width="4" height="4" rx="1.5" fill="#0d1116"/>';});
-    /* gloss highlight down the spine */
-    g+='<path d="M0 -52 L6 -20 L6 30 L0 46 L-6 30 L-6 -20 Z" fill="#fff" opacity=".07"/>';
-    /* wheels tucked into the arches */
-    [[-29,-32],[29,-32],[-30,30],[30,30]].forEach(function(w2){
-      g+='<rect x="'+(w2[0]-5)+'" y="'+(w2[1]-11)+'" width="10" height="22" rx="4" fill="#0d1116"/>'
-       +'<rect x="'+(w2[0]-2.4)+'" y="'+(w2[1]-6)+'" width="4.8" height="12" rx="2" fill="#3a4658"/>';});
-    return g+'</g>';}
-    /* three of them, all black, noses out */
-    s+=lambo(GB.x+86, GB.y+112, "#101318","#05070a","#d4736f");
-    s+=lambo(GB.x+238,GB.y+112, "#15181e","#05070a","#d4736f");
-    s+=lambo(GB.x+390,GB.y+112, "#0c0f13","#05070a","#d4736f");
+      /* the edit suite */
+      var EX2=LG.x+14;
+      s+='<rect x="'+EX2+'" y="'+BY+'" width="'+BW+'" height="'+BH+'" rx="6" fill="#0c0f14" stroke="#232a35" stroke-width="1.5"/>';
+      /* two edit bays against the far wall, each a desk and a pair of screens */
+      [0,1].forEach(function(bi){
+        var bx=EX2+22+bi*(BW/2);
+        s+='<rect x="'+bx+'" y="'+(BY+20)+'" width="'+(BW/2-34)+'" height="9" rx="2" fill="#191e26"/>';
+        [0,1].forEach(function(mi){
+          var mx=bx+4+mi*((BW/2-42)/2);
+          s+='<rect x="'+mx+'" y="'+(BY+6)+'" width="'+((BW/2-46)/2)+'" height="12" rx="1.6" fill="#050810" stroke="#1e2833" stroke-width=".8"/>';
+          s+='<rect x="'+(mx+2)+'" y="'+(BY+8)+'" width="'+((BW/2-54)/2)+'" height="8" rx="1" fill="#12324a" opacity="'+(0.4+bi*0.2)+'"/>';
+        });
+        s+=person(bx+(BW/2-34)/2, BY+44, 0.86, bi?"#26303c":"#2a2434", bi?"#1e1712":"#2a1d13");
+      });
+      s+='<text x="'+(EX2+BW/2)+'" y="'+(BY+BH-8)+'" text-anchor="middle" font-size="6.4" '
+        +'font-weight="800" letter-spacing="2.2" fill="#4b5563">EDIT SUITE</text>';
 
-    /* The bikes were here. Taken out — the cars have the floor to themselves. */
+      /* the green room */
+      var GX2=EX2+BW+16;
+      s+='<rect x="'+GX2+'" y="'+BY+'" width="'+BW+'" height="'+BH+'" rx="6" fill="#0d1013" stroke="#232a35" stroke-width="1.5"/>';
+      /* a couch, a table, a monitor showing the programme output */
+      s+='<rect x="'+(GX2+18)+'" y="'+(BY+34)+'" width="'+(BW-36)+'" height="20" rx="7" fill="#1b1f27"/>';
+      s+='<rect x="'+(GX2+18)+'" y="'+(BY+30)+'" width="'+(BW-36)+'" height="9" rx="4.5" fill="#232833"/>';
+      s+='<rect x="'+(GX2+BW/2-20)+'" y="'+(BY+60)+'" width="40" height="7" rx="2" fill="#191e26"/>';
+      s+='<rect x="'+(GX2+BW-58)+'" y="'+(BY+8)+'" width="42" height="24" rx="2" fill="#050810" stroke="#1e2833" stroke-width="1"/>';
+      s+='<rect x="'+(GX2+BW-55)+'" y="'+(BY+11)+'" width="36" height="18" rx="1.4" fill="#2a0b0b" opacity=".7"/>';
+      s+='<text x="'+(GX2+BW-37)+'" y="'+(BY+23)+'" text-anchor="middle" font-size="5.4" font-weight="800" fill="#ff8078">ON AIR</text>';
+      s+=person(GX2+40, BY+30, 0.9, "#2f3a2c", "#241a12");
+      s+='<text x="'+(GX2+BW/2)+'" y="'+(BY+BH-8)+'" text-anchor="middle" font-size="6.4" '
+        +'font-weight="800" letter-spacing="2.2" fill="#4b5563">GREEN ROOM</text>';
+    })();
 
-    s+='<text x="'+(GB.x+GB.w/2)+'" y="'+(GB.y+GB.h-12)+'" text-anchor="middle" font-size="8" '
-      +'font-weight="800" letter-spacing="4.5" fill="#5b6472">THE GARAGE</text>';
+    /* =================== EXODUS NEWS — THE STUDIO ===================
+       The garage is a working newsroom and it does not close. It runs the full
+       width of the basement now: news desk left, the weather wall in the middle,
+       the sports desk right, the gallery behind glass and a vehicle ramp in the
+       corner. The theatre gave up its back two rows for the floor.
+
+       Every screen on this set reads from the same BRIEF the dashboard uses.
+       Nothing here is decorative: if a wall says a headline, that headline is on
+       his dashboard too. */
+    var ST={x:56, y:626, w:1200, h:334};
+
+    s+='<rect x="'+ST.x+'" y="'+ST.y+'" width="'+ST.w+'" height="'+ST.h+'" rx="9" fill="#080a0e"/>';
+    s+='<rect x="'+ST.x+'" y="'+ST.y+'" width="'+ST.w+'" height="'+ST.h+'" rx="9" fill="none" stroke="#2a3140" stroke-width="2"/>';
+    /* camera marks on a painted studio floor */
+    for(var sg=1;sg*56<ST.h;sg++)
+      s+='<line x1="'+(ST.x+3)+'" y1="'+(ST.y+sg*56)+'" x2="'+(ST.x+ST.w-3)+'" y2="'+(ST.y+sg*56)+'" stroke="#101419" stroke-width="1.2"/>';
+    for(var sc2=1;sc2*56<ST.w;sc2++)
+      s+='<line x1="'+(ST.x+sc2*56)+'" y1="'+(ST.y+3)+'" x2="'+(ST.x+sc2*56)+'" y2="'+(ST.y+ST.h-3)+'" stroke="#101419" stroke-width="1.2"/>';
+
+    /* the overhead lighting grid, two runs the length of the room */
+    [ST.y+22, ST.y+ST.h-26].forEach(function(lgy){
+      s+='<line x1="'+(ST.x+16)+'" y1="'+lgy+'" x2="'+(ST.x+ST.w-16)+'" y2="'+lgy+'" stroke="#1e242e" stroke-width="3"/>';
+      for(var lc=0;lc<9;lc++){
+        var lx2=ST.x+56+lc*((ST.w-112)/8);
+        s+='<circle cx="'+lx2+'" cy="'+lgy+'" r="14" fill="url(#lampB)"/>';
+        s+='<rect x="'+(lx2-6)+'" y="'+(lgy-4)+'" width="12" height="8" rx="2" fill="#20262f"/>';
+        s+='<circle cx="'+lx2+'" cy="'+lgy+'" r="2.6" fill="#ffe4a8" opacity=".85"/>';
+      }
+    });
+
+    /* ON AIR, because it never goes off */
+    s+='<rect x="'+(ST.x+ST.w/2-62)+'" y="'+(ST.y+8)+'" width="124" height="22" rx="4" fill="#2a0b0b" stroke="#e0483f" stroke-width="1.5"/>';
+    s+='<circle cx="'+(ST.x+ST.w/2-46)+'" cy="'+(ST.y+19)+'" r="3.8" fill="#ff5c50"/>';
+    s+='<text x="'+(ST.x+ST.w/2+8)+'" y="'+(ST.y+23)+'" text-anchor="middle" font-size="8.5" font-weight="800" letter-spacing="2.8" fill="#ff8078">ON AIR &middot; 24/7</text>';
+
+    /* a desk with a video wall behind it */
+    function anchorDesk(dx,dy,dw,label,accent){
+      var g='';
+      g+='<rect x="'+dx+'" y="'+dy+'" width="'+dw+'" height="88" rx="5" fill="#070a0e" stroke="#232a35" stroke-width="1.5"/>';
+      g+='<rect x="'+(dx+3)+'" y="'+(dy+3)+'" width="'+(dw-6)+'" height="82" rx="4" fill="'+accent+'" opacity=".07"/>';
+      var dkw=Math.min(dw-40, 186), dkx=dx+(dw-dkw)/2, dky=dy+124;
+      g+='<rect x="'+(dkx+4)+'" y="'+(dky+6)+'" width="'+dkw+'" height="40" rx="6" fill="#000" opacity=".45"/>';
+      g+='<rect x="'+dkx+'" y="'+dky+'" width="'+dkw+'" height="30" rx="6" fill="#161b23"/>';
+      g+='<rect x="'+dkx+'" y="'+(dky+2)+'" width="'+dkw+'" height="9" rx="4.5" fill="#1f2630"/>';
+      g+='<rect x="'+(dkx+10)+'" y="'+(dky+15)+'" width="'+(dkw-20)+'" height="4" rx="2" fill="'+accent+'" opacity=".7"/>';
+      g+='<rect x="'+dkx+'" y="'+(dky+30)+'" width="'+dkw+'" height="11" rx="2" fill="'+accent+'" opacity=".24"/>';
+      g+='<text x="'+(dkx+dkw/2)+'" y="'+(dky+38.5)+'" text-anchor="middle" font-size="7" font-weight="800" letter-spacing="2.4" fill="'+accent+'">'+label+'</text>';
+      return g;
+    }
+
+    function camera(cx,cy){
+      var g='<g transform="translate('+cx+','+cy+')">';
+      g+='<ellipse cx="0" cy="17" rx="17" ry="6" fill="#000" opacity=".45"/>';
+      g+='<path d="M0 12 L-12 20 M0 12 L12 20 M0 12 L0 21" stroke="#2a313c" stroke-width="2.8" stroke-linecap="round"/>';
+      g+='<rect x="-2.6" y="-2" width="5.2" height="15" fill="#242a34"/>';
+      g+='<rect x="-14" y="-16" width="28" height="18" rx="3" fill="#1b212a"/>';
+      g+='<rect x="-14" y="-16" width="28" height="5" rx="2.5" fill="#252d38"/>';
+      g+='<rect x="-21" y="-12" width="8" height="10" rx="2" fill="#141920"/>';
+      g+='<circle cx="-21" cy="-7" r="4" fill="#0a0d12"/>';
+      g+='<circle cx="-21" cy="-7" r="1.8" fill="#5b9bd5" opacity=".85"/>';
+      g+='<circle cx="10" cy="-18" r="2.6" fill="#ff5c50"/>';
+      g+='<g transform="translate(17,3) scale(.66)">'
+        +'<ellipse cx="0" cy="4" rx="11" ry="9" fill="#000" opacity=".3"/>'
+        +'<path d="M-10 6 q0 -11 10 -11 q10 0 10 11 z" fill="#242a33"/>'
+        +'<circle cx="0" cy="-4" r="7.4" fill="#e8bf9b"/>'
+        +'<path d="M-7.4 -5 a7.4 7.4 0 0 1 14.8 0 q-3 -4 -7.4 -4 q-4.4 0 -7.4 4 z" fill="#1e1712"/>'
+        +'</g>';
+      return g+'</g>';
+    }
+
+    /* ================= THE NEWS DESK — left ================= */
+    (function(){
+      var NX=ST.x+30, NY=ST.y+46, NW=300;
+      s+=anchorDesk(NX,NY,NW,"EXODUS NEWS","#4b7bd4");
+      var rows=(typeof BRIEF!=="undefined" && BRIEF && (BRIEF.news||BRIEF.headlines)) || [];
+      if(rows.length){
+        rows.slice(0,5).forEach(function(x,i2){
+          var ty=NY+18+i2*15.5;
+          s+='<rect x="'+(NX+10)+'" y="'+(ty-8.5)+'" width="34" height="11" rx="2" fill="#4b7bd4" opacity=".5"/>';
+          s+='<text x="'+(NX+13)+'" y="'+ty+'" font-size="6" font-weight="800" fill="#dbe8fa">'+esc(String(x.src||"").slice(0,8))+'</text>';
+          s+='<text x="'+(NX+50)+'" y="'+ty+'" font-size="6.6" fill="#a6bcd8">'+esc(String(x.title||"").slice(0,50))+'</text>';
+        });
+      } else s+='<text x="'+(NX+NW/2)+'" y="'+(NY+48)+'" text-anchor="middle" font-size="8" fill="#3f5470">AWAITING THE WIRE</text>';
+      s+=person(NX+NW/2-26, NY+150, 1.15, "#1d3a6b", "#241a12");
+      s+=person(NX+NW/2+26, NY+150, 1.15, "#6b1d2a", "#3a2a18");
+      s+=camera(NX+NW/2, NY+232);
+    })();
+
+    /* ================= THE WEATHER WALL — centre ================= */
+    (function(){
+      var WX=ST.x+368, WY=ST.y+46, WW=406;
+      s+='<rect x="'+WX+'" y="'+WY+'" width="'+WW+'" height="88" rx="5" fill="#061019" stroke="#1e3546" stroke-width="1.5"/>';
+      s+='<rect x="'+(WX+3)+'" y="'+(WY+3)+'" width="'+(WW-6)+'" height="82" rx="4" fill="#0d2233" opacity=".72"/>';
+      /* an abstract coastline so it reads as a map, not a chart */
+      s+='<path d="M'+(WX+22)+' '+(WY+66)+' q40 -26 74 -10 q26 12 54 -6 q30 -20 68 -4 q34 14 66 -12 q28 -22 60 -6"'
+        +' stroke="#2f6f96" stroke-width="1.7" fill="none" opacity=".8"/>';
+      s+='<path d="M'+(WX+16)+' '+(WY+26)+' q54 14 108 -6 q46 -18 96 2 q50 20 100 -8"'
+        +' stroke="#255a7c" stroke-width="1.3" fill="none" opacity=".55"/>';
+      var wx2=(typeof BRIEF!=="undefined" && BRIEF && BRIEF.weather) ? BRIEF.weather.here : null;
+      var days=(wx2 && wx2.days) || [];
+      if(days.length){
+        days.slice(0,5).forEach(function(dd,i2){
+          var cx2=WX+56+i2*((WW-112)/4);
+          s+='<circle cx="'+cx2+'" cy="'+(WY+44)+'" r="19" fill="#0a1c2a" stroke="#2a5f80" stroke-width="1.2"/>';
+          s+='<text x="'+cx2+'" y="'+(WY+28)+'" text-anchor="middle" font-size="6" font-weight="800" fill="#6fa8cc">'
+            +esc(i2===0?"TODAY":shortDayName(dd.d).toUpperCase())+'</text>';
+          s+='<text x="'+cx2+'" y="'+(WY+48)+'" text-anchor="middle" font-size="12.5" font-weight="800" fill="#e6f2fb">'
+            +dd.high+'°</text>';
+          s+='<text x="'+cx2+'" y="'+(WY+62)+'" text-anchor="middle" font-size="7" fill="#5d89a8">'+dd.low+'°</text>';
+          if(dd.rain>=30)
+            s+='<text x="'+cx2+'" y="'+(WY+78)+'" text-anchor="middle" font-size="6" font-weight="800" fill="#5b9bd5">'+dd.rain+'%</text>';
+        });
+        if(wx2 && wx2.place)
+          s+='<text x="'+(WX+12)+'" y="'+(WY+80)+'" font-size="7" font-weight="800" letter-spacing="1.6" fill="#3f7396">'
+            +esc(String(wx2.place).toUpperCase())+(isFinite(wx2.now)?' · '+wx2.now+'°':'')+'</text>';
+      } else s+='<text x="'+(WX+WW/2)+'" y="'+(WY+50)+'" text-anchor="middle" font-size="8" fill="#33586f">WAITING ON THE FORECAST</text>';
+
+      /* the weatherman, side on, arm up at the map */
+      s+='<g transform="translate('+(WX+WW-64)+','+(WY+176)+')">'
+        +'<ellipse cx="0" cy="18" rx="17" ry="7" fill="#000" opacity=".45"/>'
+        +'<path d="M-13 16 q0 -29 13 -29 q13 0 13 29 z" fill="#1f3b52"/>'
+        +'<circle cx="0" cy="-18" r="9.4" fill="#efc8a4"/>'
+        +'<path d="M-9.4 -19 a9.4 9.4 0 0 1 18.8 0 q-3.8 -5 -9.4 -5 q-5.6 0 -9.4 5 z" fill="#2a1d13"/>'
+        +'<path d="M-11 -5 L-34 -30" stroke="#1f3b52" stroke-width="5.5" stroke-linecap="round"/>'
+        +'<circle cx="-36" cy="-32" r="3.4" fill="#efc8a4"/>'
+        +'</g>';
+      s+=camera(WX+70, WY+206);
+      s+='<text x="'+(WX+12)+'" y="'+(WY+214)+'" font-size="7" font-weight="800" letter-spacing="2.6" fill="#3f7396">WEATHER</text>';
+    })();
+
+    /* ================= THE SPORTS DESK — right ================= */
+    (function(){
+      var PX2=ST.x+810, PY=ST.y+46, PW=286;
+      s+=anchorDesk(PX2,PY,PW,"EXODUS SPORT","#e0483f");
+      var gm=(typeof BRIEF!=="undefined" && BRIEF && BRIEF.scores) || [];
+      var show=gm.filter(function(g2){ return g2 && g2.teams && g2.teams.length===2; }).slice(0,5);
+      if(show.length){
+        show.forEach(function(g2,i2){
+          var ty=PY+18+i2*15.5, t2=g2.teams;
+          s+='<text x="'+(PX2+12)+'" y="'+ty+'" font-size="6" font-weight="800" fill="#e0483f">'+esc(g2.league||"")+'</text>';
+          s+='<text x="'+(PX2+52)+'" y="'+ty+'" font-size="7" font-weight="700" fill="#c9d6e6">'+esc(t2[0].team)+'</text>';
+          s+='<text x="'+(PX2+104)+'" y="'+ty+'" font-size="7.6" font-weight="800" fill="#fff">'+esc(String(t2[0].score===null?"-":t2[0].score))+'</text>';
+          s+='<text x="'+(PX2+134)+'" y="'+ty+'" font-size="7" font-weight="700" fill="#c9d6e6">'+esc(t2[1].team)+'</text>';
+          s+='<text x="'+(PX2+186)+'" y="'+ty+'" font-size="7.6" font-weight="800" fill="#fff">'+esc(String(t2[1].score===null?"-":t2[1].score))+'</text>';
+          if(g2.live)
+            s+='<text x="'+(PX2+PW-14)+'" y="'+ty+'" text-anchor="end" font-size="5.6" font-weight="800" fill="#5ee3a4">LIVE</text>';
+        });
+      } else s+='<text x="'+(PX2+PW/2)+'" y="'+(PY+48)+'" text-anchor="middle" font-size="8" fill="#6b3a36">NO GAMES ON</text>';
+      s+=person(PX2+PW/2-24, PY+150, 1.15, "#7a2b22", "#191410");
+      s+=person(PX2+PW/2+24, PY+150, 1.15, "#243044", "#2a1d13");
+      s+=camera(PX2+PW/2, PY+232);
+    })();
+
+    /* ================= THE GALLERY — behind glass, far right ================= */
+    (function(){
+      var CB={x:ST.x+ST.w-146, y:ST.y+46, w:132, h:96};
+      s+='<rect x="'+CB.x+'" y="'+CB.y+'" width="'+CB.w+'" height="'+CB.h+'" rx="5" fill="#0d1117" stroke="#2a3140" stroke-width="1.5"/>';
+      s+='<rect x="'+(CB.x+4)+'" y="'+(CB.y+4)+'" width="'+(CB.w-8)+'" height="34" rx="3" fill="#8fc4e8" opacity=".14"/>';
+      s+='<line x1="'+(CB.x+CB.w/2)+'" y1="'+(CB.y+4)+'" x2="'+(CB.x+CB.w/2)+'" y2="'+(CB.y+38)+'" stroke="#2a3140" stroke-width="1.2"/>';
+      for(var mr=0;mr<3;mr++) for(var mc=0;mc<4;mc++){
+        var mx2=CB.x+10+mc*29, my2=CB.y+44+mr*17;
+        s+='<rect x="'+mx2+'" y="'+my2+'" width="24" height="13" rx="1.6" fill="#050810" stroke="#1e2833" stroke-width=".8"/>';
+        s+='<rect x="'+(mx2+2)+'" y="'+(my2+2)+'" width="20" height="9" rx="1" fill="#12324a" opacity="'+(0.3+((mr+mc)%3)*0.22)+'"/>';
+      }
+      s+=person(CB.x+36, CB.y+24, 0.78, "#222932", "#191410");
+      s+=person(CB.x+CB.w-36, CB.y+24, 0.78, "#2a2230", "#2a1d13");
+      s+='<text x="'+(CB.x+CB.w/2)+'" y="'+(CB.y+CB.h+11)+'" text-anchor="middle" font-size="6" font-weight="800" letter-spacing="2" fill="#4b5563">GALLERY</text>';
+    })();
+
+    /* ================= THE VEHICLE ENTRANCE — bottom right corner ================= */
+    (function(){
+      var GD={x:ST.x+ST.w-132, y:ST.y+ST.h-116, w:116, h:96};
+      s+='<path d="M'+GD.x+' '+(GD.y+GD.h)+' L'+(GD.x+GD.w)+' '+(GD.y+GD.h)+' L'+(GD.x+GD.w-18)+' '+GD.y+' L'+(GD.x+18)+' '+GD.y+' Z" fill="#0d1116"/>';
+      for(var rr=1;rr<7;rr++){
+        var ry2=GD.y+rr*(GD.h/7), inset=18*(1-rr/7);
+        s+='<line x1="'+(GD.x+inset)+'" y1="'+ry2+'" x2="'+(GD.x+GD.w-inset)+'" y2="'+ry2+'" stroke="#191f27" stroke-width="1.5"/>';
+      }
+      /* the roller door, half up */
+      s+='<rect x="'+(GD.x+16)+'" y="'+(GD.y-6)+'" width="'+(GD.w-32)+'" height="28" rx="2" fill="#171c24"/>';
+      for(var sl2=0;sl2<5;sl2++)
+        s+='<line x1="'+(GD.x+16)+'" y1="'+(GD.y-6+sl2*6)+'" x2="'+(GD.x+GD.w-16)+'" y2="'+(GD.y-6+sl2*6)+'" stroke="#232a34" stroke-width="1.6"/>';
+      for(var hz=0;hz<8;hz++)
+        s+='<rect x="'+(GD.x+8+hz*13)+'" y="'+(GD.y+GD.h-7)+'" width="7" height="6" fill="'+(hz%2?"#0f1319":"#c9a25c")+'" opacity=".72"/>';
+      s+='<text x="'+(GD.x+GD.w/2)+'" y="'+(GD.y+GD.h+12)+'" text-anchor="middle" font-size="6" font-weight="800" letter-spacing="2" fill="#5b6472">VEHICLE ENTRANCE</text>';
+
+      function guard(gx,gy){
+        return '<g transform="translate('+gx+','+gy+')">'
+          +'<ellipse cx="0" cy="14" rx="13" ry="5" fill="#000" opacity=".45"/>'
+          +'<path d="M-10 12 q0 -23 10 -23 q10 0 10 23 z" fill="#171b22"/>'
+          +'<rect x="-10" y="-2" width="20" height="4.5" rx="1" fill="#0c0f14"/>'
+          +'<circle cx="0" cy="-14" r="7.4" fill="#e0b58f"/>'
+          +'<path d="M-7.6 -16 a7.6 7.6 0 0 1 15.2 0 z" fill="#12161c"/>'
+          +'<path d="M6.5 -13 q5 4 3 12" stroke="#3a424e" stroke-width="1.3" fill="none"/>'
+          +'<circle cx="0" cy="1" r="2" fill="#c9a25c" opacity=".85"/>'
+          +'</g>';
+      }
+      s+=guard(GD.x-20, GD.y+GD.h-26);
+      s+=guard(GD.x+GD.w+20, GD.y+GD.h-26);
+    })();
+
+    s+='<text x="'+(ST.x+ST.w/2)+'" y="'+(ST.y+ST.h-8)+'" text-anchor="middle" font-size="8.5" '
+      +'font-weight="800" letter-spacing="5" fill="#5b6472">EXODUS NEWS NETWORK &middot; STUDIO A</text>';
   })();
 
-  s+='<text x="650" y="992" text-anchor="middle" font-size="9.5" font-weight="800" letter-spacing="4" fill="#4b5563">BASEMENT &middot; THEATRE &middot; LOUNGE &middot; GROW &middot; GARAGE</text>';
+  s+='<text x="650" y="992" text-anchor="middle" font-size="9.5" font-weight="800" letter-spacing="4" fill="#4b5563">BASEMENT &middot; THEATRE &middot; LOUNGE &middot; GROW &middot; NEWS STUDIO</text>';
 
   document.getElementById("bld").innerHTML=d+s;
   var su=[];
@@ -11903,9 +12118,27 @@ function spPaint(){
   if(!games.length){ host.className="sptick"; host.innerHTML=""; return; }
 
   var rows=games.map(spGame).filter(Boolean).join("");
-  if(!rows){ host.className="sptick"; host.innerHTML=""; return; }
+
+  /* Philadelphia sport underneath. The scores rail is one line tall and the
+     panel next to the weather is three, so the rest of it was empty space —
+     this is what he would actually put there. */
+  var ph=(briefFresh()&&BRIEF&&BRIEF.philly) ? BRIEF.philly : [];
+  var phRows=ph.slice(0,4).map(function(x){
+    var href=/^https?:\/\//i.test(x.link||"") ? x.link : "";
+    var body='<span class="ph-s">'+esc(x.src)+'</span>'
+            +'<span class="ph-t">'+esc(x.title)+'</span>';
+    return href
+      ? '<a class="ph-r" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+body+'</a>'
+      : '<span class="ph-r">'+body+'</span>';
+  }).join("");
+
+  if(!rows && !phRows){ host.className="sptick"; host.innerHTML=""; return; }
   host.className="sptick on";
-  host.innerHTML='<div class="sp-lbl">SCORES</div><div class="sp-rail">'+rows+'</div>';
+  host.innerHTML=
+     (rows ? '<div class="sp-top"><div class="sp-lbl">SCORES</div>'
+             +'<div class="sp-rail">'+rows+'</div></div>' : "")
+    +(phRows ? '<div class="sp-phl"><span>PHILLY</span></div>'
+               +'<div class="ph-list">'+phRows+'</div>' : "");
 }
 
 /* ======================= WHAT SHE KNOWS ABOUT HIM =======================
@@ -14609,10 +14842,18 @@ function salesPipe(){
    +SORTS.map(function(o){
       return '<option value="'+o.k+'"'+(LSORT===o.k?" selected":"")+'>'+esc(o.nm)+'</option>';}).join("")
    +'</select></label>'
-   +'<button class="sb-b'+(LGROUP?" on":"")+'" id="l-group">'
-   +(LGROUP?"Grouped by stage":"Flat list")+'</button>'
+   /* A segmented pair, not one button whose label is its current state. The old
+      one said "Grouped by stage" while grouped, which reads as the thing it
+      will do rather than the thing it is — so nobody could tell whether they
+      were pressing it to turn grouping on or off. */
+   +'<span class="sb-seg">'
+     +'<button class="sb-sg'+(LGROUP?" on":"")+'" data-lgrp="1">By stage</button>'
+     +'<button class="sb-sg'+(LGROUP?"":" on")+'" data-lgrp="0">Flat list</button>'
+   +'</span>'
    +(due?'<button class="sb-b due" id="l-due">'+due+' follow-up'+(due>1?"s":"")+' due</button>':'')
-   +'<button class="sb-b" id="l-fold">Collapse all</button>'
+   /* Only offered when there are bands to fold. In a flat list it did nothing,
+      which is the worst thing a button can do. */
+   +(LGROUP?'<button class="sb-b" id="l-fold">Collapse all</button>':'')
    +'<span class="sb-n">'+rows.length+' shown</span></div>';
 
   /* Grouped by stage, New Leads first, because a new lead going cold is the most
@@ -17930,8 +18171,12 @@ function wire(){
   /* the sort controls */
   var so=document.getElementById("l-sort");
   if(so) so.onchange=function(){ LSORT=this.value; redraw(); };
-  var gb2=document.getElementById("l-group");
-  if(gb2) gb2.onclick=function(){ LGROUP=!LGROUP; redraw(); };
+  var seg=document.querySelectorAll("[data-lgrp]");
+  for(var g3=0;g3<seg.length;g3++) seg[g3].onclick=function(){
+    var want=this.getAttribute("data-lgrp")==="1";
+    if(want===LGROUP) return;
+    LGROUP=want; redraw();
+  };
   var db3=document.getElementById("l-due");
   if(db3) db3.onclick=function(){ LSORT="follow"; LGROUP=false; redraw(); };
 
