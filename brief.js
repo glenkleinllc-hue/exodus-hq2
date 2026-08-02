@@ -1,8 +1,8 @@
 /* ==========================================================================
    /api/brief  —  everything Claudia cannot know on her own
    --------------------------------------------------------------------------
-   Weather where he is, and eight desks of headlines — world, USA, markets,
-   military, Thailand, sport and men's health — plus the two coins. Fetched server-side and handed to her as facts. She is told, in her
+   Weather where he is, and eight desks of headlines — world, USA, military,
+   Thailand, sport and men's health — plus the two coins. Fetched server-side and handed to her as facts. She is told, in her
    own brief, never to state one of these that is not in here. An invented
    headline is worse than no headline.
 
@@ -45,10 +45,12 @@ async function weatherAt(place) {
   const u = "https://api.open-meteo.com/v1/forecast"
     + "?latitude=" + place.lat + "&longitude=" + place.lon
     + "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m"
-    + "&hourly=temperature_2m,weather_code,precipitation_probability"
-    + "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset"
+    + "&current=relative_humidity_2m,uv_index,is_day"
+    + "&hourly=temperature_2m,weather_code,precipitation_probability,apparent_temperature,wind_speed_10m"
+    + "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,"
+    + "sunrise,sunset,weather_code,wind_speed_10m_max,uv_index_max"
     + "&temperature_unit=fahrenheit&wind_speed_unit=mph"
-    + "&timezone=" + encodeURIComponent(place.tz || "auto") + "&forecast_days=2";
+    + "&timezone=" + encodeURIComponent(place.tz || "auto") + "&forecast_days=7";
   try {
     const r = await fetch(u);
     if (!r.ok) return { place: place.name, error: "Weather service returned " + r.status };
@@ -91,8 +93,50 @@ async function weatherAt(place) {
       }).format(new Date());
     } catch { /* an unknown zone is not worth failing the forecast over */ }
 
+    /* The next twelve hours, hour by hour, for the panel he opens. A single
+       "high today" cannot answer "is it worth filming at four". */
+    let hours = [];
+    if (Array.isArray(h.time) && h.time.length) {
+      const now2 = new Date();
+      let k0 = h.time.findIndex(t => new Date(t) > now2);
+      if (k0 < 0) k0 = 0;
+      for (let k = k0; k < Math.min(k0 + 12, h.time.length); k++) {
+        hours.push({
+          t: h.time[k],
+          temp: Math.round(h.temperature_2m[k]),
+          feels: Math.round((h.apparent_temperature || [])[k]),
+          rain: (h.precipitation_probability || [])[k],
+          wind: Math.round((h.wind_speed_10m || [])[k]),
+          sky: SKY[(h.weather_code || [])[k]] !== undefined
+             ? SKY[h.weather_code[k]] : "unsettled"
+        });
+      }
+    }
+
+    /* The week, for the same panel. */
+    let days = [];
+    if (Array.isArray(d.time)) {
+      for (let k = 0; k < d.time.length; k++) {
+        days.push({
+          d: d.time[k],
+          high: Math.round(d.temperature_2m_max[k]),
+          low: Math.round(d.temperature_2m_min[k]),
+          rain: (d.precipitation_probability_max || [])[k],
+          wind: Math.round((d.wind_speed_10m_max || [])[k]),
+          uv: Math.round((d.uv_index_max || [])[k]),
+          sky: SKY[(d.weather_code || [])[k]] !== undefined
+             ? SKY[d.weather_code[k]] : "unsettled"
+        });
+      }
+    }
+
     return {
       place: place.name,
+      humidity: c.relative_humidity_2m,
+      uv: c.uv_index === undefined ? null : Math.round(c.uv_index),
+      isDay: c.is_day === 1,
+      sunrise: (d.sunrise || [])[0] || null,
+      hours, days,
       now: Math.round(c.temperature_2m),
       feels: Math.round(c.apparent_temperature),
       sky: SKY[c.weather_code] !== undefined ? SKY[c.weather_code] : "unsettled",
@@ -141,15 +185,6 @@ const DESKS = {
     { src: "CBC",        url: "https://www.cbc.ca/webfeed/rss/rss-world" },
     { src: "ToI",        url: "https://www.timesofisrael.com/feed/" }
   ],
-  markets: [
-    { src: "CNBC",       url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258" },
-    { src: "CNBC",       url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114" },
-    { src: "MarketWatch",url: "https://feeds.content.dowjones.io/public/rss/mw_topstories" },
-    { src: "Yahoo Fin",  url: "https://finance.yahoo.com/news/rssindex" },
-    { src: "Investing",  url: "https://www.investing.com/rss/news.rss" },
-    { src: "CoinDesk",   url: "https://www.coindesk.com/arc/outboundfeeds/rss/" },
-    { src: "Cointelegraph", url: "https://cointelegraph.com/rss" }
-  ],
   usa: [
     { src: "AP",      gn: 1, url: "https://news.google.com/rss/search?q=site:apnews.com+US+when:1d&hl=en-US&gl=US&ceid=US:en" },
     { src: "NPR",     url: "https://feeds.npr.org/1003/rss.xml" },
@@ -170,6 +205,15 @@ const DESKS = {
     { src: "War on the Rocks", url: "https://warontherocks.com/feed/" },
     { src: "Breaking Defense", url: "https://breakingdefense.com/feed/" },
     { src: "Task & Purpose",   url: "https://taskandpurpose.com/feed/" }
+  ],
+  /* His city. Under the scores in the ticker, because a scoreboard with two
+     games on it leaves a lot of empty panel and Philadelphia sport is what he
+     would put there. */
+  philly: [
+    { src: "Inquirer",      url: "https://www.inquirer.com/arc/outboundfeeds/rss/category/sports/?outputType=xml" },
+    { src: "Bleeding Green",url: "https://www.bleedinggreennation.com/rss/current.xml" },
+    { src: "Crossing Broad",url: "https://crossingbroad.com/feed" },
+    { src: "Philly",        gn: 1, url: "https://news.google.com/rss/search?q=(Eagles+OR+Phillies+OR+Sixers+OR+Flyers)+when:2d&hl=en-US&gl=US&ceid=US:en" }
   ],
   sport: [
     { src: "ESPN",       url: "https://www.espn.com/espn/rss/news" },
@@ -207,6 +251,9 @@ const TIDY = {
 };
 
 function unxml(s) {
+  /* Tags are stripped TWICE, before and after entity decoding. Several feeds —
+     the Guardian's especially — escape their HTML, so &lt;p&gt; only becomes a
+     <p> after decoding, and a single pass leaves the markup in the text. */
   return String(s)
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
     .replace(/<[^>]*>/g, "")
@@ -215,6 +262,7 @@ function unxml(s) {
     .replace(/&quot;/g, '"').replace(/&apos;/g, "'")
     .replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
+    .replace(/<[^>]*>/g, "")
     .replace(/\s+/g, " ").trim();
 }
 
@@ -250,7 +298,22 @@ function parseFeed(xml, feed, want) {
       const h = raw.match(/<link[^>]*href="([^"]+)"/i);
       if (h) link = h[1];
     }
-    out.push({ title, link, src });
+
+    /* The standfirst. <description> in RSS, <summary> or <content> in Atom.
+       Without this Claudia can only read titles aloud, which is exactly what
+       made the brief feel like a list rather than a briefing. */
+    let sum = "";
+    const dm = raw.match(/<(?:description|summary|content)[^>]*>([\s\S]*?)<\/(?:description|summary|content)>/i);
+    if (dm) sum = unxml(dm[1]);
+    /* Google News packs a block of related-article HTML into description; once
+       the tags are stripped it is a run-on of other headlines, not a summary. */
+    if (feed.gn) sum = "";
+    if (sum) {
+      if (sum.toLowerCase().startsWith(title.toLowerCase().slice(0, 30))) sum = "";
+      else if (sum.length > 400) sum = sum.slice(0, 397).replace(/\s+\S*$/, "") + "…";
+    }
+
+    out.push({ title, link, src, sum });
     if (out.length >= want) break;
   }
   return out;
@@ -286,13 +349,16 @@ async function pullDesk(feeds, limit) {
 }
 
 /* ---------------- live scores ---------------- */
+/* His order, and the ticker keeps it: NFL, NBA, MLB, NHL, then the rest. */
 const LEAGUES = [
   { k: "NFL",  path: "football/nfl" },
   { k: "NBA",  path: "basketball/nba" },
   { k: "MLB",  path: "baseball/mlb" },
   { k: "NHL",  path: "hockey/nhl" },
+  { k: "NCAAF",path: "football/college-football" },
   { k: "EPL",  path: "soccer/eng.1" },
-  { k: "UCL",  path: "soccer/uefa.champions" }
+  { k: "UCL",  path: "soccer/uefa.champions" },
+  { k: "UFC",  path: "mma/ufc" }
 ];
 
 async function scores() {
@@ -316,15 +382,24 @@ async function scores() {
           done: st.completed === true,
           teams: (comp.competitors || []).map((c) => ({
             team: (c.team && (c.team.abbreviation || c.team.shortDisplayName)) || "?",
+            name: (c.team && (c.team.shortDisplayName || c.team.displayName)) || "",
+            /* ESPN serves these from its own CDN, no key, no referrer check */
+            logo: (c.team && c.team.logo) || "",
+            color: (c.team && c.team.color) ? "#" + c.team.color : "",
             score: c.score === undefined ? null : c.score,
-            home: c.homeAway === "home"
+            home: c.homeAway === "home",
+            winner: c.winner === true
           }))
         });
       });
     } catch { /* one league down does not take the section */ }
   }));
+  /* Live first, then finals, then fixtures — and inside each of those, his
+     league order. A live NHL game still beats an NFL fixture next Thursday. */
   const rank = (x) => x.live ? 0 : x.done ? 1 : 2;
-  out.sort((a, b) => rank(a) - rank(b));
+  const lg = (x) => { const i = LEAGUES.findIndex(l => l.k === x.league);
+                      return i < 0 ? 99 : i; };
+  out.sort((a, b) => (rank(a) - rank(b)) || (lg(a) - lg(b)));
   return out;
 }
 
@@ -386,8 +461,8 @@ export default async function handler(req, res) {
 
   /* Every desk at once. They run in parallel and each feed has its own 7s
      timeout, so a slow masthead costs nothing but its own slot. */
-  const CATS = ["world", "usa", "markets", "military", "thailand", "sport", "fitness"];
-  const smaller = { fitness: 8, thailand: 8, military: 8 };
+  const CATS = ["world", "usa", "military", "thailand", "sport", "philly", "fitness"];
+  const smaller = { fitness: 8, thailand: 8, military: 8, philly: 6 };
   const [wHere, sc, coins, ...desks] = await Promise.all([
     weatherAt(here),
     scores(),
@@ -402,6 +477,11 @@ export default async function handler(req, res) {
   const world = byCat.world, sport = byCat.sport;
   const news = tag(world, "world");
 
+  /* The single biggest thing on ESPN right now, with what it is about. He asked
+     for the headline, not the scoreboard — "dont give me abbreviated scores" was
+     about as clear as feedback gets. */
+  const espnLead = sport.find(x => /^ESPN$/.test(x.src)) || sport[0] || null;
+
   const out = {
     ok: true,
     at: new Date().toISOString(),
@@ -411,7 +491,8 @@ export default async function handler(req, res) {
     headlines: CATS.reduce((a, c) => a.concat(tag(byCat[c], c)), []),
     counts,
     cats: CATS,
-    sport, scores: sc, crypto: coins
+    sport, espnLead, philly: byCat.philly || [],
+    scores: sc, crypto: coins
   };
   if (!news.length) out.newsError = "No news feed answered just now.";
   if (!sport.length && !sc.length) out.sportError = "No sports feed answered just now.";
