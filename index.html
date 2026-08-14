@@ -1792,6 +1792,44 @@ a.lnk:hover{color:#bfdbfe}
 .crmwrap .pills{gap:6px}
 .crmwrap .legend{opacity:.9}
 
+.cm.ovr{border-color:#4a3a1f}
+.cm-ov{color:#c8a86a;font-size:10px;line-height:1.4}
+.cm-clr{font-size:9.5px;font-weight:800;letter-spacing:.3px;padding:2px 7px;
+  margin-left:3px;border-radius:5px;cursor:pointer;font-family:inherit;
+  background:rgba(200,168,106,.15);border:1px solid rgba(200,168,106,.4);color:#dcbe86}
+.cm-clr:hover{background:rgba(200,168,106,.28);color:#f0dcae}
+
+/* ---- Claudia: a waveform, and one word ----
+   Glen asked for Jarvis. Jarvis does not show you a transcript while he is
+   talking to you. A centred pill with the bars moving is the whole interface. */
+.jvpop{position:fixed;left:0;right:0;bottom:26px;z-index:900;
+  display:flex;justify-content:center;pointer-events:none}
+.jvpop[hidden]{display:none}
+.jvpop-in{display:flex;align-items:center;gap:13px;
+  padding:12px 18px;border-radius:99px;pointer-events:auto;
+  background:rgba(9,13,19,.93);border:1px solid #22303f;
+  box-shadow:0 14px 44px rgba(0,0,0,.55);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.jvpop-in>b{font-size:12px;font-weight:800;letter-spacing:.4px;color:#dbe3ee;
+  min-width:64px}
+.jvpop.live .jvpop-in{border-color:#2c5340}
+.jvpop.live .jvpop-in>b{color:#7fe0ac}
+.jvpop.talk .jvpop-in{border-color:#2b4a6e}
+.jvpop.talk .jvpop-in>b{color:#8fc0f0}
+
+.jvpop .jv-wave{display:flex;align-items:center;gap:3px;height:22px}
+.jvpop .jv-wave i{width:3px;height:5px;border-radius:2px;background:#3d4a5a;
+  animation:none}
+.jvpop.live .jv-wave i{background:#5ee3a4;animation:jvBar .78s ease-in-out infinite}
+.jvpop.talk .jv-wave i{background:#79aef5;animation:jvBar .62s ease-in-out infinite}
+.jvpop.think .jv-wave i{background:#6f7c8d;animation:jvBar 1.5s ease-in-out infinite}
+@keyframes jvBar{0%,100%{height:5px;opacity:.55}50%{height:20px;opacity:1}}
+
+.jvpop .jv-stop{font-size:10.5px;font-weight:800;letter-spacing:.5px;
+  padding:6px 12px;border-radius:99px;cursor:pointer;font-family:inherit;
+  background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.4);color:#f0857f}
+.jvpop .jv-stop:hover{background:rgba(239,68,68,.24);color:#ffb4ac}
+
 /* ===================== THE LEAD GRID =====================
    The single change that matters: a cell reads as TEXT until you touch it.
 
@@ -2218,7 +2256,10 @@ a.sp-g:hover{background:rgba(255,255,255,.05)}
 
 
 /* the exchange, inside the voice overlay */
-.jvpop-in{flex-direction:column;align-items:stretch;gap:0;width:min(520px,calc(100vw - 32px))}
+/* The old full-width panel rules, from when this was a transcript window. The
+   overlay is a pill now — waveform, one word, Stop, on one line — so both
+   copies are overridden rather than deleted. */
+.jvpop-in{flex-direction:row;align-items:center;gap:13px;width:auto}
 .jvpop-top{display:flex;align-items:center;gap:14px}
 .jv-say{display:flex;flex-direction:column;gap:7px;margin-top:12px;padding-top:12px;
   border-top:1px solid rgba(255,255,255,.08);max-height:190px;overflow-y:auto}
@@ -2303,7 +2344,10 @@ a.sp-g:hover{background:rgba(255,255,255,.05)}
 .spot-msg{margin-top:9px;font-size:11.5px;color:#f0b8b6}
 
 /* the exchange, inside the voice overlay */
-.jvpop-in{flex-direction:column;align-items:stretch;gap:0;width:min(520px,calc(100vw - 32px))}
+/* The old full-width panel rules, from when this was a transcript window. The
+   overlay is a pill now — waveform, one word, Stop, on one line — so both
+   copies are overridden rather than deleted. */
+.jvpop-in{flex-direction:row;align-items:center;gap:13px;width:auto}
 .jvpop-top{display:flex;align-items:center;gap:14px}
 .jv-say{display:flex;flex-direction:column;gap:7px;margin-top:12px;padding-top:12px;
   border-top:1px solid rgba(255,255,255,.08);max-height:190px;overflow-y:auto}
@@ -3905,7 +3949,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-14-d">
+<body data-build="2026-08-14-e">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3920,7 +3964,9 @@ textarea.dw-pi.big{min-height:92px}
         <div class="tb-time" id="tb-time">--:--</div>
         <div class="tb-sub"><span id="tb-place">—</span> &middot; <span id="tb-date">—</span></div>
       </div>
-      <div class="tb-cd"><b id="cd-n">—</b><i>days to Bangkok</i></div>
+      <!-- The Bangkok countdown is gone at Glen's request. A number that only
+           ever goes down, in the corner of every screen, all day. He knows when
+           he is leaving; he does not need it counting at him. -->
 
       <!-- the four places that matter: where he is going, the two he deals
            with, and the coast he sells into -->
@@ -3961,15 +4007,16 @@ textarea.dw-pi.big{min-height:92px}
     <!-- The waveform, only while she is actually listening or talking. It is
          an overlay rather than a permanent bar, because a bar that is idle 99%
          of the time is furniture. -->
+    <!-- Talking to Claudia is a waveform and one word of state. Glen asked for
+         Jarvis: you speak, something on screen shows it heard you, and that is
+         the whole interface. The transcript panel that used to sit under it was
+         reading her answer while she was saying it out loud — two channels for
+         one message, and the eye wins, so he stopped listening. -->
     <div class="jvpop" id="jvpop" hidden>
       <div class="jvpop-in">
-        <div class="jvpop-top">
-          <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
-          <span class="jv-t"><b id="jv-lab">Listening…</b>
-            <i id="jv-sub">tap again when you are done</i></span>
-          <button class="jv-stop" id="jv-stop" title="Stop">Stop</button>
-        </div>
-        <div class="jv-say" id="jv-say" style="display:none"></div>
+        <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
+        <b id="jv-lab">Listening</b>
+        <button class="jv-stop" id="jv-stop" title="Stop">Stop</button>
       </div>
     </div>
 
@@ -4016,7 +4063,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-d</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-e</span></div>
 </div>
 
 <script>
@@ -4852,7 +4899,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-14-d";
+var BUILD="2026-08-14-e";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -4866,8 +4913,8 @@ function paintTopBar(){
   tickSalesClocks();
   paintZones();
 
-  var cd=document.getElementById("cd-n");
-  if(cd){ var dl=Math.ceil((BANGKOK-new Date())/86400000); cd.textContent=dl>0?dl:"HERE"; }
+  /* The Bangkok counter came out of the banner, so there is nothing to paint.
+     BANGKOK itself stays — the week planner and Claudia both use the date. */
 }
 
 
@@ -9984,16 +10031,78 @@ var REC=null, RECON=false;
 function ttsReady(){ return typeof speechSynthesis!=="undefined"; }
 function srCtor(){ return window.SpeechRecognition||window.webkitSpeechRecognition||null; }
 
-function pickVoice(){
-  if(!ttsReady())return null;
+/* ---- one voice per agent, not one voice for all three ----
+   This is why Glen said "everyone's voices are the same". pickVoice() took no
+   argument: it returned the single best female English voice on the machine and
+   handed it to Claudia, Jordan and Claude alike. The only difference between
+   them was a rate and pitch tweak, and pitch on the Web Speech API is barely
+   audible on most Windows voices — so in practice, one voice, three times.
+
+   Now each agent has an ordered preference list and, critically, a claim step:
+   once Claudia has taken a voice, Jordan cannot be given the same one. Falling
+   back to "any English voice" for all three is how they collapsed into one in
+   the first place, so the last resort is to walk the list by INDEX and give
+   each agent a different entry.
+
+   ElevenLabs remains the real answer — three genuinely distinct voices. This is
+   what he hears when the key is missing or the app is running outside Vercel,
+   and it should still sound like three people. */
+var VOICE_WANT={
+  /* warm, measured, female — a chief of staff */
+  claudia:["Samantha","Microsoft Aria","Microsoft Jenny","Google UK English Female",
+           "Karen","Serena","Zira","Victoria","Moira"],
+  /* male, quick, forward — the floor closer */
+  jordan :["Microsoft Guy","Daniel","Google UK English Male","Microsoft David",
+           "Alex","Fred","Aaron","Rishi"],
+  /* male, slower, heavier */
+  claude :["Microsoft Ryan","Oliver","Microsoft Mark","Arthur","Gordon","Rocko",
+           "Google US English","Tom","Reed"]
+};
+function voicesAvail(){
+  if(!ttsReady()) return [];
   var vs=speechSynthesis.getVoices()||[];
-  /* prefer a natural female English voice */
-  var want=["Samantha","Google UK English Female","Google US English","Microsoft Aria","Microsoft Jenny","Karen","Serena","Zira"];
-  for(var i=0;i<want.length;i++){
-    for(var j=0;j<vs.length;j++) if(vs[j].name.indexOf(want[i])>=0) return vs[j];}
-  for(var k=0;k<vs.length;k++) if(/^en/i.test(vs[k].lang)) return vs[k];
-  return vs[0]||null;
+  var en=vs.filter(function(v){ return /^en/i.test(v.lang||""); });
+  return en.length?en:vs;
 }
+function pickVoice(who){
+  var vs=voicesAvail();
+  if(!vs.length) return null;
+  who=String(who||"claudia").toLowerCase();
+  if(!VOICE_WANT[who]) who="claudia";
+
+  /* Whoever else has already been assigned. Two agents sharing a voice is the
+     exact bug being fixed, so a name taken by another agent is skipped. */
+  var taken={};
+  Object.keys(VOICE_WANT).forEach(function(k){
+    if(k!==who && VOICE_PICKED[k]) taken[VOICE_PICKED[k]]=1;
+  });
+
+  var want=VOICE_WANT[who];
+  for(var i=0;i<want.length;i++)
+    for(var j=0;j<vs.length;j++)
+      if(vs[j].name.indexOf(want[i])>=0 && !taken[vs[j].name]){
+        VOICE_PICKED[who]=vs[j].name; return vs[j];
+      }
+
+  /* Nothing on the preference list is installed. Walk the available voices by a
+     per-agent offset so the three of them still land on three different ones,
+     rather than all three landing on vs[0]. */
+  var order=["claudia","jordan","claude"];
+  var slot=order.indexOf(who); if(slot<0) slot=0;
+  for(var t=0;t<vs.length;t++){
+    var v=vs[(slot+t)%vs.length];
+    if(!taken[v.name]){ VOICE_PICKED[who]=v.name; return v; }
+  }
+  return vs[slot%vs.length]||null;
+}
+var VOICE_PICKED={};
+/* The voice list arrives asynchronously in Chrome — getVoices() is empty on the
+   first call. Clearing the assignments when it populates means the first thing
+   said is not permanently stuck on whatever was available at boot. */
+try{
+  if(ttsReady() && typeof speechSynthesis.addEventListener==="function")
+    speechSynthesis.addEventListener("voiceschanged", function(){ VOICE_PICKED={}; });
+}catch(e){}
 /* ==================== THE AGENTS' VOICES ====================
    Three real voices from ElevenLabs, one each. The key lives on the server, so
    the page asks /api/speak for an mp3 and plays it — nothing secret is ever in
@@ -10102,10 +10211,10 @@ function sayLocal(text){
   try{
     speechSynthesis.cancel();
     var u=new SpeechSynthesisUtterance(speakable(text).slice(0,900));
-    var v=pickVoice(); if(v)u.voice=v;
-    /* a rough nod to each character until the real voices are on */
-    if(VOICE_WHO==="jordan"){ u.rate=1.16; u.pitch=0.9; }
-    else if(VOICE_WHO==="claude"){ u.rate=0.9; u.pitch=0.82; }
+    var v=pickVoice(VOICE_WHO); if(v)u.voice=v;
+    /* Rate and pitch on top of three different voices, not instead of them. */
+    if(VOICE_WHO==="jordan"){ u.rate=1.14; u.pitch=0.92; }
+    else if(VOICE_WHO==="claude"){ u.rate=0.9; u.pitch=0.84; }
     else { u.rate=1.02; u.pitch=1.06; }
     speechSynthesis.speak(u);
   }catch(e){}
@@ -11964,31 +12073,11 @@ function jvPaint(){
     pop.classList.toggle("live", !!live);
     pop.classList.toggle("think", !live && think && !talking);
     pop.classList.toggle("talk", !!talking && !live);
-    var lab=document.getElementById("jv-lab"), sub=document.getElementById("jv-sub");
-    if(lab) lab.textContent = live ? "Listening…" : talking ? "Claudia" : "Thinking…";
-    if(sub) sub.textContent = live ? "tap the button again when you are done"
-          : talking ? "tap stop to cut her off" : "one moment";
-
-    /* What she heard, and what she said. The whole exchange in this one panel,
-       so there is never a second window open behind it. */
-    var log=document.getElementById("jv-say");
-    if(log){
-      var rows=(STATE&&STATE.chat)||[];
-      var mine="", hers="";
-      for(var i=rows.length-1;i>=0 && (!mine||!hers);i--){
-        var r=rows[i];
-        var body=(typeof r.t==="string") ? r.t
-               : Array.isArray(r.t) ? r.t.join(" \u00b7 ") : "";
-        if(!body) continue;
-        if(!hers && r.r==="ai") hers=body;
-        else if(!mine && r.r==="me") mine=body;
-      }
-      var h2="";
-      if(mine) h2+='<span class="jv-me">'+esc(mine)+'</span>';
-      if(hers && !live) h2+='<span class="jv-her">'+esc(hers)+'</span>';
-      log.innerHTML=h2;
-      log.style.display=h2?"":"none";
-    }
+    /* One word, not a sentence and a sub-line. "Listening" is the entire
+       message; anything more is reading material at the moment he is supposed
+       to be talking. */
+    var lab=document.getElementById("jv-lab");
+    if(lab) lab.textContent = live ? "Listening" : talking ? "Claudia" : "Thinking";
   }
 }
 function jvTap(){
@@ -17575,7 +17664,10 @@ function dashView(){
       +'<button class="nwfold" id="task-fold" '
         +'title="'+(TASK_SHUT?"Show today\u2019s tasks":"Fold this away")+'" '
         +'aria-expanded="'+(TASK_SHUT?"false":"true")+'"><span class="nwf-c"></span></button>'
-      +'<b>Today&rsquo;s Tasks</b>'
+      /* Just "Tasks". Calling it Today's Tasks made anything he wanted to
+         carry past tonight feel like it was in the wrong box, so it went
+         unwritten. This list is the week as much as the day. */
+      +'<b>Tasks</b>'
       +'<span class="tc-n">'+(tasks.length?done2+" of "+tasks.length+" done":"nothing yet")+'</span>'
       +(!tasks.length&&plan?'<button class="tc-seed" id="dt-seed">Use the plan</button>':'')
       +'</div>';
@@ -17735,8 +17827,23 @@ function dashView(){
 
     /* the money lives here, next to the people it comes from */
     h+='<div class="crmmoney">'
-      +'<div class="cm"><span>Cash Collected</span><b class="g">$'
-        +m.collected.toLocaleString()+'</b><i>'+memberCount()+' paying</i></div>'
+      /* An override silently outranks every recorded payment. Glen told Claudia
+         Peter had paid, she wrote it correctly, and the number did not move —
+         because a typed-in figure was sitting on top of the sum and nothing on
+         screen said so. A number that ignores your data without telling you is
+         worse than a wrong number. It says so now, with one tap back. */
+      +(function(){
+        var ov=cashOverride(), raw=collectedRaw();
+        return '<div class="cm'+(ov!==null?" ovr":"")+'">'
+          +'<span>Cash Collected</span><b class="g">$'
+          +m.collected.toLocaleString()+'</b>'
+          +(ov!==null
+            ? '<i class="cm-ov">typed in by you &middot; payments total $'
+              +raw.toLocaleString()
+              +' <button class="cm-clr" id="cash-real">use that</button></i>'
+            : '<i>'+memberCount()+' paying</i>')
+          +'</div>';
+       })()
       +'<div class="cm"><span>Still To Collect</span><b class="'+(m.chase?"a":"")+'">$'
         +m.chase.toLocaleString()+'</b><i>already sold</i></div>'
       +'<div class="cm"><span>Contingent</span><b>$'+m.conting.toLocaleString()+'</b>'
@@ -18860,6 +18967,14 @@ function wire(){
     markTouched(this.getAttribute("data-touch"));
     redraw();
   };
+  /* one tap back to the real, summed figure */
+  var cre=document.getElementById("cash-real");
+  if(cre) cre.onclick=function(){
+    LS("cash_collected","");
+    try{ SBW.cash(); }catch(e){}
+    redraw();
+  };
+
   var afd=document.getElementById("an-fold");
   if(afd) afd.onclick=function(){
     AN_SHUT=!AN_SHUT; LS("an_shut", AN_SHUT?"1":"0"); redraw();
