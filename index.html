@@ -1792,6 +1792,140 @@ a.lnk:hover{color:#bfdbfe}
 .crmwrap .pills{gap:6px}
 .crmwrap .legend{opacity:.9}
 
+/* ===================== THE LEAD GRID =====================
+   The single change that matters: a cell reads as TEXT until you touch it.
+
+   Before this, every cell in every row was a visible bordered input — ten
+   columns times forty leads is four hundred filled rectangles competing for
+   attention at once, and no amount of tidying the bar above it fixes that.
+   Attio, Close, Airtable and Notion all do the same thing this does: render
+   the value, reveal the input on hover, commit on blur. The field is exactly
+   as editable; it just stops shouting while he is reading. */
+table.lgrid{width:100%;border-collapse:collapse;table-layout:fixed}
+
+table.lgrid thead th{
+  position:sticky;top:0;z-index:2;
+  padding:7px 10px;text-align:left;
+  font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;
+  color:#4d5666;background:#0b1018;
+  border-bottom:1px solid #1e2732;white-space:nowrap}
+
+table.lgrid tbody td{
+  padding:0 4px;height:38px;vertical-align:middle;
+  border-bottom:1px solid rgba(255,255,255,.038);
+  font-size:12px;color:#c3ccd9;overflow:hidden}
+table.lgrid tbody tr:hover td{background:rgba(255,255,255,.026)}
+table.lgrid tbody tr.prirow td{background:rgba(168,85,247,.055)}
+table.lgrid tbody tr.prirow:hover td{background:rgba(168,85,247,.085)}
+
+/* ---- the invisible-until-touched field ---- */
+table.lgrid .cn,
+table.lgrid .ntbox,
+table.lgrid .cin-came{
+  width:100%;box-sizing:border-box;
+  padding:6px 7px;margin:0;
+  font:inherit;font-size:12px;color:#c3ccd9;
+  background:transparent;border:1px solid transparent;border-radius:6px;
+  outline:none;resize:none;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;
+  transition:background .1s,border-color .1s}
+table.lgrid .cn::placeholder,
+table.lgrid .ntbox::placeholder{color:#39414d}
+table.lgrid tr:hover .cn,
+table.lgrid tr:hover .ntbox,
+table.lgrid tr:hover .cin-came{border-color:#1f2a36}
+table.lgrid .cn:focus,
+table.lgrid .ntbox:focus,
+table.lgrid .cin-came:focus{
+  background:#111922;border-color:#3c5570;color:#e3eaf3;
+  white-space:normal;overflow:auto;position:relative;z-index:3}
+table.lgrid .ntbox:focus{min-height:64px}
+
+/* The date input paints its own picker icon; dim it until the row is live so
+   forty little calendars are not the loudest thing on the page. */
+table.lgrid .cin-came::-webkit-calendar-picker-indicator{opacity:.22;cursor:pointer}
+table.lgrid tr:hover .cin-came::-webkit-calendar-picker-indicator{opacity:.6}
+
+/* ---- name ---- */
+table.lgrid .nm-c{position:relative}
+table.lgrid .openlead{
+  background:none;border:none;padding:6px 7px;font:inherit;font-size:12.5px;
+  font-weight:700;color:#dbe3ee;cursor:pointer;text-align:left;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.lgrid .openlead:hover{color:#fff;text-decoration:underline}
+
+/* Removal is destructive and permanent, so it does not sit under every name
+   advertising itself. It appears when the row is live. */
+table.lgrid .delone{
+  position:absolute;right:2px;top:50%;transform:translateY(-50%);
+  opacity:0;pointer-events:none;
+  width:20px;height:20px;line-height:1;
+  background:none;border:none;border-radius:5px;
+  color:#4d5666;font-size:15px;cursor:pointer;transition:opacity .12s,color .12s}
+table.lgrid tr:hover .delone{opacity:1;pointer-events:auto}
+table.lgrid .delone:hover{color:#f0857f;background:rgba(239,68,68,.13)}
+
+/* ---- status as a pill in its own colour ---- */
+table.lgrid .stsel{
+  width:100%;box-sizing:border-box;
+  padding:5px 7px;font:inherit;font-size:11px;font-weight:700;
+  background:color-mix(in srgb, var(--sc) 12%, transparent);
+  border:1px solid color-mix(in srgb, var(--sc) 38%, transparent);
+  border-radius:99px;outline:none;cursor:pointer;
+  text-overflow:ellipsis;transition:background .12s}
+table.lgrid .stsel:hover{background:color-mix(in srgb, var(--sc) 20%, transparent)}
+table.lgrid .stsel:focus{border-color:var(--sc)}
+
+/* ---- follow-up flag, under the name ---- */
+table.lgrid .fuflag{font-size:9.5px;font-weight:700;padding:0 7px 3px;
+  letter-spacing:.2px}
+table.lgrid .fuflag.od{color:#e8837c}
+table.lgrid .fuflag.tod{color:#dcae43}
+table.lgrid .fuflag.soon{color:#5b6478}
+table.lgrid .softflag,table.lgrid .manualflag{font-size:9.5px;color:#4d5666;
+  padding:0 7px 3px}
+
+/* Call, Alt and Text on ONE line. They were wrapping onto two, which pushed
+   every row to 74px and made a 40-lead list twice as long as it needed to be —
+   the single biggest remaining source of "bulky". */
+table.lgrid .reach{white-space:nowrap;padding-right:8px}
+/* .rbx is flex-wrap:wrap with .rb{flex:1 1 auto} — three buttons in a 158px
+   cell will always wrap to two lines under those rules no matter how small the
+   font is. Turn the wrap off here and let each button be its own width. */
+table.lgrid .reach .rbx{flex-wrap:nowrap;gap:3px}
+table.lgrid .reach .rb{flex:0 0 auto;min-width:0}
+table.lgrid .reach .rbtn,
+table.lgrid .reach button,
+table.lgrid .reach a{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:24px;padding:0 8px;margin:0 3px 0 0;
+  font-size:9.5px;font-weight:800;letter-spacing:.4px;border-radius:6px;
+  white-space:nowrap;vertical-align:middle}
+table.lgrid tbody td.reach{height:38px}
+
+@media (max-width:860px){
+  /* On a phone the grid stops being a grid. Each lead becomes a card, every
+     field labelled, because eight columns at 390px is eight columns of
+     nothing — and this is the view he actually works from on a break. */
+  table.lgrid,table.lgrid thead,table.lgrid tbody,
+  table.lgrid tr,table.lgrid td{display:block;width:100%}
+  table.lgrid thead{display:none}
+  table.lgrid tbody tr{
+    margin:0 0 9px;padding:4px 0 7px;border-radius:10px;
+    border:1px solid #1e2732;background:#0b1018}
+  table.lgrid tbody td{
+    height:auto;display:flex;align-items:center;gap:10px;
+    padding:5px 10px;border-bottom:none}
+  table.lgrid tbody td:before{
+    content:attr(data-l);flex:none;width:74px;
+    font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+    color:#4d5666}
+  table.lgrid tbody td:not([data-l]):before{display:none}
+  table.lgrid .cn,table.lgrid .ntbox,table.lgrid .cin-came{
+    border-color:#1f2a36;min-height:38px}
+  table.lgrid .delone{opacity:1;pointer-events:auto}
+}
+
 /* ---- the reply lane and the conversation sheet ---- */
 .bd-t.bd-in{background:rgba(34,197,94,.15);color:#5ee3a4}
 .bd-l.bd-in{color:#4bbd86}
@@ -3771,7 +3905,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-14-c">
+<body data-build="2026-08-14-d">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3882,7 +4016,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-c</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-d</span></div>
 </div>
 
 <script>
@@ -4605,9 +4739,19 @@ function refreshContacts(){
     x.hasEmail=/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i.test(x.email||"");
     x.directOnly=x.hasPhone||x.hasEmail;
     x.hasContact=x.directOnly||!!(x.ig&&x.ig.length);
-    /* your own status pick beats whatever the sheet implies */
+    /* Your own status pick beats whatever the sheet implies.
+       stageFix on the fallback is the important part. Without it a lead whose
+       stored stage was a retired name — "Demo No Sale", "Contact in the
+       Future" — kept that raw string on x.stage. It then counted towards a
+       stage that is not in STATUSES, so the Show list never offered it, the
+       grouped view had no band to put it in, and the lead showed under
+       "Everyone" and nowhere else. That is leads going missing, and it is
+       exactly what it looked like from the outside. */
     var so=stGet(x.name);
-    x.stage = (so && STATUSES.indexOf(so)>=0) ? so : x.stageBase;
+    var base=stageFix(x.stageBase);
+    if(STATUSES.indexOf(base)<0) base="New Lead";
+    x.stage = (so && STATUSES.indexOf(so)>=0) ? so : base;
+    x.stageBase = base;
     x.stageSet = !!so;
     /* your own notes replace the sheet's */
     var no=ntGet(x.name);
@@ -4708,7 +4852,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-14-c";
+var BUILD="2026-08-14-d";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -14429,6 +14573,10 @@ var OPENLEAD=null;
 /* The board is open by default — a worklist you have to unfold is a worklist
    you stop seeing. It folds because some days he only wants the table. */
 var BOARD_SHUT = LS("board_shut") === "1";
+/* Analytics starts folded. It is the least urgent thing on the page and the
+   tallest, so open-by-default is a lot of scrolling past a number that moves
+   once a day. */
+var AN_SHUT = LS("an_shut") !== "0";
 function actLoad(n){ return LJ("act_"+keyOf(n),[]); }
 
 /* ============ REMOVING A LEAD FOR GOOD ============
@@ -15434,13 +15582,16 @@ function salesPipe(){
       +'<span class="pgrp-d"></span><b>'+esc(g.label)+'</b><i>'+g.n+'</i>'
       +'</button>';
     h+='<div class="pgbody'+(shut?" shut":"")+'" data-pgbody="'+esc(g.label)+'">';
-    h+='<table><thead><tr>'
-     +'<th style="width:30px" title="Priority">&#9679;</th>'
-     +'<th>Name</th><th style="width:140px">Status</th>'
-     +'<th style="width:118px">Phone</th><th style="width:170px">Email</th>'
-     +'<th style="width:112px">Handle</th>'
-     +'<th style="width:62px">Owed</th><th style="width:124px">Came In</th>'
-     +'<th>Notes</th><th style="width:132px">Reach</th></tr></thead><tbody>';
+    /* Eight columns, not ten. Owed already has a tile in the money strip
+       directly above this table, and Handle is something you look up on one
+       person rather than scan down a list — both are on the lead record when
+       he opens it. Every column removed is forty fewer boxes on screen. */
+    h+='<table class="lgrid"><thead><tr>'
+     +'<th style="width:26px" title="Priority"></th>'
+     +'<th>Name</th><th style="width:132px">Status</th>'
+     +'<th style="width:124px">Phone</th><th style="width:186px">Email</th>'
+     +'<th style="width:118px">Came In</th>'
+     +'<th>Notes</th><th style="width:158px">Reach</th></tr></thead><tbody>';
     g.rows.forEach(function(x){
     function fld(field,val,ph){
       return '<input class="cn" data-n="'+esc(x.name)+'" data-k="'+field+'" value="'+esc(val||"")
@@ -15462,7 +15613,8 @@ function salesPipe(){
           +'<button class="dy" data-delyes="'+esc(x.name)+'">Yes, remove</button>'
           +'<button class="dn" data-delno="1">Keep</button></div>'
         : '<button class="delone" data-delask="'+esc(x.name)+'" '
-          +'title="Remove this lead completely">remove</button>')
+          +'title="Remove this lead completely" aria-label="Remove this lead">'
+          +'\u00d7</button>')
      +(function(){
         var fd=fuDaysOut(x.name);
         if(fd===null) return "";
@@ -15471,21 +15623,25 @@ function salesPipe(){
         return '<div class="fuflag '+cls+'">'+txt+'</div>';
       })()
      +'</td>'
-     +'<td><select class="stsel" data-n="'+esc(x.name)+'" style="border-color:'+c.hex+'66;color:'+c.dot+'">'
+     /* A pill in the stage's own colour rather than a grey select with a
+        coloured edge. It is the field on the row he changes most often, so it
+        is the one that should look like a control. */
+     +'<td><select class="stsel" data-n="'+esc(x.name)+'" '
+       +'style="--sc:'+c.hex+';color:'+c.dot+'">'
      +STATUSES.map(function(st){
         return '<option'+(st===x.stage?" selected":"")+'>'+esc(st)+'</option>';}).join("")
-     +'</select>'+(x.stageSet?'<div class="editedflag">set by you</div>':'')+'</td>'
+     +'</select></td>'
      +'<td>'+fld("p",x.phone,"add number")+'</td>'
      +'<td>'+fld("e",x.email,"add email")+'</td>'
-     +'<td>'+fld("s",x.ig,"@handle")+'</td>'
-     +'<td class="'+(x.owed?"owe":"")+'">'+(x.owed?"$"+x.owed:"—")+'</td>'
      +'<td data-l="Came In" class="camecell">'
        +'<input class="cin-came" type="'+(camePrec(x.name)==="month"?"month":"date")+'" '
        +'data-n="'+esc(x.name)+'" value="'+esc(cameInRaw(x.name))+'">'
      +'</td>'
-     +'<td><textarea class="ntbox" data-n="'+esc(x.name)+'" rows="2" '
-     +'placeholder="Notes — type anything">'+esc(x.notes||"")+'</textarea>'
-     +(x.notesSet?'<div class="editedflag">edited</div>':'')+'</td>'
+     /* One line at rest, taller when he is in it. A 2-row textarea on every
+        row made every row 60px tall and the table twice as long as it needed
+        to be. */
+     +'<td><textarea class="ntbox" data-n="'+esc(x.name)+'" rows="1" '
+     +'placeholder="Notes">'+esc(x.notes||"")+'</textarea></td>'
      +'<td class="reach">'+reachBtns(x)+'</td></tr>';});
     h+='</tbody></table></div>';
   });
@@ -17071,41 +17227,25 @@ function analyticsSection(){
     var viewsAll=ANALYTICS_ORDER.reduce(function(t,pl){
       return t+reachTotal(pl.k,"v"); },0);
 
+    /* Folds, and remembers. It sits at the foot of the page now, below the
+       CRM — followers move on their own, leads only move when he moves them. */
     h+='<div class="sec"><div class="sec-h">'
+      +'<button class="nwfold" id="an-fold" '
+        +'title="'+(AN_SHUT?"Show analytics":"Fold this away")+'" '
+        +'aria-expanded="'+(AN_SHUT?"false":"true")+'"><span class="nwf-c"></span></button>'
       +'<h2>Content Analytics</h2>'
       +'<span class="sec-s">Instagram and TikTok are the engine. YouTube is the long game.</span>'
       +'<button class="sec-b" id="an-log" title="Record today\'s numbers">Log today</button>'
       +'<button class="sec-b" data-dgo="content|0">Studio</button>'
       +'</div>';
+    if(AN_SHUT) return h+'</div>';
 
-    /* ---- followers and views. Nothing else. ----
-       No countdown, no goal arithmetic: he asked for the numbers, not the
-       nagging. Every figure here is a measurement. */
-    var nf30=ANALYTICS_ORDER.reduce(function(t,pl){
-      var w=reachWindow(pl.k,0,30); return t+(w&&w.net!==null?w.net:0); },0);
-    h+='<div class="anrow">'
-      +'<div class="an-big">'
-        +'<span class="an-k">Total Following</span>'
-        +'<b>'+total.toLocaleString()+'</b>'
-        +'<i>'+(w30 ? '<span class="'+(w30>=0?"gu":"gd")+'">'+(w30>0?"+":"")
-              +w30.toLocaleString()+'</span> in 30 days' : "across all three")+'</i>'
-      +'</div>'
-      +'<div class="an-big">'
-        +'<span class="an-k">Total Views</span>'
-        +'<b class="b">'+(viewsAll?abbr(viewsAll):"&mdash;")+'</b>'
-        +'<i>everything on record</i>'
-      +'</div>'
-      +'<div class="an-big">'
-        +'<span class="an-k">Views, 30 Days</span>'
-        +'<b>'+(reach30?abbr(reach30):"&mdash;")+'</b>'
-        +'<i>'+(reach30?Math.round(reach30/30).toLocaleString()+" a day":"no data yet")+'</i>'
-      +'</div>'
-      +'<div class="an-big">'
-        +'<span class="an-k">New Followers, 30 Days</span>'
-        +'<b class="'+(nf30>0?"g":nf30<0?"r":"")+'">'
-        +(nf30>0?"+":"")+nf30.toLocaleString()+'</b>'
-        +'<i>across all three</i>'
-      +'</div></div>';
+    /* The four totals are gone at Glen's request, and he was right about why:
+       not one of them can be acted on. "Total Views, everything on record"
+       cannot be moved tomorrow by anything he does, and "Total Following" is
+       the sum of three numbers printed just below it. They were scoreboard.
+       The platform cards underneath carry the same figures attached to a
+       per-day pace, which is the number that decides whether he films today. */
 
     /* ---- one card per platform ---- */
     h+='<div class="plats">';
@@ -17642,7 +17782,10 @@ function dashView(){
   h+=analyticsSection();
 
   h+=smsCard();
-  h+=operatorBar();
+  /* The operator bar is gone. Three avatars at the foot of the dashboard, each
+     opening a chat with an agent Claudia already reaches, in the part of the
+     page his eye goes to least. Talking to them happens through the Claudia
+     button in the Today header. */
   return h;
 }
 
@@ -18717,6 +18860,11 @@ function wire(){
     markTouched(this.getAttribute("data-touch"));
     redraw();
   };
+  var afd=document.getElementById("an-fold");
+  if(afd) afd.onclick=function(){
+    AN_SHUT=!AN_SHUT; LS("an_shut", AN_SHUT?"1":"0"); redraw();
+  };
+
   var bfd=document.getElementById("bd-fold");
   if(bfd) bfd.onclick=function(){
     BOARD_SHUT=!BOARD_SHUT;
