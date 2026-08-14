@@ -201,6 +201,22 @@ export default async function handler(req, res) {
   if (!skip && !twilioSigned(req, params, process.env.TWILIO_AUTH_TOKEN))
     return res.status(403).json({ error: "Bad signature." });
 
+  /* ---- a delivery receipt, not a new message ----
+     Twilio posts here twice for an outbound text: once when it hands off to the
+     carrier and once with the final verdict. MessageStatus tells us which, and
+     ErrorCode names the reason when it failed. "delivered" and "undelivered"
+     look identical from our side without this, which is how a blocked text
+     passes for a sent one. */
+  if (params.MessageStatus || params.SmsStatus) {
+    const st = String(params.MessageStatus || params.SmsStatus);
+    const sid = params.MessageSid || params.SmsSid;
+    const err = params.ErrorCode ? " (error " + params.ErrorCode + ")" : "";
+    if (sid) await sql(
+      "update messages set status = " + q(st + err) + " where twilio_sid = " + q(sid)
+    );
+    return noReply(res);
+  }
+
   const from = e164(params.From);
   const body = String(params.Body || "");
   const sid = params.MessageSid || params.SmsSid || null;
