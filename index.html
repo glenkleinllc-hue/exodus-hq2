@@ -1792,6 +1792,203 @@ a.lnk:hover{color:#bfdbfe}
 .crmwrap .pills{gap:6px}
 .crmwrap .legend{opacity:.9}
 
+/* ---- the reply lane and the conversation sheet ---- */
+.bd-t.bd-in{background:rgba(34,197,94,.15);color:#5ee3a4}
+.bd-l.bd-in{color:#4bbd86}
+.bd-why.bd-in{color:#9fb0a8;font-style:italic}
+.bd-r.bd-unread{background:rgba(34,197,94,.045)}
+.bd-r.bd-unread:hover{background:rgba(34,197,94,.075)}
+.bd-b.open{border-color:#1f3a2c;color:#7fbf9a}
+.bd-b.open:hover{background:rgba(34,197,94,.13);color:#9fe0bb;border-color:#2c5340}
+
+/* A sheet, not a page. It sits over whatever he was doing and closes back to
+   the same scroll position — a conversation is a glance, not a destination. */
+.th-wrap{position:fixed;inset:0;z-index:820;display:flex;align-items:center;
+  justify-content:center;background:rgba(4,7,11,.72);padding:20px}
+.th-card{width:min(560px,100%);max-height:min(720px,86vh);display:flex;
+  flex-direction:column;border:1px solid #22303f;border-radius:14px;
+  background:#0b1018;box-shadow:0 24px 70px rgba(0,0,0,.6);overflow:hidden}
+.th-h{display:flex;align-items:center;gap:10px;padding:13px 16px;
+  border-bottom:1px solid #1a222c;background:rgba(255,255,255,.02)}
+.th-h b{font-size:14px;font-weight:800;color:#dbe3ee}
+.th-x{margin-left:auto;background:none;border:none;color:#5b6478;font-size:22px;
+  line-height:1;cursor:pointer;padding:0 4px}
+.th-x:hover{color:#dbe3ee}
+
+.th-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;
+  flex-direction:column;gap:10px}
+.th-none{padding:28px 0;text-align:center;font-size:12px;color:#5b6478}
+
+/* Theirs left, his right. The oldest convention in messaging, and the reason
+   it survived is that it needs no label. */
+.th-m{max-width:80%;align-self:flex-start;display:flex;flex-direction:column;gap:3px}
+.th-m.me{align-self:flex-end;align-items:flex-end}
+.th-b{padding:9px 12px;border-radius:13px;font-size:12.5px;line-height:1.45;
+  background:#18222e;color:#dbe3ee;white-space:pre-wrap;word-break:break-word;
+  border-bottom-left-radius:4px}
+.th-m.me .th-b{background:#1c3a58;color:#e8f1fb;
+  border-bottom-left-radius:13px;border-bottom-right-radius:4px}
+.th-t{font-size:9.5px;color:#4d5666;padding:0 3px}
+
+.th-f .btn{white-space:nowrap;flex:none}
+.th-f{display:flex;align-items:center;gap:10px;padding:11px 16px;
+  border-top:1px solid #1a222c;background:rgba(255,255,255,.015)}
+.th-n{font-size:10.5px;color:#4d5666;line-height:1.35}
+
+@media (max-width:620px){
+  .th-wrap{padding:0;align-items:stretch}
+  .th-card{width:100%;max-height:none;border-radius:0;border:none}
+  .th-m{max-width:88%}
+  .th-n{display:none}
+}
+
+/* ===================== THE CRM CONTROL BAR =====================
+   One strip, fixed positions, nothing that reflows when a filter changes. It
+   replaced five stacked full-width bars — pills, legend, add, search, sort —
+   each of which re-laid out on every click. */
+.cbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:9px 11px;margin:0 0 12px;border:1px solid #1e2732;border-radius:10px;
+  background:#0b1018}
+
+.cb-find{position:relative;display:flex;align-items:center;flex:1 1 210px;
+  min-width:150px;max-width:340px}
+.cb-fi{position:absolute;left:8px;color:#4d5666;pointer-events:none}
+.cb-find input{width:100%;box-sizing:border-box;padding:6px 52px 6px 27px;
+  font-size:12px;color:#dbe3ee;background:#111922;border:1px solid #232e3b;
+  border-radius:7px;outline:none;font-family:inherit}
+.cb-find input:focus{border-color:#33455a;background:#131d28}
+.cb-fx{position:absolute;right:34px;background:none;border:none;color:#4d5666;
+  font-size:15px;line-height:1;cursor:pointer;padding:0 4px}
+.cb-fx:hover{color:#9aa7b8}
+.cb-find .lscount{position:absolute;right:8px;font-size:10px;color:#4d5666;
+  pointer-events:none}
+
+.cb-l{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;
+  letter-spacing:.9px;text-transform:uppercase;color:#4d5666;white-space:nowrap}
+.cb-l select{font-size:12px;font-weight:600;color:#c3ccd9;background:#111922;
+  border:1px solid #232e3b;border-radius:7px;padding:6px 8px;outline:none;
+  font-family:inherit;cursor:pointer;letter-spacing:0;text-transform:none}
+.cb-l select:hover{border-color:#33455a}
+.cb-l select:focus{border-color:#3c5570}
+
+.cb-seg{display:flex;border:1px solid #232e3b;border-radius:7px;overflow:hidden}
+.cb-sg{font-size:11px;font-weight:700;padding:6px 11px;border:none;
+  background:#111922;color:#6f7c8d;cursor:pointer;font-family:inherit}
+.cb-sg+.cb-sg{border-left:1px solid #232e3b}
+.cb-sg:hover{color:#a9b6c6}
+.cb-sg.on{background:#1c2836;color:#e3eaf3}
+
+.cb-b{font-size:11px;font-weight:700;padding:6px 11px;border-radius:7px;
+  border:1px solid #232e3b;background:#111922;color:#a9b6c6;cursor:pointer;
+  white-space:nowrap;font-family:inherit}
+.cb-b:hover{background:#18222e;color:#e3eaf3;border-color:#33455a}
+.cb-b.due{border-color:#4a2b2b;color:#e8877f}
+.cb-b.due:hover{background:rgba(239,68,68,.12);border-color:#63393a;color:#f5a29b}
+
+/* The row count sits right of everything and left of the one action. It is the
+   only number in the bar that is not inside a control, so it goes last. */
+.cb-n{margin-left:auto;font-size:11px;font-weight:700;color:#4d5666;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.cb-add{font-size:11.5px;font-weight:800;padding:7px 13px;border-radius:7px;
+  border:1px solid #2b4a6e;background:#152539;color:#8fc0f0;cursor:pointer;
+  white-space:nowrap;font-family:inherit}
+.cb-add:hover{background:#1b3049;border-color:#37628f;color:#b9daf8}
+
+@media (max-width:760px){
+  /* Search takes the first line on its own; the controls wrap under it. A
+     150px search box is not a search box. */
+  .cbar{gap:7px;padding:8px}
+  .cb-find{flex:1 1 100%;max-width:none;order:-1}
+  .cb-n{margin-left:0}
+  .cb-add{margin-left:auto}
+}
+
+/* ===================== THE BOARD =====================
+   The first thing in the CRM, and the only part of it that is a to-do list
+   rather than a record. Fixed columns so the eye can run straight down the
+   names, the reasons and the numbers without re-finding them on every row. */
+.board{border:1px solid #1e2732;border-radius:12px;background:#0b1018;
+  margin:0 0 14px;overflow:hidden}
+.bd-h{display:flex;align-items:center;gap:10px;padding:11px 14px;
+  border-bottom:1px solid #1a222c;background:rgba(255,255,255,.015)}
+.board.shut .bd-h{border-bottom:none}
+.bd-h>b{font-size:13px;font-weight:800;letter-spacing:.2px;color:#dbe3ee}
+.bd-sub{font-size:11px;color:#5b6478}
+.bd-tags{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.bd-t{font-size:10px;font-weight:800;letter-spacing:.4px;padding:3px 8px;
+  border-radius:99px;white-space:nowrap}
+/* Namespaced tones. "nw" on its own is the news-item row further down this
+   stylesheet — display:flex, padding, radius, border — so a bare .nw here was
+   inherited by every never-contacted cell and drew a box around the text. This
+   is the third class collision in this file (.dk, .win, now .nw); prefixing is
+   cheaper than finding the next one from a screenshot. */
+.bd-t.bd-od{background:rgba(239,68,68,.13);color:#f0857f}
+.bd-t.bd-td{background:rgba(245,183,49,.13);color:#e5b64a}
+.bd-t.bd-nw{background:rgba(96,165,250,.12);color:#79aef5}
+
+.bd-lane{padding:4px 0 8px}
+.bd-l{display:block;padding:9px 14px 5px;font-size:9.5px;font-weight:800;
+  letter-spacing:1.3px;text-transform:uppercase;color:#4d5666}
+.bd-l.bd-od{color:#c96b66}
+.bd-l.bd-td{color:#b8912f}
+.bd-l.bd-nw{color:#5d87c4}
+
+/* One row = one person = one decision. */
+/* Fixed final column, and no auto anywhere. Each row is its own grid, so a
+   row whose last cell is narrower — someone with no phone number gets Done and
+   nothing else — would otherwise compute wider fr columns than the row above
+   it, and the "why" column would step sideways halfway down the list. Reserve
+   the buttons' width whether or not the buttons are there. */
+.bd-r{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1.15fr)
+  132px 170px;align-items:center;gap:10px;padding:7px 14px;
+  border-top:1px solid rgba(255,255,255,.035)}
+.bd-lane .bd-r:first-of-type{border-top:none}
+.bd-r:hover{background:rgba(255,255,255,.028)}
+
+.bd-nm{display:flex;align-items:center;gap:8px;min-width:0;background:none;
+  border:none;padding:0;cursor:pointer;text-align:left;font:inherit}
+.bd-dot{flex:none;width:7px;height:7px;border-radius:99px}
+.bd-nm b{font-size:12.5px;font-weight:700;color:#dbe3ee;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.bd-nm:hover b{color:#fff;text-decoration:underline}
+.bd-nm em{font-style:normal;font-size:10px;color:#5b6478;white-space:nowrap}
+
+.bd-why{font-size:11.5px;color:#8d99a8;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.bd-why.bd-od{color:#e8837c;font-weight:700}
+.bd-why.bd-td{color:#dcae43;font-weight:700}
+.bd-why.bd-nw{color:#8d99a8}
+
+.bd-tel{font-size:11.5px;color:#79879a;font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.bd-tel i{font-style:normal;color:#454e5c}
+
+.bd-act{display:flex;gap:5px;justify-content:flex-end}
+.bd-b{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:6px;
+  border:1px solid #26313f;background:#131b25;color:#a9b6c6;cursor:pointer;
+  white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
+.bd-b:hover{background:#1a2532;color:#e3eaf3;border-color:#33414f}
+.bd-b.done{border-color:#1f3a2c;color:#7fbf9a}
+.bd-b.done:hover{background:rgba(34,197,94,.13);color:#9fe0bb;border-color:#2c5340}
+
+.bd-clear{padding:20px 14px;text-align:center;font-size:12px;color:#5b6478}
+.bd-more{padding:7px 14px 2px;font-size:11px;color:#4d5666}
+
+@media (max-width:760px){
+  /* Two rows per person on a phone: who and why up top, number and buttons
+     underneath. Four columns at 390px is four columns of nothing. */
+  .bd-r{grid-template-columns:1fr auto;gap:4px 10px;padding:9px 12px}
+  .bd-nm{grid-column:1}
+  .bd-why{grid-column:2;text-align:right}
+  .bd-tel{grid-column:1;align-self:center}
+  /* Real tap targets on a phone. He works this list one-handed on a break at
+     Amazon; a 10px button is a missed call. */
+  .bd-act{grid-column:2;gap:6px}
+  .bd-b{padding:8px 13px;font-size:11.5px}
+  .bd-sub{display:none}
+}
+
 /* ================= THE SPORTS TICKER =================
    A rail of small fixed-width cards. Fixed width matters: the cards no longer
    stretch to fill the rail, which is what pulled their contents apart. */
@@ -3574,7 +3771,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-02-a">
+<body data-build="2026-08-14-c">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -3623,6 +3820,9 @@ textarea.dw-pi.big{min-height:92px}
     <!-- A slim strip, not a block. Once it is connected this is one line:
          artwork, track, transport. -->
     <div id="spotwrap"></div>
+
+    <!-- One conversation, over the page. Empty until a thread is opened. -->
+    <div id="thsheet" hidden></div>
 
     <!-- The waveform, only while she is actually listening or talking. It is
          an overlay rather than a permanent bar, because a bar that is idle 99%
@@ -3682,7 +3882,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-02-a</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-c</span></div>
 </div>
 
 <script>
@@ -3966,33 +4166,58 @@ function owedFor(n){return OWED[keyOf(n)]||null;}
    name read like they had already said yes. Demo No Sale has since been retired as well, at his request, and everyone on it
    moved across rather than being dropped. Three real
    leads live in it. */
-var STATUSES=["New Lead","Warm Lead","Contact in the Future",
-              "Signed Up","Dead Lead"];
+/* ======================= THE SIX STAGES ==========================
+   Glen's own words, in his own order: a lead arrives, you ring them, they
+   either pick up or they don't, and from there they warm up, go cold, die, or
+   sign. "Did Not Answer" earns its own stage because it is the single most
+   common outcome of a first dial and it is not the same as cold — a person who
+   has not answered twice still has full odds, and burying them in Cold is how
+   they get written off early.
+
+   Order matters: this array drives the filter row, the stage strip, the
+   grouping bands and the sort. It reads left to right as the journey. */
+var STATUSES=["New Lead","Did Not Answer","Warm Lead",
+              "Cold Lead","Dead Lead","Signed Up"];
+
+/* Temperature runs cool-to-warm and ends green. Dead is the only red, so red on
+   this screen always means the same thing. */
 var SCOL={
-  "New Lead"         :{hex:"#cbd5e1",cls:"b-new",  dot:"#e2e8f0"},
-  "Warm Lead"        :{hex:"#fbbf24",cls:"b-warm", dot:"#fcd34d"},
-  /* Kept deliberately even though the stage is retired: scol() is called on raw
-     stored values in a few places, and a missing entry throws before the alias
-     ever gets a chance to map it across. */
-  "Demo No Sale"     :{hex:"#60a5fa",cls:"b-call", dot:"#93c5fd"},
-  "Signed Up"        :{hex:"#4ade80",cls:"b-paid", dot:"#86efac"},
-  "Contact in the Future":{hex:"#22d3ee",cls:"b-soon", dot:"#7dd3fc"},
-  "Dead Lead"        :{hex:"#f87171",cls:"b-owe",  dot:"#fca5a5"}
+  "New Lead"        :{hex:"#cbd5e1",cls:"b-new",  dot:"#e2e8f0"},
+  "Did Not Answer"  :{hex:"#a78bfa",cls:"b-dna",  dot:"#c4b5fd"},
+  "Warm Lead"       :{hex:"#fbbf24",cls:"b-warm", dot:"#fcd34d"},
+  "Cold Lead"       :{hex:"#60a5fa",cls:"b-cold", dot:"#93c5fd"},
+  "Dead Lead"       :{hex:"#f87171",cls:"b-owe",  dot:"#fca5a5"},
+  "Signed Up"       :{hex:"#4ade80",cls:"b-paid", dot:"#86efac"},
+  /* Retired names keep an entry. scol() is called on raw stored values in a
+     few places and a missing key throws before the alias can map it across. */
+  "Demo No Sale"         :{hex:"#60a5fa",cls:"b-cold",dot:"#93c5fd"},
+  "Contact in the Future":{hex:"#60a5fa",cls:"b-cold",dot:"#93c5fd"}
 };
-/* Anything saved under the old name still reads correctly. */
-/* Anything saved under an older name still reads correctly. */
-/* Retired stages, mapped to what they became. Nothing is deleted — a lead on a
-   retired stage is moved across, not dropped. Deleting the name without the
-   alias is what makes a lead appear to vanish: stageFix() returns nothing, and
-   the lead silently falls back to whatever the sheet said. */
-var STAGE_ALIAS={"Call Completed":"Contact in the Future",
-                 "Call completed":"Contact in the Future",
-                 "Demo No Sale":"Contact in the Future",
-                 "Demo no sale":"Contact in the Future",
-                 "demo no sale":"Contact in the Future",
-                 "Joining in Future":"Contact in the Future",
-                 "Joining In Future":"Contact in the Future",
-                 "Joining in future":"Contact in the Future"};
+
+/* Retired stages, mapped to what they became. Nothing is ever deleted — a lead
+   on a retired stage is moved across, not dropped. Removing a name without its
+   alias is exactly how a lead appears to vanish: stageFix() returns nothing and
+   the lead silently falls back to whatever the sheet said.
+
+   "Contact in the Future" becomes Cold: it described someone who was not saying
+   no but was not moving either, which is what cold means. */
+var STAGE_ALIAS={
+  "Call Completed":"Warm Lead",
+  "Call completed":"Warm Lead",
+  "Demo No Sale":"Cold Lead",
+  "Demo no sale":"Cold Lead",
+  "demo no sale":"Cold Lead",
+  "Joining in Future":"Cold Lead",
+  "Joining In Future":"Cold Lead",
+  "Joining in future":"Cold Lead",
+  "Contact in the Future":"Cold Lead",
+  "Contact In The Future":"Cold Lead",
+  "contact in the future":"Cold Lead",
+  "No Answer":"Did Not Answer",
+  "no answer":"Did Not Answer",
+  "Didn't Answer":"Did Not Answer",
+  "Did not answer":"Did Not Answer"
+};
 function stageFix(st){ st=String(st||""); return STAGE_ALIAS[st]||st; }
 function scol(st){return SCOL[stageFix(st)]||SCOL["New Lead"];}
 
@@ -4055,6 +4280,292 @@ function fuDaysOut(n){
   var d=followUp(n); if(!d) return null;
   var t=new Date(); t.setHours(12,0,0,0);
   return Math.round((d-t)/86400000);
+}
+
+
+/* ======================== TEXTS, BOTH DIRECTIONS ========================
+   /api/threads is the only thing that knows about replies. It is polled, not
+   pushed: a websocket for a one-person CRM is a lot of machinery to keep alive
+   for something a 30-second poll answers just as well, and a poll cannot
+   silently die without the next tick noticing.
+
+   THREADS holds the overview — one entry per person who has ever texted, with
+   their unread count and the last line said. THREAD_ONE holds whichever
+   conversation is currently open. */
+var THREADS=[], THREADS_UNREAD=0, THREADS_AT=0, THREADS_ERR="";
+var THREAD_ONE=null, THREAD_FOR="", THREAD_BUSY=false;
+
+function apiBase(){
+  /* Hosted, this is same-origin. In the Cowork preview there is no /api, and
+     asking for one there produces a 404 every 30 seconds forever — so the
+     poll simply does not start. */
+  try{ return (typeof window!=="undefined" && window.__EXODUS_HOSTED__) ? "" : null; }
+  catch(e){ return null; }
+}
+
+function threadsPull(force){
+  var base=apiBase();
+  if(base===null) return Promise.resolve();
+  if(!force && Date.now()-THREADS_AT < 20000) return Promise.resolve();
+  THREADS_AT=Date.now();
+  return fetch(base+"/api/threads",{cache:"no-store"})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if(!j || j.error){ THREADS_ERR=(j&&j.error)||"no answer"; return; }
+      THREADS_ERR="";
+      THREADS=j.threads||[];
+      THREADS_UNREAD=Number(j.unread||0);
+      try{ tickInbox(); }catch(e){}
+    })
+    .catch(function(e){ THREADS_ERR=String(e.message||e); });
+}
+
+/* Repaint only the inbox, not the page. A poll that redraws the whole
+   dashboard every 30 seconds would wipe whatever he is halfway through typing
+   into a notes box. */
+function tickInbox(){
+  var host=document.getElementById("bd-inbox");
+  if(!host) return;
+  host.innerHTML=inboxLane();
+  try{ wire(); }catch(e){}
+}
+
+function unreadFor(name){
+  var t=threadFor(name);
+  return t ? Number(t.unread||0) : 0;
+}
+function threadFor(name){
+  var L=leadBy(name); if(!L) return null;
+  var ten=String(cnGet(L.name).p||L.phone||"").replace(/[^0-9]/g,"").slice(-10);
+  if(ten.length!==10) return null;
+  for(var i=0;i<THREADS.length;i++)
+    if(String(THREADS[i].ten||"")===ten) return THREADS[i];
+  return null;
+}
+
+/* ---- the lane at the top of the board ---- */
+function inboxLane(){
+  var live=THREADS.filter(function(t){ return Number(t.unread||0)>0; });
+  if(!live.length) return "";
+  var h='<div class="bd-lane"><span class="bd-l bd-in">Replied &mdash; answer these first</span>';
+  live.slice(0,8).forEach(function(t){
+    var who=t.name || t.e164 || "Unknown number";
+    var last=String(t.last_body||"").replace(/\s+/g," ").slice(0,70);
+    h+='<div class="bd-r bd-unread">'
+      +'<button class="bd-nm" data-thread="'+esc(t.e164||"")+'" data-thname="'+esc(t.name||"")+'">'
+        +'<i class="bd-dot" style="background:#5ee3a4"></i>'
+        +'<b>'+esc(who)+'</b>'
+        +'<em>'+t.unread+' new</em>'
+      +'</button>'
+      +'<span class="bd-why bd-in">&ldquo;'+esc(last)+'&rdquo;</span>'
+      +'<span class="bd-tel">'+esc(t.e164||"")+'</span>'
+      +'<span class="bd-act">'
+        +'<button class="bd-b open" data-thread="'+esc(t.e164||"")+'" '
+          +'data-thname="'+esc(t.name||"")+'">Read</button>'
+      +'</span></div>';
+  });
+  return h+'</div>';
+}
+
+/* ---- one conversation, as a sheet ---- */
+function threadOpen(e164, name){
+  var base=apiBase();
+  if(base===null){ alert("Conversations need the hosted app."); return; }
+  THREAD_FOR=name||e164; THREAD_BUSY=true; THREAD_ONE=null;
+  threadPaint();
+  var qs = e164 ? "e164="+encodeURIComponent(e164) : "name="+encodeURIComponent(name||"");
+  fetch(base+"/api/threads?"+qs,{cache:"no-store"})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      THREAD_ONE=(j&&j.messages)||[]; THREAD_BUSY=false; threadPaint();
+      /* Opening it is reading it. */
+      if(e164) fetch(base+"/api/threads",{method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({e164:e164, read:true})})
+        .then(function(){ threadsPull(true); }).catch(function(){});
+    })
+    .catch(function(e){ THREAD_ONE=[]; THREAD_BUSY=false; threadPaint(); });
+}
+function threadClose(){ THREAD_ONE=null; THREAD_FOR=""; threadPaint(); }
+
+function threadPaint(){
+  var host=document.getElementById("thsheet");
+  if(!host) return;
+  if(!THREAD_FOR){ host.innerHTML=""; host.hidden=true; return; }
+  host.hidden=false;
+
+  var h='<div class="th-wrap"><div class="th-card">'
+    +'<div class="th-h"><b>'+esc(THREAD_FOR)+'</b>'
+      +'<button class="th-x" id="th-close" title="Close">&times;</button></div>'
+    +'<div class="th-body" id="th-body">';
+  if(THREAD_BUSY) h+='<div class="th-none">Loading&hellip;</div>';
+  else if(!THREAD_ONE || !THREAD_ONE.length)
+    h+='<div class="th-none">No texts with this person yet.</div>';
+  else THREAD_ONE.forEach(function(m){
+    var mine=m.direction==="out";
+    var when="";
+    try{
+      var d=new Date(m.sent_at);
+      when=d.toLocaleDateString(undefined,{month:"short",day:"numeric"})
+         +" "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+    }catch(e){}
+    h+='<div class="th-m'+(mine?" me":"")+'">'
+      +'<div class="th-b">'+esc(m.body||"")+'</div>'
+      +'<span class="th-t">'+esc(when)+'</span></div>';
+  });
+  h+='</div>'
+    +'<div class="th-f"><button class="btn" id="th-reply">Write a reply</button>'
+    +'<span class="th-n">Replies go out through your Twilio number. '
+    +'Nothing sends until you read it and press Send.</span></div>'
+    +'</div></div>';
+  host.innerHTML=h;
+  try{ wire(); }catch(e){}
+  var bd=document.getElementById("th-body");
+  if(bd) bd.scrollTop=bd.scrollHeight;
+}
+
+/* ======================== WHEN HE LAST SPOKE TO THEM ====================
+   Nothing in this app recorded a conversation. Stage recorded where somebody
+   had got to and follow-up recorded an intention, but a lead he rang yesterday
+   and a lead untouched since June looked exactly the same on screen. That is
+   the actual reason things "slip" — not the volume, the absence of a last
+   contact date.
+
+   One field, stamped by one button. It lives in lx_ alongside came/fu so it
+   rides the same Supabase sync those already use. */
+function touchRaw(n){ return lxGet(n).touch || ""; }
+function touchDays(n){
+  var v = touchRaw(n);
+  if(!v) return null;
+  var d = new Date(v + "T12:00:00");
+  if(isNaN(d.getTime())) return null;
+  var t = new Date(); t.setHours(12,0,0,0);
+  return Math.round((t - d) / 86400000);
+}
+function touchLabel(n){
+  var d = touchDays(n);
+  if(d === null) return "never contacted";
+  if(d <= 0) return "spoke today";
+  if(d === 1) return "spoke yesterday";
+  if(d < 14)  return d + " days ago";
+  if(d < 60)  return Math.round(d/7) + " weeks ago";
+  return Math.round(d/30) + " months ago";
+}
+function markTouched(n){ lxPut(n, "touch", dkey(new Date())); }
+
+/* ---------------------------------------------------- THE BOARD ----------
+   Three lanes, worst first:
+     overdue  a follow-up date that has already passed
+     today    a follow-up date that is today
+     fresh    nobody has ever spoken to them and no date is set
+
+   Signed Up and Dead Lead are excluded. A closed deal is not work, and a dead
+   lead being "overdue" is noise that trains you to ignore the board — which is
+   the failure mode of every worklist that has ever been abandoned. */
+function workQueue(){
+  var overdue = [], today = [], fresh = [];
+  (STATE.leads || []).forEach(function(L){
+    if(L.stage === "Dead Lead" || L.stage === "Signed Up") return;
+    /* Somebody who has just texted is already at the top of the board in the
+       Replied lane. Listing them again under Overdue is the same person twice
+       with two different instructions — and the reply is the newer, better
+       instruction, so it wins. */
+    if(unreadFor(L.name) > 0) return;
+    var d = fuDaysOut(L.name);
+    if(d !== null && d < 0){ overdue.push({L:L, d:d}); return; }
+    if(d === 0){ today.push({L:L, d:0}); return; }
+    if(d === null && !touchRaw(L.name)) fresh.push({L:L, d:null});
+  });
+  overdue.sort(function(a,b){ return a.d - b.d; });          /* latest first */
+  /* Speed to lead: newest arrival at the top, because that is the one whose
+     odds are still falling by the hour. */
+  fresh.sort(function(a,b){
+    return String(cameInRaw(b.L.name)).localeCompare(String(cameInRaw(a.L.name)));
+  });
+  return { overdue: overdue, today: today, fresh: fresh.slice(0, 8),
+           freshTotal: fresh.length };
+}
+
+function boardRow(L, why, tone){
+  var tel  = (cnGet(L.name).p || L.phone || "");
+  var ok   = dialable(tel).ok;
+  var c    = scol(L.stage);
+  return '<div class="bd-r">'
+    +'<button class="bd-nm" data-n="'+esc(L.name)+'">'
+      +'<i class="bd-dot" style="background:'+c.hex+'"></i>'
+      +'<b>'+esc(L.name)+'</b>'
+      /* stageFix, not the raw value: "Demo No Sale" and "Joining in Future"
+         were retired and alias forward, and the board should say what the
+         pipeline says. */
+      +'<em>'+esc(stageFix(L.stage))+'</em>'
+    +'</button>'
+    +'<span class="bd-why bd-'+tone+'">'+esc(why)+'</span>'
+    +'<span class="bd-tel">'+(ok ? esc(tel) : '<i>no number</i>')+'</span>'
+    +'<span class="bd-act">'
+      +(ok ? '<button class="bd-b" data-rcall="'+esc(L.name)+'" data-rtel="'+esc(tel)+'">Call</button>'
+           + '<button class="bd-b" data-rtext="'+esc(L.name)+'">Text</button>' : '')
+      +'<button class="bd-b done" data-touch="'+esc(L.name)+'" '
+        +'title="Records that you spoke to them today and clears them off the board">Done</button>'
+    +'</span></div>';
+}
+
+function boardCard(){
+  var q = workQueue();
+  var total = q.overdue.length + q.today.length + q.fresh.length;
+
+  var h = '<div class="board'+(BOARD_SHUT?" shut":"")+'">'
+    +'<div class="bd-h">'
+      +'<button class="nwfold" id="bd-fold" '
+        +'title="'+(BOARD_SHUT?"Show the board":"Fold this away")+'" '
+        +'aria-expanded="'+(BOARD_SHUT?"false":"true")+'"><span class="nwf-c"></span></button>'
+      +'<b>The Board</b><span class="bd-sub">what needs you today</span>'
+      +'<span class="bd-tags">'
+        +(THREADS_UNREAD ? '<span class="bd-t bd-in">'+THREADS_UNREAD+' replied</span>' : '')
+        +(q.overdue.length ? '<span class="bd-t bd-od">'+q.overdue.length+' overdue</span>' : '')
+        +(q.today.length   ? '<span class="bd-t bd-td">'+q.today.length+' today</span>' : '')
+        +(q.freshTotal     ? '<span class="bd-t bd-nw">'+q.freshTotal+' never contacted</span>' : '')
+      +'</span></div>';
+
+  if(BOARD_SHUT) return h + '</div>';
+
+  /* Replies go above everything. A person who just texted you is worth more
+     than a person you meant to ring on Tuesday, and this is the one lane that
+     can appear between renders — so it gets its own container that the poll
+     can repaint without touching the rest of the page. */
+  h += '<div id="bd-inbox">' + (function(){ try{ return inboxLane(); }catch(e){ return ""; } })() + '</div>';
+
+  if(!total && !THREADS_UNREAD)
+    return h + '<div class="bd-clear">Nothing needs you right now. '
+             + 'Every follow-up is booked and every new lead has been spoken to.</div></div>';
+
+  if(q.overdue.length){
+    h += '<div class="bd-lane"><span class="bd-l bd-od">Overdue</span>';
+    q.overdue.forEach(function(o){
+      var late = Math.abs(o.d);
+      h += boardRow(o.L, late === 1 ? "1 day late" : late + " days late", "od");
+    });
+    h += '</div>';
+  }
+  if(q.today.length){
+    h += '<div class="bd-lane"><span class="bd-l bd-td">Due today</span>';
+    q.today.forEach(function(o){
+      var note = lxGet(o.L.name).funote || "";
+      h += boardRow(o.L, note ? note.slice(0,60) : "follow up today", "td");
+    });
+    h += '</div>';
+  }
+  if(q.fresh.length){
+    h += '<div class="bd-lane"><span class="bd-l bd-nw">Never contacted</span>';
+    q.fresh.forEach(function(o){
+      var came = cameLabel(o.L.name);
+      h += boardRow(o.L, came ? "came in " + came : "no arrival date", "nw");
+    });
+    if(q.freshTotal > q.fresh.length)
+      h += '<div class="bd-more">and '+(q.freshTotal - q.fresh.length)
+         + ' more below</div>';
+    h += '</div>';
+  }
+  return h + '</div>';
 }
 
 function cnGet(n){try{return JSON.parse(LS("cn_"+keyOf(n))||"null")||{};}catch(e){return {};}}
@@ -4197,7 +4708,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-02-a";
+var BUILD="2026-08-14-c";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -11373,6 +11884,15 @@ function wireJarvis(){
 /* one timer, not one per render */
 setInterval(function(){ try{ jvPaint(); }catch(e){} }, 700);
 
+/* Replies, every 30 seconds. Only the inbox lane repaints, so this can never
+   wipe something he is halfway through typing. */
+setInterval(function(){ try{ threadsPull(); }catch(e){} }, 30000);
+try{
+  document.addEventListener("visibilitychange", function(){
+    if(!document.hidden){ try{ threadsPull(true); }catch(e){} }
+  });
+}catch(e){}
+
 /* ============================ WHERE HE IS ============================
    He asked her to always know his location. The browser will give it once he
    allows it, and it is remembered so he is asked once rather than every
@@ -13906,6 +14426,9 @@ function dialerView(){
    status, a running activity log you append to, and free notes. Everything is
    stored against the lead's name so it survives a Drive re-read. */
 var OPENLEAD=null;
+/* The board is open by default — a worklist you have to unfold is a worklist
+   you stop seeing. It folds because some days he only wants the table. */
+var BOARD_SHUT = LS("board_shut") === "1";
 function actLoad(n){ return LJ("act_"+keyOf(n),[]); }
 
 /* ============ REMOVING A LEAD FOR GOOD ============
@@ -14643,7 +15166,12 @@ function lsApply(){
   try{ pgFoldLabel(); }catch(e){}
 
   var c=document.getElementById("lscount");
-  if(c) c.textContent=q?(shown+" of "+rows.length):(rows.length+" leads");
+  /* Only while searching. Sitting there permanently it printed "5 leads" on
+     top of the "Search leads" placeholder — two pieces of text in one 210px
+     box. The total row count lives in the control bar already. */
+  if(c) c.textContent = q ? (shown+" of "+rows.length) : "";
+  var xb=document.getElementById("lsclear");
+  if(xb) xb.style.display = q ? "block" : "none";
   return shown;
 }
 /* ---- which stage bands are folded shut ----
@@ -14764,12 +15292,10 @@ function salesPipe(){
   var ig=L.filter(function(x){return !x.directOnly;}).length;
 
   var np=prCount();
-  var h='<div class="pills"><button class="pill'+(FILTER==="all"?" on":"")+'" data-f="all">All '+L.length+'</button>'
-   +'<button class="pill prip'+(FILTER==="priority"?" on":"")+'" data-f="priority">'
-   +'<i class="pd"></i>Priority '+np+'</button>'
-   +ORD.filter(function(s){return cn[s];}).map(function(s){
-     return '<button class="pill'+(FILTER===s?" on":"")+'" data-f="'+esc(s)+'">'+esc(s)+' '+cn[s]+'</button>';}).join("")
-   +'<button class="pill'+(FILTER==="noreach"?" on":"")+'" data-f="noreach">Needs a number '+ig+'</button></div>';
+  /* The pill row is gone; "Show" in the control bar does its job in a control
+     that does not wrap or reflow. Nine pills at 1400px wrapped to two lines,
+     and the second line moved every time a count changed. */
+  var h='';
 
   /* Money strip. On the dashboard the CRM section header is already showing
      these four figures, so printing them again ten pixels lower is just the
@@ -14789,19 +15315,12 @@ function salesPipe(){
    +'<div class="card"><h4>Members</h4><div class="v g">'+memberCount()+'</div>'
    +'<div class="d">Paid or signed up</div></div></div>';
 
-  /* colour key */
-  h+='<div class="legend">';
-  STATUSES.forEach(function(st){
-    var c=scol(st);
-    h+='<span class="lg"><i style="background:'+c.hex+'"></i>'+esc(st)+' '+(cn[st]||0)+'</span>';});
-  h+='<span class="note-c" style="margin-left:auto">Status, phone, email, handle and notes are all editable. '
-   +'Everything saves here.</span></div>';
+  /* The colour key is gone. Every row already prints its stage as a coloured
+     dot next to the word it stands for, so a separate legend explained a thing
+     that was never unexplained. The sentence about everything being editable
+     went with it — it was printed twice, ten pixels apart. */
 
   var mine=mlLoad();
-  h+='<div class="addbar">'
-   +'<button class="btn" id="addtoggle">+ New Lead</button>'
-   +'<span class="note-c">Phone, email and handle are editable on every row — click, type, done.'
-   +(mine.length?' '+mine.length+' lead'+(mine.length>1?'s':'')+' added by hand.':'')+'</span></div>';
   h+='<div class="addform" id="addform">'
    +'<div class="af-grid">'
    +'<label>Name<input class="wide" id="nl-name" placeholder="Marco Martin"></label>'
@@ -14830,31 +15349,59 @@ function salesPipe(){
 
   /* Search hides rows that are already on screen, so the cursor never jumps and
      nothing re-renders while you type. */
-  h+='<div class="lsrch"><span class="lsi">&#128269;</span>'
-   +'<input id="lsearch" placeholder="Search '+rows.length+' leads — name, email, phone or handle" '
-   +'autocomplete="off" value="'+esc(LSEARCH)+'">'
-   +'<button class="lsx" id="lsclear" title="Clear">&times;</button>'
-   +'<span class="lscount" id="lscount"></span></div>';
-
+  /* ---------------------------- ONE CONTROL BAR ----------------------------
+     Search, stage, sort, grouping and New Lead, on one line, in fixed
+     positions. Nothing here moves when a filter changes — only the numbers
+     inside the controls do. The five separate strips this replaced each
+     re-laid out on every click, which is why filtering felt chaotic. */
   var due=STATE.leads.filter(function(x){var d=fuDaysOut(x.name);return d!==null&&d<=0;}).length;
-  h+='<div class="sortbar">'
-   +'<label class="sb-l">Sort<select id="l-sort">'
-   +SORTS.map(function(o){
-      return '<option value="'+o.k+'"'+(LSORT===o.k?" selected":"")+'>'+esc(o.nm)+'</option>';}).join("")
-   +'</select></label>'
+
+  h+='<div class="cbar">'
+   /* An inline SVG rather than U+1F50D. The emoji renders as a tofu box in the
+      UI font on Windows, and a missing glyph inside a search field reads as a
+      broken app rather than as a missing font. */
+   +'<span class="cb-find"><svg class="cb-fi" viewBox="0 0 16 16" width="12" height="12" '
+     +'fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">'
+     +'<circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>'
+     +'<input id="lsearch" placeholder="Search leads" autocomplete="off" '
+       +'value="'+esc(LSEARCH)+'">'
+     +'<button class="cb-fx" id="lsclear" title="Clear" '
+       +'style="display:'+(LSEARCH?"":"none")+'">&times;</button>'
+     +'<span class="lscount" id="lscount"></span></span>'
+
+   /* A select, not a row of pills. Six stages plus All, Priority and Needs a
+      number is nine buttons that wrap onto two lines at any real width and
+      reflow as the counts change. A select is one fixed-width control that
+      never moves and still shows the count of whatever is chosen. */
+   +'<label class="cb-l">Show'
+     +'<select id="l-filter">'
+       +'<option value="all"'+(FILTER==="all"?" selected":"")+'>Everyone ('+L.length+')</option>'
+       +'<option value="priority"'+(FILTER==="priority"?" selected":"")+'>Priority ('+np+')</option>'
+       +ORD.map(function(st){
+          return '<option value="'+esc(st)+'"'+(FILTER===st?" selected":"")+'>'
+                +esc(st)+' ('+(cn[st]||0)+')</option>';}).join("")
+       +'<option value="noreach"'+(FILTER==="noreach"?" selected":"")+'>Needs a number ('+ig+')</option>'
+     +'</select></label>'
+
+   +'<label class="cb-l">Sort'
+     +'<select id="l-sort">'
+     +SORTS.map(function(o){
+        return '<option value="'+o.k+'"'+(LSORT===o.k?" selected":"")+'>'+esc(o.nm)+'</option>';}).join("")
+     +'</select></label>'
+
    /* A segmented pair, not one button whose label is its current state. The old
       one said "Grouped by stage" while grouped, which reads as the thing it
-      will do rather than the thing it is — so nobody could tell whether they
-      were pressing it to turn grouping on or off. */
-   +'<span class="sb-seg">'
-     +'<button class="sb-sg'+(LGROUP?" on":"")+'" data-lgrp="1">By stage</button>'
-     +'<button class="sb-sg'+(LGROUP?"":" on")+'" data-lgrp="0">Flat list</button>'
+      will do rather than the thing it is. */
+   +'<span class="cb-seg">'
+     +'<button class="cb-sg'+(LGROUP?" on":"")+'" data-lgrp="1" title="Group into stage bands">Stages</button>'
+     +'<button class="cb-sg'+(LGROUP?"":" on")+'" data-lgrp="0" title="One flat list">List</button>'
    +'</span>'
-   +(due?'<button class="sb-b due" id="l-due">'+due+' follow-up'+(due>1?"s":"")+' due</button>':'')
-   /* Only offered when there are bands to fold. In a flat list it did nothing,
-      which is the worst thing a button can do. */
-   +(LGROUP?'<button class="sb-b" id="l-fold">Collapse all</button>':'')
-   +'<span class="sb-n">'+rows.length+' shown</span></div>';
+
+   +(LGROUP?'<button class="cb-b" id="l-fold" title="Fold every stage band">Collapse</button>':'')
+   +(due?'<button class="cb-b due" id="l-due">'+due+' due</button>':'')
+   +'<span class="cb-n">'+rows.length+'</span>'
+   +'<button class="cb-add" id="addtoggle">+ New Lead</button>'
+   +'</div>';
 
   /* Grouped by stage, New Leads first, because a new lead going cold is the most
      expensive thing that happens here. Purple-flagged people are lifted into
@@ -17027,10 +17574,7 @@ function dashView(){
     h+='</div></div>';
   })();
 
-  /* ============ 2. CONTENT ANALYTICS ============ */
-  h+=analyticsSection();
-
-  /* ============ 3. EXODUS CRM  —  the real pipeline, in place ============
+  /* ============ 2. EXODUS CRM  —  the real pipeline, in place ============
      Sales is the top of the page because it is the top of the business.
      Cash first, then the pipeline, then who came in, then who to ring. */
   (function(){
@@ -17044,6 +17588,10 @@ function dashView(){
       +'Sales Script</a>'
       +'<button class="sec-b" data-dgo="sales|5">Dialer</button>'
       +'<button class="sec-b hot" data-dgo="sales|1">Full Screen</button></div>';
+
+    /* The work comes before the scoreboard. He opens this before a shift to
+       find out who to ring, not to admire a total. */
+    h+=boardCard();
 
     /* the money lives here, next to the people it comes from */
     h+='<div class="crmmoney">'
@@ -17087,6 +17635,11 @@ function dashView(){
     h+='</div></div></div>';
     h+='</div>';
   })();
+
+  /* ============ 3. CONTENT ANALYTICS ============
+     Followers move on their own; leads do not move unless he moves them. The
+     thing that needs a human sits above the thing that reports itself. */
+  h+=analyticsSection();
 
   h+=smsCard();
   h+=operatorBar();
@@ -17310,6 +17863,7 @@ function drawDash(){
   try{ spPaint(); }catch(e){}
   try{ wireJarvis(); }catch(e){}
   try{ spotMount(); }catch(e){}
+  try{ threadsPull(); }catch(e){}
   /* Everything inside the sheet is a real room panel, so it needs the room's own
      handlers — the same wire() the floating windows use. */
   if(DASH_MOD){
@@ -18136,6 +18690,46 @@ function wire(){
     redraw();
   };
 
+  /* ---- conversations ---- */
+  var tho=document.querySelectorAll("[data-thread]");
+  for(var q1=0;q1<tho.length;q1++) tho[q1].onclick=function(ev){
+    ev.stopPropagation();
+    threadOpen(this.getAttribute("data-thread"), this.getAttribute("data-thname"));
+  };
+  var thx=document.getElementById("th-close");
+  if(thx) thx.onclick=function(){ threadClose(); };
+  var thr=document.getElementById("th-reply");
+  if(thr) thr.onclick=function(){
+    /* Straight into the existing draft box, which already has the gate: he
+       reads the exact words and the exact number before anything sends. */
+    var L=leadBy(THREAD_FOR);
+    var tel=L ? (cnGet(L.name).p || L.phone || "") : THREAD_FOR;
+    threadClose();
+    smsDraft(L?L.name:THREAD_FOR, tel, "");
+    setTimeout(function(){
+      var b=document.getElementById("sms-body"); if(b) b.focus();
+    },140);
+  };
+
+  /* ---- the board: Done, and folding ---- */
+  var tch=document.querySelectorAll("[data-touch]");
+  for(var t1=0;t1<tch.length;t1++) tch[t1].onclick=function(){
+    markTouched(this.getAttribute("data-touch"));
+    redraw();
+  };
+  var bfd=document.getElementById("bd-fold");
+  if(bfd) bfd.onclick=function(){
+    BOARD_SHUT=!BOARD_SHUT;
+    LS("board_shut", BOARD_SHUT?"1":"0");
+    redraw();
+  };
+  /* A name on the board opens that lead, same as a name in the table. */
+  var bnm=document.querySelectorAll(".bd-nm[data-n]");
+  for(var b1=0;b1<bnm.length;b1++) bnm[b1].onclick=function(){
+    OPENLEAD=this.getAttribute("data-n");
+    dashGo("sales", 1);
+  };
+
   /* ---- Call, Alt and Text, on the row ---- */
   var rcs=document.querySelectorAll("[data-rcall]");
   for(var r1=0;r1<rcs.length;r1++) rcs[r1].onclick=function(){
@@ -18167,6 +18761,13 @@ function wire(){
   var fold=document.getElementById("l-fold");
   if(fold) fold.onclick=function(){ pgSetAll(!pgAllShut()); };
   try{ pgFoldLabel(); }catch(e){}
+
+  /* Show — the stage filter. A change, not a click, because it is a select
+     now rather than a row of pills. Search clears with it: filtering to a
+     stage while a search is still narrowing the list is how you end up staring
+     at "no results" and concluding the CRM lost your leads. */
+  var lf=document.getElementById("l-filter");
+  if(lf) lf.onchange=function(){ FILTER=this.value; LSEARCH=""; redraw(); };
 
   /* the sort controls */
   var so=document.getElementById("l-sort");
