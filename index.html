@@ -27,12 +27,24 @@
      shades apart so panels read as panels, one restrained blue used only for
      what is interactive, and status colours desaturated to the point where a
      screen full of them still looks like business software. */
-  --blk:#12141a; --blk2:#171a21; --blk3:#1e2229; --blk4:#272c35;
-  --blu:#4b7bd4; --blu2:#8fb3e8; --blu3:#6d97dd; --ice:#5fa8b8;
-  /* page, panel, raised surface — each step clearly lighter than the last */
-  --paper:#14171d; --paper2:#1b1f26; --raise:#22262f;
-  --ink:#eceef2; --mut:#98a0ae; --line:#2f3540;
-  --green:#5fb37c; --red:#d4736f; --amber:#c9a25c;
+  /* MATTE BLACK AND GREY. The old palette carried a blue cast in every
+     surface — #14171d, #1b1f26, #22262f all lean cool, and on a big monitor a
+     page of them reads as "dark blue app" rather than as a tool. These are the
+     same lightness steps with the blue taken out: true neutral greys, so the
+     one blue that is left reads unmistakably as "this is interactive" instead of
+     competing with the background it sits on.
+
+     Steps are deliberately even (16 -> 22 -> 28 -> 34) so a panel on a panel on
+     a panel still separates without borders doing all the work. */
+  --blk:#101010; --blk2:#161616; --blk3:#1c1c1c; --blk4:#242424;
+  --blu:#4b7bd4; --blu2:#8fb3e8; --blu3:#6d97dd; --ice:#6a9aa6;
+  /* page, panel, raised surface */
+  --paper:#0f0f10; --paper2:#161617; --raise:#1d1d1f;
+  --ink:#ececed; --mut:#9a9a9e; --line:#2b2b2e;
+  /* Status colours desaturated further. On a neutral ground a saturated green
+     shouts; muted, it still reads instantly and stops the screen looking like a
+     dashboard demo. */
+  --green:#63ac7b; --red:#c97b76; --amber:#bfa065;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
@@ -41,8 +53,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-s
 
 /* ============ MASTHEAD ============ */
 .top{position:relative;overflow:hidden;border-radius:14px;padding:0;
-  background:linear-gradient(160deg,#1b1f26 0%,#1e232b 55%,#191d24 100%);
-  border:1px solid #2f3540;
+  background:linear-gradient(160deg,#191919 0%,#1e1e1e 55%,#161616 100%);
+  border:1px solid #2b2b2e;
   box-shadow:0 10px 28px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05)}
 /* the two big coloured washes are gone — a masthead should not glow */
 .top:before{content:"";position:absolute;inset:0;pointer-events:none;
@@ -1807,7 +1819,7 @@ a.lnk:hover{color:#bfdbfe}
 .jvpop[hidden]{display:none}
 .jvpop-in{display:flex;align-items:center;gap:13px;
   padding:12px 18px;border-radius:99px;pointer-events:auto;
-  background:rgba(9,13,19,.93);border:1px solid #22303f;
+  background:rgba(9,13,19,.93);border:1px solid #2f2f33;
   box-shadow:0 14px 44px rgba(0,0,0,.55);
   backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
 .jvpop-in>b{font-size:12px;font-weight:800;letter-spacing:.4px;color:#dbe3ee;
@@ -1830,6 +1842,30 @@ a.lnk:hover{color:#bfdbfe}
   background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.4);color:#f0857f}
 .jvpop .jv-stop:hover{background:rgba(239,68,68,.24);color:#ffb4ac}
 
+/* ---- the email list, for a mailout ---- */
+.mailbar{border:1px solid #2b2b2e;border-radius:9px;background:#131314;
+  margin:10px 0 0;overflow:hidden}
+.mb-h{display:flex;align-items:center;gap:9px;width:100%;padding:8px 11px;
+  background:none;border:none;cursor:pointer;font:inherit;text-align:left}
+.mb-h:hover{background:rgba(255,255,255,.025)}
+.mb-c{font-size:9px;color:#5a5a5e}
+.mb-h b{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+  color:#8f8f96}
+.mb-h i{font-style:normal;font-size:10.5px;color:#5a5a5e}
+.mb-b{padding:0 11px 11px}
+.mb-b textarea{width:100%;box-sizing:border-box;resize:vertical;
+  padding:8px 9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11px;line-height:1.55;color:#c9c9ce;background:#1a1a1c;
+  border:1px solid #313134;border-radius:7px;outline:none}
+.mb-b textarea:focus{border-color:#4d4d59}
+.mb-act{display:flex;align-items:center;gap:9px;margin-top:7px}
+.mb-btn{font-size:10.5px;font-weight:800;letter-spacing:.4px;padding:6px 12px;
+  border-radius:6px;cursor:pointer;font-family:inherit;
+  background:#1c2b3c;border:1px solid #2b4a6e;color:#8fc0f0}
+.mb-btn:hover{background:#233a52;border-color:#37628f;color:#b9daf8}
+.mb-n{font-size:10.5px;color:#63ac7b;font-weight:700}
+.mb-none{padding:0 11px 11px;font-size:11px;color:#5a5a5e}
+
 /* ===================== THE LEAD GRID =====================
    The single change that matters: a cell reads as TEXT until you touch it.
 
@@ -1845,8 +1881,8 @@ table.lgrid thead th{
   position:sticky;top:0;z-index:2;
   padding:7px 10px;text-align:left;
   font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;
-  color:#4d5666;background:#0b1018;
-  border-bottom:1px solid #1e2732;white-space:nowrap}
+  color:#4d5666;background:#131314;
+  border-bottom:1px solid #2b2b2e;white-space:nowrap}
 
 table.lgrid tbody td{
   padding:0 4px;height:38px;vertical-align:middle;
@@ -1868,14 +1904,14 @@ table.lgrid .cin-came{
   text-overflow:ellipsis;white-space:nowrap;
   transition:background .1s,border-color .1s}
 table.lgrid .cn::placeholder,
-table.lgrid .ntbox::placeholder{color:#39414d}
+table.lgrid .ntbox::placeholder{color:#4a4a4e}
 table.lgrid tr:hover .cn,
 table.lgrid tr:hover .ntbox,
-table.lgrid tr:hover .cin-came{border-color:#1f2a36}
+table.lgrid tr:hover .cin-came{border-color:#2a2a2d}
 table.lgrid .cn:focus,
 table.lgrid .ntbox:focus,
 table.lgrid .cin-came:focus{
-  background:#111922;border-color:#3c5570;color:#e3eaf3;
+  background:#1a1a1c;border-color:#4d4d59;color:#e3eaf3;
   white-space:normal;overflow:auto;position:relative;z-index:3}
 table.lgrid .ntbox:focus{min-height:64px}
 
@@ -1950,7 +1986,7 @@ table.lgrid tbody td.reach{height:38px}
   table.lgrid thead{display:none}
   table.lgrid tbody tr{
     margin:0 0 9px;padding:4px 0 7px;border-radius:10px;
-    border:1px solid #1e2732;background:#0b1018}
+    border:1px solid #2b2b2e;background:#131314}
   table.lgrid tbody td{
     height:auto;display:flex;align-items:center;gap:10px;
     padding:5px 10px;border-bottom:none}
@@ -1960,7 +1996,7 @@ table.lgrid tbody td.reach{height:38px}
     color:#4d5666}
   table.lgrid tbody td:not([data-l]):before{display:none}
   table.lgrid .cn,table.lgrid .ntbox,table.lgrid .cin-came{
-    border-color:#1f2a36;min-height:38px}
+    border-color:#2a2a2d;min-height:38px}
   table.lgrid .delone{opacity:1;pointer-events:auto}
 }
 
@@ -1978,10 +2014,10 @@ table.lgrid tbody td.reach{height:38px}
 .th-wrap{position:fixed;inset:0;z-index:820;display:flex;align-items:center;
   justify-content:center;background:rgba(4,7,11,.72);padding:20px}
 .th-card{width:min(560px,100%);max-height:min(720px,86vh);display:flex;
-  flex-direction:column;border:1px solid #22303f;border-radius:14px;
-  background:#0b1018;box-shadow:0 24px 70px rgba(0,0,0,.6);overflow:hidden}
+  flex-direction:column;border:1px solid #2f2f33;border-radius:14px;
+  background:#131314;box-shadow:0 24px 70px rgba(0,0,0,.6);overflow:hidden}
 .th-h{display:flex;align-items:center;gap:10px;padding:13px 16px;
-  border-bottom:1px solid #1a222c;background:rgba(255,255,255,.02)}
+  border-bottom:1px solid #252527;background:rgba(255,255,255,.02)}
 .th-h b{font-size:14px;font-weight:800;color:#dbe3ee}
 .th-x{margin-left:auto;background:none;border:none;color:#5b6478;font-size:22px;
   line-height:1;cursor:pointer;padding:0 4px}
@@ -1996,7 +2032,7 @@ table.lgrid tbody td.reach{height:38px}
 .th-m{max-width:80%;align-self:flex-start;display:flex;flex-direction:column;gap:3px}
 .th-m.me{align-self:flex-end;align-items:flex-end}
 .th-b{padding:9px 12px;border-radius:13px;font-size:12.5px;line-height:1.45;
-  background:#18222e;color:#dbe3ee;white-space:pre-wrap;word-break:break-word;
+  background:#232325;color:#dbe3ee;white-space:pre-wrap;word-break:break-word;
   border-bottom-left-radius:4px}
 .th-m.me .th-b{background:#1c3a58;color:#e8f1fb;
   border-bottom-left-radius:13px;border-bottom-right-radius:4px}
@@ -2004,7 +2040,7 @@ table.lgrid tbody td.reach{height:38px}
 
 .th-f .btn{white-space:nowrap;flex:none}
 .th-f{display:flex;align-items:center;gap:10px;padding:11px 16px;
-  border-top:1px solid #1a222c;background:rgba(255,255,255,.015)}
+  border-top:1px solid #252527;background:rgba(255,255,255,.015)}
 .th-n{font-size:10.5px;color:#4d5666;line-height:1.35}
 
 @media (max-width:620px){
@@ -2019,16 +2055,16 @@ table.lgrid tbody td.reach{height:38px}
    replaced five stacked full-width bars — pills, legend, add, search, sort —
    each of which re-laid out on every click. */
 .cbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  padding:9px 11px;margin:0 0 12px;border:1px solid #1e2732;border-radius:10px;
-  background:#0b1018}
+  padding:9px 11px;margin:0 0 12px;border:1px solid #2b2b2e;border-radius:10px;
+  background:#131314}
 
 .cb-find{position:relative;display:flex;align-items:center;flex:1 1 210px;
   min-width:150px;max-width:340px}
 .cb-fi{position:absolute;left:8px;color:#4d5666;pointer-events:none}
 .cb-find input{width:100%;box-sizing:border-box;padding:6px 52px 6px 27px;
-  font-size:12px;color:#dbe3ee;background:#111922;border:1px solid #232e3b;
+  font-size:12px;color:#dbe3ee;background:#1a1a1c;border:1px solid #313134;
   border-radius:7px;outline:none;font-family:inherit}
-.cb-find input:focus{border-color:#33455a;background:#131d28}
+.cb-find input:focus{border-color:#41414a;background:#202022}
 .cb-fx{position:absolute;right:34px;background:none;border:none;color:#4d5666;
   font-size:15px;line-height:1;cursor:pointer;padding:0 4px}
 .cb-fx:hover{color:#9aa7b8}
@@ -2037,23 +2073,23 @@ table.lgrid tbody td.reach{height:38px}
 
 .cb-l{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;
   letter-spacing:.9px;text-transform:uppercase;color:#4d5666;white-space:nowrap}
-.cb-l select{font-size:12px;font-weight:600;color:#c3ccd9;background:#111922;
-  border:1px solid #232e3b;border-radius:7px;padding:6px 8px;outline:none;
+.cb-l select{font-size:12px;font-weight:600;color:#c3ccd9;background:#1a1a1c;
+  border:1px solid #313134;border-radius:7px;padding:6px 8px;outline:none;
   font-family:inherit;cursor:pointer;letter-spacing:0;text-transform:none}
-.cb-l select:hover{border-color:#33455a}
-.cb-l select:focus{border-color:#3c5570}
+.cb-l select:hover{border-color:#41414a}
+.cb-l select:focus{border-color:#4d4d59}
 
-.cb-seg{display:flex;border:1px solid #232e3b;border-radius:7px;overflow:hidden}
+.cb-seg{display:flex;border:1px solid #313134;border-radius:7px;overflow:hidden}
 .cb-sg{font-size:11px;font-weight:700;padding:6px 11px;border:none;
-  background:#111922;color:#6f7c8d;cursor:pointer;font-family:inherit}
-.cb-sg+.cb-sg{border-left:1px solid #232e3b}
+  background:#1a1a1c;color:#6f7c8d;cursor:pointer;font-family:inherit}
+.cb-sg+.cb-sg{border-left:1px solid #313134}
 .cb-sg:hover{color:#a9b6c6}
-.cb-sg.on{background:#1c2836;color:#e3eaf3}
+.cb-sg.on{background:#28282b;color:#e3eaf3}
 
 .cb-b{font-size:11px;font-weight:700;padding:6px 11px;border-radius:7px;
-  border:1px solid #232e3b;background:#111922;color:#a9b6c6;cursor:pointer;
+  border:1px solid #313134;background:#1a1a1c;color:#a9b6c6;cursor:pointer;
   white-space:nowrap;font-family:inherit}
-.cb-b:hover{background:#18222e;color:#e3eaf3;border-color:#33455a}
+.cb-b:hover{background:#232325;color:#e3eaf3;border-color:#41414a}
 .cb-b.due{border-color:#4a2b2b;color:#e8877f}
 .cb-b.due:hover{background:rgba(239,68,68,.12);border-color:#63393a;color:#f5a29b}
 
@@ -2080,10 +2116,10 @@ table.lgrid tbody td.reach{height:38px}
    The first thing in the CRM, and the only part of it that is a to-do list
    rather than a record. Fixed columns so the eye can run straight down the
    names, the reasons and the numbers without re-finding them on every row. */
-.board{border:1px solid #1e2732;border-radius:12px;background:#0b1018;
+.board{border:1px solid #2b2b2e;border-radius:12px;background:#131314;
   margin:0 0 14px;overflow:hidden}
 .bd-h{display:flex;align-items:center;gap:10px;padding:11px 14px;
-  border-bottom:1px solid #1a222c;background:rgba(255,255,255,.015)}
+  border-bottom:1px solid #252527;background:rgba(255,255,255,.015)}
 .board.shut .bd-h{border-bottom:none}
 .bd-h>b{font-size:13px;font-weight:800;letter-spacing:.2px;color:#dbe3ee}
 .bd-sub{font-size:11px;color:#5b6478}
@@ -2138,9 +2174,9 @@ table.lgrid tbody td.reach{height:38px}
 
 .bd-act{display:flex;gap:5px;justify-content:flex-end}
 .bd-b{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:6px;
-  border:1px solid #26313f;background:#131b25;color:#a9b6c6;cursor:pointer;
+  border:1px solid #323236;background:#1c1c1e;color:#a9b6c6;cursor:pointer;
   white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
-.bd-b:hover{background:#1a2532;color:#e3eaf3;border-color:#33414f}
+.bd-b:hover{background:#242426;color:#e3eaf3;border-color:#33414f}
 .bd-b.done{border-color:#1f3a2c;color:#7fbf9a}
 .bd-b.done:hover{background:rgba(34,197,94,.13);color:#9fe0bb;border-color:#2c5340}
 
@@ -2507,7 +2543,7 @@ a.sp-g:hover{background:rgba(255,255,255,.05)}
 .wxp{display:flex;flex-direction:column;justify-content:center;min-width:0;
   gap:0;padding:10px 14px 11px;
   border-radius:12px;background:linear-gradient(120deg,#0d1520,#101a26 60%,#0d1520);
-  border:1px solid #22303f}
+  border:1px solid #2f2f33}
 .wxp.empty{justify-content:center}
 .wx-get{background:rgba(75,123,212,.16);border:1px solid rgba(75,123,212,.4);
   border-radius:8px;padding:9px 16px;color:#a9c6f5;font-family:inherit;
@@ -3949,7 +3985,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-14-e">
+<body data-build="2026-08-14-g">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -4063,7 +4099,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-e</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-g</span></div>
 </div>
 
 <script>
@@ -4899,7 +4935,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-14-e";
+var BUILD="2026-08-14-g";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -6491,13 +6527,13 @@ function drawTower(){
     /* recessed into the wall */
     s+='<rect x="'+(SFx-3)+'" y="'+(SFy-3)+'" width="'+(SFw+6)+'" height="'+(SFh+6)+'" rx="3" fill="#15181e"/>';
     s+='<rect x="'+SFx+'" y="'+SFy+'" width="'+SFw+'" height="'+SFh+'" rx="2" fill="#20242c"/>';
-    s+='<rect x="'+SFx+'" y="'+SFy+'" width="'+SFw+'" height="'+SFh+'" rx="2" fill="none" stroke="#39414d" stroke-width="1.4"/>';
+    s+='<rect x="'+SFx+'" y="'+SFy+'" width="'+SFw+'" height="'+SFh+'" rx="2" fill="none" stroke="#4a4a4e" stroke-width="1.4"/>';
     if(open){
       /* the door swung to the left, contents lit */
       s+='<rect x="'+(SFx+5)+'" y="'+(SFy+5)+'" width="'+(SFw-10)+'" height="'+(SFh-10)+'" rx="1.5" fill="#0b0e13"/>';
       s+='<rect x="'+(SFx+5)+'" y="'+(SFy+5)+'" width="'+(SFw-10)+'" height="'+(SFh-10)+'" rx="1.5" fill="url(#lampG)" opacity=".5"/>';
       /* a shelf, some banded cash and a card */
-      s+='<rect x="'+(SFx+7)+'" y="'+(SFy+22)+'" width="'+(SFw-14)+'" height="1.6" fill="#39414d"/>';
+      s+='<rect x="'+(SFx+7)+'" y="'+(SFy+22)+'" width="'+(SFw-14)+'" height="1.6" fill="#4a4a4e"/>';
       s+='<rect x="'+(SFx+9)+'" y="'+(SFy+11)+'" width="13" height="8" rx="1" fill="#3f7d5a"/>';
       s+='<rect x="'+(SFx+9)+'" y="'+(SFy+13)+'" width="13" height="1.6" fill="#c9a25c"/>';
       s+='<rect x="'+(SFx+25)+'" y="'+(SFy+11)+'" width="13" height="8" rx="1" fill="#3f7d5a"/>';
@@ -6527,7 +6563,7 @@ function drawTower(){
       /* keypad and a red locked light */
       s+='<rect x="'+(SFx+30)+'" y="'+(SFy+6)+'" width="14" height="9" rx="1.6" fill="#161a20"/>';
       for(var kr=0;kr<3;kr++)for(var kc=0;kc<3;kc++)
-        s+='<rect x="'+(SFx+31.4+kc*4.2)+'" y="'+(SFy+7.2+kr*2.6)+'" width="2.8" height="1.7" fill="#39414d"/>';
+        s+='<rect x="'+(SFx+31.4+kc*4.2)+'" y="'+(SFy+7.2+kr*2.6)+'" width="2.8" height="1.7" fill="#4a4a4e"/>';
       s+='<circle cx="'+(SFx+SFw-8)+'" cy="'+(SFy+SFh-7)+'" r="2" fill="#d4736f">'
         +'<animate attributeName="opacity" values="1;.3;1" dur="3.2s" repeatCount="indefinite"/></circle>';
     }
@@ -7060,7 +7096,7 @@ function drawTower(){
       s+='<rect x="'+(mx+2)+'" y="'+(my+2)+'" width="'+(mw-4)+'" height="'+(mh-4)+'" rx="1" fill="#101a24"/>';
       if(mi===0){
         /* edit timeline */
-        s+='<rect x="'+(mx+4)+'" y="'+(my+4)+'" width="'+(mw-8)+'" height="8" rx="1" fill="#1c2836"/>';
+        s+='<rect x="'+(mx+4)+'" y="'+(my+4)+'" width="'+(mw-8)+'" height="8" rx="1" fill="#28282b"/>';
         ["#22d3ee","#4ade80","#fbbf24"].forEach(function(c,ci){
           s+='<rect x="'+(mx+4)+'" y="'+(my+14+ci*4.4)+'" width="'+((mw-8)*(0.9-ci*0.2))+'" height="3" rx="1.4" fill="'+c+'" opacity=".8"/>';});
         s+='<rect x="'+(mx+mw*0.55)+'" y="'+(my+4)+'" width="1.2" height="'+(mh-8)+'" fill="#f4f6fa" opacity=".7"/>';
@@ -7069,7 +7105,7 @@ function drawTower(){
         var rp="M"+(mx+4)+" "+(my+8);
         for(var r2=1;r2<=8;r2++) rp+=" L"+(mx+4+r2*((mw-8)/8))+" "+(my+8+r2*1.8+((r2*5)%4));
         s+='<path d="'+rp+'" fill="none" stroke="#ff2d55" stroke-width="1.4"/>';
-        s+='<rect x="'+(mx+4)+'" y="'+(my+mh-9)+'" width="'+(mw-8)+'" height="5" rx="1" fill="#1c2836"/>';
+        s+='<rect x="'+(mx+4)+'" y="'+(my+mh-9)+'" width="'+(mw-8)+'" height="5" rx="1" fill="#28282b"/>';
       }
       s+='<rect x="'+(mx+mw/2-4)+'" y="'+(my+mh)+'" width="8" height="4" fill="#2b3240"/>';});
     /* vertical chat panel on the right */
@@ -8014,7 +8050,7 @@ function drawTower(){
   s+='<rect x="'+KT.x+'" y="'+KT.y+'" width="'+KT.w+'" height="'+KT.h+'" rx="4" fill="#151b24"/>';
   /* tiled splashback */
   for(var kt=0;kt<Math.floor(KT.w/18);kt++)for(var kt2=0;kt2<2;kt2++)
-    s+='<rect x="'+(KT.x+6+kt*18)+'" y="'+(KT.y+6+kt2*11)+'" width="16" height="9" rx="1.5" fill="#22303f" opacity="'+(0.5+((kt+kt2)%2)*0.3)+'"/>';
+    s+='<rect x="'+(KT.x+6+kt*18)+'" y="'+(KT.y+6+kt2*11)+'" width="16" height="9" rx="1.5" fill="#2f2f33" opacity="'+(0.5+((kt+kt2)%2)*0.3)+'"/>';
   /* run of units along the top */
   s+=box(KT.x+6,KT.y+30,168,30,10,"#20262f","#12161c",3);
   s+='<rect x="'+(KT.x+6)+'" y="'+(KT.y+30)+'" width="168" height="5" rx="2.5" fill="#3a4553" opacity=".8"/>';
@@ -9227,7 +9263,7 @@ function drawExterior(){
     s+='<rect x="'+dx2+'" y="'+(GND-dh)+'" width="'+dw+'" height="'+dh+'" rx="2" fill="'+(N?'#0f151d':'#6f7a85')+'"/>';
     for(var sl3=0;sl3<10;sl3++)
       s+='<rect x="'+dx2+'" y="'+(GND-dh+4+sl3*8.8)+'" width="'+dw+'" height="5.4" fill="'+(N?'#1c2530':'#87929c')+'" opacity=".9"/>';
-    s+='<rect x="'+(dx2-4)+'" y="'+(GND-dh-7)+'" width="'+(dw+8)+'" height="8" rx="2" fill="'+(N?'#26313f':'#7b8792')+'"/>';
+    s+='<rect x="'+(dx2-4)+'" y="'+(GND-dh-7)+'" width="'+(dw+8)+'" height="8" rx="2" fill="'+(N?'#323236':'#7b8792')+'"/>';
     s+='<circle cx="'+(dx2+dw/2)+'" cy="'+(GND-dh-14)+'" r="3.4" fill="'+(di===1?'#4ade80':'#ef4444')+'" opacity=".9"/>';
     s+='<text x="'+(dx2+dw/2)+'" y="'+(GND-dh+-20)+'" text-anchor="middle" font-size="7" font-weight="800" fill="'+(N?'#4b5563':'#5d6b7a')+'">'+(di+1)+'</text>';
     s+='<rect x="'+(dx2-5)+'" y="'+GND+'" width="'+(dw+10)+'" height="40" fill="'+(N?'#0e131a':'#9aa3ab')+'"/>';
@@ -9254,10 +9290,10 @@ function drawExterior(){
   s+='<rect x="'+EXX+'" y="'+(GND-108)+'" width="'+EXW+'" height="108" rx="2" fill="'+(N?'#0e1721':'#5d6a75')+'"/>';
   s+='<rect x="'+(EXX+5)+'" y="'+(GND-103)+'" width="'+(EXW-10)+'" height="103" rx="2" fill="url(#xglass)" opacity="'+(N?'.4':'.66')+'"/>';
   for(var mu=1;mu<4;mu++)
-    s+='<rect x="'+(EXX+mu*EXW/4-2)+'" y="'+(GND-103)+'" width="3.4" height="103" fill="'+(N?'#26313f':'#6d7883')+'"/>';
+    s+='<rect x="'+(EXX+mu*EXW/4-2)+'" y="'+(GND-103)+'" width="3.4" height="103" fill="'+(N?'#323236':'#6d7883')+'"/>';
   s+='<circle cx="'+(EXX+EXW/2)+'" cy="'+(GND-52)+'" r="24" fill="none" stroke="'+(N?'#38465a':'#7f8b96')+'" stroke-width="1.8"/>';
   s+='<path d="M'+(EXX+EXW/2-24)+' '+(GND-52)+' h48 M'+(EXX+EXW/2)+' '+(GND-76)+' v48" stroke="'+(N?'#38465a':'#7f8b96')+'" stroke-width="1.6"/>';
-  s+='<rect x="'+(EXX-20)+'" y="'+(GND-122)+'" width="'+(EXW+40)+'" height="12" rx="3" fill="'+(N?'#26313f':'#7b8792')+'"/>';
+  s+='<rect x="'+(EXX-20)+'" y="'+(GND-122)+'" width="'+(EXW+40)+'" height="12" rx="3" fill="'+(N?'#323236':'#7b8792')+'"/>';
   s+='<rect x="'+(EXX-20)+'" y="'+(GND-122)+'" width="'+(EXW+40)+'" height="4" rx="2" fill="#1f4f8f" opacity=".85"/>';
   if(N) s+='<ellipse cx="'+(EXX+EXW/2)+'" cy="'+(GND-50)+'" rx="118" ry="62" fill="url(#xglow)"/>';
 
@@ -9350,12 +9386,12 @@ function drawExterior(){
   /* bus shelter */
   s+='<rect x="1180" y="'+(GND+18)+'" width="96" height="48" rx="3" fill="none" stroke="'+(N?'#2b3446':'#8e979e')+'" stroke-width="2"/>';
   s+='<rect x="1180" y="'+(GND+18)+'" width="96" height="48" rx="3" fill="url(#xglass)" opacity="'+(N?'.14':'.3')+'"/>';
-  s+='<rect x="1180" y="'+(GND+12)+'" width="96" height="8" rx="3" fill="'+(N?'#26313f':'#7b8792')+'"/>';
+  s+='<rect x="1180" y="'+(GND+12)+'" width="96" height="8" rx="3" fill="'+(N?'#323236':'#7b8792')+'"/>';
   s+='<rect x="1192" y="'+(GND+52)+'" width="72" height="6" rx="3" fill="'+(N?'#2b3446':'#8e979e')+'"/>';
   /* traffic signals both ends */
   [64,1424].forEach(function(sx2){
     s+='<rect x="'+(sx2-2)+'" y="'+(GND-72)+'" width="4" height="72" fill="'+(N?'#242f3b':'#7f8b96')+'"/>';
-    s+='<rect x="'+(sx2-8)+'" y="'+(GND-98)+'" width="16" height="30" rx="3" fill="'+(N?'#1a222c':'#3f4a55')+'"/>';
+    s+='<rect x="'+(sx2-8)+'" y="'+(GND-98)+'" width="16" height="30" rx="3" fill="'+(N?'#252527':'#3f4a55')+'"/>';
     ["#e0453f","#e8b93a","#4ade80"].forEach(function(tc,i){
       s+='<circle cx="'+sx2+'" cy="'+(GND-90+i*9)+'" r="3" fill="'+tc+'" opacity="'+(i===2?".95":".3")+'"/>';});});
 
@@ -14662,6 +14698,9 @@ var OPENLEAD=null;
 /* The board is open by default — a worklist you have to unfold is a worklist
    you stop seeing. It folds because some days he only wants the table. */
 var BOARD_SHUT = LS("board_shut") === "1";
+/* Closed by default — something he reaches for occasionally, not something that
+   should take up room on every load. */
+var MAILOPEN = false;
 /* Analytics starts folded. It is the least urgent thing on the page and the
    tallest, so open-by-default is a lot of scrolling past a number that moves
    once a day. */
@@ -15333,7 +15372,12 @@ function wireWeek(){
 var FILTER="all";
 var ORD=STATUSES;
 var LSEARCH="";      /* what is typed in the pipeline search box */
-var LSORT="came-new";  /* how the pipeline is ordered */
+/* By stage, not by date. A flat list ordered newest-first interleaves a signed
+   member, a dead lead and a new lead on consecutive rows, so the eye has to read
+   the status column on every line to know what it is looking at. Ordering by
+   stage means the list arrives already grouped even with the bands turned off,
+   which is what Glen asked for. Newest-in-first is still one click away. */
+var LSORT = LS("lsort") || "stage";
 var LGROUP=true;       /* stage bands on, or one flat list */
 
 var SORTS=[
@@ -15350,8 +15394,15 @@ var SORTS=[
 function sortLeads(list){
   function t(x){ var d=cameIn(x.name); return d?d.getTime():null; }
   return list.slice().sort(function(a,b){
-    var pa=prGet(a.name)?0:1, pb=prGet(b.name)?0:1;
-    if(pa!==pb) return pa-pb;
+    /* Purple rides to the top of every order EXCEPT "By stage" — the one order
+       whose whole job is to keep the categories separate. Floating two flagged
+       people above the bands produced Warm, Cold, New, Cold, Signed Up, which is
+       exactly the "leads are not sorted correctly" Glen reported. Under By stage
+       the purple dot stays a marker, not a re-order. */
+    if(LSORT!=="stage"){
+      var pa=prGet(a.name)?0:1, pb=prGet(b.name)?0:1;
+      if(pa!==pb) return pa-pb;
+    }
     if(LSORT==="came-new"||LSORT==="came-old"){
       var ta=t(a), tb=t(b);
       /* undated people go last either way — an unknown date is not "oldest" */
@@ -15369,8 +15420,17 @@ function sortLeads(list){
       if(fb===null) return -1;
       return fa-fb;
     }
-    var sd=ORD.indexOf(a.stage)-ORD.indexOf(b.stage);
-    if(sd) return sd;
+    /* Stage order first. Within a stage, newest arrival first — inside "New
+       Lead" the thing that matters is which one came in this morning, not which
+       name starts with an A. */
+    var ia=ORD.indexOf(a.stage), ib=ORD.indexOf(b.stage);
+    if(ia<0) ia=ORD.length;
+    if(ib<0) ib=ORD.length;
+    if(ia!==ib) return ia-ib;
+    var ka=t(a), kb=t(b);
+    if(ka!==null && kb!==null && ka!==kb) return kb-ka;
+    if(ka===null && kb!==null) return 1;
+    if(kb===null && ka!==null) return -1;
     return String(a.name).localeCompare(String(b.name));
   });
 }
@@ -15734,6 +15794,40 @@ function salesPipe(){
      +'<td class="reach">'+reachBtns(x)+'</td></tr>';});
     h+='</tbody></table></div>';
   });
+  /* ---- every email in one block, for a mailout ----
+     Small on purpose: one line until he opens it. It follows whatever is
+     filtered, so "Show: Warm Lead" then Copy gives him the warm leads and
+     nothing else — which is the only reason to build this rather than tell him
+     to read down the email column. */
+  (function(){
+    var mails=[], seen={};
+    rows.forEach(function(x){
+      var e=String(x.email||"").trim().toLowerCase();
+      if(!e || !/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(e)) return;
+      if(seen[e]) return;
+      seen[e]=1; mails.push(e);
+    });
+    h+='<div class="mailbar'+(MAILOPEN?" open":"")+'">'
+      +'<button class="mb-h" id="mb-tog">'
+        +'<span class="mb-c">'+(MAILOPEN?"▾":"▸")+'</span>'
+        +'<b>Email list</b>'
+        +'<i>'+mails.length+' address'+(mails.length===1?"":"es")
+          +(FILTER==="all"?"":" in this view")+'</i>'
+      +'</button>';
+    if(MAILOPEN){
+      if(!mails.length)
+        h+='<div class="mb-none">Nobody in this view has an email on record.</div>';
+      else
+        h+='<div class="mb-b">'
+          +'<textarea id="mb-txt" readonly rows="3">'+esc(mails.join(", "))+'</textarea>'
+          +'<div class="mb-act">'
+            +'<button class="mb-btn" id="mb-copy">Copy all</button>'
+            +'<span class="mb-n" id="mb-said"></span></div>'
+          +'</div>';
+    }
+    h+='</div>';
+  })();
+
   /* the original spreadsheet, one click away. This is the same sheet the app
      reads on every load, so it is the live source and not a copy. */
   h+='<div class="srcbar">'
@@ -18519,7 +18613,7 @@ function vaultView(){
     return '<div class="vlock">'
       +'<div class="vlock-i">'
         +'<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="18" fill="none" '
-        +'stroke="#4a5462" stroke-width="2"/><circle cx="20" cy="20" r="11" fill="none" stroke="#39414d" '
+        +'stroke="#4a5462" stroke-width="2"/><circle cx="20" cy="20" r="11" fill="none" stroke="#4a4a4e" '
         +'stroke-width="1.4"/><circle cx="20" cy="20" r="3.4" fill="#c9a25c"/></svg>'
       +'</div>'
       +'<div class="vlock-t"><b>The safe is locked</b>'
@@ -18980,6 +19074,28 @@ function wire(){
     AN_SHUT=!AN_SHUT; LS("an_shut", AN_SHUT?"1":"0"); redraw();
   };
 
+  /* ---- the email list ---- */
+  var mbt=document.getElementById("mb-tog");
+  if(mbt) mbt.onclick=function(){ MAILOPEN=!MAILOPEN; redraw(); };
+  var mbc=document.getElementById("mb-copy");
+  if(mbc) mbc.onclick=function(){
+    var t=document.getElementById("mb-txt");
+    if(!t) return;
+    var said=document.getElementById("mb-said");
+    /* Select first, so the manual route still works: on a page opened from
+       file:// the clipboard API is refused outright, and leaving the text
+       selected so Ctrl+C works is the graceful failure. */
+    try{ t.focus(); t.select(); }catch(e){}
+    function ok(){ if(said) said.textContent="Copied"; }
+    function manual(){ if(said) said.textContent="Press Ctrl+C"; }
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText)
+        navigator.clipboard.writeText(t.value).then(ok, manual);
+      else if(document.execCommand && document.execCommand("copy")) ok();
+      else manual();
+    }catch(e){ manual(); }
+  };
+
   var bfd=document.getElementById("bd-fold");
   if(bfd) bfd.onclick=function(){
     BOARD_SHUT=!BOARD_SHUT;
@@ -19034,7 +19150,8 @@ function wire(){
 
   /* the sort controls */
   var so=document.getElementById("l-sort");
-  if(so) so.onchange=function(){ LSORT=this.value; redraw(); };
+  /* Remembered. Re-picking the same sort every morning is a chore. */
+  if(so) so.onchange=function(){ LSORT=this.value; LS("lsort", LSORT); redraw(); };
   var seg=document.querySelectorAll("[data-lgrp]");
   for(var g3=0;g3<seg.length;g3++) seg[g3].onclick=function(){
     var want=this.getAttribute("data-lgrp")==="1";
