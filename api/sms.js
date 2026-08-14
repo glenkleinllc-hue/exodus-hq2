@@ -71,6 +71,51 @@ async function readBody(req) {
   }
 }
 
+/* ------------------------- logging what was sent -------------------------
+   A thread that only holds their replies is not a conversation. Every outbound
+   text is written to the same table /api/sms-in writes inbound ones to, so the
+   lead card can show both sides in order.
+
+   Logging happens AFTER Twilio has accepted the message and never blocks the
+   response: if the database write fails, the text still went, and reporting a
+   failure to Glen for a message that was in fact delivered would be worse than
+   a missing row. The failure is returned in the payload instead. */
+function dbCfg() {
+  return {
+    url: (process.env.SUPABASE_URL || "").replace(/\/+$/, ""),
+    key: process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
+  };
+}
+function qlit(v) {
+  if (v === null || v === undefined || v === "") return "null";
+  return "'" + String(v).replace(/'/g, "''") + "'";
+}
+async function logOut(to, body, sid, name) {
+  const { url, key } = dbCfg();
+  if (!url || !key) return { logged: false, why: "database not configured" };
+
+  /* Match the lead on the last ten digits. Numbers are stored however Glen
+     typed them and this one is E.164, so a direct comparison matches nothing.
+     A miss is fine — the row is still written, just without a name. */
+  const last10 = String(to).replace(/[^\d]/g, "").slice(-10);
+  const q =
+    "with who as (select name_key from leads where right(regexp_replace("
+      + "coalesce(phone,''), '[^0-9]', '', 'g'), 10) = " + qlit(last10) + " limit 1) "
+    + "insert into messages (direction, e164, name_key, body, twilio_sid, status, sent_at) "
+    + "select 'out', " + qlit(to) + ", (select name_key from who), " + qlit(body) + ", "
+    + qlit(sid) + ", 'sent', now() "
+    + "on conflict (twilio_sid) do nothing returning id";
+  try {
+    const r = await fetch(url + "/rest/v1/rpc/exodus_sql", {
+      method: "POST",
+      headers: { apikey: key, Authorization: "Bearer " + key, "Content-Type": "application/json" },
+      body: JSON.stringify({ q })
+    });
+    if (!r.ok) return { logged: false, why: (await r.text()).slice(0, 160) };
+    return { logged: true };
+  } catch (e) { return { logged: false, why: String(e.message || e).slice(0, 160) }; }
+}
+
 function cfg() {
   return {
     sid: process.env.TWILIO_ACCOUNT_SID,
@@ -142,10 +187,17 @@ export default async function handler(req, res) {
     const j = await r.json().catch(() => ({}));
     if (!r.ok) return res.status(502).json({
       error: j.message || "Twilio refused that.", code: j.code });
+    /* Sent first, logged second, and a logging failure never turns a
+       delivered text into an error. */
+    let log = { logged: false, why: "skipped" };
+    try { log = await logOut(v.e164, body, j.sid, b.name); }
+    catch (e) { log = { logged: false, why: String(e.message || e).slice(0, 160) }; }
+
     return res.status(200).json({
       ok: true, sid: j.sid, to: v.e164, from: c.from,
       segments: Math.ceil(body.length / 153) || 1,
-      name: b.name || null
+      name: b.name || null,
+      log
     });
   } catch (e) {
     return res.status(502).json({ error: String(e.message || e).slice(0, 200) });
