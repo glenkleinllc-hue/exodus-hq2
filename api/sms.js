@@ -172,7 +172,23 @@ export default async function handler(req, res) {
   if (body.length > 1500) return res.status(400).json({
     error: "That is " + body.length + " characters. Keep a text under 1500." });
 
+  /* ---- ask Twilio to tell us what actually happened ----
+     This is the gap that made a failed text look like a sent one. Twilio's POST
+     returns 200 as soon as it ACCEPTS the message — that is "queued", not
+     "delivered". The real outcome arrives minutes later and only if you asked
+     for it. Without a StatusCallback, a message blocked by carrier filtering or
+     by missing A2P registration is indistinguishable from one that landed, which
+     is exactly what happened: the server said 200, the row said "sent", and the
+     phone never buzzed.
+
+     PUBLIC_BASE_URL is used if set; otherwise VERCEL_URL, which Vercel provides
+     on every deployment. If neither exists we simply do not ask — a missing
+     callback must never stop a text going out. */
+  const base = process.env.PUBLIC_BASE_URL
+    || (process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : "");
+
   const form = new URLSearchParams({ To: v.e164, From: c.from, Body: body });
+  if (base) form.set("StatusCallback", base.replace(/\/+$/, "") + "/api/sms-in?status=1");
 
   try {
     const r = await fetch("https://api.twilio.com/2010-04-01/Accounts/"
