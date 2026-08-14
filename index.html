@@ -1842,6 +1842,39 @@ a.lnk:hover{color:#bfdbfe}
   background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.4);color:#f0857f}
 .jvpop .jv-stop:hover{background:rgba(239,68,68,.24);color:#ffb4ac}
 
+/* ---- a booked meeting reads as a record ---- */
+.mt.lock{background:rgba(255,255,255,.014)}
+.mt-nmv{flex:1;min-width:0;font-size:13px;font-weight:700;color:#ececed;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mt-e{flex:none;font-size:10px;font-weight:800;letter-spacing:.4px;
+  padding:4px 9px;border-radius:6px;cursor:pointer;font-family:inherit;
+  background:#1a1a1c;border:1px solid #313134;color:#9a9a9e}
+.mt-e:hover{background:#232325;color:#ececed;border-color:#41414a}
+.mt-gv{font-size:11.5px;color:#9a9a9e;margin:5px 0 0;
+  font-variant-numeric:tabular-nums}
+.mt-ntv{font-size:11.5px;color:#8a8a90;line-height:1.5;margin:6px 0 0;
+  white-space:pre-wrap}
+.mt-b.ok{background:rgba(99,172,123,.14);border-color:#2c4a38;color:#7fbf9a}
+.mt-b.ok:hover{background:rgba(99,172,123,.24);color:#9fe0bb}
+
+/* ---- the inbox rows ---- */
+.th-sub{font-size:10.5px;color:#5a5a5e}
+.ib-r{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;
+  padding:10px 12px;border-radius:9px;cursor:pointer;font:inherit;
+  background:#1a1a1c;border:1px solid #2b2b2e;transition:background .12s}
+.ib-r:hover{background:#222224;border-color:#3a3a3f}
+.ib-r.un{background:rgba(99,172,123,.07);border-color:#2c4a38}
+.ib-r.un:hover{background:rgba(99,172,123,.11)}
+.ib-top{display:flex;align-items:center;gap:8px}
+.ib-top b{font-size:12.5px;font-weight:700;color:#ececed;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.ib-n{flex:none;font-style:normal;font-size:9.5px;font-weight:800;
+  padding:1px 6px;border-radius:99px;background:#63ac7b;color:#0c1a12}
+.ib-w{margin-left:auto;flex:none;font-size:10px;color:#5a5a5e}
+.ib-l{font-size:11.5px;color:#9a9a9e;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.ib-l em{font-style:normal;color:#5a5a5e}
+
 /* ---- the email list, for a mailout ---- */
 .mailbar{border:1px solid #2b2b2e;border-radius:9px;background:#131314;
   margin:10px 0 0;overflow:hidden}
@@ -3985,7 +4018,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-14-g">
+<body data-build="2026-08-14-i">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -4099,7 +4132,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-g</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-i</span></div>
 </div>
 
 <script>
@@ -4588,6 +4621,7 @@ function inboxLane(){
 function threadOpen(e164, name){
   var base=apiBase();
   if(base===null){ alert("Conversations need the hosted app."); return; }
+  THREAD_LIST=false;
   THREAD_FOR=name||e164; THREAD_BUSY=true; THREAD_ONE=null;
   threadPaint();
   var qs = e164 ? "e164="+encodeURIComponent(e164) : "name="+encodeURIComponent(name||"");
@@ -4603,11 +4637,66 @@ function threadOpen(e164, name){
     })
     .catch(function(e){ THREAD_ONE=[]; THREAD_BUSY=false; threadPaint(); });
 }
-function threadClose(){ THREAD_ONE=null; THREAD_FOR=""; threadPaint(); }
+function threadClose(){ THREAD_ONE=null; THREAD_FOR=""; THREAD_LIST=false; threadPaint(); }
+
+/* ---- the inbox: every conversation, newest first ----
+   Read and unread together. An inbox that hides what you have already read is
+   not an inbox, it is a notification tray — and what he wants is to go back and
+   see what he said to somebody last week. */
+var THREAD_LIST=false;
+function threadListOpen(){
+  THREAD_LIST=true; THREAD_ONE=null; THREAD_FOR="";
+  threadPaint();
+  var pr=threadsPull(true);
+  if(pr && pr.then) pr.then(function(){ if(THREAD_LIST) threadPaint(); });
+}
+function inboxSheet(){
+  var h='<div class="th-wrap"><div class="th-card">'
+    +'<div class="th-h"><b>Texts</b>'
+      +'<span class="th-sub">'+(THREADS.length?THREADS.length+' conversation'
+        +(THREADS.length===1?"":"s"):"")+'</span>'
+      +'<button class="th-x" id="th-close" title="Close">&times;</button></div>'
+    +'<div class="th-body">';
+  if(apiBase()===null)
+    h+='<div class="th-none">Conversations need the hosted app &mdash; '
+      +'open exodus-hq2.vercel.app.</div>';
+  else if(THREADS_ERR)
+    h+='<div class="th-none">Could not reach the message log.<br>'+esc(THREADS_ERR)+'</div>';
+  else if(!THREADS.length)
+    h+='<div class="th-none">No texts yet. Send one from any lead&rsquo;s Text button '
+      +'and the conversation appears here.</div>';
+  else THREADS.forEach(function(t){
+    var who=t.name || t.e164 || "Unknown number";
+    var last=String(t.last_body||"").replace(/\s+/g," ").slice(0,64);
+    var when="";
+    try{
+      var d=new Date(t.last_at), now=new Date();
+      when = (d.toDateString()===now.toDateString())
+        ? d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})
+        : d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+    }catch(e){}
+    var un=Number(t.unread||0);
+    h+='<button class="ib-r'+(un?" un":"")+'" data-thread="'+esc(t.e164||"")+'" '
+        +'data-thname="'+esc(t.name||"")+'">'
+      +'<span class="ib-top"><b>'+esc(who)+'</b>'
+        +(un?'<i class="ib-n">'+un+'</i>':'')
+        +'<span class="ib-w">'+esc(when)+'</span></span>'
+      +'<span class="ib-l">'+(t.last_dir==="out"?'<em>You:</em> ':'')+esc(last)+'</span>'
+      +'</button>';
+  });
+  h+='</div></div></div>';
+  return h;
+}
 
 function threadPaint(){
   var host=document.getElementById("thsheet");
   if(!host) return;
+  if(THREAD_LIST && !THREAD_FOR){
+    host.hidden=false;
+    host.innerHTML=inboxSheet();
+    try{ wire(); }catch(e){}
+    return;
+  }
   if(!THREAD_FOR){ host.innerHTML=""; host.hidden=true; return; }
   host.hidden=false;
 
@@ -4935,7 +5024,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-14-g";
+var BUILD="2026-08-14-i";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -5950,6 +6039,7 @@ function sbPull(){
     +"'pays',       (select coalesce(json_agg(json_build_object('k',name_key,'a',amount)),'[]'::json) from payments),"
     +"'brands',     (select value from settings where key='brand_notes'),"
     +"'cash',       (select value from settings where key='cash_collected'),"
+    +"'cashbase',   (select value from settings where key='cash_base'),"
     +"'calendly',   (select value from settings where key='calendly'),"
     +"'vacct',      (select coalesce(json_agg(json_build_object('label',label,'kind',kind,'institution',institution,'last4',last4,'balance',balance,'limit_amt',limit_amt,'note',note) order by sort),'[]'::json) from vault_accounts),"
     +"'vexp',       (select coalesce(json_agg(json_build_object('label',label,'amount',amount,'cadence',cadence,'due_day',due_day,'category',category,'paid_with',paid_with,'active',active,'note',note) order by sort),'[]'::json) from vault_expenses),"
@@ -6028,6 +6118,9 @@ function sbPull(){
        replaced, including an empty string, so a phone and a laptop can never
        disagree about how much has come in. */
     LS("cash_collected", (d.cash===null||d.cash===undefined) ? "" : String(d.cash));
+    /* Same rule for the baseline: the database is the truth, so a laptop and a
+       phone can never disagree about the starting balance. */
+    LS("cash_base", (d.cashbase===null||d.cashbase===undefined) ? "" : String(d.cashbase));
     /* the other three headline numbers */
     ["chase","conting","members"].forEach(function(k){
       var ov=(d.ovs&&d.ovs["ov_"+k]!==undefined&&d.ovs["ov_"+k]!==null)?String(d.ovs["ov_"+k]):"";
@@ -6220,7 +6313,26 @@ function cashOverride(){
   if(v===null||v==="") return null;
   var n=parseFloat(v); return isNaN(n)?null:n;
 }
-function collected(){var o=cashOverride();return o===null?collectedRaw():o;}
+/* Money collected before this app existed. Glen banked a lot of it through
+   Zelle, cash and Discord long before there was a payments table, and there is
+   no honest way to reconstruct those rows one by one.
+
+   A baseline is the right shape for that and a hard override is the wrong one.
+   An override freezes the number: a payment recorded tomorrow changes nothing,
+   which is exactly the trap that made "Peter paid me" appear to do nothing for
+   a day. A baseline is a starting balance that every new payment adds to, so
+   the figure is correct today AND keeps moving. */
+function cashBase(){
+  var v=LS("cash_base");
+  if(v===null||v==="") return 0;
+  var n=parseFloat(String(v).replace(/[^0-9.\-]/g,""));
+  return isNaN(n)?0:n;
+}
+function collected(){
+  var o=cashOverride();
+  if(o!==null) return o;              /* a hard override still wins, if set */
+  return cashBase() + collectedRaw();
+}
 /* The four headline numbers. Each is worked out from the pipeline, but Glen can
    type over any of them — the sheet was never complete and he knows the real
    figures. An override is remembered; clear the box and it goes back to the sum. */
@@ -13999,8 +14111,31 @@ function execCalls(){
       open2.forEach(function(row){
         var i=row.i, m=row.m;
         var can=dialable(m.phone||"").ok;
-        h+='<div class="mt'+(mtIsPast(m)?" past":"")+'">'
-          +'<div class="mt-top">'
+        /* ---- a booked meeting is a record, not a form ----
+           Glen: "meetings should lock in when I'm done making the meeting, it
+           is still editable." He is right — an appointment that stays a row of
+           live input boxes invites a stray click into the datetime field, and a
+           meeting whose time silently moved is worse than one you never booked.
+
+           A meeting with a name is treated as booked and renders as text. Edit
+           puts it back into fields. A blank new one stays open so it can be
+           filled in without an extra click. */
+        var locked = !MT_EDIT[i] && !!String(m.name||"").trim();
+        h+='<div class="mt'+(mtIsPast(m)?" past":"")+(locked?" lock":"")+'">';
+
+        if(locked){
+          h+='<div class="mt-top">'
+            +'<b class="mt-nmv">'+esc(m.name)+'</b>'
+            +'<span class="mt-when'+(mtIsPast(m)?" late":"")+'">'+esc(mtWhen(m))+'</span>'
+            +'<button class="mt-e" data-mtedit="'+i+'" title="Edit this meeting">Edit</button>'
+          +'</div>';
+          var bits=[];
+          if(m.phone) bits.push(esc(m.phone));
+          if(m.email) bits.push(esc(m.email));
+          if(bits.length) h+='<div class="mt-gv">'+bits.join(" &middot; ")+'</div>';
+          if(m.notes) h+='<div class="mt-ntv">'+esc(m.notes)+'</div>';
+        } else {
+          h+='<div class="mt-top">'
             +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" value="'+esc(m.name||"")+'" '
             +'placeholder="Who">'
             +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
@@ -14014,11 +14149,14 @@ function execCalls(){
             +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(m.link||"")+'" placeholder="Meeting link">'
           +'</div>'
           +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
-          +'placeholder="What this call is about.">'+esc(m.notes||"")+'</textarea>'
-          +'<div class="mt-act">'
+          +'placeholder="What this call is about.">'+esc(m.notes||"")+'</textarea>';
+        }
+
+        h+='<div class="mt-act">'
             +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
             +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
             +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
+            +(locked?'':'<button class="mt-b ok" data-mtlock="'+i+'">Save</button>')
           +'</div></div>';
       });
       h+='</div>';
@@ -17592,6 +17730,11 @@ function folStatus(k){
    can send, and if he has not set one the row still works with a plain Meet link,
    so nothing here depends on a setting being filled in. */
 var MT_DEL=null;    /* which meeting is asking to be deleted, if any */
+/* Which meetings are open for editing right now. Deliberately NOT stored — a
+   meeting should be locked again next time the page loads, so an edit session
+   cannot outlive the moment he meant it. */
+var MT_EDIT={};
+
 function mtLoad(){ try{ return JSON.parse(LS("meetings")||"[]")||[]; }catch(e){ return []; } }
 function mtSave(a){ LS("meetings", JSON.stringify(a)); SBSAVE("meetings"); }
 function calendlyBase(){ return (LS("calendly")||"").trim(); }
@@ -17813,17 +17956,34 @@ function dashView(){
       ms.forEach(function(row){
         var i=row.i, mm=row.m, past=mtIsPast(mm);
         var can=dialable(mm.phone||"").ok;
-        h+='<div class="mt'+(past?" past":"")+'">'
-          +'<div class="mt-top">'
+        /* Locked once it has a name. This is the copy on the DASHBOARD — the
+           one Glen actually looks at — and it is the one that was still a row
+           of live inputs after a meeting was booked. A stray click into the
+           datetime field silently moves an appointment, and a meeting whose
+           time changed without you knowing is worse than one never booked. */
+        var lockd = !MT_EDIT[i] && !!String(mm.name||"").trim();
+        h+='<div class="mt'+(past?" past":"")+(lockd?" lock":"")+'">';
+
+        if(lockd){
+          h+='<div class="mt-top">'
+            +'<b class="mt-nmv">'+esc(mm.name)+'</b>'
+            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
+            +'<button class="mt-e" data-mtedit="'+i+'" title="Edit this meeting">Edit</button>'
+          +'</div>';
+          var bits2=[];
+          if(mm.phone) bits2.push(esc(mm.phone));
+          if(mm.email) bits2.push(esc(mm.email));
+          if(bits2.length) h+='<div class="mt-gv">'+bits2.join(" &middot; ")+'</div>';
+          if(mm.notes) h+='<div class="mt-ntv">'+esc(mm.notes)+'</div>';
+        } else {
+          h+='<div class="mt-top">'
             +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" '
             +'value="'+esc(mm.name||"")+'" placeholder="Who">'
             +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
             +'value="'+esc(mtLocalValue(mm.at))+'">'
             +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
             /* Booking a call is one tap; unbooking it should not be. The X
-               arms, and only the second, differently-worded button removes it —
-               a meeting deleted by a mis-tap is a meeting he does not know he
-               has lost. */
+               arms, and only the second, differently-worded button removes it. */
             +(MT_DEL===i
               ? '<span class="mt-del"><em>Delete this meeting?</em>'
                 +'<button class="mt-dy" data-mtdelyes="'+i+'">Delete</button>'
@@ -17836,11 +17996,14 @@ function dashView(){
             +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(mm.link||"")+'" placeholder="Meeting link">'
           +'</div>'
           +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
-          +'placeholder="What this call is about.">'+esc(mm.notes||"")+'</textarea>'
-          +'<div class="mt-act">'
+          +'placeholder="What this call is about.">'+esc(mm.notes||"")+'</textarea>';
+        }
+
+        h+='<div class="mt-act">'
             +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
             +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
             +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
+            +(lockd?'':'<button class="mt-b ok" data-mtlock="'+i+'">Save</button>')
           +'</div></div>';
       });
       h+='</div>';
@@ -17912,6 +18075,12 @@ function dashView(){
       +'$'+m.collected.toLocaleString()+' collected</span>'
       +'<a class="sec-b script" href="'+SCRIPT_URL+'" target="_blank" rel="noopener">'
       +'Sales Script</a>'
+      /* Texts. Glen asked "where are the text messages lol" and the honest
+         answer was nowhere browsable — the Replied lane on the board only shows
+         when something is unread, so a conversation he had already read became
+         invisible. This opens every conversation, read or not. */
+      +'<button class="sec-b'+(THREADS_UNREAD?" hot":"")+'" id="tx-open">Texts'
+        +(THREADS_UNREAD?' <b>'+THREADS_UNREAD+'</b>':'')+'</button>'
       +'<button class="sec-b" data-dgo="sales|5">Dialer</button>'
       +'<button class="sec-b hot" data-dgo="sales|1">Full Screen</button></div>';
 
@@ -17932,10 +18101,13 @@ function dashView(){
           +'<span>Cash Collected</span><b class="g">$'
           +m.collected.toLocaleString()+'</b>'
           +(ov!==null
-            ? '<i class="cm-ov">typed in by you &middot; payments total $'
-              +raw.toLocaleString()
+            ? '<i class="cm-ov">frozen at a typed-in figure &middot; live total is $'
+              +(cashBase()+raw).toLocaleString()
               +' <button class="cm-clr" id="cash-real">use that</button></i>'
-            : '<i>'+memberCount()+' paying</i>')
+            : (cashBase()
+                ? '<i>'+memberCount()+' paying &middot; $'+cashBase().toLocaleString()
+                  +' banked before this app</i>'
+                : '<i>'+memberCount()+' paying</i>'))
           +'</div>';
        })()
       +'<div class="cm"><span>Still To Collect</span><b class="'+(m.chase?"a":"")+'">$'
@@ -18902,6 +19074,18 @@ function wireMeetings(){
     setTimeout(function(){ try{ askCall(nm,tel); }catch(e){} },100);
   };
 
+  /* Edit reopens a booked meeting; Save locks it again. Both only touch
+     MT_EDIT — the meeting itself is already saved on every keystroke, so
+     "Save" is really "I am finished", not "commit". */
+  var mte=document.querySelectorAll("[data-mtedit]");
+  for(var e9=0;e9<mte.length;e9++) mte[e9].onclick=function(){
+    MT_EDIT[this.getAttribute("data-mtedit")]=true; redraw();
+  };
+  var mtl=document.querySelectorAll("[data-mtlock]");
+  for(var l9=0;l9<mtl.length;l9++) mtl[l9].onclick=function(){
+    delete MT_EDIT[this.getAttribute("data-mtlock")]; redraw();
+  };
+
   var mn2=document.getElementById("mt-new2");
   if(mn2) mn2.onclick=function(){
     var a=mtLoad();
@@ -19040,6 +19224,9 @@ function wire(){
     ev.stopPropagation();
     threadOpen(this.getAttribute("data-thread"), this.getAttribute("data-thname"));
   };
+  var txo=document.getElementById("tx-open");
+  if(txo) txo.onclick=function(){ threadListOpen(); };
+
   var thx=document.getElementById("th-close");
   if(thx) thx.onclick=function(){ threadClose(); };
   var thr=document.getElementById("th-reply");
