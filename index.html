@@ -1878,6 +1878,12 @@ a.lnk:hover{color:#bfdbfe}
 /* ---- the email list, for a mailout ---- */
 .mailbar{border:1px solid #2b2b2e;border-radius:9px;background:#131314;
   margin:10px 0 0;overflow:hidden}
+.mb-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-right:10px}
+.mb-row .mb-h{width:auto;flex:1 1 auto;min-width:150px}
+.mb-jb{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.mb-btn.gh{background:#1a1a1c;border-color:#313134;color:#a9a9ae;
+  text-decoration:none;display:inline-flex;align-items:center}
+.mb-btn.gh:hover{background:#232325;border-color:#41414a;color:#ececed}
 .mb-h{display:flex;align-items:center;gap:9px;width:100%;padding:8px 11px;
   background:none;border:none;cursor:pointer;font:inherit;text-align:left}
 .mb-h:hover{background:rgba(255,255,255,.025)}
@@ -4018,7 +4024,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-14-i">
+<body data-build="2026-08-16-a">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -4132,7 +4138,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-14-i</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-16-a</span></div>
 </div>
 
 <script>
@@ -5024,7 +5030,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-14-i";
+var BUILD="2026-08-16-a";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -14839,6 +14845,15 @@ var BOARD_SHUT = LS("board_shut") === "1";
 /* Closed by default — something he reaches for occasionally, not something that
    should take up room on every load. */
 var MAILOPEN = false;
+
+/* The free job board — the top of Glen's whole funnel. Somebody fills the form,
+   gets the board, and that is the relationship starting.
+
+   Two links, because there are two different jobs: the public page he sends to
+   people, and the sheet he edits it from. Keeping them together stops the
+   weekly ritual being "now where was that spreadsheet". */
+var JOBBOARD_URL   = "https://exodus-job-board.netlify.app/";
+var JOBBOARD_SHEET = "https://docs.google.com/spreadsheets/d/1LtTWok6vZd8fPcpyGu8umB91Er2qC4xsHWEv7PQGiMY/edit";
 /* Analytics starts folded. It is the least urgent thing on the page and the
    tallest, so open-by-default is a lot of scrolling past a number that moves
    once a day. */
@@ -15946,12 +15961,32 @@ function salesPipe(){
       seen[e]=1; mails.push(e);
     });
     h+='<div class="mailbar'+(MAILOPEN?" open":"")+'">'
+      +'<div class="mb-row">'
       +'<button class="mb-h" id="mb-tog">'
         +'<span class="mb-c">'+(MAILOPEN?"▾":"▸")+'</span>'
         +'<b>Email list</b>'
         +'<i>'+mails.length+' address'+(mails.length===1?"":"es")
           +(FILTER==="all"?"":" in this view")+'</i>'
-      +'</button>';
+      +'</button>'
+
+      /* ---- the free job board, beside the list it feeds ----
+         These sit here rather than in a menu because they are two halves of the
+         same weekly job: open the sheet, add this week's roles, then send the
+         board to the list. The list is right there.
+
+         Copy rather than only a link: the board URL is the thing he pastes into
+         a DM twenty times a day, and hunting for it in a browser tab is the
+         friction that stops him sending it. */
+      +'<span class="mb-jb">'
+        +'<a class="mb-btn gh" href="'+esc(JOBBOARD_URL)+'" target="_blank" '
+          +'rel="noopener noreferrer" title="Open the live job board">Job board</a>'
+        +'<button class="mb-btn gh" id="jb-copy" '
+          +'title="Copy the board link to paste into a DM">Copy link</button>'
+        +'<a class="mb-btn gh" href="'+esc(JOBBOARD_SHEET)+'" target="_blank" '
+          +'rel="noopener noreferrer" title="Edit this week\u2019s jobs">Edit jobs</a>'
+        +'<span class="mb-n" id="jb-said"></span>'
+      +'</span>'
+      +'</div>';
     if(MAILOPEN){
       if(!mails.length)
         h+='<div class="mb-none">Nobody in this view has an email on record.</div>';
@@ -19264,6 +19299,21 @@ function wire(){
   /* ---- the email list ---- */
   var mbt=document.getElementById("mb-tog");
   if(mbt) mbt.onclick=function(){ MAILOPEN=!MAILOPEN; redraw(); };
+  /* Copy the board link. Same graceful failure as the email list: select the
+     text first so Ctrl+C still works where the clipboard API is refused. */
+  var jbc=document.getElementById("jb-copy");
+  if(jbc) jbc.onclick=function(){
+    var said=document.getElementById("jb-said");
+    function done(){ if(said){ said.textContent="Copied"; setTimeout(function(){
+      if(said) said.textContent=""; }, 2200); } }
+    function manual(){ if(said) said.textContent="Ctrl+C"; }
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText)
+        navigator.clipboard.writeText(JOBBOARD_URL).then(done, manual);
+      else manual();
+    }catch(e){ manual(); }
+  };
+
   var mbc=document.getElementById("mb-copy");
   if(mbc) mbc.onclick=function(){
     var t=document.getElementById("mb-txt");
