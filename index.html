@@ -1857,6 +1857,14 @@ a.lnk:hover{color:#bfdbfe}
 .mt-b.ok{background:rgba(99,172,123,.14);border-color:#2c4a38;color:#7fbf9a}
 .mt-b.ok:hover{background:rgba(99,172,123,.24);color:#9fe0bb}
 
+/* ---- hiding the music ---- */
+.spot-x{margin-left:auto;flex:none;background:none;border:none;cursor:pointer;
+  color:#5a5a5e;font-size:17px;line-height:1;padding:0 3px;font-family:inherit}
+.spot-x:hover{color:#ececed}
+.spot-x.slim{position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  font-size:15px;z-index:2}
+.spotbar{position:relative;padding-right:26px}
+
 /* ---- the inbox rows ---- */
 .th-sub{font-size:10.5px;color:#5a5a5e}
 .ib-r{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;
@@ -4024,7 +4032,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-16-a">
+<body data-build="2026-08-16-b">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -4138,7 +4146,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-16-a</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-16-b</span></div>
 </div>
 
 <script>
@@ -5030,7 +5038,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-16-a";
+var BUILD="2026-08-16-b";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -12746,13 +12754,27 @@ function spotMs(ms){
 }
 
 /* ---- what he sees ---- */
+/* Hidden by choice, and it stays hidden. The setup card is a numbered list of
+   developer-portal instructions, and on an iPad — where the OAuth handoff is
+   flakiest and the screen is smallest — it is a wall of text sitting at the top
+   of the dashboard telling him to do something he has already tried and failed
+   at. He should be able to close it and get on with his day.
+
+   Stored, not per-session: "I do not want this" is a standing preference, not a
+   thing to re-express every morning. A small Music link in the Today header
+   brings it back. */
+var SPOT_HIDE = LS("spot_hide") === "1";
+
 function spotCard(){
+  if(SPOT_HIDE) return "";
   var id=spotId();
 
   if(!id || !spotTok()){
     return '<div class="spot setup">'
       +'<div class="spot-h"><span class="spot-ic">'+spotMark()+'</span>'
-      +'<b>Spotify</b><i>real playback, needs Premium</i></div>'
+      +'<b>Spotify</b><i>real playback, needs Premium</i>'
+      +'<button class="spot-x" id="spot-hide" title="Hide this. '
+        +'Music in the Today header brings it back.">&times;</button></div>'
       +'<ol class="spot-steps">'
         +'<li>Open <a href="https://developer.spotify.com/dashboard" target="_blank" '
           +'rel="noopener noreferrer">developer.spotify.com/dashboard</a> and hit '
@@ -12780,6 +12802,8 @@ function spotCard(){
   /* One line: art, what is playing, transport, progress underneath. It was a
      block in the middle of the page and he was right that it dominated. */
   var h='<div class="spotbar'+(playing?" playing":"")+'">'
+    +'<button class="spot-x slim" id="spot-hide" title="Hide the player. '
+      +'Music in the Today header brings it back.">&times;</button>'
     +(art?'<img class="sb-art" src="'+esc(art)+'" alt="">'
          :'<span class="sb-art none">'+spotMark()+'</span>')
     +'<span class="sb-t"><b>'+esc(tr?tr.name:(SPOT_READY?"Ready — hit play":"Starting…"))+'</b>'
@@ -17919,6 +17943,10 @@ function dashView(){
       +'<button class="sec-b jv" id="jarvis" title="Tap, speak, tap again">'
       +'<span class="jv-dot"></span>Talk to Claudia</button>'
       +'<button class="sec-b" id="jv-brief" title="Weather, news, sport and today">Brief</button>'
+      /* Only offered while it is hidden. A permanent "Music" button for a thing
+         already on screen is one more control doing nothing. */
+      +(SPOT_HIDE?'<button class="sec-b" id="spot-show" '
+        +'title="Bring the Spotify player back">Music</button>':'')
       +'<button class="sec-b script" id="sc-open">Call Script</button>'
       +'<button class="sec-b'+(tick?" hot":"")+'" id="d-tick">'
       +(tick?"&#10003; Day done":"Mark day done")+'</button>'
@@ -19297,6 +19325,18 @@ function wire(){
   };
 
   /* ---- the email list ---- */
+  /* Spotify: hide it, and remember. He is on an iPad where the OAuth handoff
+     keeps failing, and a setup card he cannot complete is worse than no card. */
+  var sph=document.getElementById("spot-hide");
+  if(sph) sph.onclick=function(ev){
+    ev.stopPropagation();
+    SPOT_HIDE=true; LS("spot_hide","1"); redraw();
+  };
+  var sps=document.getElementById("spot-show");
+  if(sps) sps.onclick=function(){
+    SPOT_HIDE=false; LS("spot_hide","0"); redraw();
+  };
+
   var mbt=document.getElementById("mb-tog");
   if(mbt) mbt.onclick=function(){ MAILOPEN=!MAILOPEN; redraw(); };
   /* Copy the board link. Same graceful failure as the email list: select the
