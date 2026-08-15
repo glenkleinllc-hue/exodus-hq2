@@ -1857,6 +1857,18 @@ a.lnk:hover{color:#bfdbfe}
 .mt-b.ok{background:rgba(99,172,123,.14);border-color:#2c4a38;color:#7fbf9a}
 .mt-b.ok:hover{background:rgba(99,172,123,.24);color:#9fe0bb}
 
+/* ---- the stage strip, as a filter ---- */
+.stgstrip .sg{cursor:pointer;transition:background .12s,border-color .12s}
+.stgstrip .sg:hover{background:color-mix(in srgb, var(--sc) 10%, transparent);
+  border-color:color-mix(in srgb, var(--sc) 45%, transparent)}
+.stgstrip .sg.on{background:color-mix(in srgb, var(--sc) 16%, transparent);
+  border-color:var(--sc)}
+.stgstrip .sg.on b{color:#fff}
+/* An empty stage stays in place and goes quiet. Removing it would make the row
+   reflow every time a count hit zero. */
+.stgstrip .sg.nil{opacity:.42}
+.stgstrip .sg.nil:hover{opacity:.7}
+
 /* ---- hiding the music ---- */
 .spot-x{margin-left:auto;flex:none;background:none;border:none;cursor:pointer;
   color:#5a5a5e;font-size:17px;line-height:1;padding:0 3px;font-family:inherit}
@@ -4032,7 +4044,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-16-b">
+<body data-build="2026-08-16-d">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -4146,7 +4158,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-16-b</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-16-d</span></div>
 </div>
 
 <script>
@@ -4447,7 +4459,10 @@ var STATUSES=["New Lead","Did Not Answer","Warm Lead",
    this screen always means the same thing. */
 var SCOL={
   "New Lead"        :{hex:"#cbd5e1",cls:"b-new",  dot:"#e2e8f0"},
-  "Did Not Answer"  :{hex:"#a78bfa",cls:"b-dna",  dot:"#c4b5fd"},
+  /* Pink, not purple. Purple is already the priority dot's colour, and two
+     different meanings sharing one colour on the same row is exactly how a
+     glance goes wrong. */
+  "Did Not Answer"  :{hex:"#ec6f9e",cls:"b-dna",  dot:"#f3a0c0"},
   "Warm Lead"       :{hex:"#fbbf24",cls:"b-warm", dot:"#fcd34d"},
   "Cold Lead"       :{hex:"#60a5fa",cls:"b-cold", dot:"#93c5fd"},
   "Dead Lead"       :{hex:"#f87171",cls:"b-owe",  dot:"#fca5a5"},
@@ -4840,7 +4855,6 @@ function boardCard(){
         +'aria-expanded="'+(BOARD_SHUT?"false":"true")+'"><span class="nwf-c"></span></button>'
       +'<b>The Board</b><span class="bd-sub">what needs you today</span>'
       +'<span class="bd-tags">'
-        +(THREADS_UNREAD ? '<span class="bd-t bd-in">'+THREADS_UNREAD+' replied</span>' : '')
         +(q.overdue.length ? '<span class="bd-t bd-od">'+q.overdue.length+' overdue</span>' : '')
         +(q.today.length   ? '<span class="bd-t bd-td">'+q.today.length+' today</span>' : '')
         +(q.freshTotal     ? '<span class="bd-t bd-nw">'+q.freshTotal+' never contacted</span>' : '')
@@ -5038,7 +5052,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-16-b";
+var BUILD="2026-08-16-d";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -18147,9 +18161,16 @@ function dashView(){
       +'<button class="sec-b" data-dgo="sales|5">Dialer</button>'
       +'<button class="sec-b hot" data-dgo="sales|1">Full Screen</button></div>';
 
-    /* The work comes before the scoreboard. He opens this before a shift to
-       find out who to ring, not to admire a total. */
-    h+=boardCard();
+    /* The Board is gone at Glen's request, and it deserved to go. It was a
+       second place where leads lived, with its own idea of "handled" stored in
+       lx_<name>.touch — and that field is not part of the record the cloud pull
+       rebuilds, so a sync wiped it and everything he had ticked off came back.
+       Two sources of truth for one list is a bug generator, and the stage on
+       the lead is the one that is actually saved everywhere.
+
+       Anything that needed doing is visible in the table itself: overdue
+       follow-ups have a red flag under the name, and the due count in the
+       control bar filters straight to them. */
 
     /* the money lives here, next to the people it comes from */
     h+='<div class="crmmoney">'
@@ -18181,10 +18202,20 @@ function dashView(){
         +'<i>came in</i></div></div>';
 
     /* stage strip */
+    /* The stage strip filters the table underneath it. Every one of these
+       buttons used to do the same thing — open the CRM full screen — which made
+       six controls that looked like six different choices into one control
+       pretending to be six. Now clicking "Warm Lead 12" shows the twelve, and
+       clicking it again clears back to everyone.
+
+       Empty stages are dimmed rather than hidden. A row of buttons that appears
+       and disappears as counts change is the reflow problem the pill row had. */
     h+='<div class="stgstrip">';
     STATUSES.forEach(function(st){
       var n=sc2[st]||0;
-      h+='<button class="sg" data-dgo="sales|1" style="--sc:'+scol(st).hex+'">'
+      h+='<button class="sg'+(FILTER===st?" on":"")+(n?"":" nil")+'" '
+        +'data-stgf="'+esc(st)+'" style="--sc:'+scol(st).hex+'" '
+        +'title="'+(FILTER===st?"Show everyone again":"Show only "+esc(st))+'">'
         +'<b>'+n+'</b><i>'+esc(st)+'</i></button>';
     });
     h+='</div>';
@@ -19422,6 +19453,22 @@ function wire(){
      now rather than a row of pills. Search clears with it: filtering to a
      stage while a search is still narrowing the list is how you end up staring
      at "no results" and concluding the CRM lost your leads. */
+  /* the stage strip — click to filter, click again to clear */
+  var sgf=document.querySelectorAll("[data-stgf]");
+  for(var g8=0;g8<sgf.length;g8++) sgf[g8].onclick=function(ev){
+    ev.stopPropagation();
+    var st=this.getAttribute("data-stgf");
+    FILTER=(FILTER===st) ? "all" : st;
+    LSEARCH="";
+    redraw();
+    /* Filtering from a control above the table should land you at the table,
+       not leave you looking at the strip you just clicked. */
+    try{
+      var t=document.querySelector("#dash-crm table.lgrid");
+      if(t) t.scrollIntoView({block:"nearest", behavior:"smooth"});
+    }catch(e){}
+  };
+
   var lf=document.getElementById("l-filter");
   if(lf) lf.onchange=function(){ FILTER=this.value; LSEARCH=""; redraw(); };
 
