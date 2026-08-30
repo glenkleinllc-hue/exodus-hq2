@@ -4252,6 +4252,13 @@ table.lgrid tbody tr:hover td.cel .notev{color:#aeb6c2}
 table.lgrid tbody tr:hover{cursor:default}
 table.lgrid .openlead:after{content:"";display:inline-block;width:0}
 
+
+/* four reach buttons need to stay on one line */
+.lgrid .rbx{flex-wrap:nowrap}
+.lgrid .rb{padding:6px 9px;font-size:10.5px;letter-spacing:.1px}
+.lgrid .rb.mail:hover:not([disabled]){background:#2a2118;color:#f0d9b0;
+  border-color:#6b5636}
+
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -16084,6 +16091,17 @@ function reachBtns(x){
     +'<button class="rb txt" data-rtext="'+esc(x.name)+'"'
       +(mOk?'':' disabled')+' title="'+(mOk?"Write a text":"No number to text")+'">'
       +'Text</button>'
+    /* Opens Gmail in a browser tab with the address already in it. mailto:
+       hands off to a desktop mail app, which is not where this mail gets
+       written. */
+    +(function(){
+       var em=(cnGet(x.name).e || x.email || "").trim();
+       var ok=/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(em);
+       return '<button class="rb mail" data-rmail="'+esc(x.name)+'" '
+         +'data-rem="'+esc(em)+'"'+(ok?'':' disabled')
+         +' title="'+(ok?"Open Gmail to "+esc(em):"No email on file")+'">'
+         +'Email</button>';
+     })()
     +'</div>';
 }
 
@@ -16258,7 +16276,7 @@ function salesPipe(){
      +'<th>Name</th><th style="width:132px">Status</th>'
      +'<th style="width:126px">Phone</th><th style="width:190px">Email</th>'
      +'<th style="width:132px">Source</th>'
-     +'<th>Notes</th><th style="width:150px">Reach</th></tr></thead><tbody>';
+     +'<th>Notes</th><th style="width:196px">Reach</th></tr></thead><tbody>';
     g.rows.forEach(function(x){
     var c=scol(x.stage), pri=prGet(x.name);
     var hay=[x.name,x.email,x.phone,x.ig,x.notes].join(" ").toLowerCase();
@@ -19414,7 +19432,11 @@ function dashBusy(){
   if(!host||!a||a===document.body) return false;
   if(!host.contains(a)) return false;
   var t=(a.tagName||"").toLowerCase();
-  return t==="input" || t==="textarea" || t==="select";
+  /* A <select> is not "mid-sentence". Changing a lead's stage leaves the
+     select focused, dashBusy() said busy, the repaint was skipped and the row
+     stayed in the band it had just left. A dropdown commits on change; only
+     free text can be interrupted. */
+  return t==="input" || t==="textarea";
 }
 /* One repaint for the whole app.
 
@@ -19769,6 +19791,23 @@ function wire(){
     touchStamp(this.getAttribute("data-rcall"));
     askCall(this.getAttribute("data-rcall"), this.getAttribute("data-rtel"));
   };
+  /* Gmail compose, in the browser */
+  var rms=document.querySelectorAll("[data-rmail]");
+  for(var rm=0;rm<rms.length;rm++) rms[rm].onclick=function(){
+    var nm=this.getAttribute("data-rmail"),
+        em=this.getAttribute("data-rem");
+    if(!em) return;
+    touchStamp(nm);
+    var L=leadBy(nm), first=String(nm||"").split(/\s+/)[0];
+    var su="Following up — Exodus",
+        bd="Hey "+first+",\n\n";
+    window.open("https://mail.google.com/mail/?view=cm&fs=1"
+      +"&to="+encodeURIComponent(em)
+      +"&su="+encodeURIComponent(su)
+      +"&body="+encodeURIComponent(bd), "_blank", "noopener");
+    redraw();
+  };
+
   var rts=document.querySelectorAll("[data-rtext]");
   for(var r2=0;r2<rts.length;r2++) rts[r2].onclick=function(){
     var nm=this.getAttribute("data-rtext");
@@ -19951,8 +19990,12 @@ function wire(){
   /* status picker */
   var sts=document.querySelectorAll("select.stsel");
   for(var s2=0;s2<sts.length;s2++) sts[s2].onchange=function(){
-    stSet(this.getAttribute("data-n"),this.value);
-    refreshContacts();SBW.lead(this.getAttribute("data-n"));drawBuilding();
+    var nm=this.getAttribute("data-n");
+    stSet(nm,this.value);
+    /* drop focus before the repaint: the row is about to be replaced, and a
+       focused element inside it is what made the old view stick */
+    try{ this.blur(); }catch(e){}
+    refreshContacts(); SBW.lead(nm); drawBuilding();
     redraw();};
 
   /* per-lead notes */
