@@ -4059,6 +4059,138 @@ textarea.dw-pi.big{min-height:92px}
   .pd-t{grid-template-columns:1fr 1fr}
   .pd-line,.pd-line .chartbox,.pd-line .chart{height:90px}
 }
+
+/* ================================================================
+   CRM — visual rebuild.  Overrides only; no markup depends on this.
+   The old table read as a spreadsheet: 38px rows, 12px grey-blue on
+   near-black, every field bordered, nothing dominant. A CRM row has
+   one subject — the person — and everything else is supporting.
+   ================================================================ */
+
+/* the table sits in a card, not on the page */
+.crmwrap-x{border:1px solid #26262a;border-radius:14px;overflow:hidden;
+  background:#111113}
+
+table.lgrid{border-collapse:separate;border-spacing:0}
+
+table.lgrid thead th{
+  padding:11px 14px;
+  font-size:9px;font-weight:700;letter-spacing:1.4px;
+  color:#5c6472;background:#141416;
+  border-bottom:1px solid #26262a}
+
+table.lgrid tbody td{
+  padding:9px 10px;height:auto;min-height:56px;
+  border-bottom:1px solid rgba(255,255,255,.045);
+  font-size:12.5px;color:#aeb6c2;vertical-align:middle}
+table.lgrid tbody tr:last-child td{border-bottom:none}
+table.lgrid tbody tr{transition:background .12s}
+table.lgrid tbody tr:nth-child(even) td{background:rgba(255,255,255,.012)}
+table.lgrid tbody tr:hover td{background:rgba(255,255,255,.045)}
+table.lgrid tbody tr.prirow td{background:rgba(168,85,247,.07)}
+table.lgrid tbody tr.prirow:hover td{background:rgba(168,85,247,.11)}
+
+/* the name is the row */
+table.lgrid .openlead{
+  font-size:14.5px;font-weight:650;color:#f0f3f8;letter-spacing:-.2px;
+  background:none;border:none;padding:0;cursor:pointer;text-align:left;
+  font-family:inherit;line-height:1.3}
+table.lgrid .openlead:hover{color:#fff;text-decoration:underline;
+  text-underline-offset:3px;text-decoration-color:#3d3d44}
+
+/* fields disappear until you want them */
+table.lgrid .cn,
+table.lgrid .ntbox,
+table.lgrid .cin-came{
+  padding:7px 9px;font-size:12.5px;color:#aeb6c2;border-radius:8px;
+  border:1px solid transparent;background:transparent}
+table.lgrid tr:hover .cn,
+table.lgrid tr:hover .ntbox,
+table.lgrid tr:hover .cin-came{border-color:#2b2b30;background:rgba(255,255,255,.02)}
+table.lgrid .cn:focus,
+table.lgrid .ntbox:focus,
+table.lgrid .cin-came:focus{
+  background:#1b1b1f;border-color:#4a4a55;color:#eef2f8;
+  box-shadow:0 0 0 3px rgba(255,255,255,.04)}
+
+/* stage: a pill you can read across the room, not a form control */
+table.lgrid select.stsel{
+  width:100%;box-sizing:border-box;appearance:none;cursor:pointer;
+  padding:7px 10px;border-radius:999px;
+  font:700 11px/1.2 inherit;letter-spacing:.4px;
+  background:color-mix(in srgb, var(--sc) 15%, #17171a);
+  border:1px solid color-mix(in srgb, var(--sc) 42%, transparent);
+  outline:none;transition:background .12s,border-color .12s}
+table.lgrid select.stsel:hover{
+  background:color-mix(in srgb, var(--sc) 24%, #17171a);
+  border-color:color-mix(in srgb, var(--sc) 62%, transparent)}
+table.lgrid select.stsel option{background:#141416;color:#e6ebf2}
+
+/* source: quiet until touched */
+table.lgrid select.srcsel{
+  margin-bottom:5px;padding:4px 7px;border-radius:7px;
+  background:transparent;color:#6e7686;
+  font:600 10px/1.4 var(--mono,ui-monospace,monospace);letter-spacing:.6px;
+  border:1px solid transparent}
+table.lgrid tr:hover select.srcsel{border-color:#2b2b30;color:#9aa3b2}
+table.lgrid select.srcsel:focus{border-color:#4a4a55;color:#e6ebf2;background:#1b1b1f}
+
+/* chips under the name */
+.tchip{margin-top:5px;margin-right:6px;padding:2px 7px;border-radius:999px;
+  font-size:9.5px;font-weight:700;letter-spacing:.4px}
+.fuflag{margin-top:5px;padding:2px 7px;border-radius:999px;
+  font-size:9.5px;font-weight:700;letter-spacing:.4px;display:inline-block}
+
+/* reach buttons: present, not shouting */
+.lgrid .rbx{display:flex;gap:5px}
+.lgrid .rb{
+  padding:6px 11px;border-radius:8px;font-size:11px;font-weight:650;
+  background:#1a1a1e;border:1px solid #2b2b30;color:#8a93a3;
+  transition:background .12s,color .12s,border-color .12s}
+.lgrid tr:hover .rb{color:#c2cad6;border-color:#37373e}
+.lgrid .rb:hover:not([disabled]){background:#26262c;color:#fff;border-color:#4a4a55}
+.lgrid .rb[disabled]{opacity:.3}
+
+/* the delete × stays out of the way until the row is live */
+table.lgrid .delone{opacity:0;transition:opacity .12s}
+table.lgrid tr:hover .delone{opacity:.45}
+table.lgrid .delone:hover{opacity:1}
+
+/* priority dot */
+table.lgrid .prdot{width:11px;height:11px;border-radius:50%;
+  border:1.5px solid #3a3a42;background:transparent;cursor:pointer;
+  transition:border-color .12s,background .12s}
+table.lgrid tr:hover .prdot{border-color:#55555f}
+table.lgrid .prdot.on{background:#a855f7;border-color:#a855f7;
+  box-shadow:0 0 0 3px rgba(168,85,247,.18)}
+
+/* ---- control bar ---- */
+.cbar{gap:10px;padding:11px 13px;margin:0 0 14px;
+  border:1px solid #26262a;border-radius:14px;background:#111113}
+.cb-find input,.cb-l select,.cb-b,.cb-seg{border-radius:9px}
+.cb-find input{padding:8px 52px 8px 29px;font-size:12.5px;
+  background:#17171a;border-color:#2b2b30}
+.cb-find input:focus{border-color:#4a4a55;background:#1d1d21;
+  box-shadow:0 0 0 3px rgba(255,255,255,.04)}
+.cb-l select,.cb-b{padding:8px 11px;font-size:12px;
+  background:#17171a;border-color:#2b2b30}
+.cb-l select:hover,.cb-b:hover{border-color:#3d3d45;background:#1d1d21}
+.cb-seg{border-color:#2b2b30}
+.cb-sg{padding:8px 13px;background:#17171a}
+.cb-sg.on{background:#2c2c32;color:#fff}
+
+/* ---- stage strip ---- */
+.stgstrip{gap:8px}
+.stgstrip .sg{
+  padding:9px 14px;border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--sc) 26%, transparent);
+  background:color-mix(in srgb, var(--sc) 7%, #131315);
+  font-weight:650;letter-spacing:.2px}
+.stgstrip .sg:hover{background:color-mix(in srgb, var(--sc) 15%, #131315);
+  border-color:color-mix(in srgb, var(--sc) 48%, transparent)}
+.stgstrip .sg.on{background:color-mix(in srgb, var(--sc) 22%, #131315);
+  border-color:var(--sc)}
+
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -14189,19 +14321,7 @@ function execMoney(){
   var cont =by(L,function(x){return x.contingent>0;});
   var dead =by(L,function(x){return x.writeOff;});
 
-  var ov=cashOverride(), raw=collectedRaw();
-  var h='<h4 class="sh">Cash Collected</h4>'
-   +'<div class="cashset">'
-   +'<span class="note-c">Total in the door</span>'
-   +'<input id="cash-set" inputmode="decimal" value="'+(ov===null?"":ov)+'" placeholder="'+raw+'">'
-   +'<button class="btn gh" id="cash-clear">Use the per-person figures instead</button>'
-   +'</div>'
-   +'<div class="note-c" style="margin-bottom:15px">'
-   +(ov===null
-      ? 'Adding up what each member paid below: <b>$'+raw.toLocaleString()+'</b>.'
-      : 'Showing <b>$'+ov.toLocaleString()+'</b> because you set it by hand. '
-        +'The per-person amounts below add up to $'+raw.toLocaleString()+'.')
-   +' This is the number on the Sales Floor.</div>';
+  var h='';
 
   function tbl(rows,title,tone,key){
     if(!rows.length)return "";
@@ -18304,15 +18424,6 @@ function dashView(){
        Anything that needed doing is visible in the table itself: overdue
        follow-ups have a red flag under the name, and the due count in the
        control bar filters straight to them. */
-
-    /* the money lives here, next to the people it comes from */
-    h+='<div class="crmmoney">'
-      +'<div class="cm"><span>Still To Collect</span><b class="'+(m.chase?"a":"")+'">$'
-        +m.chase.toLocaleString()+'</b><i>already sold</i></div>'
-      +'<div class="cm"><span>Contingent</span><b>$'+m.conting.toLocaleString()+'</b>'
-        +'<i>once placed</i></div>'
-      +'<div class="cm"><span>New This Week</span><b class="b">'+newThisWeek()+'</b>'
-        +'<i>came in</i></div></div>';
 
     /* stage strip */
     /* The stage strip filters the table underneath it. Every one of these
