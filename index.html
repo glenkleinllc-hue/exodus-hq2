@@ -4256,6 +4256,8 @@ table.lgrid .openlead:after{content:"";display:inline-block;width:0}
 /* four reach buttons need to stay on one line */
 .lgrid .rbx{flex-wrap:nowrap}
 .lgrid .rb{padding:6px 9px;font-size:10.5px;letter-spacing:.1px}
+a.rb{display:inline-flex;align-items:center;justify-content:center;
+  text-decoration:none;line-height:1.5}
 .lgrid .rb.mail:hover:not([disabled]){background:#2a2118;color:#f0d9b0;
   border-color:#6b5636}
 
@@ -4791,14 +4793,13 @@ function cameLabel(n){
    a layout one: a name with no origin and no last-contact date is a stranger. */
 var SOURCES=["","TikTok","Instagram","YouTube","Form","Calendly","Referral","DM","Other"];
 function srcGet(n){ return lxGet(n).src||""; }
-function srcSet(n,v){ var o=lxGet(n); o.src=v||""; lxSet(n,o); }
+function srcSet(n,v){ lxPut(n,"src",v||""); }
 /* stamped automatically every time you call or text from the app */
 function touchGet(n){ return lxGet(n).lt||""; }
 function touchStamp(n){
-  var o=lxGet(n), d=new Date();
-  o.lt=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")
-      +"-"+String(d.getDate()).padStart(2,"0");
-  lxSet(n,o);
+  var d=new Date();
+  lxPut(n,"lt", d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")
+      +"-"+String(d.getDate()).padStart(2,"0"));
 }
 /* Days since you last spoke. Falls back to the day they came in, because a
    lead you have never contacted is measured from the day it landed - that is
@@ -16106,13 +16107,19 @@ function reachBtns(x){
     /* Opens Gmail in a browser tab with the address already in it. mailto:
        hands off to a desktop mail app, which is not where this mail gets
        written. */
+    /* An <a> is never popup-blocked; window.open with a features string is. */
     +(function(){
        var em=(cnGet(x.name).e || x.email || "").trim();
        var ok=/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(em);
-       return '<button class="rb mail" data-rmail="'+esc(x.name)+'" '
-         +'data-rem="'+esc(em)+'"'+(ok?'':' disabled')
-         +' title="'+(ok?"Open Gmail to "+esc(em):"No email on file")+'">'
-         +'Email</button>';
+       if(!ok) return '<button class="rb mail" disabled title="No email on file">Email</button>';
+       var first=String(x.name||"").split(/\s+/)[0];
+       var url="https://mail.google.com/mail/?view=cm&fs=1"
+         +"&to="+encodeURIComponent(em)
+         +"&su="+encodeURIComponent("Following up \u2014 Exodus")
+         +"&body="+encodeURIComponent("Hey "+first+",\n\n");
+       return '<a class="rb mail" href="'+esc(url)+'" target="_blank" '
+         +'rel="noopener noreferrer" data-rmail="'+esc(x.name)+'" '
+         +'title="Open Gmail to '+esc(em)+'">Email</a>';
      })()
     +'</div>';
 }
@@ -19778,7 +19785,7 @@ function wire(){
   var fay=document.getElementById("fuall-yes");
   if(fay) fay.onclick=function(){
     (STATE.leads||[]).forEach(function(x){
-      var o=lxGet(x.name); if(o.fu){ o.fu=""; lxSet(x.name,o); }
+      if(lxGet(x.name).fu) lxPut(x.name,"fu","");
     });
     FUCLR_ASK=false; redraw();
   };
@@ -19790,8 +19797,8 @@ function wire(){
   for(var fi=0;fi<fcl.length;fi++){
     fcl[fi].onclick=function(e){
       e.stopPropagation();
-      var n=this.getAttribute("data-fuclr"), o=lxGet(n);
-      o.fu=""; lxSet(n,o); redraw();
+      lxPut(this.getAttribute("data-fuclr"),"fu","");
+      redraw();
     };
   }
   /* source picker */
@@ -19849,18 +19856,9 @@ function wire(){
   /* Gmail compose, in the browser */
   var rms=document.querySelectorAll("[data-rmail]");
   for(var rm=0;rm<rms.length;rm++) rms[rm].onclick=function(){
-    var nm=this.getAttribute("data-rmail"),
-        em=this.getAttribute("data-rem");
-    if(!em) return;
-    touchStamp(nm);
-    var L=leadBy(nm), first=String(nm||"").split(/\s+/)[0];
-    var su="Following up — Exodus",
-        bd="Hey "+first+",\n\n";
-    window.open("https://mail.google.com/mail/?view=cm&fs=1"
-      +"&to="+encodeURIComponent(em)
-      +"&su="+encodeURIComponent(su)
-      +"&body="+encodeURIComponent(bd), "_blank", "noopener");
-    redraw();
+    /* the link opens Gmail on its own; this only records the contact */
+    touchStamp(this.getAttribute("data-rmail"));
+    setTimeout(redraw, 60);
   };
 
   var rts=document.querySelectorAll("[data-rtext]");
