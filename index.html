@@ -1837,10 +1837,30 @@ a.lnk:hover{color:#d2ebdd}
 .jvpop.think .jv-wave i{background:#6f7c8d;animation:jvBar 1.5s ease-in-out infinite}
 @keyframes jvBar{0%,100%{height:5px;opacity:.55}50%{height:20px;opacity:1}}
 
-.jvpop .jv-stop{font-size:10.5px;font-weight:800;letter-spacing:.5px;
-  padding:6px 12px;border-radius:99px;cursor:pointer;font-family:inherit;
-  background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.4);color:#f0857f}
-.jvpop .jv-stop:hover{background:rgba(239,68,68,.24);color:#ffb4ac}
+/* The label and, under it, what it has actually heard so far. Before this
+   there were two competing strips on screen at once — this overlay saying
+   "Listening / Stop" and a separate red bar saying "Listening / Done" — which
+   is why it made no sense. There is one now. */
+.jvpop .jv-txt{display:flex;flex-direction:column;gap:2px;min-width:104px;max-width:340px}
+.jvpop .jv-txt>b{font-size:12px;font-weight:800;letter-spacing:.4px;color:#dfeae4}
+.jvpop .jv-txt>i{font-style:normal;font-size:11.5px;line-height:1.35;color:#9fb3a8;
+  max-height:32px;overflow:hidden;display:none}
+.jvpop .jv-txt>i.on{display:block}
+
+/* The primary button always says what it will do, and then does that. */
+.jvpop .jv-go{font-size:10.5px;font-weight:800;letter-spacing:.6px;
+  padding:7px 14px;border-radius:99px;cursor:pointer;font-family:inherit;
+  background:#5bb583;border:1px solid #6cc494;color:#0d1210;transition:.14s}
+.jvpop .jv-go:hover{filter:brightness(1.08)}
+.jvpop .jv-go[disabled]{opacity:.4;cursor:default}
+.jvpop.talk .jv-go{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.42);color:#f0857f}
+.jvpop.think .jv-go{background:rgba(201,168,106,.16);border-color:rgba(201,168,106,.42);color:#e0c084}
+
+.jvpop .jv-stop{font-size:12px;font-weight:800;line-height:1;
+  width:26px;height:26px;border-radius:50%;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.05);border:1px solid #33333a;color:#8d8d94;transition:.14s}
+.jvpop .jv-stop:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.4);color:#f0857f}
 
 /* ---- a booked meeting reads as a record ---- */
 .mt.lock{background:rgba(255,255,255,.014)}
@@ -4229,8 +4249,12 @@ table.lgrid .openlead:after{content:"";display:inline-block;width:0}
     <div class="jvpop" id="jvpop" hidden>
       <div class="jvpop-in">
         <span class="jv-wave" id="jv-wave" aria-hidden="true"></span>
-        <b id="jv-lab">Listening</b>
-        <button class="jv-stop" id="jv-stop" title="Stop">Stop</button>
+        <span class="jv-txt">
+          <b id="jv-lab">Listening</b>
+          <i id="jv-heard"></i>
+        </span>
+        <button class="jv-go"   id="jv-go">Send</button>
+        <button class="jv-stop" id="jv-stop" title="Throw it away">&#10005;</button>
       </div>
     </div>
 
@@ -11074,7 +11098,15 @@ function startMic(who){
     }
     else if(got) T.note("Nothing came through. Try again.");
   };
-  REC.__stop=function(){ stopping=true; try{REC.stop();}catch(e){} };
+  REC.__stop=function(){ stopping=true; silCancel(); try{REC.stop();}catch(e){} };
+  /* Cancel is not stop. Stop means "I have finished, send it"; cancel means
+     "forget I said anything". Wiping heard before aborting is what makes the
+     difference, because onend sends whatever heard still holds. */
+  REC.__cancel=function(){
+    stopping=true; silCancel(); heard=""; got=false;
+    T.inputs.forEach(function(id){var t=document.getElementById(id); if(t)t.value="";});
+    try{ REC.abort(); }catch(e){ try{ REC.stop(); }catch(e2){} }
+  };
   try{ REC.start(); }
   catch(e){
     RECON=false; micPaint(false);
@@ -11175,34 +11207,36 @@ function micFix(text){
 
    The button now turns red and pulses, the label says LISTENING, and a bar
    appears above the composer showing your words appearing as you speak. */
+/* ================= ONE VOICE INTERFACE =================
+   There used to be two things on screen during a mic session: this overlay,
+   saying "Listening" next to a red Stop, and a separate red strip at the
+   bottom saying "Listening… tap the square to send" next to a button called
+   Done. Two labels, two buttons, two different words for the same action, and
+   Stop actually sent the message rather than cancelling it.
+
+   Now there is one surface — the overlay — and its state lives in these two
+   variables. Nothing else draws a listening indicator. */
+var MIC_HEARD="", MIC_NOTE="";
+
 function micPaint(on){
   ["mic","mmic","jmic","tmic"].forEach(function(id){
     var b=document.getElementById(id); if(!b)return;
     b.classList.toggle("rec",on);
     b.innerHTML = on ? "&#9632;" : "&#127908;";
-    b.title = on ? "Listening — tap to stop and send"
-                 : "Tap, speak, tap again when you are done";
+    b.title = on ? "Listening — stop when you have finished"
+                 : "Tap and speak. It sends itself when you stop talking.";
   });
-  micBar(on ? "Listening… speak now, then tap the square to send" : null);
+  if(!on){ MIC_HEARD=""; MIC_NOTE=""; }
+  try{ jvPaint(); }catch(e){}
 }
 
-/* the live strip above whichever composer is in use */
+/* Kept under its old name because startMic calls it in four places. It no
+   longer builds anything — it just records what to show and lets the one
+   overlay draw it. */
 function micBar(msg, words){
-  var host=document.getElementById("micbar");
-  if(!host){
-    if(!msg || !document.body) return;
-    host=document.createElement("div"); host.id="micbar"; host.className="micbar";
-    document.body.appendChild(host);
-  }
-  if(!msg){ if(host.parentNode) host.parentNode.removeChild(host); return; }
-  host.innerHTML='<span class="mb-dot"></span>'
-    +'<span class="mb-t">'+esc(msg)+'</span>'
-    +(words?'<span class="mb-w">'+esc(words)+'</span>':'')
-    +'<button class="mb-x" id="mb-stop">Done</button>';
-  var st=document.getElementById("mb-stop");
-  if(st) st.onclick=function(){
-    if(REC&&REC.__stop) REC.__stop(); else { try{REC.stop();}catch(e){} }
-  };
+  MIC_NOTE = msg || "";
+  MIC_HEARD = words || "";
+  try{ jvPaint(); }catch(e){}
 }
 
 /* ============================ ASSISTANT ============================ */
@@ -12790,9 +12824,22 @@ function bannerPlace(){
    One tap: the mic opens, the bars run, she hears you. Tap again and she
    answers out loud. It is the same recogniser and the same ask() the dock
    uses — this is a shortcut to it, not a second brain. */
+/* Who is on the other end, in words rather than a key. */
+function micWhoName(){
+  return MICWHO==="jordan" ? "Jordan"
+       : MICWHO==="claude" ? "Coach"
+       : "Claudia";
+}
 function jvPaint(){
-  var live=(typeof RECON!=="undefined" && RECON && MICWHO==="claudia");
-  var think=!!(STATE && STATE.busy);
+  /* Any agent, not just Claudia. The overlay is the voice interface for all
+     three now, so listening to Jordan has to light it up too. */
+  var live=(typeof RECON!=="undefined" && !!RECON);
+  /* Whichever of the three is mid-request. Jordan and the coach keep their own
+     busy flags, so watching only STATE.busy made the overlay disappear between
+     "sent" and "speaking" for them — which reads as the message vanishing. */
+  var think=!!(STATE && STATE.busy)
+    || (typeof JBUSY!=="undefined" && JBUSY)
+    || (typeof TBUSY!=="undefined" && TBUSY);
   var talking=false;
   try{ talking = !!(window.speechSynthesis && window.speechSynthesis.speaking); }catch(e){}
   try{ if(!talking && VOICE_AUDIO && !VOICE_AUDIO.paused) talking=true; }catch(e){}
@@ -12821,11 +12868,51 @@ function jvPaint(){
     pop.classList.toggle("live", !!live);
     pop.classList.toggle("think", !live && think && !talking);
     pop.classList.toggle("talk", !!talking && !live);
-    /* One word, not a sentence and a sub-line. "Listening" is the entire
-       message; anything more is reading material at the moment he is supposed
-       to be talking. */
+
     var lab=document.getElementById("jv-lab");
-    if(lab) lab.textContent = live ? "Listening" : talking ? "Claudia" : "Thinking";
+    var hrd=document.getElementById("jv-heard");
+    var go =document.getElementById("jv-go");
+    var xb =document.getElementById("jv-stop");
+
+    /* The label says which of the three things is happening and to whom. */
+    if(lab) lab.textContent = live    ? "Listening"
+                            : talking ? micWhoName()+" is speaking"
+                            :           micWhoName()+" is thinking";
+
+    /* Underneath it, the words it has actually caught. Seeing your own
+       sentence appear is the only reliable signal that it is hearing you. */
+    if(hrd){
+      var show = live ? (MIC_HEARD || "") : "";
+      hrd.textContent = show;
+      hrd.classList.toggle("on", !!show);
+    }
+
+    /* The button does what it says. Listening: Send. Speaking: Stop the
+       voice. Thinking: nothing to press, so it is disabled rather than
+       lying about what it would do. */
+    if(go){
+      go.textContent = live ? (MIC_HEARD ? "Send" : "Listening\u2026")
+                    : talking ? "Stop" : "Working\u2026";
+      go.disabled = live ? !MIC_HEARD : !talking;
+      go.onclick = function(){
+        if(live){ try{ if(REC && REC.__stop) REC.__stop(); else REC.stop(); }catch(e){} }
+        else if(talking){ try{ stopSpeaking(); }catch(e){} }
+        try{ jvPaint(); }catch(e){}
+      };
+    }
+    /* The cross throws the turn away without sending it. There was no way to
+       do that before — Stop sent, which is why it felt like it was ignoring
+       him when he changed his mind mid-sentence. */
+    if(xb){
+      xb.title = live ? "Throw this away without sending"
+               : talking ? "Stop talking" : "Dismiss";
+      xb.onclick = function(){
+        if(live){ try{ if(REC && REC.__cancel) REC.__cancel(); else REC.abort(); }catch(e){} }
+        else { try{ stopSpeaking(); }catch(e){} }
+        MIC_HEARD=""; MIC_NOTE="";
+        try{ jvPaint(); }catch(e){}
+      };
+    }
   }
 }
 function jvTap(){
@@ -12859,8 +12946,10 @@ function wireJarvis(){
     if(fab && !fab.__wired){ fab.__wired=true; fab.onclick=function(){ jvTap(); }; }
     var bf=document.getElementById("jv-brief");
     if(bf) bf.onclick=function(){ briefNow(); };
-    var st=document.getElementById("jv-stop");
-    if(st) st.onclick=function(){ briefStop(); };
+    /* jv-stop and jv-go are bound inside jvPaint, because what they do depends
+       on which of the three states the overlay is in. Binding them here as
+       well is how the cross ended up calling briefStop() and cancelling the
+       whole turn no matter what was happening. */
     jvPaint();
   })();
 }
