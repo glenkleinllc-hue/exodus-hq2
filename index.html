@@ -1934,124 +1934,169 @@ a.lnk:hover{color:#d2ebdd}
    Attio, Close, Airtable and Notion all do the same thing this does: render
    the value, reveal the input on hover, commit on blur. The field is exactly
    as editable; it just stops shouting while he is reading. */
-table.lgrid{width:100%;border-collapse:collapse;table-layout:fixed}
 
+
+/* meetings, with an empty diary: one line, not a panel */
+.mtslim{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:12px 16px;margin-bottom:12px;
+  border:1px solid #26262a;border-radius:14px;
+  background:linear-gradient(180deg,#121214,#0f0f11)}
+.mts-l{font-size:10px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:#8b939e}
+.mts-n{font-size:12px;color:#565c65;margin-right:auto}
+.mts-b{font:600 11.5px/1 inherit;padding:8px 13px;border-radius:9px;cursor:pointer;
+  background:var(--blu);border:1px solid var(--blu);color:#0d1a13;
+  transition:filter .13s}
+.mts-b:hover{filter:brightness(1.1)}
+.mts-b.gh{background:transparent;border-color:#2b2b30;color:#8b939e}
+.mts-b.gh:hover{border-color:#3d4047;color:#e6ebf2;filter:none}
+
+/* ==================================================================
+   THE CRM
+   One stylesheet, written once. Reference points are Attio and Linear:
+   a lot of air, one dominant element per row, colour used only where it
+   carries meaning, and no visible control until you reach for it.
+   ================================================================== */
+
+.crmcard{border:1px solid #26262a;border-radius:16px;overflow:hidden;
+  background:linear-gradient(180deg,#121214,#0f0f11)}
+
+table.lgrid{width:100%;border-collapse:separate;border-spacing:0;
+  table-layout:fixed}
+
+/* --- header: a label strip, not a spreadsheet bar --- */
 table.lgrid thead th{
-  position:sticky;top:0;z-index:2;
-  padding:7px 10px;text-align:left;
-  font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;
-  color:#4d5666;background:#131314;
-  border-bottom:1px solid #2b2b2e;white-space:nowrap}
+  position:sticky;top:0;z-index:2;text-align:left;
+  padding:13px 14px 11px;
+  font-size:8.5px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
+  color:#5a6068;background:#111113;
+  border-bottom:1px solid #26262a;white-space:nowrap}
 
+/* --- rows --- */
 table.lgrid tbody td{
-  padding:0 4px;height:38px;vertical-align:middle;
-  border-bottom:1px solid rgba(255,255,255,.038);
-  font-size:12px;color:#c3ccd9;overflow:hidden}
-table.lgrid tbody tr:hover td{background:rgba(255,255,255,.026)}
-table.lgrid tbody tr.prirow td{background:rgba(168,85,247,.055)}
-table.lgrid tbody tr.prirow:hover td{background:rgba(168,85,247,.085)}
+  padding:13px 14px;vertical-align:middle;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:12.5px;color:#9ba3ad;background:#0f0f11;
+  transition:background .13s}
+table.lgrid tbody tr:last-child td{border-bottom:none}
+table.lgrid tbody tr:hover td{background:#16161a}
+table.lgrid tbody tr.prirow td{background:rgba(168,85,247,.06)}
+table.lgrid tbody tr.prirow:hover td{background:rgba(168,85,247,.1)}
 
-/* ---- the invisible-until-touched field ---- */
-table.lgrid .cn,
-table.lgrid .ntbox,
-table.lgrid .cin-came{
-  width:100%;box-sizing:border-box;
-  padding:6px 7px;margin:0;
-  font:inherit;font-size:12px;color:#c3ccd9;
-  background:transparent;border:1px solid transparent;border-radius:6px;
-  outline:none;resize:none;overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap;
-  transition:background .1s,border-color .1s}
-table.lgrid .cn::placeholder,
-table.lgrid .ntbox::placeholder{color:#4a4a4e}
-table.lgrid tr:hover .cn,
-table.lgrid tr:hover .ntbox,
-table.lgrid tr:hover .cin-came{border-color:#2a2a2d}
-table.lgrid .cn:focus,
-table.lgrid .ntbox:focus,
-table.lgrid .cin-came:focus{
-  background:#1a1a1c;border-color:#4d4d59;color:#e7efeb;
-  white-space:normal;overflow:auto;position:relative;z-index:3}
-table.lgrid .ntbox:focus{min-height:64px}
-
-/* The date input paints its own picker icon; dim it until the row is live so
-   forty little calendars are not the loudest thing on the page. */
-table.lgrid .cin-came::-webkit-calendar-picker-indicator{opacity:.22;cursor:pointer}
-table.lgrid tr:hover .cin-came::-webkit-calendar-picker-indicator{opacity:.6}
-
-/* ---- name ---- */
-/* ---- last-contact chip + source picker (CRM rows) ----
-   tchip / srcsel are new names. Checked against every class already in this
-   file before adding: nothing else uses either. */
-.tchip{display:inline-block;margin-top:3px;margin-right:5px;padding:1px 6px;
-  border-radius:3px;font-size:9.5px;font-weight:700;letter-spacing:.3px;
-  line-height:1.5;vertical-align:middle}
-.tchip.ok{background:rgba(74,222,128,.12);color:#86efac}
-.tchip.warm{background:rgba(251,191,36,.14);color:#fcd34d}
-.tchip.cold{background:rgba(248,113,113,.14);color:#fca5a5}
-.tchip.none{background:rgba(255,255,255,.05);color:#6e6e72}
-table.lgrid select.srcsel{width:100%;margin-bottom:4px;background:var(--paper2);
-  color:var(--ink2);border:1px solid transparent;border-radius:4px;
-  font:600 10.5px/1.5 var(--mono,ui-monospace,monospace);letter-spacing:.3px;
-  padding:3px 5px;cursor:pointer;appearance:none}
-table.lgrid tr:hover select.srcsel{border-color:#2a2a2d}
-table.lgrid select.srcsel:focus{outline:none;border-color:var(--blu)}
-table.lgrid select.srcsel option{background:#141416;color:var(--ink)}
+/* --- the person --- */
 table.lgrid .nm-c{position:relative}
+.nmrow{display:flex;align-items:center;gap:11px}
+.avi{flex:none;width:34px;height:34px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;letter-spacing:.2px;
+  color:#0f0f11;background:var(--av,#5a6068);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.nmtx{min-width:0;flex:1}
 table.lgrid .openlead{
-  background:none;border:none;padding:6px 7px;font:inherit;font-size:12.5px;
-  font-weight:700;color:#dfeae4;cursor:pointer;text-align:left;
-  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-table.lgrid .openlead:hover{color:#fff;text-decoration:underline}
+  display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;text-align:left;
+  font-size:14px;font-weight:600;letter-spacing:-.15px;color:#f2f4f7;
+  background:none;border:none;padding:0;cursor:pointer;font-family:inherit;
+  line-height:1.35}
+table.lgrid .openlead:hover{color:#fff}
+.rowmeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:3px}
+.rowmeta:empty{display:none}
+.tchip{padding:1px 0;font-size:10px;font-weight:600;letter-spacing:.2px;
+  background:none!important}
+.tchip.ok{color:#6fbf95}
+.tchip.warm{color:#c9a25c}
+.tchip.cold{color:#c9807a}
+.tchip.none{color:#4d525a}
 
-/* Removal is destructive and permanent, so it does not sit under every name
-   advertising itself. It appears when the row is live. */
-table.lgrid .delone{
-  position:absolute;right:2px;top:50%;transform:translateY(-50%);
-  opacity:0;pointer-events:none;
-  width:20px;height:20px;line-height:1;
-  background:none;border:none;border-radius:5px;
-  color:#4d5666;font-size:15px;cursor:pointer;transition:opacity .12s,color .12s}
-table.lgrid tr:hover .delone{opacity:1;pointer-events:auto}
-table.lgrid .delone:hover{color:#f0857f;background:rgba(239,68,68,.13)}
+/* --- stage: a solid pill --- */
+table.lgrid select.stsel{
+  width:100%;box-sizing:border-box;appearance:none;cursor:pointer;
+  padding:7px 12px;border-radius:8px;
+  font:600 11.5px/1.3 inherit;letter-spacing:.1px;
+  color:var(--sc);
+  background:color-mix(in srgb, var(--sc) 13%, #141417);
+  border:1px solid color-mix(in srgb, var(--sc) 30%, transparent);
+  outline:none;transition:background .13s,border-color .13s}
+table.lgrid select.stsel:hover{
+  background:color-mix(in srgb, var(--sc) 20%, #141417);
+  border-color:color-mix(in srgb, var(--sc) 52%, transparent)}
+table.lgrid select.stsel option{background:#141417;color:#e6ebf2}
 
-/* ---- status as a pill in its own colour ---- */
-table.lgrid .stsel{
-  width:100%;box-sizing:border-box;
-  padding:5px 7px;font:inherit;font-size:11px;font-weight:700;
-  background:color-mix(in srgb, var(--sc) 12%, transparent);
-  border:1px solid color-mix(in srgb, var(--sc) 38%, transparent);
-  border-radius:99px;outline:none;cursor:pointer;
-  text-overflow:ellipsis;transition:background .12s}
-table.lgrid .stsel:hover{background:color-mix(in srgb, var(--sc) 20%, transparent)}
-table.lgrid .stsel:focus{border-color:var(--sc)}
+/* --- read-only cells that become editable on click --- */
+td.ced{cursor:text}
+td.ced:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);border-radius:8px}
+.celv{display:block;font-size:12.5px;color:#9ba3ad;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.celn{color:#3a3e45}
+.notev{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;font-size:12.5px;color:#828a95;line-height:1.5}
+.srcv{display:inline-block;padding:3px 9px;border-radius:7px;
+  background:rgba(255,255,255,.05);font-size:10px;font-weight:600;
+  letter-spacing:.3px;color:#8b939e}
+.camev{display:block;margin-top:5px;font-size:10.5px;color:#565c65;
+  font-variant-numeric:tabular-nums}
+tr:hover .celv,tr:hover .notev{color:#d6dce4}
+.cedin{width:100%;box-sizing:border-box;padding:8px 10px;margin:0;font:inherit;
+  font-size:12.5px;color:#f2f4f7;background:#1a1a1e;border:1px solid var(--blu);
+  border-radius:9px;outline:none;resize:none;
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--blu) 18%, transparent)}
+.cedin.multi{min-height:66px;line-height:1.5}
+.cedin::placeholder{color:#565c65}
 
-/* ---- follow-up flag, under the name ---- */
-table.lgrid .fuflag{font-size:9.5px;font-weight:700;padding:0 7px 3px;
-  letter-spacing:.2px}
-table.lgrid .fuflag.od{color:#e8837c}
-table.lgrid .fuflag.tod{color:#dcae43}
-table.lgrid .fuflag.soon{color:#5b6478}
-table.lgrid .softflag,table.lgrid .manualflag{font-size:9.5px;color:#4d5666;
-  padding:0 7px 3px}
-
-/* Call, Alt and Text on ONE line. They were wrapping onto two, which pushed
-   every row to 74px and made a 40-lead list twice as long as it needed to be —
-   the single biggest remaining source of "bulky". */
-table.lgrid .reach{white-space:nowrap;padding-right:8px}
-/* .rbx is flex-wrap:wrap with .rb{flex:1 1 auto} — three buttons in a 158px
-   cell will always wrap to two lines under those rules no matter how small the
-   font is. Turn the wrap off here and let each button be its own width. */
-table.lgrid .reach .rbx{flex-wrap:nowrap;gap:3px}
-table.lgrid .reach .rb{flex:0 0 auto;min-width:0}
-table.lgrid .reach .rbtn,
-table.lgrid .reach button,
-table.lgrid .reach a{
+/* --- actions --- */
+table.lgrid td.reach{white-space:nowrap}
+.lgrid .rbx{display:flex;gap:5px;flex-wrap:nowrap}
+.lgrid .rb,.lgrid a.rb{
   display:inline-flex;align-items:center;justify-content:center;
-  height:24px;padding:0 8px;margin:0 3px 0 0;
-  font-size:9.5px;font-weight:800;letter-spacing:.4px;border-radius:6px;
-  white-space:nowrap;vertical-align:middle}
-table.lgrid tbody td.reach{height:38px}
+  height:29px;padding:0 10px;border-radius:8px;
+  font:600 10.5px/1 inherit;letter-spacing:.2px;text-decoration:none;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
+  color:#7d8590;cursor:pointer;
+  transition:background .13s,color .13s,border-color .13s}
+.lgrid tr:hover .rb{color:#aab2bd;border-color:rgba(255,255,255,.12)}
+.lgrid .rb:hover:not([disabled]){background:var(--blu);border-color:var(--blu);
+  color:#0d1a13}
+.lgrid .rb[disabled]{opacity:.22;cursor:default}
+
+/* --- priority and delete: quiet --- */
+table.lgrid .prdot{width:9px;height:9px;border-radius:50%;padding:0;
+  border:1.5px solid #34363b;background:none;cursor:pointer;
+  transition:border-color .13s,background .13s,box-shadow .13s}
+table.lgrid tr:hover .prdot{border-color:#4a4d54}
+table.lgrid .prdot.on{background:#a855f7;border-color:#a855f7;
+  box-shadow:0 0 0 3px rgba(168,85,247,.2)}
+table.lgrid .delone{
+  position:absolute;top:2px;right:0;width:20px;height:20px;border-radius:6px;
+  border:none;background:none;color:#4d525a;font-size:14px;line-height:1;
+  cursor:pointer;opacity:0;transition:opacity .13s,color .13s,background .13s}
+table.lgrid tr:hover .delone{opacity:1}
+table.lgrid .delone:hover{color:#e0857f;background:rgba(224,133,127,.12)}
+table.lgrid .softflag{font-size:10px;color:#4d525a;margin-top:3px}
+
+/* --- band headers --- */
+.pgrp{margin:22px 0 6px;padding:6px 2px;gap:10px}
+.pgrp b{font-size:10.5px;letter-spacing:1.8px}
+.pgrp-d{width:7px;height:7px}
+
+/* --- control bar --- */
+.cbar{gap:10px;padding:12px 14px;margin:0 0 14px;
+  border:1px solid #26262a;border-radius:14px;
+  background:linear-gradient(180deg,#121214,#0f0f11)}
+.cb-find input{padding:9px 52px 9px 30px;font-size:12.5px;border-radius:10px;
+  background:#17171a;border-color:#2b2b30;color:#e6ebf2}
+.cb-find input:focus{border-color:var(--blu);background:#1c1c20;
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--blu) 16%, transparent)}
+.cb-l select,.cb-b{padding:9px 12px;font-size:12px;border-radius:10px;
+  background:#17171a;border-color:#2b2b30;color:#aab2bd}
+.cb-l select:hover,.cb-b:hover{border-color:#3d4047;background:#1c1c20;color:#e6ebf2}
+.cb-seg{border-radius:10px;border-color:#2b2b30}
+.cb-sg{padding:9px 14px;background:#17171a;font-size:12px}
+.cb-sg.on{background:var(--blu);color:#0d1a13}
+
+@media (max-width:860px){
+  .avi{width:30px;height:30px;border-radius:9px;font-size:11px}
+  table.lgrid tbody td{padding:11px 12px}
+}
 
 @media (max-width:860px){
   /* On a phone the grid stops being a grid. Each lead becomes a card, every
@@ -2598,6 +2643,33 @@ a.sp-g:hover{background:rgba(255,255,255,.05)}
 .sec-b.jv.live .jv-dot{background:#181818;animation:spPulse 1.1s ease-in-out infinite}
 .sec-b.jv.busy{border-color:var(--gold);color:var(--gold)}
 .sec-b.jv.busy .jv-dot{background:var(--gold)}
+
+/* ---- the always-there talk button ----
+   Bottom right, above everything, on the dashboard only. Green when idle,
+   solid and pulsing while she is listening, gold while she is thinking. */
+.jvfab{position:fixed;right:22px;bottom:22px;z-index:1290;
+  display:none;align-items:center;gap:9px;padding:13px 20px 13px 17px;
+  border-radius:999px;cursor:pointer;font-family:inherit;
+  background:linear-gradient(150deg,#5bb583,#3f8f65);border:1px solid #6cc494;
+  color:#0d1210;font-size:13px;font-weight:800;letter-spacing:.3px;
+  box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 6px rgba(91,181,131,.10);
+  transition:transform .14s,box-shadow .14s,filter .14s}
+body.homeview .jvfab{display:inline-flex}
+.jvfab:hover{transform:translateY(-2px);filter:brightness(1.06);
+  box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 0 8px rgba(91,181,131,.14)}
+.jvfab:active{transform:translateY(0)}
+.jvfab-i{font-size:16px;line-height:1}
+.jvfab.live{background:linear-gradient(150deg,#7fd8aa,#5bb583);
+  animation:jvFabPulse 1.15s ease-in-out infinite}
+.jvfab.busy{background:linear-gradient(150deg,#d4b06a,#b08f4e);border-color:#e0c084}
+@keyframes jvFabPulse{
+  0%,100%{box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 6px rgba(91,181,131,.16)}
+  50%    {box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 15px rgba(91,181,131,.04)}}
+@media (max-width:700px){
+  .jvfab{right:14px;bottom:78px;padding:12px 17px 12px 15px;font-size:12px}
+}
+/* while the CRM or a panel is full-screen it would sit on top of the content */
+body.dsheeting .jvfab{display:none}
 
 /* the waveform overlay, only while she is listening or talking */
 .jvpop{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:1300;
@@ -4061,171 +4133,6 @@ textarea.dw-pi.big{min-height:92px}
 }
 
 /* ================================================================
-   CRM — visual rebuild.  Overrides only; no markup depends on this.
-   The old table read as a spreadsheet: 38px rows, 12px grey-blue on
-   near-black, every field bordered, nothing dominant. A CRM row has
-   one subject — the person — and everything else is supporting.
-   ================================================================ */
-
-/* the table sits in a card, not on the page */
-.crmwrap-x{border:1px solid #26262a;border-radius:14px;overflow:hidden;
-  background:#111113}
-
-table.lgrid{border-collapse:separate;border-spacing:0}
-
-table.lgrid thead th{
-  padding:11px 14px;
-  font-size:9px;font-weight:700;letter-spacing:1.4px;
-  color:#5c6472;background:#141416;
-  border-bottom:1px solid #26262a}
-
-table.lgrid tbody td{
-  padding:9px 10px;height:auto;min-height:56px;
-  border-bottom:1px solid rgba(255,255,255,.045);
-  font-size:12.5px;color:#aeb6c2;vertical-align:middle}
-table.lgrid tbody tr:last-child td{border-bottom:none}
-table.lgrid tbody tr{transition:background .12s}
-table.lgrid tbody tr:nth-child(even) td{background:rgba(255,255,255,.012)}
-table.lgrid tbody tr:hover td{background:rgba(255,255,255,.045)}
-table.lgrid tbody tr.prirow td{background:rgba(168,85,247,.07)}
-table.lgrid tbody tr.prirow:hover td{background:rgba(168,85,247,.11)}
-
-/* the name is the row */
-table.lgrid .openlead{
-  font-size:14.5px;font-weight:650;color:#f2f6f4;letter-spacing:-.2px;
-  background:none;border:none;padding:0;cursor:pointer;text-align:left;
-  font-family:inherit;line-height:1.3}
-table.lgrid .openlead:hover{color:#fff;text-decoration:underline;
-  text-underline-offset:3px;text-decoration-color:#3d3d44}
-
-/* fields disappear until you want them */
-table.lgrid .cn,
-table.lgrid .ntbox,
-table.lgrid .cin-came{
-  padding:7px 9px;font-size:12.5px;color:#aeb6c2;border-radius:8px;
-  border:1px solid transparent;background:transparent}
-table.lgrid tr:hover .cn,
-table.lgrid tr:hover .ntbox,
-table.lgrid tr:hover .cin-came{border-color:#2b2b30;background:rgba(255,255,255,.02)}
-table.lgrid .cn:focus,
-table.lgrid .ntbox:focus,
-table.lgrid .cin-came:focus{
-  background:#1b1b1f;border-color:#4a4a55;color:#f0f6f3;
-  box-shadow:0 0 0 3px rgba(255,255,255,.04)}
-
-/* stage: a pill you can read across the room, not a form control */
-table.lgrid select.stsel{
-  width:100%;box-sizing:border-box;appearance:none;cursor:pointer;
-  padding:7px 10px;border-radius:999px;
-  font:700 11px/1.2 inherit;letter-spacing:.4px;
-  background:color-mix(in srgb, var(--sc) 15%, #17171a);
-  border:1px solid color-mix(in srgb, var(--sc) 42%, transparent);
-  outline:none;transition:background .12s,border-color .12s}
-table.lgrid select.stsel:hover{
-  background:color-mix(in srgb, var(--sc) 24%, #17171a);
-  border-color:color-mix(in srgb, var(--sc) 62%, transparent)}
-table.lgrid select.stsel option{background:#141416;color:#e9efec}
-
-/* source: quiet until touched */
-table.lgrid select.srcsel{
-  margin-bottom:5px;padding:4px 7px;border-radius:7px;
-  background:transparent;color:#6e7686;
-  font:600 10px/1.4 var(--mono,ui-monospace,monospace);letter-spacing:.6px;
-  border:1px solid transparent}
-table.lgrid tr:hover select.srcsel{border-color:#2b2b30;color:#9aa3b2}
-table.lgrid select.srcsel:focus{border-color:#4a4a55;color:#e9efec;background:#1b1b1f}
-
-/* chips under the name */
-.tchip{margin-top:5px;margin-right:6px;padding:2px 7px;border-radius:999px;
-  font-size:9.5px;font-weight:700;letter-spacing:.4px}
-.fuflag{margin-top:5px;padding:2px 7px;border-radius:999px;
-  font-size:9.5px;font-weight:700;letter-spacing:.4px;display:inline-block}
-
-/* reach buttons: present, not shouting */
-.lgrid .rbx{display:flex;gap:5px}
-.lgrid .rb{
-  padding:6px 11px;border-radius:8px;font-size:11px;font-weight:650;
-  background:#1a1a1e;border:1px solid #2b2b30;color:#8a93a3;
-  transition:background .12s,color .12s,border-color .12s}
-.lgrid tr:hover .rb{color:#c2cad6;border-color:#37373e}
-.lgrid .rb:hover:not([disabled]){background:#26262c;color:#fff;border-color:#4a4a55}
-.lgrid .rb[disabled]{opacity:.3}
-
-/* the delete × stays out of the way until the row is live */
-table.lgrid .delone{opacity:0;transition:opacity .12s}
-table.lgrid tr:hover .delone{opacity:.45}
-table.lgrid .delone:hover{opacity:1}
-
-/* priority dot */
-table.lgrid .prdot{width:11px;height:11px;border-radius:50%;
-  border:1.5px solid #3a3a42;background:transparent;cursor:pointer;
-  transition:border-color .12s,background .12s}
-table.lgrid tr:hover .prdot{border-color:#55555f}
-table.lgrid .prdot.on{background:#a855f7;border-color:#a855f7;
-  box-shadow:0 0 0 3px rgba(168,85,247,.18)}
-
-/* ---- control bar ---- */
-.cbar{gap:10px;padding:11px 13px;margin:0 0 14px;
-  border:1px solid #26262a;border-radius:14px;background:#111113}
-.cb-find input,.cb-l select,.cb-b,.cb-seg{border-radius:9px}
-.cb-find input{padding:8px 52px 8px 29px;font-size:12.5px;
-  background:#17171a;border-color:#2b2b30}
-.cb-find input:focus{border-color:#4a4a55;background:#1d1d21;
-  box-shadow:0 0 0 3px rgba(255,255,255,.04)}
-.cb-l select,.cb-b{padding:8px 11px;font-size:12px;
-  background:#17171a;border-color:#2b2b30}
-.cb-l select:hover,.cb-b:hover{border-color:#3d3d45;background:#1d1d21}
-.cb-seg{border-color:#2b2b30}
-.cb-sg{padding:8px 13px;background:#17171a}
-.cb-sg.on{background:#2c2c32;color:#fff}
-
-/* ---- stage strip ---- */
-.stgstrip{gap:8px}
-.stgstrip .sg{
-  padding:9px 14px;border-radius:999px;
-  border:1px solid color-mix(in srgb, var(--sc) 26%, transparent);
-  background:color-mix(in srgb, var(--sc) 7%, #131315);
-  font-weight:650;letter-spacing:.2px}
-.stgstrip .sg:hover{background:color-mix(in srgb, var(--sc) 15%, #131315);
-  border-color:color-mix(in srgb, var(--sc) 48%, transparent)}
-.stgstrip .sg.on{background:color-mix(in srgb, var(--sc) 22%, #131315);
-  border-color:var(--sc)}
-
-
-/* follow-up chip: a control, not a label */
-table.lgrid button.fuflag{
-  display:inline-flex;align-items:center;gap:5px;
-  margin-top:5px;padding:2px 8px;border-radius:999px;
-  font:700 9.5px/1.6 inherit;letter-spacing:.4px;
-  border:1px solid transparent;cursor:pointer;
-  transition:background .12s,border-color .12s,color .12s}
-table.lgrid button.fuflag i{font-style:normal;opacity:.5;font-size:11px}
-table.lgrid button.fuflag:hover i{opacity:1}
-table.lgrid button.fuflag.od{background:rgba(232,131,124,.14);color:#e8837c;
-  border-color:rgba(232,131,124,.3)}
-table.lgrid button.fuflag.od:hover{background:rgba(232,131,124,.24)}
-table.lgrid button.fuflag.tod{background:rgba(220,174,67,.14);color:#dcae43;
-  border-color:rgba(220,174,67,.3)}
-table.lgrid button.fuflag.tod:hover{background:rgba(220,174,67,.24)}
-table.lgrid button.fuflag.soon{background:rgba(255,255,255,.05);color:#7c869a;
-  border-color:rgba(255,255,255,.09)}
-table.lgrid button.fuflag.soon:hover{background:rgba(255,255,255,.1);color:#aab3c2}
-
-
-/* inline confirm in the control bar */
-.cb-ask{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;
-  border-radius:9px;background:rgba(232,131,124,.1);
-  border:1px solid rgba(232,131,124,.32);color:#e8a5a0;
-  font-size:11.5px;font-weight:650;white-space:nowrap}
-.cb-y,.cb-n{font:700 11px inherit;padding:5px 11px;border-radius:7px;
-  cursor:pointer;border:1px solid transparent}
-.cb-y{background:#e8837c;color:#17171a}
-.cb-y:hover{background:#f0968f}
-.cb-n{background:transparent;border-color:#3d3d45;color:#98a1b0}
-.cb-n:hover{border-color:#55555f;color:#dfe8e3}
-
-
-/* ================================================================
    CRM grid — read, don't edit.
    Form controls in forty rows is what made this look like a
    spreadsheet. The grid now shows text; the row opens the record.
@@ -4253,25 +4160,6 @@ table.lgrid tbody tr:hover{cursor:default}
 table.lgrid .openlead:after{content:"";display:inline-block;width:0}
 
 
-/* four reach buttons need to stay on one line */
-.lgrid .rbx{flex-wrap:nowrap}
-.lgrid .rb{padding:6px 9px;font-size:10.5px;letter-spacing:.1px}
-a.rb{display:inline-flex;align-items:center;justify-content:center;
-  text-decoration:none;line-height:1.5}
-.lgrid .rb.mail:hover:not([disabled]){background:#2a2118;color:#f0d9b0;
-  border-color:#6b5636}
-
-
-/* click-to-edit cells */
-td.ced{cursor:text}
-td.ced:hover{background:rgba(255,255,255,.055)!important;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
-.cedin{width:100%;box-sizing:border-box;padding:6px 8px;margin:0;
-  font:inherit;font-size:12.5px;color:#f0f6f3;background:#1b1b1f;
-  border:1px solid #4a4a55;border-radius:7px;outline:none;resize:none;
-  box-shadow:0 0 0 3px rgba(255,255,255,.05)}
-.cedin.multi{min-height:62px;line-height:1.45}
-.cedin::placeholder{color:#585f6c}
 
 </style>
 </head>
@@ -4345,6 +4233,14 @@ td.ced:hover{background:rgba(255,255,255,.055)!important;
         <button class="jv-stop" id="jv-stop" title="Stop">Stop</button>
       </div>
     </div>
+
+    <!-- The header button was there all along and he never found it, which is
+         the same as it not existing. This one is always on screen, bottom
+         right, and does nothing but open her ear. -->
+    <button class="jvfab" id="jvfab" title="Hold a conversation with Claudia">
+      <span class="jvfab-i" aria-hidden="true">&#127908;</span>
+      <span class="jvfab-t">Talk</span>
+    </button>
 
     <div class="dash" id="dash"></div>
 
@@ -9945,7 +9841,22 @@ function drawBasement(){
 
   var d='<defs>'
    +'<linearGradient id="bfl" x1="0" y1="0" x2="0" y2="1">'
-   +'<stop offset="0" stop-color="#15171c"/><stop offset="1" stop-color="#0d0f13"/></linearGradient>'
+   +'<stop offset="0" stop-color="#24272e"/><stop offset="1" stop-color="#171a1f"/></linearGradient>'
+   /* Every room down here was drawn on near-black, so the whole floor read as
+      one dark hole with faint furniture in it. These are the materials that
+      give each zone something to sit on. */
+   +'<linearGradient id="studioFl" x1="0" y1="0" x2="1" y2="1">'
+   +'<stop offset="0" stop-color="#1b2129"/><stop offset="1" stop-color="#12161c"/></linearGradient>'
+   +'<linearGradient id="rugG" x1="0" y1="0" x2="1" y2="1">'
+   +'<stop offset="0" stop-color="#4a3a56"/><stop offset="1" stop-color="#33283c"/></linearGradient>'
+   +'<linearGradient id="woodG" x1="0" y1="0" x2="0" y2="1">'
+   +'<stop offset="0" stop-color="#4a3524"/><stop offset="1" stop-color="#33251a"/></linearGradient>'
+   +'<radialGradient id="warmPool" cx=".5" cy=".5" r=".5">'
+   +'<stop offset="0" stop-color="#ffcf8a" stop-opacity=".30"/>'
+   +'<stop offset="1" stop-color="#ffcf8a" stop-opacity="0"/></radialGradient>'
+   +'<radialGradient id="coolPool" cx=".5" cy=".5" r=".5">'
+   +'<stop offset="0" stop-color="#9fd4ff" stop-opacity=".22"/>'
+   +'<stop offset="1" stop-color="#9fd4ff" stop-opacity="0"/></radialGradient>'
    +'<radialGradient id="growG" cx=".5" cy=".5" r=".5">'
    +'<stop offset="0" stop-color="#e05a9f" stop-opacity=".45"/>'
    +'<stop offset="1" stop-color="#e05a9f" stop-opacity="0"/></radialGradient>'
@@ -9971,9 +9882,9 @@ function drawBasement(){
   /* poured slab, saw cuts */
   s+='<rect x="34" y="34" width="1112" height="932" fill="url(#bfl)"/>';
   for(var r=0;r<Math.ceil(932/78);r++)
-    s+='<line x1="34" y1="'+(34+r*78)+'" x2="1146" y2="'+(34+r*78)+'" stroke="#090b0e" stroke-width="1.4" opacity=".75"/>';
+    s+='<line x1="34" y1="'+(34+r*78)+'" x2="1146" y2="'+(34+r*78)+'" stroke="#12151a" stroke-width="1.4" opacity=".8"/>';
   for(var c=0;c<Math.ceil(1112/78);c++)
-    s+='<line x1="'+(34+c*78)+'" y1="34" x2="'+(34+c*78)+'" y2="966" stroke="#090b0e" stroke-width="1.4" opacity=".75"/>';
+    s+='<line x1="'+(34+c*78)+'" y1="34" x2="'+(34+c*78)+'" y2="966" stroke="#12151a" stroke-width="1.4" opacity=".8"/>';
 
   /* columns */
   for(var cr=0;cr<4;cr++)for(var cc=0;cc<6;cc++){
@@ -10049,7 +9960,7 @@ function drawBasement(){
   (function(){
     /* Two tiers and out. The floor below belongs to the studio now. */
     var TH={x:56,y:206,w:612,h:392};
-    var FLOORC="#08090b", WALLC="#101216", TRIM="#1b1f26";
+    var FLOORC="#101318", WALLC="#1b212a", TRIM="#2a323d";
 
     /* the shell */
     s+='<rect x="'+(TH.x-6)+'" y="'+(TH.y-6)+'" width="'+(TH.w+12)+'" height="'+(TH.h+12)+'" rx="12" fill="'+TRIM+'"/>';
@@ -10085,6 +9996,28 @@ function drawBasement(){
          +'<circle cx="'+(spx+9)+'" cy="'+(SCY+4+oy)+'" r="2.4" fill="#0a0c0f"/>';});
     });
 
+    /* ---- an aisle runner, so the rows have something to sit on ---- */
+    s+='<rect x="'+(TH.x+16)+'" y="'+(TH.y+188)+'" width="'+(TH.w-32)+'" height="'+(TH.h-208)+'" rx="4" fill="#191a20"/>';
+    s+='<rect x="'+(TH.x+16)+'" y="'+(TH.y+188)+'" width="'+(TH.w-32)+'" height="'+(TH.h-208)+'" rx="4" fill="none" stroke="#2e313b" stroke-width="1.2"/>';
+    s+='<rect x="'+(TH.x+TH.w/2-30)+'" y="'+(TH.y+188)+'" width="60" height="'+(TH.h-208)+'" fill="#22242c" opacity=".8"/>';
+
+    /* ---- framed one-sheets down both slat walls ---- */
+    (function(){
+      var art=[["#7d3f39","EXODUS"],["#405e4d","BANGKOK"],["#6d5a2a","THE ROAD"],["#42395c","SAIGON"]];
+      art.forEach(function(a,ai){
+        var side=ai%2===0, py5=TH.y+196+Math.floor(ai/2)*112;
+        var px5=side ? TH.x+3 : TH.x+TH.w-29;
+        s+='<ellipse cx="'+(px5+13)+'" cy="'+(py5+24)+'" rx="24" ry="32" fill="url(#warmPool)" opacity=".5"/>';
+        s+='<rect x="'+px5+'" y="'+py5+'" width="26" height="46" rx="2" fill="#0a0c0f"/>';
+        s+='<rect x="'+(px5+2.5)+'" y="'+(py5+2.5)+'" width="21" height="41" rx="1.4" fill="'+a[0]+'" opacity=".85"/>';
+        s+='<rect x="'+(px5+5)+'" y="'+(py5+28)+'" width="16" height="2.4" rx="1.2" fill="#f2efe6" opacity=".7"/>';
+        s+='<text x="'+(px5+13)+'" y="'+(py5+22)+'" text-anchor="middle" font-size="4.6" font-weight="800" '
+          +'letter-spacing=".6" fill="#f2efe6" opacity=".9">'+a[1]+'</text>';
+        /* a picture light over each */
+        s+='<rect x="'+(px5+8)+'" y="'+(py5-5)+'" width="10" height="2.6" rx="1.3" fill="#c9a86a" opacity=".75"/>';
+      });
+    })();
+
     /* ---- the recliners ---- */
     function seat(cx,cy,sc){
       return '<g transform="translate('+cx+','+cy+') scale('+sc+')">'
@@ -10115,6 +10048,25 @@ function drawBasement(){
       var gap=(TH.w-152)/4;
       for(var c=0;c<5;c++) s+=seat(TH.x+76+c*gap, r.y, r.sc);
     });
+
+    /* ---- the back of house: two doorways with light spilling under them ---- */
+    (function(){
+      var RY2=TH.y+TH.h-30;
+      s+='<rect x="'+(TH.x+16)+'" y="'+RY2+'" width="'+(TH.w-32)+'" height="16" rx="3" fill="#171b22"/>';
+      s+='<rect x="'+(TH.x+16)+'" y="'+RY2+'" width="'+(TH.w-32)+'" height="4" rx="2" fill="#222833"/>';
+      [TH.x+108, TH.x+TH.w-152].forEach(function(dxx){
+        s+='<rect x="'+dxx+'" y="'+(RY2+1)+'" width="44" height="14" rx="2" fill="#0d1116"/>';
+        s+='<rect x="'+(dxx+2)+'" y="'+(RY2+11)+'" width="40" height="3" rx="1.5" fill="#a3d6ba" opacity=".55"/>';
+        s+='<ellipse cx="'+(dxx+22)+'" cy="'+(RY2+18)+'" rx="34" ry="14" fill="url(#stepG)" opacity=".7"/>';
+        s+='<circle cx="'+(dxx+38)+'" cy="'+(RY2+8)+'" r="1.6" fill="#5f6b7d"/>';
+      });
+      /* the little green exit signs above them */
+      [TH.x+108, TH.x+TH.w-152].forEach(function(dxx){
+        s+='<rect x="'+(dxx+13)+'" y="'+(RY2-11)+'" width="18" height="8" rx="1.6" fill="#12291f"/>';
+        s+='<text x="'+(dxx+22)+'" y="'+(RY2-4.6)+'" text-anchor="middle" font-size="5" font-weight="800" '
+          +'letter-spacing=".8" fill="#5ee3a4" opacity=".8">EXIT</text>';
+      });
+    })();
 
     /* ---- floor lighting, cool, down both walls ---- */
     [TH.x+32, TH.x+TH.w-32].forEach(function(lx){
@@ -10162,20 +10114,30 @@ function drawBasement(){
     /* ---------- the chill room, left, nearest the theatre ---------- */
     (function(){
       var CR={x:LG.x+10, y:RY, w:RW, h:RH};
-      s+='<rect x="'+CR.x+'" y="'+CR.y+'" width="'+CR.w+'" height="'+CR.h+'" rx="6" fill="#191b21"/>';
+      /* Warm wood underfoot. The old floor was the same charcoal as the slab,
+         so the room had no edge and nothing to sit on. */
+      s+='<rect x="'+CR.x+'" y="'+CR.y+'" width="'+CR.w+'" height="'+CR.h+'" rx="6" fill="url(#woodG)"/>';
+      for(var pk=0;pk*22<CR.w;pk++)
+        s+='<line x1="'+(CR.x+pk*22)+'" y1="'+CR.y+'" x2="'+(CR.x+pk*22)+'" y2="'+(CR.y+CR.h)+'" stroke="#2a1e15" stroke-width="1" opacity=".6"/>';
       /* warm pool of light, low and soft */
-      s+='<ellipse cx="'+(CR.x+CR.w/2)+'" cy="'+(CR.y+CR.h/2)+'" rx="'+(CR.w*0.46)+'" ry="'+(CR.h*0.4)+'" fill="url(#lampB)"/>';
-      /* a rug */
-      s+='<rect x="'+(CR.x+22)+'" y="'+(CR.y+74)+'" width="'+(CR.w-44)+'" height="86" rx="5" fill="#2a2230"/>';
-      s+='<rect x="'+(CR.x+30)+'" y="'+(CR.y+82)+'" width="'+(CR.w-60)+'" height="70" rx="4" fill="none" stroke="#443a4e" stroke-width="1.4"/>';
+      s+='<ellipse cx="'+(CR.x+CR.w/2)+'" cy="'+(CR.y+CR.h/2)+'" rx="'+(CR.w*0.52)+'" ry="'+(CR.h*0.46)+'" fill="url(#warmPool)"/>';
+      /* a rug with a pattern in it */
+      s+='<rect x="'+(CR.x+22)+'" y="'+(CR.y+74)+'" width="'+(CR.w-44)+'" height="86" rx="5" fill="url(#rugG)"/>';
+      s+='<rect x="'+(CR.x+30)+'" y="'+(CR.y+82)+'" width="'+(CR.w-60)+'" height="70" rx="4" fill="none" stroke="#6b5a7d" stroke-width="1.4"/>';
+      s+='<rect x="'+(CR.x+38)+'" y="'+(CR.y+90)+'" width="'+(CR.w-76)+'" height="54" rx="3" fill="none" stroke="#8a76a0" stroke-width="1" opacity=".5"/>';
+      for(var rz=0;rz<5;rz++)
+        s+='<circle cx="'+(CR.x+CR.w/2+(rz-2)*26)+'" cy="'+(CR.y+117)+'" r="5" fill="#8a76a0" opacity=".35"/>';
       /* sectional couch along the back and down the left */
-      s+='<rect x="'+(CR.x+18)+'" y="'+(CR.y+30)+'" width="'+(CR.w-92)+'" height="34" rx="9" fill="#2e2733"/>';
-      s+='<rect x="'+(CR.x+18)+'" y="'+(CR.y+30)+'" width="'+(CR.w-92)+'" height="12" rx="6" fill="#3a3140"/>';
-      s+='<rect x="'+(CR.x+18)+'" y="'+(CR.y+62)+'" width="30" height="86" rx="9" fill="#2e2733"/>';
-      s+='<rect x="'+(CR.x+18)+'" y="'+(CR.y+62)+'" width="30" height="10" rx="5" fill="#3a3140"/>';
+      s+='<rect x="'+(CR.x+22)+'" y="'+(CR.y+36)+'" width="'+(CR.w-92)+'" height="34" rx="9" fill="#000" opacity=".4"/>';
+      s+='<rect x="'+(CR.x+18)+'" y="'+(CR.y+30)+'" width="'+(CR.w-92)+'" height="34" rx="9" fill="#3d3348"/>';
+      s+='<rect x="'+(CR.x+18)+'" y="'+(CR.y+30)+'" width="'+(CR.w-92)+'" height="12" rx="6" fill="#4d4159"/>';
+      s+='<rect x="'+(CR.x+18)+'" y="'+(CR.y+62)+'" width="30" height="86" rx="9" fill="#3d3348"/>';
+      s+='<rect x="'+(CR.x+18)+'" y="'+(CR.y+62)+'" width="30" height="10" rx="5" fill="#4d4159"/>';
       /* cushions */
       [0,1,2].forEach(function(ci){
-        s+='<rect x="'+(CR.x+26+ci*34)+'" y="'+(CR.y+34)+'" width="26" height="20" rx="4" fill="#463a4e"/>';});
+        s+='<rect x="'+(CR.x+26+ci*34)+'" y="'+(CR.y+34)+'" width="26" height="20" rx="4" fill="'
+          +["#7d5a8f","#5f7d6a","#8f6a4a"][ci]+'" opacity=".9"/>';
+        s+='<rect x="'+(CR.x+29+ci*34)+'" y="'+(CR.y+37)+'" width="20" height="6" rx="3" fill="#fff" opacity=".1"/>';});
       /* coffee table with the bong on it */
       var TX=CR.x+CR.w/2+2, TY=CR.y+104;
       s+='<rect x="'+(TX-34)+'" y="'+TY+'" width="68" height="42" rx="5" fill="#241c16"/>';
@@ -10206,11 +10168,37 @@ function drawBasement(){
       /* wall art */
       s+='<rect x="'+(CR.x+CR.w-56)+'" y="'+(CR.y+62)+'" width="26" height="20" rx="2" fill="#2a2230"/>';
       s+='<rect x="'+(CR.x+CR.w-53)+'" y="'+(CR.y+65)+'" width="20" height="14" fill="#6d4a7a" opacity=".8"/>';
+      /* a television on the far wall, on, throwing light back into the room */
+      (function(){
+        var tvw=Math.min(120, CR.w*0.44), tvx=CR.x+18, tvy=CR.y+8;
+        s+='<rect x="'+(tvx-3)+'" y="'+(tvy-3)+'" width="'+(tvw+6)+'" height="26" rx="3" fill="#0a0c0f"/>';
+        s+='<rect x="'+tvx+'" y="'+tvy+'" width="'+tvw+'" height="20" rx="1.6" fill="#1b2733"/>';
+        s+='<rect x="'+(tvx+3)+'" y="'+(tvy+3)+'" width="'+(tvw-6)+'" height="14" rx="1" fill="#2f5f7d" opacity=".7"/>';
+        s+='<ellipse cx="'+(tvx+tvw/2)+'" cy="'+(tvy+34)+'" rx="'+(tvw*0.6)+'" ry="20" fill="url(#coolPool)"/>';
+      })();
+      /* a floor lamp in the corner with its own pool */
+      (function(){
+        var lx3=CR.x+CR.w-24, ly4=CR.y+CR.h-40;
+        s+='<ellipse cx="'+lx3+'" cy="'+(ly4+6)+'" rx="26" ry="20" fill="url(#warmPool)"/>';
+        s+='<ellipse cx="'+lx3+'" cy="'+(ly4+8)+'" rx="9" ry="4" fill="#000" opacity=".45"/>';
+        s+='<rect x="'+(lx3-1.6)+'" y="'+(ly4-24)+'" width="3.2" height="30" fill="#4a4136"/>';
+        s+='<path d="M'+(lx3-11)+' '+(ly4-24)+' l3 -13 h16 l3 13 z" fill="#c9b489"/>';
+        s+='<path d="M'+(lx3-11)+' '+(ly4-24)+' l3 -13 h16 l3 13 z" fill="#ffd9a0" opacity=".35"/>';
+      })();
+      /* a plant by the door */
+      (function(){
+        var px4=CR.x+14, py4=CR.y+CR.h-26;
+        s+='<ellipse cx="'+px4+'" cy="'+(py4+7)+'" rx="12" ry="5" fill="#000" opacity=".42"/>';
+        s+='<path d="M'+(px4-8)+' '+(py4+6)+' l2 -13 h12 l2 13 z" fill="#3b3229"/>';
+        [[-16,-24,-19,-8],[16,-24,19,-8],[0,-32,0,-6],[-10,-30,-13,-16],[10,-30,13,-16]].forEach(function(a){
+          s+='<path d="M'+px4+' '+(py4-6)+' Q'+(px4+a[0])+' '+(py4+a[1])+' '+(px4+a[2])+' '+(py4+a[3])+'" '
+            +'stroke="#347f52" stroke-width="2.4" fill="none" stroke-linecap="round"/>';});
+      })();
       /* the walls, and a doorway on the theatre side */
-      s+='<rect x="'+CR.x+'" y="'+CR.y+'" width="'+CR.w+'" height="'+CR.h+'" rx="6" fill="none" stroke="#3a3140" stroke-width="2.2"/>';
+      s+='<rect x="'+CR.x+'" y="'+CR.y+'" width="'+CR.w+'" height="'+CR.h+'" rx="6" fill="none" stroke="#6b5a7d" stroke-width="2.2"/>';
       s+='<rect x="'+(CR.x-1.4)+'" y="'+(CR.y+CR.h/2-20)+'" width="2.8" height="40" fill="#191b21"/>';
-      s+='<text x="'+(CR.x+CR.w/2)+'" y="'+(CR.y+CR.h-9)+'" text-anchor="middle" font-size="7.5" '
-        +'font-weight="800" letter-spacing="3.4" fill="#a58cb8">THE LOUNGE</text>';
+      s+='<text x="'+(CR.x+CR.w/2)+'" y="'+(CR.y+CR.h-9)+'" text-anchor="middle" font-size="9" '
+        +'font-weight="800" letter-spacing="4" fill="#c9aede">THE LOUNGE</text>';
     })();
 
     /* ---------- the grow room, right, sealed ---------- */
@@ -10288,34 +10276,56 @@ function drawBasement(){
 
       /* the edit suite */
       var EX2=LG.x+14;
-      s+='<rect x="'+EX2+'" y="'+BY+'" width="'+BW+'" height="'+BH+'" rx="6" fill="#0c0f14" stroke="#232a35" stroke-width="1.5"/>';
+      s+='<rect x="'+EX2+'" y="'+BY+'" width="'+BW+'" height="'+BH+'" rx="6" fill="#171c23" stroke="#3a4657" stroke-width="1.5"/>';
+      /* acoustic foam on the back wall — the thing that says edit room */
+      for(var af=0;af*15<BW-16;af++)
+        for(var af2=0;af2<2;af2++)
+          s+='<path d="M'+(EX2+9+af*15)+' '+(BY+4+af2*8)+' l7 0 l-3.5 7 z" fill="#232b36" opacity=".85"/>';
+      /* the light the monitors throw back at the room */
+      s+='<ellipse cx="'+(EX2+BW/2)+'" cy="'+(BY+34)+'" rx="'+(BW*0.44)+'" ry="26" fill="url(#coolPool)"/>';
       /* two edit bays against the far wall, each a desk and a pair of screens */
       [0,1].forEach(function(bi){
         var bx=EX2+22+bi*(BW/2);
-        s+='<rect x="'+bx+'" y="'+(BY+20)+'" width="'+(BW/2-34)+'" height="9" rx="2" fill="#191e26"/>';
+        s+='<rect x="'+(bx+2)+'" y="'+(BY+23)+'" width="'+(BW/2-34)+'" height="9" rx="2" fill="#000" opacity=".45"/>';
+        s+='<rect x="'+bx+'" y="'+(BY+20)+'" width="'+(BW/2-34)+'" height="9" rx="2" fill="#33251a"/>';
+        s+='<rect x="'+bx+'" y="'+(BY+20)+'" width="'+(BW/2-34)+'" height="3" rx="1.5" fill="#4a3524"/>';
         [0,1].forEach(function(mi){
           var mx=bx+4+mi*((BW/2-42)/2);
           s+='<rect x="'+mx+'" y="'+(BY+6)+'" width="'+((BW/2-46)/2)+'" height="12" rx="1.6" fill="#0a0a0a" stroke="#1e2833" stroke-width=".8"/>';
-          s+='<rect x="'+(mx+2)+'" y="'+(BY+8)+'" width="'+((BW/2-54)/2)+'" height="8" rx="1" fill="#2e2e2e" opacity="'+(0.4+bi*0.2)+'"/>';
+          s+='<rect x="'+(mx+2)+'" y="'+(BY+8)+'" width="'+((BW/2-54)/2)+'" height="8" rx="1" fill="'
+            +(mi?"#2f4a5f":"#3a4a32")+'" opacity="'+(0.7+bi*0.15)+'"/>';
+          /* a timeline across the lower monitor, the way an edit actually looks */
+          if(mi) s+='<rect x="'+(mx+3)+'" y="'+(BY+13)+'" width="'+((BW/2-58)/2)+'" height="2" rx="1" fill="#7fd8aa" opacity=".7"/>';
         });
         s+=person(bx+(BW/2-34)/2, BY+44, 0.86, bi?"#26303c":"#2a2434", bi?"#1e1712":"#2a1d13");
       });
-      s+='<text x="'+(EX2+BW/2)+'" y="'+(BY+BH-8)+'" text-anchor="middle" font-size="6.4" '
-        +'font-weight="800" letter-spacing="2.2" fill="#4b5563">EDIT SUITE</text>';
+      s+='<text x="'+(EX2+BW/2)+'" y="'+(BY+BH-8)+'" text-anchor="middle" font-size="8.5" '
+        +'font-weight="800" letter-spacing="3.2" fill="#8fa3b8">EDIT SUITE</text>';
 
       /* the green room */
       var GX2=EX2+BW+16;
-      s+='<rect x="'+GX2+'" y="'+BY+'" width="'+BW+'" height="'+BH+'" rx="6" fill="#0d1013" stroke="#232a35" stroke-width="1.5"/>';
+      s+='<rect x="'+GX2+'" y="'+BY+'" width="'+BW+'" height="'+BH+'" rx="6" fill="#1a2119" stroke="#3a4657" stroke-width="1.5"/>';
+      s+='<ellipse cx="'+(GX2+BW/2)+'" cy="'+(BY+BH/2)+'" rx="'+(BW*0.46)+'" ry="'+(BH*0.44)+'" fill="url(#warmPool)"/>';
+      /* a rug and a mirror with bulbs round it — it is a green room */
+      s+='<rect x="'+(GX2+26)+'" y="'+(BY+56)+'" width="'+(BW-52)+'" height="30" rx="4" fill="#2f3a2c" opacity=".7"/>';
+      s+='<rect x="'+(GX2+14)+'" y="'+(BY+8)+'" width="30" height="22" rx="2" fill="#0f1318"/>';
+      s+='<rect x="'+(GX2+17)+'" y="'+(BY+11)+'" width="24" height="16" rx="1.4" fill="#3a4a52" opacity=".8"/>';
+      for(var gb=0;gb<5;gb++){
+        s+='<circle cx="'+(GX2+18+gb*6)+'" cy="'+(BY+6)+'" r="1.8" fill="#ffe4a8" opacity=".9"/>';}
       /* a couch, a table, a monitor showing the programme output */
-      s+='<rect x="'+(GX2+18)+'" y="'+(BY+34)+'" width="'+(BW-36)+'" height="20" rx="7" fill="#1b1f27"/>';
-      s+='<rect x="'+(GX2+18)+'" y="'+(BY+30)+'" width="'+(BW-36)+'" height="9" rx="4.5" fill="#232833"/>';
+      s+='<rect x="'+(GX2+21)+'" y="'+(BY+37)+'" width="'+(BW-36)+'" height="20" rx="7" fill="#000" opacity=".4"/>';
+      s+='<rect x="'+(GX2+18)+'" y="'+(BY+34)+'" width="'+(BW-36)+'" height="20" rx="7" fill="#2f4437"/>';
+      s+='<rect x="'+(GX2+18)+'" y="'+(BY+30)+'" width="'+(BW-36)+'" height="9" rx="4.5" fill="#3d5745"/>';
+      [0,1,2].forEach(function(gp){
+        s+='<rect x="'+(GX2+26+gp*((BW-52)/3))+'" y="'+(BY+33)+'" width="18" height="12" rx="3" fill="'
+          +["#8f6a4a","#7d5a8f","#5f7d6a"][gp]+'" opacity=".9"/>';});
       s+='<rect x="'+(GX2+BW/2-20)+'" y="'+(BY+60)+'" width="40" height="7" rx="2" fill="#191e26"/>';
       s+='<rect x="'+(GX2+BW-58)+'" y="'+(BY+8)+'" width="42" height="24" rx="2" fill="#0a0a0a" stroke="#1e2833" stroke-width="1"/>';
       s+='<rect x="'+(GX2+BW-55)+'" y="'+(BY+11)+'" width="36" height="18" rx="1.4" fill="#2a0b0b" opacity=".7"/>';
       s+='<text x="'+(GX2+BW-37)+'" y="'+(BY+23)+'" text-anchor="middle" font-size="5.4" font-weight="800" fill="#ff8078">ON AIR</text>';
       s+=person(GX2+40, BY+30, 0.9, "#2f3a2c", "#241a12");
-      s+='<text x="'+(GX2+BW/2)+'" y="'+(BY+BH-8)+'" text-anchor="middle" font-size="6.4" '
-        +'font-weight="800" letter-spacing="2.2" fill="#4b5563">GREEN ROOM</text>';
+      s+='<text x="'+(GX2+BW/2)+'" y="'+(BY+BH-8)+'" text-anchor="middle" font-size="8.5" '
+        +'font-weight="800" letter-spacing="3.2" fill="#8fb89a">GREEN ROOM</text>';
     })();
 
     /* =================== EXODUS NEWS — THE STUDIO ===================
@@ -10329,8 +10339,33 @@ function drawBasement(){
        his dashboard too. */
     var ST={x:56, y:626, w:1200, h:334};
 
-    s+='<rect x="'+ST.x+'" y="'+ST.y+'" width="'+ST.w+'" height="'+ST.h+'" rx="9" fill="#080a0e"/>';
-    s+='<rect x="'+ST.x+'" y="'+ST.y+'" width="'+ST.w+'" height="'+ST.h+'" rx="9" fill="none" stroke="#2a3140" stroke-width="2"/>';
+    s+='<rect x="'+ST.x+'" y="'+ST.y+'" width="'+ST.w+'" height="'+ST.h+'" rx="9" fill="url(#studioFl)"/>';
+    /* A cyclorama along the back wall. Every television studio has one and it
+       is the single thing that stops the room reading as a black rectangle. */
+    s+='<path d="M'+(ST.x+8)+' '+(ST.y+118)+' L'+(ST.x+8)+' '+(ST.y+26)+' Q'+(ST.x+8)+' '+(ST.y+8)+' '+(ST.x+30)+' '+(ST.y+8)+' '
+      +'L'+(ST.x+ST.w-30)+' '+(ST.y+8)+' Q'+(ST.x+ST.w-8)+' '+(ST.y+8)+' '+(ST.x+ST.w-8)+' '+(ST.y+26)+' '
+      +'L'+(ST.x+ST.w-8)+' '+(ST.y+118)+' Z" fill="#1c2732" opacity=".9"/>';
+    s+='<path d="M'+(ST.x+8)+' '+(ST.y+118)+' L'+(ST.x+8)+' '+(ST.y+26)+' Q'+(ST.x+8)+' '+(ST.y+8)+' '+(ST.x+30)+' '+(ST.y+8)+' '
+      +'L'+(ST.x+ST.w-30)+' '+(ST.y+8)+' Q'+(ST.x+ST.w-8)+' '+(ST.y+8)+' '+(ST.x+ST.w-8)+' '+(ST.y+26)+' '
+      +'L'+(ST.x+ST.w-8)+' '+(ST.y+118)+' Z" fill="url(#coolPool)"/>';
+    /* the polished sweep where the lights hit the floor */
+    s+='<ellipse cx="'+(ST.x+ST.w/2)+'" cy="'+(ST.y+ST.h*0.52)+'" rx="'+(ST.w*0.42)+'" ry="'+(ST.h*0.34)+'" fill="#2b3540" opacity=".22"/>';
+    s+='<rect x="'+ST.x+'" y="'+ST.y+'" width="'+ST.w+'" height="'+ST.h+'" rx="9" fill="none" stroke="#3a4657" stroke-width="2"/>';
+
+    /* The floor roundel. Every studio has the network mark painted on the deck
+       between the sets and the cameras, and it is what stops the middle of the
+       room reading as a hole. Drawn first so every camera, chair and cable
+       lands on top of it. */
+    (function(){
+      var RX=ST.x+ST.w/2, RY3=ST.y+ST.h*0.62;
+      s+='<ellipse cx="'+RX+'" cy="'+RY3+'" rx="196" ry="74" fill="none" stroke="#3f6f8a" stroke-width="2.4" opacity=".3"/>';
+      s+='<ellipse cx="'+RX+'" cy="'+RY3+'" rx="178" ry="66" fill="#2b3540" opacity=".2"/>';
+      s+='<ellipse cx="'+RX+'" cy="'+RY3+'" rx="150" ry="54" fill="none" stroke="#6ab58c" stroke-width="1.4" opacity=".22"/>';
+      s+='<text x="'+RX+'" y="'+(RY3+9)+'" text-anchor="middle" font-size="30" font-weight="800" '
+        +'letter-spacing="16" fill="#6ab58c" opacity=".13">EXODUS</text>';
+      s+='<text x="'+RX+'" y="'+(RY3+26)+'" text-anchor="middle" font-size="7.5" font-weight="800" '
+        +'letter-spacing="7" fill="#8fa3b8" opacity=".22">NEWS NETWORK</text>';
+    })();
     /* camera marks on a painted studio floor */
     for(var sg=1;sg*56<ST.h;sg++)
       s+='<line x1="'+(ST.x+3)+'" y1="'+(ST.y+sg*56)+'" x2="'+(ST.x+ST.w-3)+'" y2="'+(ST.y+sg*56)+'" stroke="#101419" stroke-width="1.2"/>';
@@ -10353,18 +10388,137 @@ function drawBasement(){
     s+='<circle cx="'+(ST.x+ST.w/2-46)+'" cy="'+(ST.y+19)+'" r="3.8" fill="#ff5c50"/>';
     s+='<text x="'+(ST.x+ST.w/2+8)+'" y="'+(ST.y+23)+'" text-anchor="middle" font-size="8.5" font-weight="800" letter-spacing="2.8" fill="#ff8078">ON AIR &middot; 24/7</text>';
 
+    /* ================= WHAT MAKES IT A ROOM AND NOT A DIAGRAM =================
+       Cable runs, plants, a monitor wall, chairs that are not at a desk, a
+       water cooler, coffee. Upstairs has all of this and the basement had none
+       of it, which is the whole difference between the two floors. */
+
+    /* gaffer-taped cable snake running the length of the floor */
+    s+='<path d="M'+(ST.x+16)+' '+(ST.y+ST.h-30)+' q120 -22 240 0 q120 22 240 0 q120 -22 240 0 q120 22 226 -8" '
+      +'stroke="#0c1014" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/>';
+    s+='<path d="M'+(ST.x+16)+' '+(ST.y+ST.h-30)+' q120 -22 240 0 q120 22 240 0 q120 -22 240 0 q120 22 226 -8" '
+      +'stroke="#2f6b8f" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/>';
+    for(var gt=0;gt<9;gt++){
+      var gx=ST.x+70+gt*((ST.w-150)/8);
+      s+='<rect x="'+(gx-9)+'" y="'+(ST.y+ST.h-38)+'" width="18" height="17" rx="2" fill="#3d3527" opacity=".7"/>';
+    }
+
+    /* floor marks, the T the anchor stands on */
+    [[ST.x+180,ST.y+250],[ST.x+571,ST.y+272],[ST.x+953,ST.y+250]].forEach(function(mk){
+      s+='<path d="M'+(mk[0]-14)+' '+mk[1]+' h28 M'+mk[0]+' '+mk[1]+' v16" stroke="#c8a86a" stroke-width="2.4" opacity=".5" stroke-linecap="round"/>';
+    });
+
+    /* a studio plant in each front corner, big enough to read */
+    function bigPlant(px,py,sc){
+      sc=sc||1;
+      var g='<g transform="translate('+px+','+py+') scale('+sc+')">';
+      g+='<ellipse cx="0" cy="14" rx="22" ry="8" fill="#000" opacity=".45"/>';
+      g+='<path d="M-15 12 l3 -22 h24 l3 22 z" fill="#3b3229"/>';
+      g+='<path d="M-15 12 l3 -22 h24 l3 22 z" fill="none" stroke="#4d4136" stroke-width="1.2"/>';
+      g+='<ellipse cx="0" cy="-10" rx="13" ry="5" fill="#221a12"/>';
+      [[-24,-40,-46,-16],[24,-40,46,-16],[0,-52,0,-12],[-16,-50,-30,-30],[16,-50,30,-30]].forEach(function(a){
+        g+='<path d="M0 -12 Q'+a[0]+' '+a[1]+' '+a[2]+' '+a[3]+'" stroke="#2f7d4d" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+        g+='<ellipse cx="'+a[2]+'" cy="'+a[3]+'" rx="9" ry="5" fill="#347f52" opacity=".85" transform="rotate('+(a[0]<0?-25:25)+' '+a[2]+' '+a[3]+')"/>';
+      });
+      return g+'</g>';
+    }
+    s+=bigPlant(ST.x+34, ST.y+ST.h-46, 1);
+    s+=bigPlant(ST.x+ST.w-186, ST.y+ST.h-46, 0.92);
+
+    /* the water cooler and a coffee trolley, against the left wall */
+    (function(){
+      var wx3=ST.x+30, wy3=ST.y+184;
+      s+='<ellipse cx="'+wx3+'" cy="'+(wy3+30)+'" rx="15" ry="6" fill="#000" opacity=".45"/>';
+      s+='<rect x="'+(wx3-11)+'" y="'+(wy3-4)+'" width="22" height="34" rx="3" fill="#20262f"/>';
+      s+='<rect x="'+(wx3-11)+'" y="'+(wy3-4)+'" width="22" height="8" rx="3" fill="#2b333e"/>';
+      s+='<path d="M'+(wx3-9)+' '+(wy3-4)+' l3 -20 h12 l3 20 z" fill="#3f6f8a" opacity=".75"/>';
+      s+='<path d="M'+(wx3-9)+' '+(wy3-4)+' l1.6 -11 h14.8 l1.6 11 z" fill="#6fb6d8" opacity=".55"/>';
+      s+='<rect x="'+(wx3-4)+'" y="'+(wy3+12)+'" width="8" height="4" rx="1.6" fill="#0e1216"/>';
+
+      var cx3=ST.x+32, cy3=ST.y+300;
+      s+='<ellipse cx="'+cx3+'" cy="'+(cy3+22)+'" rx="20" ry="7" fill="#000" opacity=".45"/>';
+      s+='<rect x="'+(cx3-18)+'" y="'+(cy3-2)+'" width="36" height="22" rx="3" fill="#2a2118"/>';
+      s+='<rect x="'+(cx3-18)+'" y="'+(cy3-2)+'" width="36" height="7" rx="3" fill="#382c20"/>';
+      s+='<rect x="'+(cx3-13)+'" y="'+(cy3-16)+'" width="12" height="14" rx="2" fill="#1d232b"/>';
+      s+='<rect x="'+(cx3-11)+'" y="'+(cy3-8)+'" width="8" height="5" rx="1" fill="#8f5a2a" opacity=".85"/>';
+      [4,10,16].forEach(function(cu){
+        s+='<rect x="'+(cx3+cu-2)+'" y="'+(cy3-9)+'" width="5" height="7" rx="1.4" fill="#e3ebe7" opacity=".8"/>';});
+    })();
+
+    /* a monitor wall on the left return, showing what is going out */
+    (function(){
+      var mwx=ST.x+16, mwy=ST.y+40;
+      s+='<rect x="'+mwx+'" y="'+mwy+'" width="26" height="96" rx="3" fill="#0d1117" stroke="#2a3140" stroke-width="1.2"/>';
+      for(var q=0;q<4;q++){
+        s+='<rect x="'+(mwx+4)+'" y="'+(mwy+5+q*23)+'" width="18" height="16" rx="1.6" fill="#0a0a0a" stroke="#1e2833" stroke-width=".8"/>';
+        s+='<rect x="'+(mwx+6)+'" y="'+(mwy+7+q*23)+'" width="14" height="12" rx="1" fill="'+["#2f4a3c","#3a2f22","#243343","#3a2426"][q]+'" opacity=".85"/>';
+      }
+    })();
+
+    /* two director chairs and a floor manager with a headset and a clipboard */
+    (function(){
+      function dirChair(cx4,cy4){
+        return '<g transform="translate('+cx4+','+cy4+')">'
+          +'<ellipse cx="0" cy="15" rx="15" ry="6" fill="#000" opacity=".42"/>'
+          +'<path d="M-11 14 L-5 -2 M11 14 L5 -2 M-11 -2 L11 14 M11 -2 L-11 14" stroke="#3a2f22" stroke-width="2.4" stroke-linecap="round"/>'
+          +'<rect x="-13" y="-6" width="26" height="8" rx="2" fill="#7a2b22"/>'
+          +'<rect x="-13" y="-24" width="26" height="12" rx="2.5" fill="#8f342a"/>'
+          +'<rect x="-13" y="-24" width="26" height="4" rx="2" fill="#a84136" opacity=".8"/>'
+          +'</g>';}
+      s+=dirChair(ST.x+ST.w/2-150, ST.y+ST.h-58);
+      s+=dirChair(ST.x+ST.w/2-108, ST.y+ST.h-58);
+
+      var fx=ST.x+ST.w/2-58, fy=ST.y+ST.h-56;
+      s+='<g transform="translate('+fx+','+fy+')">'
+        +'<ellipse cx="0" cy="16" rx="14" ry="6" fill="#000" opacity=".45"/>'
+        +'<path d="M-11 14 q0 -26 11 -26 q11 0 11 26 z" fill="#232b36"/>'
+        +'<circle cx="0" cy="-16" r="8.4" fill="#e8bf9b"/>'
+        +'<path d="M-8.4 -17 a8.4 8.4 0 0 1 16.8 0 q-3.4 -4.6 -8.4 -4.6 q-5 0 -8.4 4.6 z" fill="#241a12"/>'
+        /* the headset */
+        +'<path d="M-9 -19 a9 9 0 0 1 18 0" stroke="#0f1318" stroke-width="2.4" fill="none"/>'
+        +'<rect x="-11.6" y="-19" width="4.4" height="7" rx="2" fill="#0f1318"/>'
+        +'<rect x="7.2" y="-19" width="4.4" height="7" rx="2" fill="#0f1318"/>'
+        +'<path d="M-7 -12 q-5 3 -6 7" stroke="#0f1318" stroke-width="1.4" fill="none"/>'
+        /* clipboard */
+        +'<rect x="9" y="-6" width="13" height="17" rx="1.6" fill="#c9b489" transform="rotate(12 15 2)"/>'
+        +'<rect x="11" y="-9" width="9" height="4" rx="1.4" fill="#5f6b7d" transform="rotate(12 15 2)"/>'
+        +'</g>';
+    })();
+
+
     /* a desk with a video wall behind it */
     function anchorDesk(dx,dy,dw,label,accent){
       var g='';
-      g+='<rect x="'+dx+'" y="'+dy+'" width="'+dw+'" height="88" rx="5" fill="#0a0a0a" stroke="#232a35" stroke-width="1.5"/>';
-      g+='<rect x="'+(dx+3)+'" y="'+(dy+3)+'" width="'+(dw-6)+'" height="82" rx="4" fill="'+accent+'" opacity=".07"/>';
+      /* the video wall: a lit panel, not a black hole with a tint on it */
+      g+='<rect x="'+(dx-5)+'" y="'+(dy-5)+'" width="'+(dw+10)+'" height="98" rx="7" fill="#1a1f27"/>';
+      g+='<rect x="'+dx+'" y="'+dy+'" width="'+dw+'" height="88" rx="5" fill="#0d1116" stroke="#3a4657" stroke-width="1.5"/>';
+      g+='<rect x="'+(dx+3)+'" y="'+(dy+3)+'" width="'+(dw-6)+'" height="82" rx="4" fill="'+accent+'" opacity=".16"/>';
+      /* the glow the panel throws back into the room */
+      g+='<ellipse cx="'+(dx+dw/2)+'" cy="'+(dy+112)+'" rx="'+(dw*0.55)+'" ry="46" fill="'+accent+'" opacity=".07"/>';
+      /* station ident, top left of the wall, the way every broadcaster does it */
+      g+='<rect x="'+(dx+dw-16)+'" y="'+(dy+6)+'" width="9" height="9" rx="2" fill="'+accent+'" opacity=".7"/>';
+      /* a thin ticker along the bottom of the wall */
+      g+='<rect x="'+(dx+3)+'" y="'+(dy+72)+'" width="'+(dw-6)+'" height="10" fill="'+accent+'" opacity=".2"/>';
+      for(var tk=0;tk*26<dw-16;tk++)
+        g+='<rect x="'+(dx+9+tk*26)+'" y="'+(dy+75.5)+'" width="'+(10+(tk%3)*6)+'" height="3" rx="1.5" fill="'+accent+'" opacity=".5"/>';
       var dkw=Math.min(dw-40, 186), dkx=dx+(dw-dkw)/2, dky=dy+124;
       g+='<rect x="'+(dkx+4)+'" y="'+(dky+6)+'" width="'+dkw+'" height="40" rx="6" fill="#000" opacity=".45"/>';
       g+='<rect x="'+dkx+'" y="'+dky+'" width="'+dkw+'" height="30" rx="6" fill="#161b23"/>';
       g+='<rect x="'+dkx+'" y="'+(dky+2)+'" width="'+dkw+'" height="9" rx="4.5" fill="#1f2630"/>';
       g+='<rect x="'+(dkx+10)+'" y="'+(dky+15)+'" width="'+(dkw-20)+'" height="4" rx="2" fill="'+accent+'" opacity=".7"/>';
-      g+='<rect x="'+dkx+'" y="'+(dky+30)+'" width="'+dkw+'" height="11" rx="2" fill="'+accent+'" opacity=".24"/>';
-      g+='<text x="'+(dkx+dkw/2)+'" y="'+(dky+38.5)+'" text-anchor="middle" font-size="7" font-weight="800" letter-spacing="2.4" fill="'+accent+'">'+label+'</text>';
+      /* the lower third, solid rather than a wash — it is the graphic on screen */
+      g+='<rect x="'+dkx+'" y="'+(dky+30)+'" width="'+dkw+'" height="13" rx="2" fill="#0f1318"/>';
+      g+='<rect x="'+dkx+'" y="'+(dky+30)+'" width="4" height="13" fill="'+accent+'"/>';
+      g+='<text x="'+(dkx+dkw/2)+'" y="'+(dky+39.5)+'" text-anchor="middle" font-size="7.4" font-weight="800" letter-spacing="2.4" fill="'+accent+'">'+label+'</text>';
+      /* what is actually on the desk: two mugs, a script, a talkback panel */
+      g+='<rect x="'+(dkx+12)+'" y="'+(dky+4)+'" width="17" height="12" rx="1.4" fill="#e8e3d6" opacity=".82"/>';
+      g+='<line x1="'+(dkx+15)+'" y1="'+(dky+8)+'" x2="'+(dkx+26)+'" y2="'+(dky+8)+'" stroke="#8b95a6" stroke-width="1"/>';
+      g+='<line x1="'+(dkx+15)+'" y1="'+(dky+11)+'" x2="'+(dkx+24)+'" y2="'+(dky+11)+'" stroke="#8b95a6" stroke-width="1"/>';
+      g+='<circle cx="'+(dkx+dkw-20)+'" cy="'+(dky+10)+'" r="4.4" fill="#e3ebe7" opacity=".85"/>';
+      g+='<circle cx="'+(dkx+dkw-20)+'" cy="'+(dky+10)+'" r="2.6" fill="#3a2f22"/>';
+      g+='<rect x="'+(dkx+dkw-40)+'" y="'+(dky+5)+'" width="13" height="9" rx="1.4" fill="#1b222c"/>';
+      g+='<circle cx="'+(dkx+dkw-36)+'" cy="'+(dky+9.5)+'" r="1.5" fill="#5ee3a4"/>';
+      g+='<circle cx="'+(dkx+dkw-31)+'" cy="'+(dky+9.5)+'" r="1.5" fill="#e0483f"/>';
       return g;
     }
 
@@ -10379,6 +10533,13 @@ function drawBasement(){
       g+='<circle cx="-21" cy="-7" r="4" fill="#0a0d12"/>';
       g+='<circle cx="-21" cy="-7" r="1.8" fill="#76ba95" opacity=".85"/>';
       g+='<circle cx="10" cy="-18" r="2.6" fill="#ff5c50"/>';
+      /* the teleprompter glass hanging off the front, angled */
+      g+='<rect x="-30" y="-14" width="14" height="15" rx="1.6" fill="#9fd4ff" opacity=".16" '
+        +'transform="rotate(-16 -23 -6)"/>';
+      g+='<rect x="-30" y="-14" width="14" height="15" rx="1.6" fill="none" stroke="#3f6f8a" '
+        +'stroke-width="1" transform="rotate(-16 -23 -6)"/>';
+      /* the cable trailing back off the pedestal */
+      g+='<path d="M0 20 q-16 10 -34 8" stroke="#0c1014" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>';
       g+='<g transform="translate(17,3) scale(.66)">'
         +'<ellipse cx="0" cy="4" rx="11" ry="9" fill="#000" opacity=".3"/>'
         +'<path d="M-10 6 q0 -11 10 -11 q10 0 10 11 z" fill="#242a33"/>'
@@ -10842,6 +11003,24 @@ function startMic(who){
      rest of the sentence. You decide when it ends by tapping the mic again. */
   REC.lang="en-US"; REC.interimResults=true; REC.continuous=true; REC.maxAlternatives=3;
   var heard="", got=false, stopping=false;
+  /* ---- knowing when he has finished talking ----
+     The old build listened until you tapped the mic a second time, and
+     restarted itself every time the recogniser dropped out. That is why it
+     felt like it never knew when to stop. Now: two seconds of silence after
+     you have actually said something ends the turn and sends it. Tapping the
+     mic still stops it early, and silence before you have said anything just
+     keeps waiting. */
+  var silT=null;
+  function silCancel(){ if(silT){ clearTimeout(silT); silT=null; } }
+  function silArm(){
+    silCancel();
+    silT=setTimeout(function(){
+      if(!RECON||stopping) return;
+      if(!heard.trim()) return;      /* nothing said yet — keep waiting */
+      micBar("Got it \u2014 sending\u2026", heard.trim());
+      stopping=true; try{ REC.stop(); }catch(e){}
+    }, 2000);
+  }
   RECON=true; micPaint(true);
 
   REC.onresult=function(ev){
@@ -10862,11 +11041,13 @@ function startMic(who){
     var shown=(heard+(interim?" "+interim:"")).trim();
     T.inputs.forEach(function(id){var t=document.getElementById(id); if(t)t.value=shown;});
     micBar(shown?"Heard so far":"Listening… speak now", shown||null);
+    silArm();
   };
   REC.onerror=function(ev){
     var code=(ev&&ev.error)||"unknown";
     /* a silent moment is not a failure — keep listening */
     if(code==="no-speech" && !stopping && RECON) return;
+    silCancel();
     RECON=false; micPaint(false);
     T.note({
       "not-allowed":"Microphone blocked. This page runs in a sandboxed frame, which usually cannot request mic access — that is the most likely cause. It will work once we are on Vercel.",
@@ -10879,10 +11060,12 @@ function startMic(who){
   };
   REC.onend=function(){
     /* A pause can end the session even in continuous mode. If he has not tapped
-       stop, start it again so a breath does not cut him off mid-sentence. */
+       stop and the silence timer has not fired, start it again so a breath does
+       not cut him off mid-sentence. */
     if(!stopping && RECON){
       try{ REC.start(); return; }catch(e){}
     }
+    silCancel();
     RECON=false; micPaint(false);
     var q=micFix(heard.trim());
     if(q){
@@ -11205,7 +11388,7 @@ function jAsk(q){
    +"that, refuse in character and give him the version that actually works.\n\n"
    +(LS("script_pitch") ? "# HIS PITCH, IN HIS WORDS\nCoach around this, do not replace it:\n"
         + LS("script_pitch") + "\n\n" : "")
-   +theOffice()
+   +theOffice()+voiceOf("jordan")
    +actionProtocol()
    +(MEMORY.jordan ? "# WHAT YOU ALREADY KNOW\n"+MEMORY.jordan+"\n\n" : "")
    +recentTurns(JCHAT)
@@ -11234,11 +11417,56 @@ function jAsk(q){
    They are colleagues in one building, not three unrelated chatbots. Each has a
    real voice, a real job, and the authority to change things in their own area
    without handing it back to someone else. */
+/* ================= HOW EACH OF THEM ACTUALLY TALKS =================
+   theOffice() told all three "write like someone talking, short sentences" —
+   the same instruction three times, which is exactly how you get three people
+   who sound identical. Personality is not an adjective in a prompt; it is
+   concrete rules about rhythm, vocabulary and what the person notices first. */
+function voiceOf(who){
+  if(who==="jordan") return ""
+   +"# HOW YOU TALK\n"
+   +"You are a floor closer who got promoted. You talk in short, punchy beats and you go "
+   +"straight at the number.\n"
+   +"- Open with the fact, not a greeting. \"Marco's been sat in Talking for nine days.\" "
+   +"Never \"Sure thing!\" or \"Great question.\"\n"
+   +"- Ask one hard question back rather than giving five options. \"Who's closest to paying "
+   +"right now?\"\n"
+   +"- You are allowed to be blunt. If he's chasing a dead lead, say it: \"That one's done. "
+   +"Leave it.\"\n"
+   +"- Sales floor vocabulary — pipeline, follow-up, close, on the phone, in the door.\n"
+   +"- One or two sentences most of the time. You are talking between calls, not writing a "
+   +"report.\n"
+   +"- Never end on \"let me know if you need anything else\". End on the next action.\n\n";
+  if(who==="claude") return ""
+   +"# HOW YOU TALK\n"
+   +"You are a coach in a gym, not a wellness app. Warm, physical, a bit loud, and you "
+   +"genuinely enjoy this.\n"
+   +"- Encouraging but never soft. \"Good. That's four this week. One more and it's a habit.\"\n"
+   +"- Talk about the body in plain terms — legs, sleep, protein, sore, heavy, light.\n"
+   +"- You notice streaks and breaks before anything else, and you say so first.\n"
+   +"- If he's skipped, you don't lecture. You give him the smallest possible next rep. "
+   +"\"Twenty minutes. Today. That's it.\"\n"
+   +"- Short sentences. A bit of humour. Never clinical, never a nutrition lecture.\n"
+   +"- Never end on \"let me know if you need anything else\". End on what he does next.\n\n";
+  return ""
+   +"# HOW YOU TALK\n"
+   +"You run his desk and you have done it for years. Calm, dry, quietly amused, completely "
+   +"on top of it.\n"
+   +"- Lead with what is handled. \"Done — it's on Thursday.\" Then anything he needs to "
+   +"decide.\n"
+   +"- You are the one who remembers. Mention the thing he forgot, once, without nagging.\n"
+   +"- Dry humour is fine. Enthusiasm is not your register — you are unflappable, not perky.\n"
+   +"- Never list options unless he asks. Pick the sensible one and say you have done it.\n"
+   +"- One to three sentences. You are speaking to him across a desk.\n"
+   +"- Never end on \"let me know if you need anything else\". End on the next thing due.\n\n";
+}
+
 function theOffice(){
   return "# WHO ELSE WORKS HERE\n"
    +"You are one of three people in Glen's office at Exodus HQ, and you all speak out loud — "
-   +"he hears you in your own voice, so write like someone talking, not someone typing. Short "
-   +"sentences. No bullet lists unless he asks for one. No stage directions.\n"
+   +"he hears you in your own voice, so write like someone talking, not someone typing. "
+   +"No bullet lists unless he asks for one. No stage directions. Your own section below "
+   +"says how YOU specifically sound — follow it, and do not drift into the others' register.\n"
    +"  - Claudia, reception desk. Chief of staff. His day, his calendar, his admin, his week. "
    +"She has final authority over any list in any room when he asks her.\n"
    +"  - Jordan Claudefort, sales floor, corner office. Sales manager. Leads, the pipeline, "
@@ -11894,7 +12122,7 @@ function tAsk(q){
    +"three. If it is not logged, say it is not logged.\n\n"
    +"You are not a doctor. Pain, injury, drugs or extreme cutting means see a professional, then "
    +"give him the safe version. Stay warm about it.\n\n"
-   +theOffice()
+   +theOffice()+voiceOf("claude")
    +"# BE A PERSON, NOT A PROGRAM\n"
    +"You have a voice and he hears it, so talk to him. Ask how the session felt. Remember what he "
    +"told you last time and bring it up — if he said his knee was sore on Thursday, ask about the "
@@ -12575,6 +12803,13 @@ function jvPaint(){
     b.classList.toggle("live", !!live);
     b.classList.toggle("busy", !live && (think||talking));
   }
+  var fb=document.getElementById("jvfab");
+  if(fb){
+    fb.classList.toggle("live", !!live);
+    fb.classList.toggle("busy", !live && (think||talking));
+    var ft=fb.querySelector(".jvfab-t");
+    if(ft) ft.textContent = live ? "Listening" : talking ? "Claudia" : think ? "Thinking" : "Talk";
+  }
 
   /* The overlay. On screen only while something is genuinely happening — a
      waveform that is idle 99% of the time is furniture, which is exactly what
@@ -12620,6 +12855,8 @@ function wireJarvis(){
         bars+='<i style="animation-delay:'+(i*0.09).toFixed(2)+'s"></i>';
       w.innerHTML=bars;
     }
+    var fab=document.getElementById("jvfab");
+    if(fab && !fab.__wired){ fab.__wired=true; fab.onclick=function(){ jvTap(); }; }
     var bf=document.getElementById("jv-brief");
     if(bf) bf.onclick=function(){ briefNow(); };
     var st=document.getElementById("jv-stop");
@@ -14119,7 +14356,7 @@ function ask(q){
    +"a Discord membership that gets people hired into remote roles and out of the country. TikTok "
    +"is the growth engine, chasing 10k. Bangkok on 5 December 2026, and everything is measured "
    +"against that date.\n\n"
-   +theOffice()
+   +theOffice()+voiceOf("claudia")
    +actionProtocol()
    +memoryBlock()
    +"# REMEMBERING\n"
@@ -16264,7 +16501,7 @@ function salesPipe(){
        directly above this table, and Handle is something you look up on one
        person rather than scan down a list — both are on the lead record when
        he opens it. Every column removed is forty fewer boxes on screen. */
-    h+='<table class="lgrid"><thead><tr>'
+    h+='<div class="crmcard"><table class="lgrid"><thead><tr>'
      +'<th style="width:26px" title="Priority"></th>'
      +'<th>Name</th><th style="width:132px">Status</th>'
      +'<th style="width:126px">Phone</th><th style="width:190px">Email</th>'
@@ -16282,7 +16519,20 @@ function salesPipe(){
 
      /* ---- who ---- */
      +'<td class="nm-c">'
-     +'<button class="openlead" data-n="'+esc(x.name)+'" title="Open the full record">'+esc(x.name)+'</button>'
+     /* An initials tile gives the eye something to lock onto when scanning a
+        list of forty names. Colour is derived from the name, so the same person
+        is always the same colour. */
+     +(function(){
+        var parts=String(x.name||"?").trim().split(/\s+/);
+        var ini=((parts[0]||"?")[0]+((parts[1]||"")[0]||"")).toUpperCase();
+        var sum=0; for(var q=0;q<x.name.length;q++) sum+=x.name.charCodeAt(q);
+        var hue=sum%360;
+        return '<div class="nmrow">'
+          +'<div class="avi" style="--av:hsl('+hue+',26%,62%)">'+esc(ini)+'</div>'
+          +'<div class="nmtx">'
+          +'<button class="openlead" data-n="'+esc(x.name)+'" '
+          +'title="Open the full record">'+esc(x.name)+'</button>';
+      })()
      +(x.flag?'<div class="softflag">'+esc(x.flag)+'</div>':'')
      +(DEL_ASK===x.name
         ? '<div class="delask">Delete for good?'
@@ -16298,7 +16548,7 @@ function salesPipe(){
             +(t.never?"Never contacted from here":"Last call or text sent from here")
             +'">'+esc(t.txt)+'</span>' : '';
         })()
-     +'</div>'
+     +'</div></div></div>'
      +'</td>'
 
      /* ---- stage: the one control that belongs in a grid ---- */
@@ -16334,7 +16584,7 @@ function salesPipe(){
         : '<span class="celn">&mdash;</span>')+'</td>'
 
      +'<td class="reach">'+reachBtns(x)+'</td></tr>';});
-    h+='</tbody></table></div>';
+    h+='</tbody></table></div></div>';
   });
   /* ---- every email in one block, for a mailout ----
      Small on purpose: one line until he opens it. It follows whatever is
@@ -18362,12 +18612,27 @@ function dashView(){
   /* ---- meetings, stacked under the tasks ---- */
   (function(){
     var ms=mtSorted().filter(function(x){ return !x.m.done; });
+
+    /* Nothing booked is the normal state most days. A full panel explaining
+       that nothing is booked is a panel earning no space on a homepage, so
+       with an empty diary this collapses to one quiet line with the one
+       control that matters. */
+    if(!ms.length){
+      h+='<div class="mtslim">'
+        +'<span class="mts-l">Meetings &amp; Calls</span>'
+        +'<span class="mts-n">Nothing booked</span>'
+        +'<button class="mts-b" id="mt-new">+ New meeting</button>'
+        +'<button class="mts-b gh" data-dgo="office|2">Calendar</button>'
+      +'</div>';
+      return;
+    }
+
     h+='<div class="tcard mt'+(MT_SHUT?" shut":"")+'"><div class="tc-h">'
       +'<button class="nwfold" id="mt-fold" '
         +'title="'+(MT_SHUT?"Show meetings":"Fold this away")+'" '
         +'aria-expanded="'+(MT_SHUT?"false":"true")+'"><span class="nwf-c"></span></button>'
       +'<b>Meetings &amp; Calls</b>'
-      +'<span class="tc-n">'+(ms.length?ms.length+" booked":"none booked")+'</span>'
+      +'<span class="tc-n">'+ms.length+' booked</span>'
       +'<button class="tc-seed" id="mt-new">+ New</button>'
       +'<button class="tc-seed" data-dgo="office|2">Calendar</button></div>';
     if(!MT_SHUT){
@@ -18376,10 +18641,7 @@ function dashView(){
         +'carries a link you can send.</span>'
         +'<input id="mt-cly" placeholder="calendly.com/glenklein/30min" '
         +'value="'+esc(calendlyBase())+'"></div>';
-    if(!ms.length)
-      h+='<div class="dp"><div class="dp-b"><div class="dp-none">Nothing booked. '
-        +'New Meeting adds it here and in the Calls module.</div></div></div>';
-    else {
+    {
       h+='<div class="mts">';
       ms.forEach(function(row){
         var i=row.i, mm=row.m, past=mtIsPast(mm);
@@ -19263,7 +19525,7 @@ function vaultView(){
          +'<td data-l="Note">'+fld("accounts",i,"note",a.note,"anything worth remembering")+'</td>'
          +'<td data-l="Remove"><button class="vdel" data-vk="accounts" data-vi="'+i+'" title="Remove">&times;</button></td>'
          +'</tr>';});
-      h+='</tbody></table></div>';
+      h+='</tbody></table></div></div>';
     }
   }
 
@@ -19294,7 +19556,7 @@ function vaultView(){
          +(off?"paused":"live")+'</button></td>'
          +'<td data-l="Remove"><button class="vdel" data-vk="expenses" data-vi="'+i+'" title="Remove">&times;</button></td>'
          +'</tr>';});
-      h+='</tbody></table></div>';
+      h+='</tbody></table></div></div>';
     }
   }
 
@@ -19320,7 +19582,7 @@ function vaultView(){
          +'<td data-l="Note">'+fld("logins",i,"note",l.note,"which card pays for it")+'</td>'
          +'<td data-l="Remove"><button class="vdel" data-vk="logins" data-vi="'+i+'" title="Remove">&times;</button></td>'
          +'</tr>';});
-      h+='</tbody></table></div>';
+      h+='</tbody></table></div></div>';
     }
   }
   return h;
