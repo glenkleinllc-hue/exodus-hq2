@@ -4191,6 +4191,67 @@ table.lgrid .prdot.on{background:#a855f7;border-color:#a855f7;
 .stgstrip .sg.on{background:color-mix(in srgb, var(--sc) 22%, #131315);
   border-color:var(--sc)}
 
+
+/* follow-up chip: a control, not a label */
+table.lgrid button.fuflag{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:5px;padding:2px 8px;border-radius:999px;
+  font:700 9.5px/1.6 inherit;letter-spacing:.4px;
+  border:1px solid transparent;cursor:pointer;
+  transition:background .12s,border-color .12s,color .12s}
+table.lgrid button.fuflag i{font-style:normal;opacity:.5;font-size:11px}
+table.lgrid button.fuflag:hover i{opacity:1}
+table.lgrid button.fuflag.od{background:rgba(232,131,124,.14);color:#e8837c;
+  border-color:rgba(232,131,124,.3)}
+table.lgrid button.fuflag.od:hover{background:rgba(232,131,124,.24)}
+table.lgrid button.fuflag.tod{background:rgba(220,174,67,.14);color:#dcae43;
+  border-color:rgba(220,174,67,.3)}
+table.lgrid button.fuflag.tod:hover{background:rgba(220,174,67,.24)}
+table.lgrid button.fuflag.soon{background:rgba(255,255,255,.05);color:#7c869a;
+  border-color:rgba(255,255,255,.09)}
+table.lgrid button.fuflag.soon:hover{background:rgba(255,255,255,.1);color:#aab3c2}
+
+
+/* inline confirm in the control bar */
+.cb-ask{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;
+  border-radius:9px;background:rgba(232,131,124,.1);
+  border:1px solid rgba(232,131,124,.32);color:#e8a5a0;
+  font-size:11.5px;font-weight:650;white-space:nowrap}
+.cb-y,.cb-n{font:700 11px inherit;padding:5px 11px;border-radius:7px;
+  cursor:pointer;border:1px solid transparent}
+.cb-y{background:#e8837c;color:#17171a}
+.cb-y:hover{background:#f0968f}
+.cb-n{background:transparent;border-color:#3d3d45;color:#98a1b0}
+.cb-n:hover{border-color:#55555f;color:#dbe2ec}
+
+
+/* ================================================================
+   CRM grid — read, don't edit.
+   Form controls in forty rows is what made this look like a
+   spreadsheet. The grid now shows text; the row opens the record.
+   ================================================================ */
+table.lgrid tbody td.cel{padding:10px 12px;overflow:hidden}
+.celv{display:block;font-size:12.5px;color:#aeb6c2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-variant-numeric:tabular-nums}
+.celn{color:#3f434c;font-size:13px}
+.notev{display:block;font-size:12.5px;color:#8f97a5;line-height:1.45;
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical}
+.srcv{display:inline-block;padding:2px 8px;border-radius:999px;
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);
+  font-size:10px;font-weight:650;letter-spacing:.4px;color:#9aa3b2}
+.camev{display:block;margin-top:4px;font-size:10.5px;color:#5f6675;
+  font-variant-numeric:tabular-nums}
+.rowmeta{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:5px}
+.rowmeta:empty{display:none}
+table.lgrid tbody tr:hover td.cel .celv{color:#dbe2ec}
+table.lgrid tbody tr:hover td.cel .notev{color:#aeb6c2}
+
+/* the whole row invites the click that opens the record */
+table.lgrid tbody tr:hover{cursor:default}
+table.lgrid .openlead:after{content:"";display:inline-block;width:0}
+
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -15250,6 +15311,11 @@ function leadCard(){
    +'<label>Came in'
      +'<input class="cin-came wide" type="'+(camePrec(L.name)==="month"?"month":"date")+'" '
      +'data-n="'+esc(L.name)+'" value="'+esc(fx.came||"")+'"></label>'
+   +'<label>Source'
+     +'<select class="lx-src wide" data-srcn="'+esc(L.name)+'">'
+     +SOURCES.map(function(s){return '<option value="'+esc(s)+'"'
+        +(s===srcGet(L.name)?" selected":"")+'>'+(s||"not set")+'</option>';}).join("")
+     +'</select></label>'
    +'<label>Precision'
      +'<select class="lx-prec wide" data-n="'+esc(L.name)+'">'
      +'<option value="day"'+(camePrec(L.name)==="day"?" selected":"")+'>Exact date</option>'
@@ -15265,6 +15331,12 @@ function leadCard(){
       +(fd<0?("Follow-up was due "+(-fd)+" day"+(-fd===1?"":"s")+" ago")
         :fd===0?"Follow-up is due today":("Follow-up in "+fd+" day"+(fd===1?"":"s")))
       +(fx.funote?' &mdash; '+esc(fx.funote):'')+'</div>':'')
+   /* Notes used to live only in the grid. The grid is read-only now, so the
+      field has to exist here or the data becomes uneditable. */
+   +'<label style="display:block;margin-top:11px">Notes'
+     +'<textarea class="ntbox big" data-n="'+esc(L.name)+'" rows="3" '
+     +'placeholder="Short working note — what stage this is really at">'
+     +esc(ntGet(L.name)!==null?ntGet(L.name):(L.notes||""))+'</textarea></label>'
    +'<label style="display:block;margin-top:11px">Detail'
      +'<textarea class="lx-detail wide" data-n="'+esc(L.name)+'" rows="3" '
      +'placeholder="Background, family, timezone, what they actually want — anything that helps you close them">'
@@ -15806,6 +15878,7 @@ function wireWeek(){
 var FILTER="all";
 var ORD=STATUSES;
 var LSEARCH="";      /* what is typed in the pipeline search box */
+var FUCLR_ASK=false; /* confirming the bulk follow-up wipe */
 /* By stage, not by date. A flat list ordered newest-first interleaves a signed
    member, a dead lead and a new lead on consecutive rows, so the eye has to read
    the status column on every line to know what it is looking at. Ordering by
@@ -16128,6 +16201,19 @@ function salesPipe(){
 
    +(LGROUP?'<button class="cb-b" id="l-fold" title="Fold every stage band">Collapse</button>':'')
    +(due?'<button class="cb-b due" id="l-due">'+due+' due</button>':'')
+   /* Every lead arrived from the sheet carrying a follow-up date, so the whole
+      list flagged itself as overdue on day one. One button to wipe them. */
+   +(function(){
+      var n=0;(STATE.leads||[]).forEach(function(x){if(lxGet(x.name).fu)n++;});
+      if(!n) return "";
+      return FUCLR_ASK
+        ? '<span class="cb-ask">Clear all '+n+' follow-up dates?'
+          +'<button class="cb-y" id="fuall-yes">Yes</button>'
+          +'<button class="cb-n" id="fuall-no">Keep</button></span>'
+        : '<button class="cb-b" id="fuall" title="Every lead came in from the '
+          +'sheet with a follow-up date. This clears all of them.">'
+          +'Clear '+n+' follow-ups</button>';
+    })()
    +'<span class="cb-n">'+rows.length+'</span>'
    +'<button class="cb-add" id="addtoggle">+ New Lead</button>'
    +'</div>';
@@ -16170,25 +16256,23 @@ function salesPipe(){
     h+='<table class="lgrid"><thead><tr>'
      +'<th style="width:26px" title="Priority"></th>'
      +'<th>Name</th><th style="width:132px">Status</th>'
-     +'<th style="width:124px">Phone</th><th style="width:186px">Email</th>'
-     +'<th style="width:150px">Source &amp; date</th>'
-     +'<th>Notes</th><th style="width:158px">Reach</th></tr></thead><tbody>';
+     +'<th style="width:126px">Phone</th><th style="width:190px">Email</th>'
+     +'<th style="width:132px">Source</th>'
+     +'<th>Notes</th><th style="width:150px">Reach</th></tr></thead><tbody>';
     g.rows.forEach(function(x){
-    function fld(field,val,ph){
-      return '<input class="cn" data-n="'+esc(x.name)+'" data-k="'+field+'" value="'+esc(val||"")
-        +'" placeholder="'+ph+'">';}
     var c=scol(x.stage), pri=prGet(x.name);
     var hay=[x.name,x.email,x.phone,x.ig,x.notes].join(" ").toLowerCase();
+    var cn=cnGet(x.name);
+    var ph=cn.p||x.phone||"", em=cn.e||x.email||"";
     h+='<tr'+(pri?' class="prirow"':'')+' data-row="'+esc(hay)+'"'
      +' style="box-shadow:inset 3px 0 0 '+(pri?"#a855f7":c.hex)+'">'
      +'<td data-l="Priority"><button class="prdot'+(pri?" on":"")+'" data-pr="'+esc(x.name)+'"'
      +' title="'+(pri?"Actively pursuing — tap to unflag":"Flag as one you are chasing")+'"></button></td>'
+
+     /* ---- who ---- */
      +'<td class="nm-c">'
      +'<button class="openlead" data-n="'+esc(x.name)+'" title="Open the full record">'+esc(x.name)+'</button>'
      +(x.flag?'<div class="softflag">'+esc(x.flag)+'</div>':'')
-     
-     /* Killing a duplicate has to be possible from the list itself, and it has to
-        ask, because it is not undoable. */
      +(DEL_ASK===x.name
         ? '<div class="delask">Delete for good?'
           +'<button class="dy" data-delyes="'+esc(x.name)+'">Yes, remove</button>'
@@ -16196,45 +16280,54 @@ function salesPipe(){
         : '<button class="delone" data-delask="'+esc(x.name)+'" '
           +'title="Remove this lead completely" aria-label="Remove this lead">'
           +'\u00d7</button>')
-     +(function(){
-        var t=touchLabel(x.name);
-        if(!t) return '<div class="tchip none">no date</div>';
-        return '<div class="tchip '+t.cls+'" title="'
-          +(t.never?"Never contacted from here":"Last call or text sent from here")
-          +'">'+esc(t.txt)+'</div>';
-      })()
-     +(function(){
-        var fd=fuDaysOut(x.name);
-        if(fd===null) return "";
-        var cls = fd<0?"od":fd===0?"tod":"soon";
-        var txt = fd<0?(-fd)+"d overdue":fd===0?"follow up today":"in "+fd+"d";
-        return '<div class="fuflag '+cls+'">'+txt+'</div>';
-      })()
+     +'<div class="rowmeta">'
+       +(function(){
+          var t=touchLabel(x.name);
+          return t ? '<span class="tchip '+t.cls+'" title="'
+            +(t.never?"Never contacted from here":"Last call or text sent from here")
+            +'">'+esc(t.txt)+'</span>' : '';
+        })()
+       +(function(){
+          var fd=fuDaysOut(x.name);
+          if(fd===null) return "";
+          var cls = fd<0?"od":fd===0?"tod":"soon";
+          var txt = fd<0?"follow-up "+(-fd)+"d late"
+                  : fd===0?"follow up today" : "follow up in "+fd+"d";
+          return '<button class="fuflag '+cls+'" data-fuclr="'+esc(x.name)+'" '
+            +'title="Follow-up reminder. Click to clear it.">'+txt+' <i>&times;</i></button>';
+        })()
+     +'</div>'
      +'</td>'
-     /* A pill in the stage's own colour rather than a grey select with a
-        coloured edge. It is the field on the row he changes most often, so it
-        is the one that should look like a control. */
+
+     /* ---- stage: the one control that belongs in a grid ---- */
      +'<td><select class="stsel" data-n="'+esc(x.name)+'" '
        +'style="--sc:'+c.hex+';color:'+c.dot+'">'
      +STATUSES.map(function(st){
         return '<option'+(st===x.stage?" selected":"")+'>'+esc(st)+'</option>';}).join("")
      +'</select></td>'
-     +'<td>'+fld("p",x.phone,"add number")+'</td>'
-     +'<td>'+fld("e",x.email,"add email")+'</td>'
-     +'<td data-l="Source & date" class="camecell">'
-       +'<select class="srcsel" data-srcn="'+esc(x.name)+'">'
-       +SOURCES.map(function(s){
-           return '<option value="'+esc(s)+'"'+(s===srcGet(x.name)?" selected":"")+'>'
-             +(s||"add source")+'</option>';}).join("")
-       +'</select>'
-       +'<input class="cin-came" type="'+(camePrec(x.name)==="month"?"month":"date")+'" '
-       +'data-n="'+esc(x.name)+'" value="'+esc(cameInRaw(x.name))+'">'
+
+     /* ---- contact: read, do not edit ---- */
+     +'<td class="cel">'+(ph
+        ? '<span class="celv">'+esc(fmtPhone(ph))+'</span>'
+        : '<span class="celn">&mdash;</span>')+'</td>'
+     +'<td class="cel">'+(em
+        ? '<span class="celv" title="'+esc(em)+'">'+esc(em)+'</span>'
+        : '<span class="celn">&mdash;</span>')+'</td>'
+
+     /* ---- where from, and when ---- */
+     +'<td class="cel">'
+       +(srcGet(x.name)
+          ? '<span class="srcv">'+esc(srcGet(x.name))+'</span>'
+          : '<span class="celn">&mdash;</span>')
+       +(cameLabel(x.name)
+          ? '<span class="camev">'+esc(cameLabel(x.name))+'</span>' : '')
      +'</td>'
-     /* One line at rest, taller when he is in it. A 2-row textarea on every
-        row made every row 60px tall and the table twice as long as it needed
-        to be. */
-     +'<td><textarea class="ntbox" data-n="'+esc(x.name)+'" rows="1" '
-     +'placeholder="Notes">'+esc(x.notes||"")+'</textarea></td>'
+
+     /* ---- the note, one line, full text on hover ---- */
+     +'<td class="cel">'+(x.notes
+        ? '<span class="notev" title="'+esc(x.notes)+'">'+esc(x.notes)+'</span>'
+        : '<span class="celn">&mdash;</span>')+'</td>'
+
      +'<td class="reach">'+reachBtns(x)+'</td></tr>';});
     h+='</tbody></table></div>';
   });
@@ -19642,6 +19735,28 @@ function wire(){
   };
 
   /* ---- Call, Alt and Text, on the row ---- */
+  /* wipe every follow-up date at once */
+  var fa=document.getElementById("fuall");
+  if(fa) fa.onclick=function(){ FUCLR_ASK=true; redraw(); };
+  var fay=document.getElementById("fuall-yes");
+  if(fay) fay.onclick=function(){
+    (STATE.leads||[]).forEach(function(x){
+      var o=lxGet(x.name); if(o.fu){ o.fu=""; lxSet(x.name,o); }
+    });
+    FUCLR_ASK=false; redraw();
+  };
+  var fan=document.getElementById("fuall-no");
+  if(fan) fan.onclick=function(){ FUCLR_ASK=false; redraw(); };
+
+  /* clear a follow-up straight from the row */
+  var fcl=document.querySelectorAll("[data-fuclr]");
+  for(var fi=0;fi<fcl.length;fi++){
+    fcl[fi].onclick=function(e){
+      e.stopPropagation();
+      var n=this.getAttribute("data-fuclr"), o=lxGet(n);
+      o.fu=""; lxSet(n,o); redraw();
+    };
+  }
   /* source picker */
   var ss=document.querySelectorAll("[data-srcn]");
   for(var si=0;si<ss.length;si++){
