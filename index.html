@@ -1980,6 +1980,23 @@ table.lgrid .cin-came::-webkit-calendar-picker-indicator{opacity:.22;cursor:poin
 table.lgrid tr:hover .cin-came::-webkit-calendar-picker-indicator{opacity:.6}
 
 /* ---- name ---- */
+/* ---- last-contact chip + source picker (CRM rows) ----
+   tchip / srcsel are new names. Checked against every class already in this
+   file before adding: nothing else uses either. */
+.tchip{display:inline-block;margin-top:3px;margin-right:5px;padding:1px 6px;
+  border-radius:3px;font-size:9.5px;font-weight:700;letter-spacing:.3px;
+  line-height:1.5;vertical-align:middle}
+.tchip.ok{background:rgba(74,222,128,.12);color:#86efac}
+.tchip.warm{background:rgba(251,191,36,.14);color:#fcd34d}
+.tchip.cold{background:rgba(248,113,113,.14);color:#fca5a5}
+.tchip.none{background:rgba(255,255,255,.05);color:#6e6e72}
+table.lgrid select.srcsel{width:100%;margin-bottom:4px;background:var(--paper2);
+  color:var(--ink2);border:1px solid transparent;border-radius:4px;
+  font:600 10.5px/1.5 var(--mono,ui-monospace,monospace);letter-spacing:.3px;
+  padding:3px 5px;cursor:pointer;appearance:none}
+table.lgrid tr:hover select.srcsel{border-color:#2a2a2d}
+table.lgrid select.srcsel:focus{outline:none;border-color:var(--blu)}
+table.lgrid select.srcsel option{background:#141416;color:var(--ink)}
 table.lgrid .nm-c{position:relative}
 table.lgrid .openlead{
   background:none;border:none;padding:6px 7px;font:inherit;font-size:12.5px;
@@ -4044,7 +4061,7 @@ textarea.dw-pi.big{min-height:92px}
 }
 </style>
 </head>
-<body data-build="2026-08-16-d">
+<body data-build="2026-08-16-e">
 <!-- EXODUS HQ BUILD 2026-07-30-h — if this line is missing from the deployed page,
      the index.html that got uploaded is an older download. -->
 <div class="wrap">
@@ -4158,7 +4175,7 @@ textarea.dw-pi.big{min-height:92px}
 
 
   <div class="foot">Live from Google Drive, Gmail and Calendar &middot; everything you type saves automatically
-    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-16-d</span></div>
+    <span class="bstamp" id="bstamp" title="Which build is running. If this does not match what Claude says, the upload did not take.">build 2026-08-16-e</span></div>
 </div>
 
 <script>
@@ -4398,7 +4415,7 @@ var CALLINK="https://calendar.google.com/calendar/u/1/r?mode=day";
    Anyone not listed in OWED is settled up — the sheet's old balances are ignored. */
 var CLEARED=["jordan thompson"];
 /* Status overrides Glen has set directly. */
-var STAGE_FIX={"kyle engley":"Contact in the Future"};
+var STAGE_FIX={"kyle engley":"Contacted"};
 var BADLEAD=["elijah"];
 var OWED={
   "peter (premarket)" :{amt:150,kind:"chase",     note:"Owes $150. Chase it."},
@@ -4445,60 +4462,72 @@ function owedFor(n){return OWED[keyOf(n)]||null;}
 /* ======================= THE SIX STAGES ==========================
    Glen's own words, in his own order: a lead arrives, you ring them, they
    either pick up or they don't, and from there they warm up, go cold, die, or
-   sign. "Did Not Answer" earns its own stage because it is the single most
+   sign. "Contacted" earns its own stage because it is the single most
    common outcome of a first dial and it is not the same as cold — a person who
    has not answered twice still has full odds, and burying them in Cold is how
    they get written off early.
 
    Order matters: this array drives the filter row, the stage strip, the
    grouping bands and the sort. It reads left to right as the journey. */
-var STATUSES=["New Lead","Did Not Answer","Warm Lead",
-              "Cold Lead","Dead Lead","Signed Up"];
+var STATUSES=["New","Contacted","Talking","Member","Dead"];
 
-/* Temperature runs cool-to-warm and ends green. Dead is the only red, so red on
-   this screen always means the same thing. */
+/* Five stages, each one a plain statement of where the person is:
+   New       - come in, never contacted
+   Contacted - reached out, no real conversation yet (covers no-answer and gone quiet)
+   Talking   - actively in conversation, call booked, close to a decision
+   Member    - signed up
+   Dead      - not happening
+
+   Colour runs cool to warm and ends green. Dead is the only red on the screen,
+   so red always means one thing. */
 var SCOL={
-  "New Lead"        :{hex:"#cbd5e1",cls:"b-new",  dot:"#e2e8f0"},
-  /* Pink, not purple. Purple is already the priority dot's colour, and two
-     different meanings sharing one colour on the same row is exactly how a
-     glance goes wrong. */
-  "Did Not Answer"  :{hex:"#ec6f9e",cls:"b-dna",  dot:"#f3a0c0"},
-  "Warm Lead"       :{hex:"#fbbf24",cls:"b-warm", dot:"#fcd34d"},
-  "Cold Lead"       :{hex:"#60a5fa",cls:"b-cold", dot:"#93c5fd"},
-  "Dead Lead"       :{hex:"#f87171",cls:"b-owe",  dot:"#fca5a5"},
-  "Signed Up"       :{hex:"#4ade80",cls:"b-paid", dot:"#86efac"},
-  /* Retired names keep an entry. scol() is called on raw stored values in a
+  "New"      :{hex:"#cbd5e1",cls:"b-new",  dot:"#e2e8f0"},
+  "Contacted":{hex:"#60a5fa",cls:"b-cold", dot:"#93c5fd"},
+  "Talking"  :{hex:"#fbbf24",cls:"b-warm", dot:"#fcd34d"},
+  "Member"   :{hex:"#4ade80",cls:"b-paid", dot:"#86efac"},
+  "Dead"     :{hex:"#f87171",cls:"b-owe",  dot:"#fca5a5"},
+  /* Retired names keep a colour entry. scol() runs on raw stored values in a
      few places and a missing key throws before the alias can map it across. */
+  "New Lead"             :{hex:"#cbd5e1",cls:"b-new", dot:"#e2e8f0"},
+  "Did Not Answer"       :{hex:"#60a5fa",cls:"b-cold",dot:"#93c5fd"},
+  "Warm Lead"            :{hex:"#fbbf24",cls:"b-warm",dot:"#fcd34d"},
+  "Cold Lead"            :{hex:"#60a5fa",cls:"b-cold",dot:"#93c5fd"},
+  "Dead Lead"            :{hex:"#f87171",cls:"b-owe", dot:"#fca5a5"},
+  "Signed Up"            :{hex:"#4ade80",cls:"b-paid",dot:"#86efac"},
   "Demo No Sale"         :{hex:"#60a5fa",cls:"b-cold",dot:"#93c5fd"},
   "Contact in the Future":{hex:"#60a5fa",cls:"b-cold",dot:"#93c5fd"}
 };
 
-/* Retired stages, mapped to what they became. Nothing is ever deleted — a lead
-   on a retired stage is moved across, not dropped. Removing a name without its
-   alias is exactly how a lead appears to vanish: stageFix() returns nothing and
-   the lead silently falls back to whatever the sheet said.
-
-   "Contact in the Future" becomes Cold: it described someone who was not saying
-   no but was not moving either, which is what cold means. */
+/* Every name this CRM has ever used, mapped to where it lives now. Nothing is
+   deleted - a lead on a retired stage is carried across, not dropped. Removing
+   a name without leaving its alias is exactly how a lead appears to vanish. */
 var STAGE_ALIAS={
-  "Call Completed":"Warm Lead",
-  "Call completed":"Warm Lead",
-  "Demo No Sale":"Cold Lead",
-  "Demo no sale":"Cold Lead",
-  "demo no sale":"Cold Lead",
-  "Joining in Future":"Cold Lead",
-  "Joining In Future":"Cold Lead",
-  "Joining in future":"Cold Lead",
-  "Contact in the Future":"Cold Lead",
-  "Contact In The Future":"Cold Lead",
-  "contact in the future":"Cold Lead",
-  "No Answer":"Did Not Answer",
-  "no answer":"Did Not Answer",
-  "Didn't Answer":"Did Not Answer",
-  "Did not answer":"Did Not Answer"
+  "New Lead":"New", "new lead":"New",
+  "Did Not Answer":"Contacted", "Did not answer":"Contacted",
+  "did not answer":"Contacted", "No Answer":"Contacted", "no answer":"Contacted",
+  "Didn't Answer":"Contacted", "DNA":"Contacted",
+  "Cold Lead":"Contacted", "cold lead":"Contacted", "Cold":"Contacted",
+  "Contact in the Future":"Contacted", "Contact In The Future":"Contacted",
+  "contact in the future":"Contacted",
+  "Joining in Future":"Contacted", "Joining In Future":"Contacted",
+  "Joining in future":"Contacted",
+  "Demo No Sale":"Contacted", "Demo no sale":"Contacted", "demo no sale":"Contacted",
+  "Warm Lead":"Talking", "warm lead":"Talking", "Warm":"Talking",
+  "Call Completed":"Talking", "Call completed":"Talking",
+  "Call Booked":"Talking", "Meeting Booked":"Talking",
+  "Signed Up":"Member", "signed up":"Member", "Paid":"Member", "Client":"Member",
+  "Dead Lead":"Dead", "dead lead":"Dead", "Lost":"Dead"
 };
-function stageFix(st){ st=String(st||""); return STAGE_ALIAS[st]||st; }
-function scol(st){return SCOL[stageFix(st)]||SCOL["New Lead"];}
+/* Exact match first, then case-insensitive. Typing "warm lead" into a sheet
+   should not create a stage that does not exist - that is the failure mode that
+   made leads disappear last time. */
+var STAGE_ALIAS_LC=(function(){var o={};for(var k in STAGE_ALIAS)o[k.toLowerCase()]=STAGE_ALIAS[k];
+  STATUSES.forEach(function(s){o[s.toLowerCase()]=s;});return o;})();
+function stageFix(st){
+  st=String(st||"").trim(); if(!st) return st;
+  return STAGE_ALIAS[st] || STAGE_ALIAS_LC[st.toLowerCase()] || st;
+}
+function scol(st){return SCOL[stageFix(st)]||SCOL["New"];}
 
 /* ---- the purple dot: leads Glen is actively working right now ----
    These pin to the top of the list no matter what stage they sit in. */
@@ -4543,6 +4572,42 @@ function cameLabel(n){
   return raw.length===7
     ? d.toLocaleDateString(undefined,{month:"short",year:"numeric"})
     : d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+}
+/* ---- where the lead came from, and when you last spoke ----
+   Both live on the same lx_ record as came/fu, so they sync with everything
+   else and survive a reload. "I don't know who is who" is a data problem, not
+   a layout one: a name with no origin and no last-contact date is a stranger. */
+var SOURCES=["","TikTok","Instagram","YouTube","Form","Calendly","Referral","DM","Other"];
+function srcGet(n){ return lxGet(n).src||""; }
+function srcSet(n,v){ var o=lxGet(n); o.src=v||""; lxSet(n,o); }
+/* stamped automatically every time you call or text from the app */
+function touchGet(n){ return lxGet(n).lt||""; }
+function touchStamp(n){
+  var o=lxGet(n), d=new Date();
+  o.lt=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")
+      +"-"+String(d.getDate()).padStart(2,"0");
+  lxSet(n,o);
+}
+/* Days since you last spoke. Falls back to the day they came in, because a
+   lead you have never contacted is measured from the day it landed - that is
+   exactly the number that should be going red. */
+function daysSince(n){
+  var v=touchGet(n), d=null;
+  if(v){ d=new Date(v+"T12:00:00"); }
+  else { d=cameIn(n); }
+  if(!d||isNaN(d.getTime())) return null;
+  var t=new Date(); t.setHours(12,0,0,0);
+  return Math.max(0, Math.round((t-d)/86400000));
+}
+function touchLabel(n){
+  var dy=daysSince(n);
+  if(dy===null) return null;
+  var never=!touchGet(n);
+  var cls = dy>=14?"cold":dy>=7?"warm":"ok";
+  var txt = dy===0?(never?"in today":"spoke today")
+          : dy===1?(never?"in 1d ago":"1d ago")
+          : dy+"d"+(never?" in, no contact":"");
+  return {cls:cls,txt:txt,never:never,days:dy};
 }
 function followUp(n){
   var v=lxGet(n).fu; if(!v) return null;
@@ -4794,13 +4859,13 @@ function markTouched(n){ lxPut(n, "touch", dkey(new Date())); }
      today    a follow-up date that is today
      fresh    nobody has ever spoken to them and no date is set
 
-   Signed Up and Dead Lead are excluded. A closed deal is not work, and a dead
+   Member and Dead are excluded. A closed deal is not work, and a dead
    lead being "overdue" is noise that trains you to ignore the board — which is
    the failure mode of every worklist that has ever been abandoned. */
 function workQueue(){
   var overdue = [], today = [], fresh = [];
   (STATE.leads || []).forEach(function(L){
-    if(L.stage === "Dead Lead" || L.stage === "Signed Up") return;
+    if(L.stage === "Dead" || L.stage === "Member") return;
     /* Somebody who has just texted is already at the top of the board in the
        Replied lane. Listing them again under Overdue is the same person twice
        with two different instructions — and the reply is the newer, better
@@ -4914,14 +4979,72 @@ function cnPut(n,field,val){
 }
 /* Fold saved edits over the sheet values and recompute reachability. */
 /* ---- leads typed straight into the page ---- */
+/* ---------------- merging hand-typed leads with the synced ones ----------
+   Two lists feed the CRM: whatever came down from Supabase, and whatever Glen
+   typed straight into the page (kept in localStorage as "myleads").
+
+   Glen hit this: he added Nate Hunt by hand, the Calendly sweep later added
+   Nathan Hunt from the booking email, and the CRM showed both. Then deleting
+   one appeared to delete both — because the delete matches on name and the two
+   records were the same person under two spellings.
+
+   So the merge dedupes before anything renders. A hand-added lead is dropped if
+   the synced list already has that person, matched on any of:
+     - the same name, loosely (case, punctuation and middle names ignored)
+     - the same email
+     - the same last ten digits of a phone number
+
+   The synced record wins, because it is the one the database, the sweep and
+   every other device agree about. Nothing is deleted from myleads — the entry
+   stays put and simply stops being drawn twice, so nothing is ever lost if the
+   match turns out to be wrong. */
+function nameLoose(v){
+  return String(v||"").toLowerCase().replace(/[^a-z ]/g,"").replace(/\s+/g," ").trim();
+}
+function last10(v){ return String(v||"").replace(/[^0-9]/g,"").slice(-10); }
+
+function mergeMine(synced){
+  var byName={}, byMail={}, byTel={};
+  synced.forEach(function(L){
+    var n=nameLoose(L.name); if(n) byName[n]=1;
+    /* First name + last name only, so "Nate Hunt" and "Nathan J Hunt" collide
+       on the surname at least — checked below rather than here. */
+    var e=String(L.email||"").toLowerCase().trim(); if(e) byMail[e]=1;
+    var t=last10(L.phone); if(t.length===10) byTel[t]=1;
+  });
+  var surnames={};
+  Object.keys(byName).forEach(function(n){
+    var p=n.split(" ");
+    if(p.length>1) surnames[p[p.length-1]+"|"+p[0].charAt(0)]=1;
+  });
+
+  var out=[];
+  mlLoad().forEach(function(o,i){
+    var n=nameLoose(o.name);
+    var e=String(o.email||"").toLowerCase().trim();
+    var t=last10(o.phone);
+    var p=n.split(" ");
+    var initialKey = p.length>1 ? (p[p.length-1]+"|"+p[0].charAt(0)) : "";
+
+    var dupe = (n && byName[n])
+            || (e && byMail[e])
+            || (t.length===10 && byTel[t])
+            /* same surname and same first initial — catches Nate/Nathan,
+               Mike/Michael, Chris/Christopher */
+            || (initialKey && surnames[initialKey]);
+    if(!dupe) out.push(mlToLead(o,i));
+  });
+  return synced.concat(out);
+}
+
 function mlLoad(){try{return JSON.parse(LS("myleads")||"[]");}catch(e){return [];}}
 function mlSave(a){LS("myleads",JSON.stringify(a));}
 function mlAdd(o){var a=mlLoad();a.push(o);mlSave(a);}
 function mlDel(i){var a=mlLoad();a.splice(i,1);mlSave(a);}
 /* Turn a hand-added record into the same shape parseLeads produces. */
 function mlToLead(o,i){
-  var st0=o.stage||"New Lead";
-  if(STATUSES.indexOf(st0)<0) st0="New Lead";
+  var st0=o.stage||"New";
+  if(STATUSES.indexOf(st0)<0) st0="New";
   return {name:o.name,contact:o.phone||"",secondary:o.email||"",funnel:o.source||"Added by hand",
     notes:o.notes||"",notesBase:o.notes||"",month:"",
     stage:st0,stageBase:st0,owed:0,contingent:0,deferred:false,
@@ -4949,7 +5072,7 @@ function refreshContacts(){
        exactly what it looked like from the outside. */
     var so=stGet(x.name);
     var base=stageFix(x.stageBase);
-    if(STATUSES.indexOf(base)<0) base="New Lead";
+    if(STATUSES.indexOf(base)<0) base="New";
     x.stage = (so && STATUSES.indexOf(so)>=0) ? so : base;
     x.stageBase = base;
     x.stageSet = !!so;
@@ -5052,7 +5175,7 @@ var WX_ICON={clear:"☀️",sun:"☀️",cloud:"☁️",part:"⛅",
 /* Which build is running. There is no way to tell two 800KB index.html files
    apart by eye, and an older download getting uploaded by mistake cost a whole
    round of "nothing changed". This is the answer to that. */
-var BUILD="2026-08-16-d";
+var BUILD="2026-08-16-e";
 try{ window.EXODUS_BUILD=BUILD; }catch(e){}
 
 function paintTopBar(){
@@ -5287,14 +5410,14 @@ function parseLeads(md){
       if(d0<new Date())pastMeeting=true;}
 
     var stage;
-    if(writeOff||/kicked|didnt pay or answer|dont contact|guy is crazy|never replied|bad lead/i.test(hay))stage="Dead Lead";
-    else if(/\bpaid\b|signed up|half paid|letting .* in for free|testimonial/i.test(hay))stage="Signed Up";
-    else if(owed>0)stage="Signed Up";
-    else if(pastMeeting||/had sales call|spoke to on phone|missed our scheduled/i.test(hay))stage="Contact in the Future";
-    else if(/signing up this week|wants to sign up|meeting at|set up call|trying to schedule|set up time|no.?show|didn.?t show/i.test(hay))stage="Warm Lead";
-    else if(/texted|dmed|dms|contacted|spoke|sent him|talking in dms|followed up|reach back out|reach out/i.test(hay))stage="Warm Lead";
-    else if(cleared)stage="Warm Lead";
-    else stage="New Lead";
+    if(writeOff||/kicked|didnt pay or answer|dont contact|guy is crazy|never replied|bad lead/i.test(hay))stage="Dead";
+    else if(/\bpaid\b|signed up|half paid|letting .* in for free|testimonial/i.test(hay))stage="Member";
+    else if(owed>0)stage="Member";
+    else if(pastMeeting||/had sales call|spoke to on phone|missed our scheduled/i.test(hay))stage="Talking";
+    else if(/signing up this week|wants to sign up|meeting at|set up call|trying to schedule|set up time|no.?show|didn.?t show/i.test(hay))stage="Talking";
+    else if(/texted|dmed|dms|contacted|spoke|sent him|talking in dms|followed up|reach back out|reach out/i.test(hay))stage="Talking";
+    else if(cleared)stage="Talking";
+    else stage="New";
     if(STAGE_FIX[keyOf(name)]) stage=STAGE_FIX[keyOf(name)];
 
     var cb=contact+" "+secondary;
@@ -6027,8 +6150,8 @@ var SBFORMS=[];        /* form submissions, straight out of Postgres */
    panel downstream cannot tell the difference. */
 function sbToLead(r){
   /* a retired stage name still lands in the right place rather than resetting */
-  var st=stageFix(r.stage||"New Lead");
-  if(STATUSES.indexOf(st)<0) st="New Lead";
+  var st=stageFix(r.stage||"New");
+  if(STATUSES.indexOf(st)<0) st="New";
   return {name:r.name, contact:r.phone||"", secondary:r.email||"",
     funnel:r.source||"Supabase", notes:r.notes||"", notesBase:r.notes||"", month:"",
     stage:st, stageBase:st,
@@ -6223,7 +6346,7 @@ function boot(){
   })
   .then(function(){
     if(SBLEADS.length){
-      STATE.leads = SBLEADS.concat(mlLoad().map(mlToLead));
+      STATE.leads = mergeMine(SBLEADS);
       refreshContacts();
       drawBuilding();
     }
@@ -6236,7 +6359,7 @@ function boot(){
         var sheet = parseLeads(md);
         if(!SBLEADS.length){
           /* database empty or unreachable — run off the sheet and seed the db */
-          STATE.leads = sheet.concat(mlLoad().map(mlToLead));
+          STATE.leads = mergeMine(sheet);
           STATE.source = "sheet";
           refreshContacts();
           sbSeedFromSheet(sheet);
@@ -6247,7 +6370,7 @@ function boot(){
           var fresh = sheet.filter(function(x){ return !have[keyOf(x.name)]; });
           STATE.source = "supabase";
           if(fresh.length){
-            STATE.leads = SBLEADS.concat(fresh).concat(mlLoad().map(mlToLead));
+            STATE.leads = mergeMine(SBLEADS.concat(fresh));
             refreshContacts();
             sbSeedFromSheet(fresh);
           }
@@ -6330,7 +6453,7 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function sum(a,f){var t=0;for(var i=0;i<a.length;i++)t+=f(a[i]);return t;}
 function by(a,f){return a.filter(f);}
-function paidMembers(){return by(STATE.leads,function(x){return x.stage==="Signed Up";});}
+function paidMembers(){return by(STATE.leads,function(x){return x.stage==="Member";});}
 /* Cash collected. Normally this is the sum of what each member actually paid,
    but Glen knows the real running total and the per-person figures were never
    fully filled in — so an explicit total, when set, is the truth. */
@@ -9014,7 +9137,7 @@ function drawMobileStack(){
     var m=money();
     var untracked=(STATE.forms||[]).filter(function(f){
       return !inCrm(f) && !formDismissed(f) && !f.self; }).length;
-    var warm=by(STATE.leads,function(x){return x.stage==="Warm Lead";}).length;
+    var warm=by(STATE.leads,function(x){return x.stage==="Talking";}).length;
     top.innerHTML='<div class="mstat"><b>$'+m.chase.toLocaleString()+'</b><i>to collect</i></div>'
      +'<div class="mstat"><b>'+warm+'</b><i>warm</i></div>'
      +'<div class="mstat"><b>'+untracked+'</b><i>untracked</i></div>'
@@ -10753,13 +10876,13 @@ function jordanCtx(){
       owes:x.owed||0, notes:(x.notes||"").slice(0,160), reachable:!!x.directOnly}; }); }
   return JSON.stringify({
     pipeline:{
-      newLeads:      bucket("New Lead"),
-      warm:          bucket("Warm Lead"),
-      joiningLater:  bucket("Contact in the Future"),
+      newLeads:      bucket("New"),
+      warm:          bucket("Talking"),
+      joiningLater:  bucket("Contacted"),
       priority:      (STATE.leads||[]).filter(function(x){return prGet(x.name);})
                        .map(function(x){return x.name+" ("+x.stage+")";}),
-      signedUp:      bucket("Signed Up").length,
-      dead:          bucket("Dead Lead").length
+      signedUp:      bucket("Member").length,
+      dead:          bucket("Dead").length
     },
     money:{ chaseable:m.chase, deferred:m.defer, contingent:m.conting, collected:m.collected,
             owedBy:L.filter(function(x){return x.owed>0;})
@@ -10767,7 +10890,7 @@ function jordanCtx(){
     untrackedForms: STATE.forms.filter(function(f){return !inCrm(f);})
                     .map(function(f){return {name:f.name, phone:f.phone||null, email:f.email||null,
                       wants:f.interest||null, when:f.date?new Date(f.date).toDateString():null};}),
-    noWayToReach: L.filter(function(x){return !x.directOnly && x.stage!=="Dead Lead";})
+    noWayToReach: L.filter(function(x){return !x.directOnly && x.stage!=="Dead";})
                    .map(function(x){return x.name;}),
     pricing:{ full:497, foundingClose:297, placementFee:150 },
     daysToBangkok: Math.max(0,Math.ceil((BANGKOK-new Date())/86400000)),
@@ -10776,7 +10899,7 @@ function jordanCtx(){
 }
 
 function jordanLine(){
-  var warm=by(STATE.leads,function(x){return x.stage==="Warm Lead";}).length;
+  var warm=by(STATE.leads,function(x){return x.stage==="Talking";}).length;
   var m=money();
   var untracked=STATE.forms.filter(function(f){return !inCrm(f);}).length;
   var h=nowHour();
@@ -10939,7 +11062,7 @@ function actionProtocol(){
   return "# YOU CAN CHANGE THINGS YOURSELF\n"
    +"Say your normal short reply, then on its own line at the very end put one action per change. "
    +"Never show him this syntax and never mention it — he sees a tick and the change appearing.\n"
-   +'[[CRM {"type":"stage","name":"Marco Martin","stage":"Warm Lead"}]]\n'
+   +'[[CRM {"type":"stage","name":"Marco Martin","stage":"Talking"}]]\n'
    +'[[CRM {"type":"priority","name":"Marco Martin","on":true}]]\n'
    +'[[CRM {"type":"activity","name":"Will Cater","body":"Called, no answer."}]]\n'
    +'[[CRM {"type":"note","name":"Will Cater","body":"Wants to start in August."}]]\n'
@@ -10994,7 +11117,7 @@ function actionProtocol(){
    +"# THE STAGES AND THE PURPLE DOT\n"
    +"The only stages that exist are: "+STATUSES.join(", ")+". "
    +"\"Call Completed\" and \"Demo No Sale\" are both retired — anyone who took the call and "
-   +"did not buy is Contact in the Future. Existing leads on them were moved across, not lost. "
+   +"did not buy is Contacted. Existing leads on retired stages were moved across, not lost. "
    +"Never invent a stage.\n"
    +"The purple dot is separate from the stage. It marks the people Glen is actively chasing right "
    +"now, and they pin to the top of his list whatever stage they are in. Use the priority action "
@@ -11236,8 +11359,8 @@ function jRunActions(text){
 
 function jordanChat(){
   var L=STATE.leads, m=money();
-  var warm=by(L,function(x){return x.stage==="Warm Lead";}).length;
-  var fresh=by(L,function(x){return x.stage==="New Lead";}).length;
+  var warm=by(L,function(x){return x.stage==="Talking";}).length;
+  var fresh=by(L,function(x){return x.stage==="New";}).length;
   var untracked=STATE.forms.filter(function(f){return !inCrm(f);}).length;
 
   var h='<div class="jbanner"><div class="jbf">'+JFACE+'</div>'
@@ -11370,7 +11493,7 @@ function trainerLine(){
 function claudiaLine(){
   var h=nowHour(), m=money();
   var untracked=STATE.forms.filter(function(f){return !inCrm(f);}).length;
-  var warm=by(STATE.leads,function(x){return x.stage==="Warm Lead";}).length;
+  var warm=by(STATE.leads,function(x){return x.stage==="Talking";}).length;
   var days=Math.max(0,Math.ceil((BANGKOK-new Date())/86400000));
   var wd=new Date().getDay();
 
@@ -14431,8 +14554,8 @@ function weekAsk(){
     toTenK:Math.max(0,10000-parseInt(LS("fol_tiktok")||"0",10)),
     priorityLeads:L.filter(function(x){return prGet(x.name);})
       .map(function(x){return x.name+" — "+x.stage;}),
-    warmLeads:L.filter(function(x){return x.stage==="Warm Lead";}).map(function(x){return x.name;}),
-    joiningLater:L.filter(function(x){return x.stage==="Contact in the Future";}).map(function(x){return x.name;}),
+    warmLeads:L.filter(function(x){return x.stage==="Talking";}).map(function(x){return x.name;}),
+    joiningLater:L.filter(function(x){return x.stage==="Contacted";}).map(function(x){return x.name;}),
     owedNow:m.chase,
     peopleWhoOwe:L.filter(function(x){return x.owed>0&&!x.deferred;})
       .map(function(x){return x.name+" $"+x.owed;}),
@@ -14788,12 +14911,12 @@ function dialerView(){
   var order={};
   STATUSES.forEach(function(st,i){ order[st]=i; });
   var callable=L.filter(function(x){
-      return x.stage!=="Dead Lead" && (dialable(x.phone).ok || findPhone(x.phone));})
+      return x.stage!=="Dead" && (dialable(x.phone).ok || findPhone(x.phone));})
     .sort(function(a,b){
       var pa=prGet(a.name)?0:1, pb=prGet(b.name)?0:1;
       if(pa!==pb) return pa-pb;
       return (order[a.stage]||9)-(order[b.stage]||9);});
-  var noNum=L.filter(function(x){return !findPhone(x.phone)&&x.stage!=="Dead Lead";}).length;
+  var noNum=L.filter(function(x){return !findPhone(x.phone)&&x.stage!=="Dead";}).length;
   var ready=dialerReady();
 
   var h='';
@@ -14825,8 +14948,8 @@ function dialerView(){
   }
 
   var np=callable.filter(function(x){return prGet(x.name);}).length;
-  var nn=callable.filter(function(x){return x.stage==="New Lead";}).length;
-  var nw=callable.filter(function(x){return x.stage==="Warm Lead";}).length;
+  var nn=callable.filter(function(x){return x.stage==="New";}).length;
+  var nw=callable.filter(function(x){return x.stage==="Talking";}).length;
   /* a console readout rather than another row of cards */
   h+='<div class="console">'
    +'<div class="con-t"><span class="con-live'+(ready?" on":"")+'"></span>'
@@ -15100,7 +15223,7 @@ function formToLead(f){
     phone:f.phone||"", email:f.email||"", ig:"",
     source:"Form submission"+(f.date?" "+((f.date.getMonth?f.date.getMonth():0)+1)+"/"+(f.date.getDate?f.date.getDate():""):""),
     notes:(f.interest?"Asked about: "+f.interest:"Came in through the form."),
-    stage:"New Lead"};
+    stage:"New"};
 }
 function alreadyMine(nm){
   return mlLoad().some(function(x){return keyOf(x.name)===keyOf(nm);});
@@ -15159,7 +15282,7 @@ function wireMissAdd(){
       if(!nm){ var e=document.getElementById("fm-name"); if(e)e.focus(); return; }
       var mine=mlLoad();
       mine.push({name:nm, phone:v("fm-phone"), email:v("fm-email"), ig:"",
-                 source:"Added by hand", notes:v("fm-want"), stage:"New Lead"});
+                 source:"Added by hand", notes:v("fm-want"), stage:"New"});
       mlSave(mine);
       actAdd(nm,"Added by hand from the front desk.");
       var base=STATE.leads.filter(function(x){return !x.manual;});
@@ -15587,7 +15710,7 @@ function sortLeads(list){
   return list.slice().sort(function(a,b){
     /* Purple rides to the top of every order EXCEPT "By stage" — the one order
        whose whole job is to keep the categories separate. Floating two flagged
-       people above the bands produced Warm, Cold, New, Cold, Signed Up, which is
+       people above the bands produced Talking, Contacted, New, Contacted, Member, which is
        exactly the "leads are not sorted correctly" Glen reported. Under By stage
        the purple dot stays a marker, not a re-order. */
     if(LSORT!=="stage"){
@@ -15794,8 +15917,6 @@ function salesPipe(){
   var contN =L.filter(function(x){return x.contingent>0;}).length;
   if(!DASH_INLINE)
   h+='<div class="grid3" style="margin-bottom:14px">'
-   +'<div class="card dk"><h4>Cash Collected</h4><div class="v" id="collected-total">$'+mm.collected.toLocaleString()+'</div>'
-   +'<div class="d">Logged in the office</div></div>'
    +'<div class="card"><h4>Chase Now</h4><div class="v r">$'+mm.chase.toLocaleString()+'</div>'
    +'<div class="d">'+chaseN+' people, already sold</div></div>'
    +'<div class="card"><h4>Contingent</h4><div class="v" style="color:var(--mut)">$'+mm.conting.toLocaleString()+'</div>'
@@ -15817,7 +15938,7 @@ function salesPipe(){
    +'<label>Handle<input class="wide" id="nl-ig" placeholder="@handle"></label>'
    +'<label>Alt Phone<input class="wide" id="nl-p2" placeholder="second number"></label>'
    +'<label>Stage<select class="wide" id="nl-stage">'
-   +ORD.map(function(st){return '<option'+(st==="New Lead"?" selected":"")+'>'+esc(st)+'</option>';}).join("")
+   +ORD.map(function(st){return '<option'+(st==="New"?" selected":"")+'>'+esc(st)+'</option>';}).join("")
    +'</select></label>'
    +'<label>Source<input class="wide" id="nl-source" placeholder="TikTok DM · form · referral"></label>'
    +'</div>'
@@ -15838,7 +15959,7 @@ function salesPipe(){
   /* Search hides rows that are already on screen, so the cursor never jumps and
      nothing re-renders while you type. */
   /* ---------------------------- ONE CONTROL BAR ----------------------------
-     Search, stage, sort, grouping and New Lead, on one line, in fixed
+     Search, stage, sort, grouping and Add Lead, on one line, in fixed
      positions. Nothing here moves when a filter changes — only the numbers
      inside the controls do. The five separate strips this replaced each
      re-laid out on every click, which is why filtering felt chaotic. */
@@ -15891,7 +16012,7 @@ function salesPipe(){
    +'<button class="cb-add" id="addtoggle">+ New Lead</button>'
    +'</div>';
 
-  /* Grouped by stage, New Leads first, because a new lead going cold is the most
+  /* Grouped by stage, New first, because a new lead going cold is the most
      expensive thing that happens here. Purple-flagged people are lifted into
      their own band above everything. */
   var groups=[];
@@ -15913,7 +16034,7 @@ function salesPipe(){
   h+='<div class="scroll big">';
   groups.forEach(function(g){
     /* The band header is the control. A whole row of leads is a lot of screen,
-       and Dead Leads is a band he never needs open. */
+       and Dead is a band he never needs open. */
     var shut=pgIsShut(g.label);
     h+='<button class="pgrp'+(shut?" shut":"")+'" data-pgrp="'+esc(g.label)+'" '
       +'style="--gc:'+g.hex+'" aria-expanded="'+(shut?"false":"true")+'" '
@@ -15930,7 +16051,7 @@ function salesPipe(){
      +'<th style="width:26px" title="Priority"></th>'
      +'<th>Name</th><th style="width:132px">Status</th>'
      +'<th style="width:124px">Phone</th><th style="width:186px">Email</th>'
-     +'<th style="width:118px">Came In</th>'
+     +'<th style="width:150px">Source &amp; date</th>'
      +'<th>Notes</th><th style="width:158px">Reach</th></tr></thead><tbody>';
     g.rows.forEach(function(x){
     function fld(field,val,ph){
@@ -15945,7 +16066,7 @@ function salesPipe(){
      +'<td class="nm-c">'
      +'<button class="openlead" data-n="'+esc(x.name)+'" title="Open the full record">'+esc(x.name)+'</button>'
      +(x.flag?'<div class="softflag">'+esc(x.flag)+'</div>':'')
-     +(x.manual?'<div class="manualflag" data-mi="'+x.mi+'">added by you · remove</div>':'')
+     
      /* Killing a duplicate has to be possible from the list itself, and it has to
         ask, because it is not undoable. */
      +(DEL_ASK===x.name
@@ -15955,6 +16076,13 @@ function salesPipe(){
         : '<button class="delone" data-delask="'+esc(x.name)+'" '
           +'title="Remove this lead completely" aria-label="Remove this lead">'
           +'\u00d7</button>')
+     +(function(){
+        var t=touchLabel(x.name);
+        if(!t) return '<div class="tchip none">no date</div>';
+        return '<div class="tchip '+t.cls+'" title="'
+          +(t.never?"Never contacted from here":"Last call or text sent from here")
+          +'">'+esc(t.txt)+'</div>';
+      })()
      +(function(){
         var fd=fuDaysOut(x.name);
         if(fd===null) return "";
@@ -15973,7 +16101,12 @@ function salesPipe(){
      +'</select></td>'
      +'<td>'+fld("p",x.phone,"add number")+'</td>'
      +'<td>'+fld("e",x.email,"add email")+'</td>'
-     +'<td data-l="Came In" class="camecell">'
+     +'<td data-l="Source & date" class="camecell">'
+       +'<select class="srcsel" data-srcn="'+esc(x.name)+'">'
+       +SOURCES.map(function(s){
+           return '<option value="'+esc(s)+'"'+(s===srcGet(x.name)?" selected":"")+'>'
+             +(s||"add source")+'</option>';}).join("")
+       +'</select>'
        +'<input class="cin-came" type="'+(camePrec(x.name)==="month"?"month":"date")+'" '
        +'data-n="'+esc(x.name)+'" value="'+esc(cameInRaw(x.name))+'">'
      +'</td>'
@@ -17341,8 +17474,8 @@ function stageCounts(){
   var c={};
   STATUSES.forEach(function(st){ c[st]=0; });
   (STATE.leads||[]).forEach(function(L){
-    var st=stageFix(L.stage||stGet(L.name)||"New Lead");
-    if(STATUSES.indexOf(st)<0) st="New Lead";
+    var st=stageFix(L.stage||stGet(L.name)||"New");
+    if(STATUSES.indexOf(st)<0) st="New";
     c[st]++;
   });
   return c;
@@ -18174,26 +18307,6 @@ function dashView(){
 
     /* the money lives here, next to the people it comes from */
     h+='<div class="crmmoney">'
-      /* An override silently outranks every recorded payment. Glen told Claudia
-         Peter had paid, she wrote it correctly, and the number did not move —
-         because a typed-in figure was sitting on top of the sum and nothing on
-         screen said so. A number that ignores your data without telling you is
-         worse than a wrong number. It says so now, with one tap back. */
-      +(function(){
-        var ov=cashOverride(), raw=collectedRaw();
-        return '<div class="cm'+(ov!==null?" ovr":"")+'">'
-          +'<span>Cash Collected</span><b class="g">$'
-          +m.collected.toLocaleString()+'</b>'
-          +(ov!==null
-            ? '<i class="cm-ov">frozen at a typed-in figure &middot; live total is $'
-              +(cashBase()+raw).toLocaleString()
-              +' <button class="cm-clr" id="cash-real">use that</button></i>'
-            : (cashBase()
-                ? '<i>'+memberCount()+' paying &middot; $'+cashBase().toLocaleString()
-                  +' banked before this app</i>'
-                : '<i>'+memberCount()+' paying</i>'))
-          +'</div>';
-       })()
       +'<div class="cm"><span>Still To Collect</span><b class="'+(m.chase?"a":"")+'">$'
         +m.chase.toLocaleString()+'</b><i>already sold</i></div>'
       +'<div class="cm"><span>Contingent</span><b>$'+m.conting.toLocaleString()+'</b>'
@@ -19418,15 +19531,22 @@ function wire(){
   };
 
   /* ---- Call, Alt and Text, on the row ---- */
+  /* source picker */
+  var ss=document.querySelectorAll("[data-srcn]");
+  for(var si=0;si<ss.length;si++){
+    ss[si].onchange=function(){ srcSet(this.getAttribute("data-srcn"), this.value); redraw(); };
+  }
   var rcs=document.querySelectorAll("[data-rcall]");
   for(var r1=0;r1<rcs.length;r1++) rcs[r1].onclick=function(){
     /* askCall() shows the exact E.164 number and waits for a yes. That
        confirmation is not decoration and is never skipped. */
+    touchStamp(this.getAttribute("data-rcall"));
     askCall(this.getAttribute("data-rcall"), this.getAttribute("data-rtel"));
   };
   var rts=document.querySelectorAll("[data-rtext]");
   for(var r2=0;r2<rts.length;r2++) rts[r2].onclick=function(){
     var nm=this.getAttribute("data-rtext");
+    touchStamp(nm);
     var L=leadBy(nm);
     var tel=L ? (cnGet(L.name).p || L.phone || "") : "";
     if(!dialable(tel).ok) return;
@@ -19639,7 +19759,7 @@ function wire(){
       var nm=v("nl-name");
       if(!nm){var e=document.getElementById("nl-name");if(e)e.focus();return;}
       mlAdd({name:nm,phone:v("nl-phone"),email:v("nl-email"),ig:v("nl-ig"),
-             stage:v("nl-stage")||"New Lead",source:v("nl-source"),notes:v("nl-notes")});
+             stage:v("nl-stage")||"New",source:v("nl-source"),notes:v("nl-notes")});
       /* the second number lives with the other contact overrides, which is
          where altPhone() and the Alt button read it from */
       var p2=v("nl-p2");
