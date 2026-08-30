@@ -4259,6 +4259,18 @@ table.lgrid .openlead:after{content:"";display:inline-block;width:0}
 .lgrid .rb.mail:hover:not([disabled]){background:#2a2118;color:#f0d9b0;
   border-color:#6b5636}
 
+
+/* click-to-edit cells */
+td.ced{cursor:text}
+td.ced:hover{background:rgba(255,255,255,.055)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.cedin{width:100%;box-sizing:border-box;padding:6px 8px;margin:0;
+  font:inherit;font-size:12.5px;color:#eef2f8;background:#1b1b1f;
+  border:1px solid #4a4a55;border-radius:7px;outline:none;resize:none;
+  box-shadow:0 0 0 3px rgba(255,255,255,.05)}
+.cedin.multi{min-height:62px;line-height:1.45}
+.cedin::placeholder{color:#585f6c}
+
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -16325,11 +16337,13 @@ function salesPipe(){
      +'</select></td>'
 
      /* ---- contact: read, do not edit ---- */
-     +'<td class="cel">'+(ph
+     +'<td class="cel ced" data-ed="p" data-n="'+esc(x.name)+'" '
+       +'data-raw="'+esc(ph)+'" title="Click to edit">'+(ph
         ? '<span class="celv">'+esc(fmtPhone(ph))+'</span>'
         : '<span class="celn">&mdash;</span>')+'</td>'
-     +'<td class="cel">'+(em
-        ? '<span class="celv" title="'+esc(em)+'">'+esc(em)+'</span>'
+     +'<td class="cel ced" data-ed="e" data-n="'+esc(x.name)+'" '
+       +'data-raw="'+esc(em)+'" title="Click to edit">'+(em
+        ? '<span class="celv">'+esc(em)+'</span>'
         : '<span class="celn">&mdash;</span>')+'</td>'
 
      /* ---- where from, and when ---- */
@@ -16342,8 +16356,9 @@ function salesPipe(){
      +'</td>'
 
      /* ---- the note, one line, full text on hover ---- */
-     +'<td class="cel">'+(x.notes
-        ? '<span class="notev" title="'+esc(x.notes)+'">'+esc(x.notes)+'</span>'
+     +'<td class="cel ced" data-ed="nt" data-n="'+esc(x.name)+'" '
+       +'data-raw="'+esc(x.notes||"")+'" title="Click to edit">'+(x.notes
+        ? '<span class="notev">'+esc(x.notes)+'</span>'
         : '<span class="celn">&mdash;</span>')+'</td>'
 
      +'<td class="reach">'+reachBtns(x)+'</td></tr>';});
@@ -19791,6 +19806,46 @@ function wire(){
     touchStamp(this.getAttribute("data-rcall"));
     askCall(this.getAttribute("data-rcall"), this.getAttribute("data-rtel"));
   };
+  /* ---- click a cell, edit it there ----
+     The grid reads as text until you click into it. No forty visible inputs,
+     but nothing buried two screens away either. Enter or clicking off saves,
+     Escape abandons. */
+  var eds=document.querySelectorAll("td.ced");
+  for(var ed=0;ed<eds.length;ed++) eds[ed].onclick=function(e){
+    if(this.querySelector("input,textarea")) return;
+    var td=this, nm=td.getAttribute("data-n"),
+        f=td.getAttribute("data-ed"), was=td.getAttribute("data-raw")||"";
+    var multi=(f==="nt");
+    var el=document.createElement(multi?"textarea":"input");
+    el.className="cedin"+(multi?" multi":"");
+    el.value=was;
+    el.placeholder = f==="p"?"number" : f==="e"?"email" : "note";
+    if(multi) el.rows=3;
+    td.innerHTML=""; td.appendChild(el);
+    el.focus(); if(el.select) el.select();
+
+    var done=false;
+    function save(commit){
+      if(done) return; done=true;
+      var v=el.value.trim();
+      if(commit && v!==was){
+        if(f==="nt"){
+          ntSet(nm,v);
+          var L=leadBy(nm); if(L){ L.notes=v; L.notesSet=true; }
+          SBSAVE("lead", nm);
+        } else {
+          cnPut(nm, f, v);
+        }
+      }
+      redraw();
+    }
+    el.onblur=function(){ save(true); };
+    el.onkeydown=function(ev){
+      if(ev.key==="Escape"){ ev.preventDefault(); save(false); }
+      if(ev.key==="Enter" && !(multi && ev.shiftKey)){ ev.preventDefault(); el.blur(); }
+    };
+  };
+
   /* Gmail compose, in the browser */
   var rms=document.querySelectorAll("[data-rmail]");
   for(var rm=0;rm<rms.length;rm++) rms[rm].onclick=function(){
