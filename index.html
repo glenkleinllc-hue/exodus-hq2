@@ -2002,10 +2002,10 @@ table.lgrid col.c-pr  {width:26px}
 table.lgrid col.c-nm  {width:24%}
 table.lgrid col.c-st  {width:11%}
 table.lgrid col.c-ph  {width:12.5%}
-table.lgrid col.c-em  {width:17.5%}
+table.lgrid col.c-em  {width:16%}
 table.lgrid col.c-sr  {width:8.5%}
-table.lgrid col.c-nt  {width:12%}
-table.lgrid col.c-rc  {width:13%}
+table.lgrid col.c-nt  {width:11%}
+table.lgrid col.c-rc  {width:15.5%}
 
 table.lgrid thead th{
   position:sticky;top:0;z-index:2;text-align:left;
@@ -2080,11 +2080,12 @@ tr:hover .celv,tr:hover .notev{color:#d6dce4}
 
 /* --- actions --- */
 table.lgrid td.reach{white-space:nowrap;padding-right:12px}
-.lgrid .rbx{display:flex;gap:4px;justify-content:flex-end;flex-wrap:nowrap}
+.lgrid .rbx{display:block;text-align:right;white-space:nowrap;font-size:0}
 .lgrid .rb,.lgrid a.rb{
-  display:inline-flex;align-items:center;justify-content:center;
-  height:28px;padding:0 9px;border-radius:7px;
-  font:600 10.5px/1 inherit;letter-spacing:.1px;text-decoration:none;
+  display:inline-block;vertical-align:middle;margin-left:4px;
+  height:28px;line-height:26px;padding:0 9px;border-radius:7px;text-align:center;
+  font-family:inherit;font-size:10.5px;font-weight:600;letter-spacing:.1px;
+  text-decoration:none;white-space:nowrap;
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
   color:#7d8590;cursor:pointer;
   transition:background .12s,color .12s,border-color .12s}
@@ -2107,6 +2108,7 @@ table.lgrid .delone{
 table.lgrid tr:hover .delone{opacity:1}
 table.lgrid .delone:hover{color:#e0857f;background:rgba(224,133,127,.12)}
 table.lgrid .softflag{display:none}
+table.lgrid tbody td.cel{padding:0 14px;overflow:hidden}
 
 
 /* --- band headers --- */
@@ -4168,32 +4170,11 @@ textarea.dw-pi.big{min-height:92px}
   .pd-line,.pd-line .chartbox,.pd-line .chart{height:90px}
 }
 
-/* ================================================================
-   CRM grid — read, don't edit.
-   Form controls in forty rows is what made this look like a
-   spreadsheet. The grid now shows text; the row opens the record.
-   ================================================================ */
-table.lgrid tbody td.cel{padding:10px 12px;overflow:hidden}
-.celv{display:block;font-size:12.5px;color:#aeb6c2;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  font-variant-numeric:tabular-nums}
-.celn{color:#3f434c;font-size:13px}
-.notev{display:block;font-size:12.5px;color:#8f97a5;line-height:1.45;
-  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;
-  -webkit-line-clamp:2;-webkit-box-orient:vertical}
-.srcv{display:inline-block;padding:2px 8px;border-radius:999px;
-  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);
-  font-size:10px;font-weight:650;letter-spacing:.4px;color:#9aa3b2}
-.camev{display:block;margin-top:4px;font-size:10.5px;color:#5f6675;
-  font-variant-numeric:tabular-nums}
-.rowmeta{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:5px}
-.rowmeta:empty{display:none}
-table.lgrid tbody tr:hover td.cel .celv{color:#dfe8e3}
-table.lgrid tbody tr:hover td.cel .notev{color:#aeb6c2}
-
-/* the whole row invites the click that opens the record */
-table.lgrid tbody tr:hover{cursor:default}
-table.lgrid .openlead:after{content:"";display:inline-block;width:0}
+/* The CRM grid is styled once, near the top of this sheet, beside the rest of
+   the table rules. A second block used to live here and override it — two-line
+   notes, different cell colours, pill-shaped source chips — which is how a
+   restyle could land and change nothing you could see. Do not add grid rules
+   here; edit table.lgrid above. */
 
 
 
@@ -4644,20 +4625,20 @@ var STATUSES=["New","Contacted","Talking","Member","Dead"];
    so red always means one thing. */
 var SCOL={
   "New"      :{hex:"#cbd5e1",cls:"b-new",  dot:"#e5ede9"},
-  "Contacted":{hex:"#8eccaa",cls:"b-cold", dot:"#b3ddc6"},
+  "Contacted":{hex:"#6aa9e0",cls:"b-cold", dot:"#9ccbef"},
   "Talking"  :{hex:"#fbbf24",cls:"b-warm", dot:"#fcd34d"},
   "Member"   :{hex:"#4ade80",cls:"b-paid", dot:"#86efac"},
   "Dead"     :{hex:"#f87171",cls:"b-owe",  dot:"#fca5a5"},
   /* Retired names keep a colour entry. scol() runs on raw stored values in a
      few places and a missing key throws before the alias can map it across. */
   "New Lead"             :{hex:"#cbd5e1",cls:"b-new", dot:"#e5ede9"},
-  "Did Not Answer"       :{hex:"#8eccaa",cls:"b-cold",dot:"#b3ddc6"},
+  "Did Not Answer"       :{hex:"#6aa9e0",cls:"b-cold",dot:"#9ccbef"},
   "Warm Lead"            :{hex:"#fbbf24",cls:"b-warm",dot:"#fcd34d"},
-  "Cold Lead"            :{hex:"#8eccaa",cls:"b-cold",dot:"#b3ddc6"},
+  "Cold Lead"            :{hex:"#6aa9e0",cls:"b-cold",dot:"#9ccbef"},
   "Dead Lead"            :{hex:"#f87171",cls:"b-owe", dot:"#fca5a5"},
   "Signed Up"            :{hex:"#4ade80",cls:"b-paid",dot:"#86efac"},
-  "Demo No Sale"         :{hex:"#8eccaa",cls:"b-cold",dot:"#b3ddc6"},
-  "Contact in the Future":{hex:"#8eccaa",cls:"b-cold",dot:"#b3ddc6"}
+  "Demo No Sale"         :{hex:"#6aa9e0",cls:"b-cold",dot:"#9ccbef"},
+  "Contact in the Future":{hex:"#6aa9e0",cls:"b-cold",dot:"#9ccbef"}
 };
 
 /* Every name this CRM has ever used, mapped to where it lives now. Nothing is
