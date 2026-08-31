@@ -1993,121 +1993,123 @@ a.lnk:hover{color:#d2ebdd}
    Fixed by giving every column a real width, clamping every row to one line,
    and making stage a solid badge. Uniform row height is most of what makes a
    table look finished. */
-table.lgrid{width:100%;border-collapse:separate;border-spacing:0;
-  table-layout:fixed;background:#0f0f11;border-radius:12px;overflow:hidden;
-  border:1px solid #202024}
+/* ================= THE PIPELINE GRID =================
+   Dense, and finished. The things that make it read as a real tool rather
+   than a dashboard template:
+     - 46px rows, single line, no exceptions. Ragged heights were most of
+       why the old one looked unfinished.
+     - stage is a TINTED tag, not a solid block. A saturated pill reads as a
+       toy; a tint with coloured text is what Linear and Stripe do.
+     - initials sit in a neutral plate. Coloured avatar circles fight the
+       stage colours, which are the only colours that carry meaning here.
+     - the row actions are invisible until you hover the row, so seven rows
+       are not twenty-one buttons shouting at once.
+   Every class name below is one the renderer already emits. Do not add a
+   second grid stylesheet lower down the sheet — that is what silently ate
+   the last four restyles. */
+table.lgrid{width:100%;border-collapse:collapse;table-layout:fixed;
+  background:#0f0f12;border:1px solid #1e1e23;border-radius:10px;overflow:hidden}
 
-/* column widths, once, so nothing has to fight for space */
-table.lgrid col.c-pr  {width:26px}
-table.lgrid col.c-nm  {width:24%}
-table.lgrid col.c-st  {width:11%}
-table.lgrid col.c-ph  {width:12.5%}
-table.lgrid col.c-em  {width:16%}
-table.lgrid col.c-sr  {width:8.5%}
-table.lgrid col.c-nt  {width:11%}
-table.lgrid col.c-rc  {width:15.5%}
+table.lgrid col.c-pr{width:26px}
+table.lgrid col.c-nm{width:23%}
+table.lgrid col.c-st{width:12%}
+table.lgrid col.c-ph{width:13%}
+table.lgrid col.c-em{width:18%}
+table.lgrid col.c-sr{width:9%}
+table.lgrid col.c-nt{width:12%}
+table.lgrid col.c-rc{width:15%}
 
 table.lgrid thead th{
-  position:sticky;top:0;z-index:2;text-align:left;
-  padding:11px 14px;
-  font-size:9px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
-  color:#5a6068;background:#121214;
-  border-bottom:1px solid #26262a;white-space:nowrap}
+  position:sticky;top:0;z-index:2;text-align:left;padding:10px 14px;
+  background:#0c0c0f;
+  font-size:9.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;
+  color:#5c636e;border-bottom:1px solid #1e1e23;white-space:nowrap}
 
 table.lgrid tbody td{
-  height:56px;padding:0 14px;vertical-align:middle;
-  border-bottom:1px solid rgba(255,255,255,.045);
-  font-size:12.5px;color:#9ba3ad;background:#0f0f11;
-  transition:background .12s}
+  height:46px;padding:0 14px;vertical-align:middle;
+  border-bottom:1px solid #17171b;
+  font-size:12.5px;color:#8f97a3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 table.lgrid tbody tr:last-child td{border-bottom:none}
-table.lgrid tbody tr:hover td{background:#17171b}
-
-/* priority is a left edge on the row, not a column of its own */
-table.lgrid tbody tr.prirow td{background:#131117}
-table.lgrid tbody tr.prirow:hover td{background:#191622}
+table.lgrid tbody tr:hover td{background:#141419}
+table.lgrid tbody tr.prirow td{background:#121118}
+table.lgrid tbody tr.prirow:hover td{background:#17151f}
 
 /* --- the person --- */
-table.lgrid .nm-c{position:relative;overflow:hidden}
-.nmrow{display:flex;align-items:center;gap:11px;min-width:0}
-.avi{flex:none;width:32px;height:32px;border-radius:9px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11.5px;font-weight:700;
-  color:#0f0f11;background:var(--av,#5a6068)}
-.nmtx{min-width:0;flex:1}
+table.lgrid .nm-c{position:relative}
+.nmrow{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avi{display:inline-block;width:26px;height:26px;line-height:24px;text-align:center;
+  border-radius:6px;background:#1c1c22;border:1px solid #26262d;vertical-align:middle;
+  margin-right:9px;font-size:10px;font-weight:600;color:#8f97a3;letter-spacing:.2px}
+.nmtx{display:inline;vertical-align:middle}
 table.lgrid .openlead{
-  display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;
-  white-space:nowrap;text-align:left;
-  font-size:13.5px;font-weight:600;letter-spacing:-.15px;color:#f2f4f7;
-  background:none;border:none;padding:0;cursor:pointer;font-family:inherit;
-  line-height:1.3}
-table.lgrid .openlead:hover{color:#fff;text-decoration:underline}
-.rowmeta{display:flex;align-items:center;gap:7px;margin-top:1px}
-.rowmeta:empty{display:none}
-.tchip{font-size:10.5px;font-weight:500;letter-spacing:.1px;background:none!important}
-.tchip.ok{color:#6fbf95}.tchip.warm{color:#c9a25c}
-.tchip.cold{color:#c9807a}.tchip.none{color:#4d525a}
+  display:inline;font-size:13px;font-weight:600;letter-spacing:-.1px;color:#eef2f7;
+  background:none;border:none;padding:0;cursor:pointer;font-family:inherit}
+table.lgrid tr:hover .openlead{color:#fff}
+/* the second line under the name is what broke the 46px rhythm */
+.rowmeta{display:none}
+.tchip{display:none}
 
-/* --- stage: a filled badge that reads as status --- */
+/* --- stage: tinted, never solid --- */
 table.lgrid select.stsel{
-  width:100%;box-sizing:border-box;appearance:none;cursor:pointer;
-  padding:6px 10px;border-radius:7px;text-align:left;
-  font:700 11px/1.4 inherit;letter-spacing:.3px;
-  color:#101012;background:var(--sc,#5a6068);
-  border:1px solid var(--sc,#5a6068);outline:none;transition:filter .12s}
-table.lgrid select.stsel:hover{filter:brightness(1.12)}
-table.lgrid select.stsel option{background:#141417;color:#e6ebf2}
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  height:22px;line-height:20px;padding:0 10px;border-radius:6px;
+  font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.1px;
+  color:var(--sc,#9aa4b2);
+  background:#16161b;border:1px solid #26262d;   /* overridden inline per stage */
+  outline:none;max-width:100%;transition:filter .12s}
+table.lgrid select.stsel:hover{filter:brightness(1.35)}
+table.lgrid select.stsel option{background:#16161b;color:#e6eaf0}
 
-/* --- cells: one line each, always --- */
+/* --- cells: one line, always --- */
 td.ced{cursor:text}
-td.ced:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.09)}
-.celv{display:block;font-size:12.5px;color:#9ba3ad;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
-.celn{color:#3a3e45}
-/* notes never wrap: a ragged row height is what made the whole thing look
-   unfinished. The full note is one click away in the record. */
+td.ced:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.celv{display:block;font-size:12.5px;color:#8f97a3;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;
+  letter-spacing:-.1px}
+.celn{color:#4a505a}
 .notev{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  font-size:12.5px;color:#828a95}
-.srcv{display:inline-block;padding:3px 8px;border-radius:6px;
-  background:rgba(255,255,255,.05);font-size:10px;font-weight:600;
-  letter-spacing:.2px;color:#8b939e;white-space:nowrap}
+  font-size:12.5px;color:#8f97a3}
+/* source is a word, not a chip. Chips everywhere is noise. */
+.srcv{display:inline;padding:0;background:none;border:none;border-radius:0;
+  font-size:11px;font-weight:400;letter-spacing:0;color:#6b727d}
 .camev{display:none}
-tr:hover .celv,tr:hover .notev{color:#d6dce4}
-.cedin{width:100%;box-sizing:border-box;padding:7px 9px;margin:0;font:inherit;
-  font-size:12.5px;color:#f2f4f7;background:#1a1a1e;border:1px solid var(--blu);
-  border-radius:7px;outline:none;resize:none}
-.cedin.multi{min-height:60px;line-height:1.5}
-.cedin::placeholder{color:#565c65}
-
-/* --- actions --- */
-table.lgrid td.reach{white-space:nowrap;padding-right:12px}
-.lgrid .rbx{display:block;text-align:right;white-space:nowrap;font-size:0}
-.lgrid .rb,.lgrid a.rb{
-  display:inline-block;vertical-align:middle;margin-left:4px;
-  height:28px;line-height:26px;padding:0 9px;border-radius:7px;text-align:center;
-  font-family:inherit;font-size:10.5px;font-weight:600;letter-spacing:.1px;
-  text-decoration:none;white-space:nowrap;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
-  color:#7d8590;cursor:pointer;
-  transition:background .12s,color .12s,border-color .12s}
-.lgrid tr:hover .rb{color:#aab2bd;border-color:rgba(255,255,255,.13)}
-.lgrid .rb:hover:not([disabled]){background:var(--blu);border-color:var(--blu);
-  color:#0d1a13}
-.lgrid .rb[disabled]{opacity:.2;cursor:default}
-
-/* --- priority: its own narrow cell, quiet until you hover --- */
-table.lgrid .prdot{width:9px;height:9px;border-radius:50%;padding:0;
-  border:1.5px solid #34363b;background:none;cursor:pointer;
-  transition:border-color .12s,background .12s}
-table.lgrid tr:hover .prdot{border-color:#4a4d54}
-table.lgrid .prdot.on{background:#a855f7;border-color:#a855f7}
-table.lgrid .delone{
-  position:absolute;top:50%;right:4px;transform:translateY(-50%);
-  width:20px;height:20px;border-radius:5px;
-  border:none;background:none;color:#4d525a;font-size:14px;line-height:1;
-  cursor:pointer;opacity:0;transition:opacity .12s,color .12s,background .12s}
-table.lgrid tr:hover .delone{opacity:1}
-table.lgrid .delone:hover{color:#e0857f;background:rgba(224,133,127,.12)}
 table.lgrid .softflag{display:none}
+tr:hover .celv,tr:hover .notev{color:#c3cad4}
+.cedin{width:100%;box-sizing:border-box;padding:6px 8px;margin:0;font:inherit;
+  font-size:12.5px;color:#eef2f7;background:#1a1a20;border:1px solid var(--blu);
+  border-radius:6px;outline:none;resize:none}
+.cedin.multi{min-height:58px;line-height:1.5}
+.cedin::placeholder{color:#4a505a}
+
+/* --- actions: quiet until the row matters --- */
+table.lgrid td.reach{text-align:right;white-space:nowrap;padding-right:12px}
+.lgrid .rbx{display:block;text-align:right;white-space:nowrap;
+  opacity:0;transition:opacity .12s}
+.lgrid tr:hover .rbx{opacity:1}
+.lgrid .rb,.lgrid a.rb{
+  display:inline-block;vertical-align:middle;margin-left:5px;
+  height:24px;line-height:22px;padding:0 9px;border-radius:6px;text-align:center;
+  border:1px solid #2a2a32;background:#17171c;color:#98a0ac;
+  font-family:inherit;font-size:10.5px;font-weight:600;letter-spacing:.1px;
+  text-decoration:none;white-space:nowrap;cursor:pointer;
+  transition:background .12s,color .12s}
+.lgrid .rb:hover:not([disabled]){background:#23232b;color:#dfe4ec;border-color:#34343e}
+.lgrid .rb[disabled]{opacity:.25;cursor:default}
+
+/* --- priority: a 5px dot, nothing more --- */
+table.lgrid .prdot{display:inline-block;width:5px;height:5px;border-radius:50%;
+  padding:0;border:none;background:#26262d;cursor:pointer;vertical-align:middle;
+  transition:background .12s}
+table.lgrid tr:hover .prdot{background:#3a3a44}
+table.lgrid .prdot.on,table.lgrid tr:hover .prdot.on{background:#a855f7}
+table.lgrid .delone{
+  position:absolute;top:50%;right:2px;transform:translateY(-50%);
+  width:20px;height:20px;border-radius:5px;border:none;background:none;
+  color:#4a505a;font-size:14px;line-height:1;cursor:pointer;opacity:0;
+  transition:opacity .12s,color .12s,background .12s}
+table.lgrid tr:hover .delone{opacity:1}
+table.lgrid .delone:hover{color:#c9736e;background:rgba(201,115,110,.14)}
 table.lgrid tbody td.cel{padding:0 14px;overflow:hidden}
 
 
@@ -4623,6 +4625,15 @@ var STATUSES=["New","Contacted","Talking","Member","Dead"];
 
    Colour runs cool to warm and ends green. Dead is the only red on the screen,
    so red always means one thing. */
+/* #rrggbb + alpha -> rgba(), so a stage tint is a real colour rather than a
+   CSS function the browser might not know. */
+function hexA(hex,a){
+  var s=String(hex||"").replace("#","");
+  if(s.length===3) s=s[0]+s[0]+s[1]+s[1]+s[2]+s[2];
+  var n=parseInt(s,16);
+  if(!isFinite(n)) return "rgba(154,164,178,"+a+")";
+  return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+a+")";
+}
 var SCOL={
   "New"      :{hex:"#cbd5e1",cls:"b-new",  dot:"#e5ede9"},
   "Contacted":{hex:"#6aa9e0",cls:"b-cold", dot:"#9ccbef"},
@@ -16745,8 +16756,12 @@ function salesPipe(){
      +'</td>'
 
      /* ---- stage: the one control that belongs in a grid ---- */
+     /* The tint is computed here rather than with color-mix() in the
+        stylesheet, so the badge is coloured on any engine, not just the
+        newest ones. */
      +'<td><select class="stsel" data-n="'+esc(x.name)+'" '
-       +'style="--sc:'+c.hex+';color:'+c.dot+'">'
+       +'style="--sc:'+c.hex+';color:'+c.hex+';'
+       +'background:'+hexA(c.hex,.13)+';border-color:'+hexA(c.hex,.24)+'">'
      +STATUSES.map(function(st){
         return '<option'+(st===x.stage?" selected":"")+'>'+esc(st)+'</option>';}).join("")
      +'</select></td>'
