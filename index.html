@@ -1981,117 +1981,133 @@ a.lnk:hover{color:#d2ebdd}
 .crmcard{border:1px solid #26262a;border-radius:16px;overflow:hidden;
   background:linear-gradient(180deg,#121214,#0f0f11)}
 
+/* ================= THE PIPELINE GRID =================
+   What was wrong with it, specifically:
+     - names truncated ("Christoph…", "Nathan H…") so you could not tell who
+       anyone was, which is the single thing the table exists to tell you
+     - notes wrapped to three lines, so every row was a different height and
+       the eye had nothing to track along
+     - the stage control was styled like a form select, so it read as data
+       entry rather than as status
+     - the Reach buttons overflowed the last column
+   Fixed by giving every column a real width, clamping every row to one line,
+   and making stage a solid badge. Uniform row height is most of what makes a
+   table look finished. */
 table.lgrid{width:100%;border-collapse:separate;border-spacing:0;
-  table-layout:fixed}
+  table-layout:fixed;background:#0f0f11;border-radius:12px;overflow:hidden;
+  border:1px solid #202024}
 
-/* --- header: a label strip, not a spreadsheet bar --- */
+/* column widths, once, so nothing has to fight for space */
+table.lgrid col.c-pr  {width:26px}
+table.lgrid col.c-nm  {width:24%}
+table.lgrid col.c-st  {width:11%}
+table.lgrid col.c-ph  {width:12.5%}
+table.lgrid col.c-em  {width:17.5%}
+table.lgrid col.c-sr  {width:8.5%}
+table.lgrid col.c-nt  {width:12%}
+table.lgrid col.c-rc  {width:13%}
+
 table.lgrid thead th{
   position:sticky;top:0;z-index:2;text-align:left;
-  padding:13px 14px 11px;
-  font-size:8.5px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
-  color:#5a6068;background:#111113;
+  padding:11px 14px;
+  font-size:9px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
+  color:#5a6068;background:#121214;
   border-bottom:1px solid #26262a;white-space:nowrap}
 
-/* --- rows --- */
 table.lgrid tbody td{
-  padding:13px 14px;vertical-align:middle;
-  border-bottom:1px solid rgba(255,255,255,.04);
+  height:56px;padding:0 14px;vertical-align:middle;
+  border-bottom:1px solid rgba(255,255,255,.045);
   font-size:12.5px;color:#9ba3ad;background:#0f0f11;
-  transition:background .13s}
+  transition:background .12s}
 table.lgrid tbody tr:last-child td{border-bottom:none}
-table.lgrid tbody tr:hover td{background:#16161a}
-table.lgrid tbody tr.prirow td{background:rgba(168,85,247,.06)}
-table.lgrid tbody tr.prirow:hover td{background:rgba(168,85,247,.1)}
+table.lgrid tbody tr:hover td{background:#17171b}
+
+/* priority is a left edge on the row, not a column of its own */
+table.lgrid tbody tr.prirow td{background:#131117}
+table.lgrid tbody tr.prirow:hover td{background:#191622}
 
 /* --- the person --- */
-table.lgrid .nm-c{position:relative}
-.nmrow{display:flex;align-items:center;gap:11px}
-.avi{flex:none;width:34px;height:34px;border-radius:10px;
+table.lgrid .nm-c{position:relative;overflow:hidden}
+.nmrow{display:flex;align-items:center;gap:11px;min-width:0}
+.avi{flex:none;width:32px;height:32px;border-radius:9px;
   display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:700;letter-spacing:.2px;
-  color:#0f0f11;background:var(--av,#5a6068);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+  font-size:11.5px;font-weight:700;
+  color:#0f0f11;background:var(--av,#5a6068)}
 .nmtx{min-width:0;flex:1}
 table.lgrid .openlead{
   display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;
   white-space:nowrap;text-align:left;
-  font-size:14px;font-weight:600;letter-spacing:-.15px;color:#f2f4f7;
+  font-size:13.5px;font-weight:600;letter-spacing:-.15px;color:#f2f4f7;
   background:none;border:none;padding:0;cursor:pointer;font-family:inherit;
-  line-height:1.35}
-table.lgrid .openlead:hover{color:#fff}
-.rowmeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:3px}
+  line-height:1.3}
+table.lgrid .openlead:hover{color:#fff;text-decoration:underline}
+.rowmeta{display:flex;align-items:center;gap:7px;margin-top:1px}
 .rowmeta:empty{display:none}
-.tchip{padding:1px 0;font-size:10px;font-weight:600;letter-spacing:.2px;
-  background:none!important}
-.tchip.ok{color:#6fbf95}
-.tchip.warm{color:#c9a25c}
-.tchip.cold{color:#c9807a}
-.tchip.none{color:#4d525a}
+.tchip{font-size:10.5px;font-weight:500;letter-spacing:.1px;background:none!important}
+.tchip.ok{color:#6fbf95}.tchip.warm{color:#c9a25c}
+.tchip.cold{color:#c9807a}.tchip.none{color:#4d525a}
 
-/* --- stage: a solid pill --- */
+/* --- stage: a filled badge that reads as status --- */
 table.lgrid select.stsel{
   width:100%;box-sizing:border-box;appearance:none;cursor:pointer;
-  padding:7px 12px;border-radius:8px;
-  font:600 11.5px/1.3 inherit;letter-spacing:.1px;
-  color:var(--sc);
-  background:color-mix(in srgb, var(--sc) 13%, #141417);
-  border:1px solid color-mix(in srgb, var(--sc) 30%, transparent);
-  outline:none;transition:background .13s,border-color .13s}
-table.lgrid select.stsel:hover{
-  background:color-mix(in srgb, var(--sc) 20%, #141417);
-  border-color:color-mix(in srgb, var(--sc) 52%, transparent)}
+  padding:6px 10px;border-radius:7px;text-align:left;
+  font:700 11px/1.4 inherit;letter-spacing:.3px;
+  color:#101012;background:var(--sc,#5a6068);
+  border:1px solid var(--sc,#5a6068);outline:none;transition:filter .12s}
+table.lgrid select.stsel:hover{filter:brightness(1.12)}
 table.lgrid select.stsel option{background:#141417;color:#e6ebf2}
 
-/* --- read-only cells that become editable on click --- */
+/* --- cells: one line each, always --- */
 td.ced{cursor:text}
-td.ced:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);border-radius:8px}
+td.ced:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.09)}
 .celv{display:block;font-size:12.5px;color:#9ba3ad;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .celn{color:#3a3e45}
-.notev{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
-  overflow:hidden;font-size:12.5px;color:#828a95;line-height:1.5}
-.srcv{display:inline-block;padding:3px 9px;border-radius:7px;
+/* notes never wrap: a ragged row height is what made the whole thing look
+   unfinished. The full note is one click away in the record. */
+.notev{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:12.5px;color:#828a95}
+.srcv{display:inline-block;padding:3px 8px;border-radius:6px;
   background:rgba(255,255,255,.05);font-size:10px;font-weight:600;
-  letter-spacing:.3px;color:#8b939e}
-.camev{display:block;margin-top:5px;font-size:10.5px;color:#565c65;
-  font-variant-numeric:tabular-nums}
+  letter-spacing:.2px;color:#8b939e;white-space:nowrap}
+.camev{display:none}
 tr:hover .celv,tr:hover .notev{color:#d6dce4}
-.cedin{width:100%;box-sizing:border-box;padding:8px 10px;margin:0;font:inherit;
+.cedin{width:100%;box-sizing:border-box;padding:7px 9px;margin:0;font:inherit;
   font-size:12.5px;color:#f2f4f7;background:#1a1a1e;border:1px solid var(--blu);
-  border-radius:9px;outline:none;resize:none;
-  box-shadow:0 0 0 3px color-mix(in srgb, var(--blu) 18%, transparent)}
-.cedin.multi{min-height:66px;line-height:1.5}
+  border-radius:7px;outline:none;resize:none}
+.cedin.multi{min-height:60px;line-height:1.5}
 .cedin::placeholder{color:#565c65}
 
 /* --- actions --- */
-table.lgrid td.reach{white-space:nowrap}
-.lgrid .rbx{display:flex;gap:5px;flex-wrap:nowrap}
+table.lgrid td.reach{white-space:nowrap;padding-right:12px}
+.lgrid .rbx{display:flex;gap:4px;justify-content:flex-end;flex-wrap:nowrap}
 .lgrid .rb,.lgrid a.rb{
   display:inline-flex;align-items:center;justify-content:center;
-  height:29px;padding:0 10px;border-radius:8px;
-  font:600 10.5px/1 inherit;letter-spacing:.2px;text-decoration:none;
-  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
+  height:28px;padding:0 9px;border-radius:7px;
+  font:600 10.5px/1 inherit;letter-spacing:.1px;text-decoration:none;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
   color:#7d8590;cursor:pointer;
-  transition:background .13s,color .13s,border-color .13s}
-.lgrid tr:hover .rb{color:#aab2bd;border-color:rgba(255,255,255,.12)}
+  transition:background .12s,color .12s,border-color .12s}
+.lgrid tr:hover .rb{color:#aab2bd;border-color:rgba(255,255,255,.13)}
 .lgrid .rb:hover:not([disabled]){background:var(--blu);border-color:var(--blu);
   color:#0d1a13}
-.lgrid .rb[disabled]{opacity:.22;cursor:default}
+.lgrid .rb[disabled]{opacity:.2;cursor:default}
 
-/* --- priority and delete: quiet --- */
+/* --- priority: its own narrow cell, quiet until you hover --- */
 table.lgrid .prdot{width:9px;height:9px;border-radius:50%;padding:0;
   border:1.5px solid #34363b;background:none;cursor:pointer;
-  transition:border-color .13s,background .13s,box-shadow .13s}
+  transition:border-color .12s,background .12s}
 table.lgrid tr:hover .prdot{border-color:#4a4d54}
-table.lgrid .prdot.on{background:#a855f7;border-color:#a855f7;
-  box-shadow:0 0 0 3px rgba(168,85,247,.2)}
+table.lgrid .prdot.on{background:#a855f7;border-color:#a855f7}
 table.lgrid .delone{
-  position:absolute;top:2px;right:0;width:20px;height:20px;border-radius:6px;
+  position:absolute;top:50%;right:4px;transform:translateY(-50%);
+  width:20px;height:20px;border-radius:5px;
   border:none;background:none;color:#4d525a;font-size:14px;line-height:1;
-  cursor:pointer;opacity:0;transition:opacity .13s,color .13s,background .13s}
+  cursor:pointer;opacity:0;transition:opacity .12s,color .12s,background .12s}
 table.lgrid tr:hover .delone{opacity:1}
 table.lgrid .delone:hover{color:#e0857f;background:rgba(224,133,127,.12)}
-table.lgrid .softflag{font-size:10px;color:#4d525a;margin-top:3px}
+table.lgrid .softflag{display:none}
+
 
 /* --- band headers --- */
 .pgrp{margin:22px 0 6px;padding:6px 2px;gap:10px}
@@ -4181,6 +4197,18 @@ table.lgrid .openlead:after{content:"";display:inline-block;width:0}
 
 
 
+
+/* the failed-save bar: loud, sticky, and impossible to mistake for chrome */
+.syncbar{position:sticky;top:0;z-index:400;display:flex;flex-wrap:wrap;
+  align-items:center;gap:10px 14px;margin:0 0 14px;padding:13px 16px;
+  border-radius:10px;background:rgba(201,123,118,.14);
+  border:1px solid rgba(201,123,118,.5);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.syncbar b{font-size:13px;font-weight:800;letter-spacing:-.01em;color:#f0b8b6}
+.syncbar span{flex:1;min-width:200px;font-size:11.5px;line-height:1.5;color:#c9a9a7}
+.syncbar button{flex:none;padding:8px 14px;border-radius:8px;cursor:pointer;
+  font-family:inherit;font-size:11px;font-weight:800;letter-spacing:.4px;
+  background:#c97b76;border:1px solid #d4908b;color:#161616}
+.syncbar button:hover{filter:brightness(1.08)}
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -5778,7 +5806,8 @@ function sbRetryAll(){
   return sbBackfill(true).then(function(){ redraw(); });
 }
 
-/* The bar. Sits at the top of whatever room you are in, until it is fixed. */
+/* The bar. Sticks to the top of whatever he is looking at until it is fixed,
+   because the whole point of it is that he cannot carry on unaware. */
 function syncBar(){
   if(!SYNCFAIL.n) return "";
   return '<div class="syncbar"><b>&#9888; '+SYNCFAIL.n+' change'+(SYNCFAIL.n>1?"s":"")
@@ -5925,7 +5954,24 @@ var SBW = {
       +" follow_up_on=excluded.follow_up_on, follow_up_note=excluded.follow_up_note,"
       +" detail=excluded.detail;"
       +"update leads set priority="+(prGet(L.name)?"true":"false")
-      +" where name_key="+qv(keyOf(L.name))+";");
+      +" where name_key="+qv(keyOf(L.name))+";")
+      /* Read it back. The stage constraint rejected every write for weeks and
+         the app happily carried on showing the new value from localStorage, so
+         "it saved" now means the database agrees, not that the request left. */
+      .then(function(){
+        return sbSql("select stage from leads where name_key="+qv(keyOf(L.name))+" limit 1;")
+          .then(function(rows){
+            var got = rows && rows[0] && rows[0].stage;
+            if(got && got !== st){
+              SYNCFAIL.n++;
+              SYNCFAIL.why = 'Saved "'+L.name+'" as '+st+' but the database still says '
+                           + got + '. The change is on this device only.';
+              SYNCFAIL.at = new Date();
+              try{ redraw(); }catch(e){}
+            }
+          })
+          .catch(function(){ /* the read failing is not itself a lost change */ });
+      });
   },
 
   priority: function(name){
@@ -11428,21 +11474,96 @@ function jAsk(q){
    +recentTurns(JCHAT)
    +"Glen says: "+q;
   SBW.said("jordan","glen",q);
-  if(!(window.cowork&&window.cowork.askClaude)){
-    JCHAT.push({r:"ai",t:"Line is dead. Try me again."});
-    JBUSY=false; jPaint(); return;
-  }
-  window.cowork.askClaude(prompt,[jordanCtx()]).then(function(r){
+  askAgent(prompt,[jordanCtx()]).then(function(r){
     var t=typeof r==="string"?r:(r&&(r.text||r.content||r.response||r.answer))||"";
     if(typeof t!=="string")t=JSON.stringify(t);
     if(!t)t="Nothing came back. Ask me again.";
     var res=jRunActions(t);
     if(res.text){ JCHAT.push({r:"ai",t:res.text}); SBW.said("jordan","agent",res.text); sayAs("jordan",res.text); }
     if(res.done.length){ JCHAT.push({r:"did",t:res.done}); setTimeout(function(){redraw();},40); }
-  }).catch(function(){
-    JCHAT.push({r:"ai",t:"Could not reach me. Again."});
+  }).catch(function(e){
+    JCHAT.push({r:"ai",t:"Line dropped \u2014 "+askErr(e)});
   }).then(function(){ JBUSY=false; jPaint(); });
 }
+
+/* ================= WHY SHE ANSWERED ONCE AND THEN WENT SILENT =================
+   Every agent sets a busy flag before the request and clears it in the .then()
+   afterwards, and every agent refuses to start a second request while its flag
+   is up. That is correct — right until the request never comes back.
+
+   Three ways that happened:
+     - Claudia called window.cowork.askClaude() with no guard, unlike Jordan and
+       the coach. If it was missing the call threw SYNCHRONOUSLY, before any
+       promise existed, so no .catch and no .then ever ran. STATE.busy stayed
+       true forever and every later question hit `if(STATE.busy) return;` and
+       died in silence. One answer, then nothing, exactly as he described.
+     - /api/chat had no timeout. A request that hangs leaves the promise
+       pending for the life of the page, with the same result.
+     - Any throw inside the success handler landed in .catch, which is fine —
+       but .catch swallowed the error object and printed a fixed sentence, so
+       there was never anything on screen to explain it.
+
+   askAgent() closes all three. It always settles, it always settles with a
+   readable reason, and it can never throw at the call site. */
+function askAgent(prompt, ctx){
+  return new Promise(function(resolve, reject){
+    if(!(window.cowork && typeof window.cowork.askClaude === "function"))
+      return reject(new Error("No connection to the model from this page."));
+
+    var done=false;
+    var timer=setTimeout(function(){
+      if(done) return; done=true;
+      reject(new Error("The model took more than 60 seconds and I stopped waiting."));
+    }, 60000);
+
+    var pr;
+    /* The call itself is inside the try. This is the line that used to strand
+       the busy flag. */
+    try{ pr = window.cowork.askClaude(prompt, ctx); }
+    catch(e){ clearTimeout(timer); done=true; return reject(e); }
+
+    Promise.resolve(pr).then(function(r){
+      if(done) return; done=true; clearTimeout(timer); resolve(r);
+    }, function(e){
+      if(done) return; done=true; clearTimeout(timer); reject(e);
+    });
+  });
+}
+/* the readable half of an error, whatever shape it arrived in */
+function askErr(e){
+  var m = (e && (e.message || e.error || e.statusText)) || e || "";
+  m = String(m).replace(/^Error:\s*/,"").trim();
+  return m || "no reason given";
+}
+
+/* A flag that is still up a minute later is a flag that is stuck. This is the
+   backstop for any path I have not thought of: it clears the three busy flags
+   and says so, rather than leaving him tapping a button that does nothing. */
+var BUSY_SINCE={};
+setInterval(function(){
+  try{
+    var now=Date.now();
+    function watch(key, isBusy, clear){
+      if(isBusy()){
+        if(!BUSY_SINCE[key]) BUSY_SINCE[key]=now;
+        else if(now-BUSY_SINCE[key] > 75000){ BUSY_SINCE[key]=0; clear(); }
+      } else BUSY_SINCE[key]=0;
+    }
+    watch("claudia", function(){ return !!(STATE&&STATE.busy); }, function(){
+      STATE.busy=false;
+      STATE.chat.push({r:"sys",t:"That one never came back. I have unstuck her \u2014 ask again."});
+      try{ paintLog(); }catch(e){}
+    });
+    watch("jordan", function(){ return typeof JBUSY!=="undefined" && JBUSY; }, function(){
+      JBUSY=false; JCHAT.push({r:"ai",t:"That never came back. Say it again."});
+      try{ jPaint(); }catch(e){}
+    });
+    watch("coach", function(){ return typeof TBUSY!=="undefined" && TBUSY; }, function(){
+      TBUSY=false; TCHAT.push({r:"ai",t:"Lost that one. Go again."});
+      try{ tPaint(); }catch(e){}
+    });
+  }catch(e){}
+}, 5000);
 
 /* The action protocol, written once. Jordan calls jRunActions() but his prompt
    never described the syntax, so every "move Marco to warm" he was given quietly
@@ -12190,11 +12311,7 @@ function tAsk(q){
    +recentTurns(TCHAT)
    +"Glen says: "+q;
   SBW.said("claude","glen",q);
-  if(!(window.cowork&&window.cowork.askClaude)){
-    TCHAT.push({r:"ai",t:"The line is dead, mein Freund. Try again."});
-    TBUSY=false; tPaint(); return;
-  }
-  window.cowork.askClaude(prompt,[trainerCtx()]).then(function(r){
+  askAgent(prompt,[trainerCtx()]).then(function(r){
     var t=typeof r==="string"?r:(r&&(r.text||r.content||r.response||r.answer))||"";
     if(typeof t!=="string")t=JSON.stringify(t);
     if(!t)t="Nothing came back. Ask me again.";
@@ -12205,8 +12322,8 @@ function tAsk(q){
       /* the logs are open in the same window, so repaint them */
       setTimeout(function(){ redraw(); },40);
     }
-  }).catch(function(){
-    TCHAT.push({r:"ai",t:"Could not reach me just then. Again."});
+  }).catch(function(e){
+    TCHAT.push({r:"ai",t:"Lost the line, mein Freund \u2014 "+askErr(e)});
   }).then(function(){ TBUSY=false; tPaint(); });
 }
 
@@ -14463,7 +14580,7 @@ function ask(q){
    +recentTurns(STATE.chat)
    +"Glen says: "+q;
   SBW.said("claudia","glen",q);
-  window.cowork.askClaude(prompt,[ctxPack()]).then(function(r){
+  askAgent(prompt,[ctxPack()]).then(function(r){
     var t=typeof r==="string"?r:(r&&(r.text||r.content||r.response||r.answer))||"";
     if(typeof t!=="string")t=JSON.stringify(t);
     if(!t)t="I got an empty response back. Try asking again.";
@@ -14477,8 +14594,8 @@ function ask(q){
       res.done.forEach(function(d){ SBW.acted("claudia","admin",d,{}); });
       setTimeout(function(){ redraw(); },40);
     }
-  }).catch(function(){
-    STATE.chat.push({r:"sys",t:"Couldn't reach Claudia just now. Try again."});
+  }).catch(function(e){
+    STATE.chat.push({r:"sys",t:"Couldn't reach Claudia \u2014 "+askErr(e)});
   }).then(function(){STATE.busy=false;paintLog();});
 }
 function aiBrief(){
@@ -15110,7 +15227,7 @@ function weekAsk(){
    +"day is 0 for Sunday through 6 for Saturday. Never show him this syntax.\n\n"
    +memoryBlock();
 
-  window.cowork.askClaude(prompt,[JSON.stringify(facts)]).then(function(r){
+  askAgent(prompt,[JSON.stringify(facts)]).then(function(r){
     var t=typeof r==="string"?r:(r&&(r.text||r.content||r.response||r.answer))||"";
     if(typeof t!=="string") t=JSON.stringify(t);
     var re=/\[\[WEEK\s*(\{[\s\S]*?\})\s*\]\]/g, mm, n=0;
@@ -15905,7 +16022,7 @@ function wireFoodQuick(){
     if(r.unknown.length && window.cowork && window.cowork.askClaude){
       if(prev) prev.innerHTML='<span class="fq unk"><b>Working it out…</b>asking Claudia</span>';
       var q=r.unknown.map(function(u){return u.qty+" "+u.unknown;}).join(", ");
-      window.cowork.askClaude(
+      askAgent(
         "Estimate the nutrition for exactly this food and quantity: \""+q+"\". "
         +"Reply with ONLY four whole numbers separated by commas, in this order: "
         +"calories, protein grams, carb grams, fat grams. No words, no units, no explanation. "
@@ -16013,7 +16130,7 @@ function wireBook(){
       +"The request: "+raw;
     if(!(window.cowork&&window.cowork.askClaude)){
       bookRender("Claudia is not reachable right now. Add it manually below.","bad"); return; }
-    window.cowork.askClaude(ask,[]).then(function(ans){
+    askAgent(ask,[]).then(function(ans){
       var t=typeof ans==="string"?ans:JSON.stringify(ans);
       var m=t.match(/\{[\s\S]*\}/);
       if(!m){ bookRender("She could not make sense of that. Try naming the day and the time.","bad"); return; }
@@ -16590,12 +16707,18 @@ function salesPipe(){
        directly above this table, and Handle is something you look up on one
        person rather than scan down a list — both are on the lead record when
        he opens it. Every column removed is forty fewer boxes on screen. */
-    h+='<div class="crmcard"><table class="lgrid"><thead><tr>'
-     +'<th style="width:26px" title="Priority"></th>'
-     +'<th>Name</th><th style="width:132px">Status</th>'
-     +'<th style="width:126px">Phone</th><th style="width:190px">Email</th>'
-     +'<th style="width:132px">Source</th>'
-     +'<th>Notes</th><th style="width:196px">Reach</th></tr></thead><tbody>';
+    /* Widths live in one colgroup instead of eight inline styles, so the
+       columns are declared once and cannot drift apart from the stylesheet. */
+    h+='<div class="crmcard"><table class="lgrid">'
+     +'<colgroup><col class="c-pr"><col class="c-nm"><col class="c-st">'
+     +'<col class="c-ph"><col class="c-em"><col class="c-sr">'
+     +'<col class="c-nt"><col class="c-rc"></colgroup>'
+     +'<thead><tr>'
+     +'<th title="Priority"></th>'
+     +'<th>Name</th><th>Status</th>'
+     +'<th>Phone</th><th>Email</th>'
+     +'<th>Source</th>'
+     +'<th>Notes</th><th>Reach</th></tr></thead><tbody>';
     g.rows.forEach(function(x){
     var c=scol(x.stage), pri=prGet(x.name);
     var hay=[x.name,x.email,x.phone,x.ig,x.notes].join(" ").toLowerCase();
@@ -19111,7 +19234,10 @@ function drawDash(){
      honest way is to check when he arrives, not to promise a cron. */
   if(!NEWS_TRIED){ NEWS_TRIED=true;
     setTimeout(function(){ try{ newsDaily(); newsAuto(); }catch(e){} },900); }
-  try{ host.innerHTML=dashView()+dashSheet()+scriptSheet()+wxSheet(); }
+  /* syncBar() was rendered in exactly one place — inside a room tab — so a
+     failed save was invisible to anyone working on the dashboard, which is
+     everyone, always. It goes first here. */
+  try{ host.innerHTML=syncBar()+dashView()+dashSheet()+scriptSheet()+wxSheet(); }
   catch(e){
     host.innerHTML='<div class="dp"><div class="dp-b"><div class="dp-none">'
       +'The dashboard hit a snag: '+esc((e&&e.message)||e)+'</div></div></div>';
@@ -19462,7 +19588,7 @@ function wireDash(){
       if(r.unknown.length && window.cowork && window.cowork.askClaude){
         if(prev) prev.innerHTML='<span class="fq unk"><b>Working it out\u2026</b>asking Claudia</span>';
         var q=r.unknown.map(function(u){ return u.qty+" "+u.unknown; }).join(", ");
-        window.cowork.askClaude(
+        askAgent(
           "Estimate the nutrition for exactly this food and quantity: \""+q+"\". "
           +"Reply with ONLY four whole numbers separated by commas, in this order: "
           +"calories, protein grams, carb grams, fat grams. No words, no units, no explanation. "
