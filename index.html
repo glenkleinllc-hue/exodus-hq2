@@ -350,12 +350,6 @@ h1{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.05;color:#f
   backdrop-filter:blur(6px);transition:.14s}
 .daytog:hover{border-color:var(--blu2);color:#fff}
 .daytog.on{background:linear-gradient(150deg,#fbbf24,#b45309);border-color:#fcd34d;color:#221602}
-.mtoggle{position:absolute;right:14px;bottom:14px;top:auto;left:auto;transform:none;z-index:6;
-  display:flex;flex-direction:row;align-items:center;gap:7px;width:auto;
-  background:rgba(14,14,14,.9);border:1px solid #5bb583;border-radius:22px;padding:6px 13px 6px 6px;
-  cursor:pointer;font-family:inherit;font-weight:800;font-size:9.5px;color:#5bb583;letter-spacing:1.2px;
-  text-transform:uppercase;backdrop-filter:blur(6px);
-  box-shadow:0 6px 22px rgba(91,181,131,.24)}
 .mtoggle:hover{border-color:#a3d6ba;color:#a3d6ba}
 .mtoggle .pic{width:26px;height:26px;border-radius:50%;overflow:hidden;flex:none;
   box-shadow:0 0 0 2px rgba(91,181,131,.4)}
@@ -1863,18 +1857,7 @@ a.lnk:hover{color:#d2ebdd}
 .jvpop .jv-stop:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.4);color:#f0857f}
 
 /* ---- a booked meeting reads as a record ---- */
-.mt.lock{background:rgba(255,255,255,.014)}
-.mt-nmv{flex:1;min-width:0;font-size:13px;font-weight:700;color:#ececed;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mt-e{flex:none;font-size:10px;font-weight:800;letter-spacing:.4px;
-  padding:4px 9px;border-radius:6px;cursor:pointer;font-family:inherit;
-  background:#1a1a1c;border:1px solid #313134;color:#9a9a9e}
 .mt-e:hover{background:#232325;color:#ececed;border-color:#41414a}
-.mt-gv{font-size:11.5px;color:#9a9a9e;margin:5px 0 0;
-  font-variant-numeric:tabular-nums}
-.mt-ntv{font-size:11.5px;color:#8a8a90;line-height:1.5;margin:6px 0 0;
-  white-space:pre-wrap}
-.mt-b.ok{background:rgba(99,172,123,.14);border-color:#2c4a38;color:#7fbf9a}
 .mt-b.ok:hover{background:rgba(99,172,123,.24);color:#9fe0bb}
 
 /* ---- the stage strip, as a filter ---- */
@@ -1957,6 +1940,95 @@ a.lnk:hover{color:#d2ebdd}
 
 
 /* meetings, with an empty diary: one line, not a panel */
+/* ================= MEETINGS =================
+   Rebuilt as an agenda rather than a wall of cards. What was wrong:
+     - the action buttons stretched the full width of the card, so three
+       secondary controls were the loudest thing in the module
+     - the time sat stranded on the right, disconnected from the name, which
+       is backwards: in a calendar the time is what you scan down
+     - every meeting was a separate bordered box, so ten meetings meant ten
+       heavy rectangles and no sense of which day anything was on
+   Now: grouped by day, time anchors the left, actions are quiet until hover. */
+
+.mt-day{display:flex;align-items:baseline;gap:9px;margin:18px 0 8px;padding:0 2px}
+.mt-day:first-child{margin-top:4px}
+.mt-day b{font-size:11px;font-weight:700;letter-spacing:.4px;color:#dfe4ec}
+.mt-day i{font-style:normal;font-size:10.5px;color:#5c636e}
+.mt-day .ln{flex:1;height:1px;background:#1e1e23}
+.mt-day.is-today b{color:var(--blu2,#8fc9a9)}
+
+.mts{display:block;background:#0f0f12;border:1px solid #1e1e23;border-radius:10px;
+  overflow:hidden}
+
+.mt{display:grid;grid-template-columns:96px 1fr auto;align-items:center;gap:16px;
+  padding:12px 14px;border-bottom:1px solid #17171b;
+  background:none;border-radius:0;border-left:none;transition:background .12s}
+.mt:last-child{border-bottom:none}
+.mt:hover{background:#141419}
+
+/* the time block: what you scan down */
+.mt-when{grid-column:1;display:block;text-align:left;
+  font-size:14px;font-weight:600;letter-spacing:-.2px;color:#eef2f7;
+  font-variant-numeric:tabular-nums;text-transform:none}
+.mt-when small{display:block;margin-top:1px;font-size:10px;font-weight:500;
+  letter-spacing:.6px;text-transform:uppercase;color:#5c636e}
+.mt-when.late{color:#c9736e}
+.mt-when.late small{color:#8c5a57}
+
+.mt-mid{grid-column:2;display:block;min-width:0}
+.mt-nmv{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.1px;
+  color:#eef2f7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mt-gv{display:block;margin-top:2px;font-size:11.5px;color:#6b727d;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.mt-ntv{display:block;margin-top:2px;font-size:11.5px;color:#8f97a3;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+
+/* actions: present, not shouting */
+.mt-act{grid-column:3;display:block;text-align:right;white-space:nowrap;
+  opacity:0;transition:opacity .12s}
+.mt:hover .mt-act,.mt.open .mt-act{opacity:1}
+.mt-b{display:inline-block;vertical-align:middle;margin-left:5px;
+  width:62px;height:26px;line-height:24px;padding:0;border-radius:7px;text-align:center;
+  background:#17171c;border:1px solid #2a2a32;color:#98a0ac;
+  font-family:inherit;font-size:10.5px;font-weight:600;letter-spacing:.1px;
+  cursor:pointer;white-space:nowrap;transition:background .12s,color .12s}
+.mt-b:hover{background:#23232b;color:#dfe4ec;border-color:#34343e}
+.mt-b.go{background:rgba(106,181,140,.13);border-color:rgba(106,181,140,.34);color:#8fc9a9}
+.mt-b.go:hover{background:rgba(106,181,140,.22);color:#a9dcc0}
+.mt-b.ok{background:rgba(99,172,123,.15);border-color:#2c4a38;color:#7fbf9a}
+.mt-b[disabled]{opacity:.25;cursor:default}
+.mt-e{display:inline-block;margin-left:5px;width:52px;height:26px;line-height:24px;padding:0;text-align:center;
+  border-radius:7px;background:none;border:1px solid #2a2a32;color:#6b727d;
+  font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer}
+.mt-e:hover{color:#dfe4ec;border-color:#34343e}
+
+/* a meeting that has been and gone */
+.mt.past .mt-nmv{color:#8f97a3}
+.mt.past::before{content:"";position:absolute}
+
+/* editing: the row opens into fields, still inside the same list */
+.mt.open{display:block;background:#131317;padding:14px}
+.mt.open .mt-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mt-nm,.mt-at,.mt-f,.mt-nt{background:#17171c;border:1px solid #2a2a32;border-radius:7px;
+  color:#eef2f7;font-family:inherit;font-size:12.5px;padding:8px 10px;outline:none}
+.mt-nm:focus,.mt-at:focus,.mt-f:focus,.mt-nt:focus{border-color:var(--blu,#4f9d74)}
+.mt-nm{flex:1;min-width:150px;font-weight:600}
+.mt-at{flex:none;width:200px;font-variant-numeric:tabular-nums}
+.mt-g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:8px}
+.mt-nt{display:block;width:100%;margin-top:7px;resize:vertical;line-height:1.5}
+.mt-x{margin-left:auto;background:none;border:0;color:#4a505a;cursor:pointer;
+  font-size:16px;line-height:1;padding:4px 6px}
+.mt-x:hover{color:#c9736e}
+.mt.open .mt-act{opacity:1;margin-top:9px;text-align:left}
+.mt.open .mt-b{margin-left:0;margin-right:5px}
+
+@media (max-width:640px){
+  .mt{grid-template-columns:78px 1fr;gap:11px;padding:11px 12px}
+  .mt-act{grid-column:1/-1;text-align:left;opacity:1;margin-top:8px}
+  .mt-b{margin-left:0;margin-right:5px}
+  .mt-g{grid-template-columns:1fr}
+}
+
 .mtslim{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:12px 16px;margin-bottom:12px;
   border:1px solid #26262a;border-radius:14px;
@@ -3190,8 +3262,6 @@ textarea.dw-pi::placeholder{color:#4e5763;font-style:italic}
 
 /* ============ MEETINGS AND CALLS ============ */
 .dp.wide{grid-column:1 / -1}
-.mtblock{margin-bottom:14px}
-.mtb-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .mtb-h b{font-size:13px}
 .mtb-h span{flex:1;min-width:0;font-size:11px;color:var(--mut)}
 .mt-cal{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 12px;
@@ -3200,11 +3270,6 @@ textarea.dw-pi::placeholder{color:#4e5763;font-style:italic}
 .mt-cal input{flex:1;min-width:200px;background:var(--raise);border:1px solid var(--line);
   border-radius:7px;padding:7px 9px;color:var(--ink);font-family:inherit;font-size:12px}
 .mt-cal input:focus{outline:none;border-color:var(--blu)}
-.mts{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
-.mt{background:var(--raise);border:1px solid #2b3038;border-radius:11px;padding:10px 11px;
-  min-width:0;border-left:3px solid var(--blu)}
-.mt.past{border-left-color:var(--red)}
-.mt-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 input.mt-nm{flex:1;min-width:110px;background:transparent;border:1px solid transparent;
   border-radius:6px;padding:4px 6px;color:var(--ink);font-family:inherit;font-size:13.5px;
   font-weight:700;transition:border-color .2s}
@@ -3214,13 +3279,7 @@ input.mt-at{flex:none;background:var(--paper2);border:1px solid var(--line);bord
   padding:4px 6px;color:var(--ink);font-family:inherit;font-size:11px;
   color-scheme:dark}
 input.mt-at:focus{outline:none;border-color:var(--blu)}
-.mt-when{font-size:9.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
-  color:var(--blu2);white-space:nowrap}
-.mt-when.late{color:var(--red)}
-.mt-x{margin-left:auto;background:none;border:0;color:#4a5462;cursor:pointer;
-  font-size:17px;line-height:1;padding:0 4px}
 .mt-x:hover{color:var(--red)}
-.mt-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
 input.mt-f{min-width:0;background:var(--paper2);border:1px solid var(--line);border-radius:7px;
   padding:6px 8px;color:var(--ink);font-family:inherit;font-size:11.5px}
 input.mt-f:focus{outline:none;border-color:var(--blu)}
@@ -3229,12 +3288,7 @@ textarea.mt-nt{width:100%;margin-top:6px;min-height:44px;resize:vertical;
   background:var(--paper2);border:1px solid var(--line);border-radius:7px;padding:7px 8px;
   color:var(--ink);font-family:inherit;font-size:11.5px;line-height:1.5}
 textarea.mt-nt:focus{outline:none;border-color:var(--blu)}
-.mt-act{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.mt-b{background:none;border:1px solid var(--line);border-radius:7px;padding:6px 11px;
-  color:var(--mut);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;
-  letter-spacing:.4px;transition:.14s}
 .mt-b:hover{border-color:var(--blu);color:var(--ink)}
-.mt-b.go{color:var(--blu2);border-color:rgba(106,181,140,.45);background:rgba(106,181,140,.12)}
 .mt-b[disabled]{opacity:.35;cursor:default}
 
 /* adding food straight from the dashboard */
@@ -4825,7 +4879,11 @@ function tickInbox(){
   var host=document.getElementById("bd-inbox");
   if(!host) return;
   host.innerHTML=inboxLane();
-  try{ wire(); }catch(e){}
+  if(!RENDER_WIRING){
+    RENDER_WIRING = true;
+    try{ wire(); }catch(e){}
+    RENDER_WIRING = false;
+  }
 }
 
 function unreadFor(name){
@@ -14681,6 +14739,10 @@ function chatIsOpen(){
     return false;
   });
 }
+/* Guards the wire() call at the end of renderWins(). Some wire* functions bind
+   handlers that repaint, and a repaint that re-wires could otherwise chase its
+   own tail. One level deep is all that is ever needed. */
+var RENDER_WIRING = false;
 function renderWins(){
   var host=document.getElementById("wins"); if(!host) return;
   try{ document.body.classList.toggle("mchatopen", chatIsOpen()); }catch(e){}
@@ -14722,6 +14784,14 @@ function renderWins(){
   }
 
   wireWins();
+  /* renderWins() throws away every node in the window body and builds it again,
+     which also throws away every onclick attached to those nodes. It only ever
+     re-bound the window chrome, so anything inside a room — Mark done and Save
+     on a meeting, most obviously — came back looking normal and doing nothing.
+     The dashboard never showed the bug because drawDash() re-runs wireDash().
+     Handlers here are assigned with onclick= rather than addEventListener, so
+     calling this after every repaint re-binds rather than stacking. */
+  try{ wire(); }catch(e){}
   wire();
   var chat=WINS.filter(function(w){return w.room==="assistant"&&!w.min&&w.tab===0;})[0];
   if(chat) paintLog();
@@ -14911,58 +14981,7 @@ function execCalls(){
       h+='<div class="info">Nothing booked yet. Add one here or from the dashboard \u2014 '
         +'it is the same list.</div>';
     else {
-      h+='<div class="mts">';
-      open2.forEach(function(row){
-        var i=row.i, m=row.m;
-        var can=dialable(m.phone||"").ok;
-        /* ---- a booked meeting is a record, not a form ----
-           Glen: "meetings should lock in when I'm done making the meeting, it
-           is still editable." He is right — an appointment that stays a row of
-           live input boxes invites a stray click into the datetime field, and a
-           meeting whose time silently moved is worse than one you never booked.
-
-           A meeting with a name is treated as booked and renders as text. Edit
-           puts it back into fields. A blank new one stays open so it can be
-           filled in without an extra click. */
-        var locked = !MT_EDIT[i] && !!String(m.name||"").trim();
-        h+='<div class="mt'+(mtIsPast(m)?" past":"")+(locked?" lock":"")+'">';
-
-        if(locked){
-          h+='<div class="mt-top">'
-            +'<b class="mt-nmv">'+esc(m.name)+'</b>'
-            +'<span class="mt-when'+(mtIsPast(m)?" late":"")+'">'+esc(mtWhen(m))+'</span>'
-            +'<button class="mt-e" data-mtedit="'+i+'" title="Edit this meeting">Edit</button>'
-          +'</div>';
-          var bits=[];
-          if(m.phone) bits.push(esc(m.phone));
-          if(m.email) bits.push(esc(m.email));
-          if(bits.length) h+='<div class="mt-gv">'+bits.join(" &middot; ")+'</div>';
-          if(m.notes) h+='<div class="mt-ntv">'+esc(m.notes)+'</div>';
-        } else {
-          h+='<div class="mt-top">'
-            +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" value="'+esc(m.name||"")+'" '
-            +'placeholder="Who">'
-            +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
-            +'value="'+esc(mtLocalValue(m.at))+'">'
-            +'<span class="mt-when'+(mtIsPast(m)?" late":"")+'">'+esc(mtWhen(m))+'</span>'
-            +'<button class="mt-x" data-mtdel="'+i+'" title="Remove">&times;</button>'
-          +'</div>'
-          +'<div class="mt-g">'
-            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(m.phone||"")+'" placeholder="Phone">'
-            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(m.email||"")+'" placeholder="Email">'
-            +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(m.link||"")+'" placeholder="Meeting link">'
-          +'</div>'
-          +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
-          +'placeholder="What this call is about.">'+esc(m.notes||"")+'</textarea>';
-        }
-
-        h+='<div class="mt-act">'
-            +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
-            +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
-            +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
-            +(locked?'':'<button class="mt-b ok" data-mtlock="'+i+'">Save</button>')
-          +'</div></div>';
-      });
+      h+=mtAgenda(open2);
       h+='</div>';
     }
     h+='</div>';
@@ -18850,61 +18869,7 @@ function dashView(){
         +'<input id="mt-cly" placeholder="calendly.com/glenklein/30min" '
         +'value="'+esc(calendlyBase())+'"></div>';
     {
-      h+='<div class="mts">';
-      ms.forEach(function(row){
-        var i=row.i, mm=row.m, past=mtIsPast(mm);
-        var can=dialable(mm.phone||"").ok;
-        /* Locked once it has a name. This is the copy on the DASHBOARD — the
-           one Glen actually looks at — and it is the one that was still a row
-           of live inputs after a meeting was booked. A stray click into the
-           datetime field silently moves an appointment, and a meeting whose
-           time changed without you knowing is worse than one never booked. */
-        var lockd = !MT_EDIT[i] && !!String(mm.name||"").trim();
-        h+='<div class="mt'+(past?" past":"")+(lockd?" lock":"")+'">';
-
-        if(lockd){
-          h+='<div class="mt-top">'
-            +'<b class="mt-nmv">'+esc(mm.name)+'</b>'
-            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
-            +'<button class="mt-e" data-mtedit="'+i+'" title="Edit this meeting">Edit</button>'
-          +'</div>';
-          var bits2=[];
-          if(mm.phone) bits2.push(esc(mm.phone));
-          if(mm.email) bits2.push(esc(mm.email));
-          if(bits2.length) h+='<div class="mt-gv">'+bits2.join(" &middot; ")+'</div>';
-          if(mm.notes) h+='<div class="mt-ntv">'+esc(mm.notes)+'</div>';
-        } else {
-          h+='<div class="mt-top">'
-            +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" '
-            +'value="'+esc(mm.name||"")+'" placeholder="Who">'
-            +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" '
-            +'value="'+esc(mtLocalValue(mm.at))+'">'
-            +'<span class="mt-when'+(past?" late":"")+'">'+esc(mtWhen(mm))+'</span>'
-            /* Booking a call is one tap; unbooking it should not be. The X
-               arms, and only the second, differently-worded button removes it. */
-            +(MT_DEL===i
-              ? '<span class="mt-del"><em>Delete this meeting?</em>'
-                +'<button class="mt-dy" data-mtdelyes="'+i+'">Delete</button>'
-                +'<button class="mt-dn" data-mtdelno="1">Keep it</button></span>'
-              : '<button class="mt-x" data-mtdel="'+i+'" title="Remove this meeting">&times;</button>')
-          +'</div>'
-          +'<div class="mt-g">'
-            +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(mm.phone||"")+'" placeholder="Phone">'
-            +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(mm.email||"")+'" placeholder="Email">'
-            +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(mm.link||"")+'" placeholder="Meeting link">'
-          +'</div>'
-          +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
-          +'placeholder="What this call is about.">'+esc(mm.notes||"")+'</textarea>';
-        }
-
-        h+='<div class="mt-act">'
-            +'<button class="mt-b go" data-mtjoin="'+i+'">Open link</button>'
-            +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
-            +'<button class="mt-b" data-mtdone="'+i+'">Mark done</button>'
-            +(lockd?'':'<button class="mt-b ok" data-mtlock="'+i+'">Save</button>')
-          +'</div></div>';
-      });
-      h+='</div>';
+      h+=mtAgenda(ms);
       }
     }
     h+='</div>';
@@ -19891,6 +19856,117 @@ function redraw(){
   /* the dashboard summarises the same numbers the rooms hold, so it repaints
      whenever anything is saved — unless he is mid-sentence in it */
   if(VIEW==="home" && !dashBusy()) drawDash();
+}
+
+/* ================= MEETINGS, RENDERED ONCE =================
+   The office tab and the dashboard each had their own copy of this markup.
+   Two copies drift: the dashboard kept live input boxes long after the office
+   copy learned to lock, and any restyle had to be done twice or it looked
+   half-finished. One function now, both call it.
+
+   Meetings group by day because a flat list of twenty is unreadable — you
+   scan for "when", not for "who". */
+function mtDayLabel(d){
+  var t=new Date(); t.setHours(0,0,0,0);
+  var x=new Date(d); x.setHours(0,0,0,0);
+  var days=Math.round((x-t)/86400000);
+  if(days===0) return {b:"Today",    i:DAYFULL[x.getDay()]+" "+x.getDate()+" "+MON[x.getMonth()], today:true};
+  if(days===1) return {b:"Tomorrow", i:DAYFULL[x.getDay()]+" "+x.getDate()+" "+MON[x.getMonth()], today:false};
+  return {b:DAYFULL[x.getDay()], i:x.getDate()+" "+MON[x.getMonth()], today:false};
+}
+/* "2:30 PM" over "in 40 min" — the countdown only where it is genuinely useful */
+function mtTimeCell(m,past){
+  var d=m.at?new Date(m.at):null;
+  if(!d||isNaN(d)) return '<span class="mt-when">—<small>no time set</small></span>';
+  var hh=d.getHours(), mm=String(d.getMinutes()).padStart(2,"0");
+  var ap=hh>=12?"PM":"AM", h12=((hh+11)%12)+1;
+  var sub="";
+  var mins=Math.round((d-new Date())/60000);
+  if(past) sub=DAYS[d.getDay()]+" "+d.getDate()+" "+MON[d.getMonth()].slice(0,3);
+  else if(mins>=0&&mins<=90) sub="in "+mins+" min";
+  else if(mins>90&&mins<600) sub="in "+Math.round(mins/60)+" hrs";
+  return '<span class="mt-when'+(past?" late":"")+'">'+h12+":"+mm+" "+ap
+    +(sub?'<small>'+esc(sub)+'</small>':'')+'</span>';
+}
+function mtRow(m,i,locked,past){
+  var can=dialable(m.phone||"").ok;
+  var h='<div class="mt'+(past?" past":"")+(locked?"":" open")+'">';
+  if(locked){
+    var bits=[];
+    if(m.phone) bits.push(esc(m.phone));
+    if(m.email) bits.push(esc(m.email));
+    h+=mtTimeCell(m,past)
+      +'<span class="mt-mid">'
+        +'<b class="mt-nmv">'+esc(m.name)+'</b>'
+        +(bits.length?'<span class="mt-gv">'+bits.join(" &middot; ")+'</span>':'')
+        +(m.notes?'<span class="mt-ntv">'+esc(m.notes)+'</span>':'')
+      +'</span>'
+      +'<span class="mt-act">'
+        +(mtLinkFor(m)?'<button class="mt-b go" data-mtjoin="'+i+'">Join</button>':'')
+        +'<button class="mt-b" data-mtdial="'+i+'"'+(can?'':' disabled')+'>Call</button>'
+        +'<button class="mt-b" data-mtdone="'+i+'">Done</button>'
+        +'<button class="mt-e" data-mtedit="'+i+'" title="Edit this meeting">Edit</button>'
+      +'</span>';
+  } else {
+    h+='<div class="mt-top">'
+      +'<input class="mt-nm" data-mtf="name" data-mti="'+i+'" value="'+esc(m.name||"")+'" placeholder="Who">'
+      +'<input class="mt-at" type="datetime-local" data-mtf="at" data-mti="'+i+'" value="'+esc(mtLocalValue(m.at))+'">'
+      +(MT_DEL===i
+        ? '<span class="mt-del"><em>Delete this meeting?</em>'
+          +'<button class="mt-dy" data-mtdelyes="'+i+'">Delete</button>'
+          +'<button class="mt-dn" data-mtdelno="1">Keep it</button></span>'
+        : '<button class="mt-x" data-mtdel="'+i+'" title="Remove this meeting">&times;</button>')
+      +'</div>'
+      +'<div class="mt-g">'
+        +'<input class="mt-f" data-mtf="phone" data-mti="'+i+'" value="'+esc(m.phone||"")+'" placeholder="Phone">'
+        +'<input class="mt-f" data-mtf="email" data-mti="'+i+'" value="'+esc(m.email||"")+'" placeholder="Email">'
+        +'<input class="mt-f" data-mtf="link"  data-mti="'+i+'" value="'+esc(m.link||"")+'" placeholder="Meeting link">'
+      +'</div>'
+      +'<textarea class="mt-nt" data-mtf="notes" data-mti="'+i+'" rows="2" '
+      +'placeholder="What this call is about.">'+esc(m.notes||"")+'</textarea>'
+      +'<span class="mt-act">'
+        +'<button class="mt-b ok" data-mtlock="'+i+'">Save</button>'
+        +'<button class="mt-b" data-mtdone="'+i+'">Done</button>'
+      +'</span>';
+  }
+  return h+'</div>';
+}
+/* rows in, grouped agenda out */
+function mtAgenda(rows){
+  if(!rows.length) return "";
+  var past=[], future=[];
+  rows.forEach(function(r){ (mtIsPast(r.m)?past:future).push(r); });
+  future.sort(function(a,b){ return new Date(a.m.at||0)-new Date(b.m.at||0); });
+  past.sort(function(a,b){ return new Date(b.m.at||0)-new Date(a.m.at||0); });
+
+  var out="", lastKey=null;
+  future.forEach(function(r){
+    var d=r.m.at?new Date(r.m.at):null;
+    var key=(d&&!isNaN(d))?d.toDateString():"nodate";
+    if(key!==lastKey){
+      if(lastKey!==null) out+='</div>';
+      if(key==="nodate") out+='<div class="mt-day"><b>No time set</b><span class="ln"></span></div><div class="mts">';
+      else{
+        var L=mtDayLabel(d);
+        out+='<div class="mt-day'+(L.today?" is-today":"")+'"><b>'+esc(L.b)+'</b>'
+            +'<i>'+esc(L.i)+'</i><span class="ln"></span></div><div class="mts">';
+      }
+      lastKey=key;
+    }
+    var lockd=!MT_EDIT[r.i] && !!String(r.m.name||"").trim();
+    out+=mtRow(r.m,r.i,lockd,false);
+  });
+  if(lastKey!==null) out+='</div>';
+
+  if(past.length){
+    out+='<div class="mt-day"><b>Missed</b><i>needs rebooking</i><span class="ln"></span></div><div class="mts">';
+    past.forEach(function(r){
+      var lockd=!MT_EDIT[r.i] && !!String(r.m.name||"").trim();
+      out+=mtRow(r.m,r.i,lockd,true);
+    });
+    out+='</div>';
+  }
+  return out;
 }
 
 function wireMeetings(){
