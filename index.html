@@ -4438,6 +4438,107 @@ textarea.dw-pi.big{min-height:92px}
 .sh-x:hover{color:#eef2f7;border-color:#3a3a44}
 .shsheet .sec{margin:0}
 .shsheet .sec-h{margin-bottom:14px}
+
+/* ============================================================
+   MONOCHROME + ONE ACCENT
+
+   Glen picked the Linear / Vercel / Stripe treatment: near-black,
+   greys and white doing almost all the work, colour reserved for
+   status and live things only. The champagne is gone as a general
+   accent — it now appears on exactly one class of thing, and the
+   CRM stage colours stay because those ARE status.
+
+   Spacing and type are lifted from the CRM table, which he said
+   already looks right, so the whole app is one system:
+     row height   46px      card padding  14px
+     body text    12.5px    header text   9.5px / .9px tracking
+     card bg      #0f0f12   border        #1e1e23   radius 10px
+     hover        #141419   hairline      #17171b
+   ============================================================ */
+.dash{ --ink:#eef2f7; --ink2:#98a0ac; --ink3:#5c636e; --ink4:#3a3f47;
+       --pane:#0f0f12; --edge:#1e1e23; --hair:#17171b; --hover:#141419;
+       --live:#e3cfa6; }
+
+.dash .sec{margin:0 0 24px}
+.dash .sec-h{margin:0 0 12px;gap:8px}
+.dash .sec-h h2{font-size:14px;font-weight:600;letter-spacing:-.2px;color:var(--ink)}
+.dash .sec-s{font-size:11px;color:var(--ink3)}
+.dash .sec-b{height:28px;line-height:26px;padding:0 11px;border-radius:7px;
+  background:#17171c;border:1px solid #2a2a32;color:var(--ink2);
+  font-size:10.5px;font-weight:600;letter-spacing:.1px}
+.dash .sec-b:hover{background:#23232b;color:var(--ink)}
+.dash .sec-b.jv{background:#17171c;border-color:#2a2a32;color:var(--ink2)}
+.dash .sec-b.jv .jv-dot{background:var(--ink3)}
+.dash .sec-b.jv.live{background:var(--live);border-color:var(--live);color:#101012}
+.dash .sec-b.jv.live .jv-dot{background:#101012}
+
+.dash .tcard{background:var(--pane);border:1px solid var(--edge);border-radius:10px;
+  padding:14px}
+.dash .tc-h{margin:0 0 10px;gap:8px}
+.dash .tc-h b{font-size:13px;font-weight:600;color:var(--ink)}
+.dash .tc-n{font-size:11px;color:var(--ink3)}
+
+/* ---------------- MEETINGS: one line each ---------------- */
+.mlist{margin:0 -14px}
+.mrow{display:flex;align-items:center;gap:12px;height:46px;padding:0 14px;
+  border-bottom:1px solid var(--hair);position:relative}
+.mrow:last-child{border-bottom:none}
+.mrow:hover{background:var(--hover)}
+.mrow-t{flex:0 0 74px;font-size:12.5px;font-weight:600;color:var(--ink);
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.mrow-t i{display:block;font-style:normal;font-size:10px;font-weight:500;
+  color:var(--ink3);margin-top:1px}
+.mrow.now .mrow-t i{color:var(--live)}
+.mrow-m{flex:1 1 auto;min-width:0;line-height:1.25}
+.mrow-m b{display:block;font-size:12.5px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mrow-m i{display:block;font-style:normal;font-size:11px;color:var(--ink3);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+/* the actions do not exist until the pointer is on the row */
+.mrow-a{flex:none;display:flex;gap:4px;opacity:0;transition:opacity .12s}
+.mrow:hover .mrow-a{opacity:1}
+/* fixed widths: flex children with no width get stretched by some engines,
+   and a ragged button column down a list looks worse than a slightly wide one */
+.mrow-b{flex:none;width:52px;height:24px;line-height:22px;padding:0;text-align:center;
+  border-radius:6px;
+  border:1px solid #2a2a32;background:#17171c;color:var(--ink2);
+  font-family:inherit;font-size:10px;font-weight:600;cursor:pointer;
+  text-decoration:none;white-space:nowrap}
+.mrow-b:hover{background:#23232b;color:var(--ink)}
+.mrow-b[disabled]{opacity:.22;cursor:default}
+.mfoot{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:11px;
+  border-top:1px solid var(--hair)}
+.mf-l{font-size:10.5px;font-weight:600;color:#c9736e}
+.mf-m{font-size:10.5px;color:var(--ink3)}
+.mf-b{height:26px;line-height:24px;padding:0 10px;border-radius:6px;
+  border:1px solid #2a2a32;background:#17171c;color:var(--ink2);
+  font-family:inherit;font-size:10px;font-weight:600;cursor:pointer}
+.mf-b:first-of-type{margin-left:auto}
+.mf-b:hover{background:#23232b;color:var(--ink)}
+
+/* ---------------- THE HEADLINE STRIP ---------------- */
+.newsbar{display:flex;align-items:center;gap:10px;height:30px;padding:0 16px;
+  background:#0c0c0f;border-bottom:1px solid var(--edge,#1e1e23);overflow:hidden}
+.newsbar[hidden]{display:none}
+.nb-tag{flex:none;font-size:8.5px;font-weight:700;letter-spacing:1.4px;color:#4a505a}
+.nb-track{flex:1;min-width:0;display:flex;align-items:center;gap:9px;
+  transition:opacity .25s,transform .25s}
+.nb-track.in{opacity:0;transform:translateY(4px)}
+.nb-src{flex:none;font-size:8.5px;font-weight:700;letter-spacing:.8px;color:#5c636e;
+  border:1px solid #23232a;border-radius:4px;padding:2px 6px}
+.nb-t{flex:1;min-width:0;font-size:11.5px;color:#98a0ac;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.nb-n{flex:none;font-size:9.5px;color:#3a3f47;font-variant-numeric:tabular-nums}
+
+/* ---------------- COIN BADGES ---------------- */
+.cxs{display:inline-flex;align-items:center;justify-content:center;
+  width:15px;height:15px;border-radius:50%;margin-right:5px;
+  font-size:9px;font-weight:700;font-style:normal;
+  background:#1e1e24;color:#8a8a92;border:1px solid #2a2a32}
+.cx-btc{background:#2a2118;color:#e8a33d;border-color:#3a2c1c}
+.cx-eth{background:#1c1f2b;color:#8f9fd4;border-color:#272b3a}
+.cx-xrp{background:#1b1f22;color:#a9b6bd;border-color:#262b30}
+.cx-sol{background:#1a2426;color:#7fc9bd;border-color:#243133}
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -4470,6 +4571,15 @@ textarea.dw-pi.big{min-height:92px}
         <span class="vs-ic" id="vs-ic"></span><span class="vs-t" id="vs-t">Building</span>
       </button>
       <span class="syncdot idle" id="syncdot" title="Cloud sync"></span>
+    </div>
+
+    <!-- Headlines used to be a card in the working area, competing for height
+         with the meetings beside it. They belong up here with the other ambient
+         readouts: a fixed strip that cycles, never grows, never pushes anything
+         down. -->
+    <div class="newsbar" id="newsbar" hidden>
+      <span class="nb-tag">NEWS</span>
+      <span class="nb-track" id="nb-track"></span>
     </div>
 
     <!-- ============ THE DASHBOARD ============
@@ -4523,7 +4633,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.1924 &middot; 06 Sep 19:24</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.1945 &middot; 06 Sep 19:45</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -13440,6 +13550,31 @@ function smsSend(){
 var CRYPTO=null;
 /* The banner said NEW YORK CITY no matter where he was. It follows the same
    fix the forecast uses, so the clock and the city agree with each other. */
+/* The headline strip. Cycles through what the brief already fetched, so it
+   costs nothing extra — same data the news card used to show, without a card. */
+var NB_I=0, NB_TIMER=null;
+function newsBarPaint(){
+  var bar=document.getElementById("newsbar"), tr=document.getElementById("nb-track");
+  if(!bar||!tr) return;
+  var rows=(typeof BRIEF!=="undefined" && BRIEF && (BRIEF.news||BRIEF.headlines)) || [];
+  rows=rows.filter(function(x){ return x && x.title; }).slice(0,8);
+  if(!rows.length){ bar.hidden=true; return; }
+  bar.hidden=false;
+  if(NB_I>=rows.length) NB_I=0;
+  var x=rows[NB_I];
+  tr.innerHTML='<span class="nb-src">'+esc(String(x.src||"").slice(0,10))+'</span>'
+    +'<span class="nb-t">'+esc(x.title)+'</span>'
+    +'<span class="nb-n">'+(NB_I+1)+'/'+rows.length+'</span>';
+  tr.className="nb-track in";
+  setTimeout(function(){ if(tr) tr.className="nb-track"; },40);
+}
+function newsBarStart(){
+  if(NB_TIMER) clearInterval(NB_TIMER);
+  newsBarPaint();
+  NB_TIMER=setInterval(function(){ NB_I++; newsBarPaint(); }, 7000);
+}
+setTimeout(newsBarStart, 1500);
+
 function bannerPaint(){
   var el=document.getElementById("tb-place");
   if(!el) return;
@@ -13459,12 +13594,18 @@ function cryptoPaint(){
     var ch=c.change24h;
     var cls = ch===null||ch===undefined ? "" : ch>=0 ? "up" : "dn";
     var sign = (ch>=0?"+":"");
-    return '<div class="cxp"><b><em class="cxs">'+sym+'</em>'
+    return '<div class="cxp"><b><em class="cxs cx-'+k+'">'+sym+'</em>'
       +Math.round(c.usd).toLocaleString()+'</b>'
       +'<span>'+nm+(cls?' <i class="'+cls+'">'+sign+(ch||0).toFixed(1)+'%</i>':'')
       +'</span></div>';
   }
-  host.innerHTML=one("btc","BTC","\u20BF")+one("eth","ETH","\u039E");
+  /* XRP and SOL added at Glen's request. If the endpoint has not started
+     returning them yet, one() returns "" and the strip simply stays two wide —
+     no gap, no placeholder, nothing to clean up later. */
+  host.innerHTML = one("btc","BTC","\u20BF")
+                 + one("eth","ETH","\u039E")
+                 + one("xrp","XRP","X")
+                 + one("sol","SOL","S");
 }
 function cryptoPull(){
   if(!window.__EXODUS_HOSTED__) return;
@@ -19212,52 +19353,39 @@ function dashView(){
         +'<span>'+esc(mtWhen(nx.m))+'</span></div>';
     }
     if(!MT_SHUT){
-      /* A dashboard summarises; a list enumerates. Three passes at making this
-         a tidy list all shared one fault — the module's height was set by how
-         many meetings existed, so two looked empty next to the news and eight
-         buried it. Fixed height now: the next call in full, the two after it as
-         one line each, a count for the rest. The full list is one click away in
-         the Calendar tab, which is where a long list belongs. */
+      /* Glen: "cleaner, more effective, less buttons — name, time, link,
+         details." One line per meeting: when, who, what it is about. Actions
+         only exist while the pointer is on that row, and the next one up is
+         marked rather than enlarged. A 26px clock and four permanent buttons
+         was a lot of ceremony for a single appointment. */
       var up = ms.filter(function(r){ return !mtIsPast(r.m); })
                  .sort(function(a,b){ return new Date(a.m.at||0)-new Date(b.m.at||0); });
       var late = ms.filter(function(r){ return mtIsPast(r.m); });
-
       if(!up.length && !late.length){
         h+='<div class="tc-empty">Nothing booked. Anything you add here shows up '
           +'on the calendar and on the lead\u2019s record.</div>';
       } else {
-        if(up.length){
-          var n0=up[0], can0=dialable(n0.m.phone||"").ok;
-          h+='<div class="mtnext">'
-            +'<div class="mtn-top"><span class="mtn-l">Next</span>'
-            +'<span class="mtn-w">'+esc(mtRelative(n0.m))+'</span></div>'
-            +'<div class="mtn-t">'+esc(mtClock(n0.m))+'</div>'
-            +'<div class="mtn-n">'+esc(n0.m.name||"Untitled")+'</div>'
-            +(n0.m.notes?'<div class="mtn-x">'+esc(n0.m.notes)+'</div>':'')
-            +'<div class="mtn-a">'
-              +(mtLinkFor(n0.m)?'<button class="mtn-b go" data-mtjoin="'+n0.i+'">Join</button>':'')
-              +'<button class="mtn-b" data-mtdial="'+n0.i+'"'+(can0?'':' disabled')+'>Call</button>'
-              +'<button class="mtn-b" data-mtdone="'+n0.i+'">Done</button>'
-              +'<button class="mtn-b" data-mtedit="'+n0.i+'">Edit</button>'
-            +'</div></div>';
-        }
-        var rest=up.slice(1,3);
-        if(rest.length){
-          h+='<div class="mtrest">';
-          rest.forEach(function(r){
-            h+='<div class="mtr" data-mtedit="'+r.i+'" title="Open this meeting">'
-              +'<span class="mtr-t">'+esc(mtClock(r.m))+'</span>'
-              +'<span class="mtr-n">'+esc(r.m.name||"Untitled")+'</span>'
-              +'<span class="mtr-w">'+esc(mtRelative(r.m))+'</span></div>';
-          });
-          h+='</div>';
-        }
-        var more=Math.max(0,up.length-3);
-        h+='<div class="mtfoot">'
-          +(late.length?'<span class="mtf-late">'+late.length+' missed</span>':'')
-          +(more?'<span class="mtf-m">+'+more+' more</span>':'')
-          +'<button class="mtf-b" data-dgo="office|2">Calendar</button>'
-          +'<button class="mtf-b gh" id="mt-new">+ New</button>'
+        h+='<div class="mlist">';
+        up.slice(0,6).forEach(function(r,n){
+          var can=dialable(r.m.phone||"").ok, link=mtLinkFor(r.m);
+          h+='<div class="mrow'+(n===0?" now":"")+'">'
+            +'<span class="mrow-t">'+esc(mtClock(r.m))+'<i>'+esc(mtRelative(r.m))+'</i></span>'
+            +'<span class="mrow-m"><b>'+esc(r.m.name||"Untitled")+'</b>'
+              +(r.m.notes?'<i>'+esc(r.m.notes)+'</i>':'')+'</span>'
+            +'<span class="mrow-a">'
+              +(link?'<a class="mrow-b" href="'+esc(link)+'" target="_blank" rel="noopener">Link</a>':'')
+              +'<button class="mrow-b" data-mtdial="'+r.i+'"'+(can?'':' disabled')+'>Call</button>'
+              +'<button class="mrow-b" data-mtedit="'+r.i+'">Details</button>'
+              +'<button class="mrow-b" data-mtdone="'+r.i+'">Done</button>'
+            +'</span></div>';
+        });
+        h+='</div>';
+        var more=Math.max(0,up.length-6);
+        h+='<div class="mfoot">'
+          +(late.length?'<span class="mf-l">'+late.length+' missed</span>':'')
+          +(more?'<span class="mf-m">+'+more+' more</span>':'')
+          +'<button class="mf-b" data-dgo="office|2">Calendar</button>'
+          +'<button class="mf-b" id="mt-new">+ New</button>'
         +'</div>';
       }
     }
@@ -19265,27 +19393,6 @@ function dashView(){
   })();
 
     h+='</div>';   /* .tcol — tasks and meetings share the left column */
-    h+='<div class="tcard news'+(NEWS_SHUT?" shut":"")+'"><div class="tc-h">'
-      +'<button class="nwfold" id="news-fold" '
-        +'title="'+(NEWS_SHUT?"Show the headlines":"Fold this away")+'" '
-        +'aria-expanded="'+(NEWS_SHUT?"false":"true")+'">'
-        +'<span class="nwf-c"></span></button>'
-      +'<span class="ntabs">'
-        +'<button class="ntab'+(NEWSTAB==="news"?" on":"")+'" data-ntab="news">Headlines</button>'
-        +'<button class="ntab'+(NEWSTAB==="watch"?" on":"")+'" data-ntab="watch">Watch</button>'
-      +'</span>'
-      +(NEWSTAB==="news"
-        ? '<span class="tc-n" id="news-n">'+newsAge()+'</span>'
-          +(NEWS_SHUT?'':'<button class="tc-seed" id="news-go">Refresh</button>')
-        : '<span class="tc-n">TalentFLX</span>')
-      +'</div>';
-    if(!NEWS_SHUT)
-      h+=(NEWSTAB==="news"
-        ? newsDeskTabs()+'<div class="newsbox" id="newsbox">'+newsList()+'</div>'
-        : watchBox());
-    h+='</div>';
-
-
     h+='</div>';        /* .todayrow */
     h+='</div>';        /* .sec  — Today */
   })();
