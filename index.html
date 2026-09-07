@@ -4846,7 +4846,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0605 &middot; 07 Sep 06:05</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0710 &middot; 07 Sep 07:10</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -11726,34 +11726,55 @@ function startMicScribe(who){
        Same two-second rule the old one used, but measured off the real signal
        instead of the recogniser's guesses, so a pause mid-sentence no longer
        counts as the end of the turn. */
+    /* A HARD STOP, always. Whatever the analyser does or does not detect, the
+       recording ends. The previous version could sit listening forever if his
+       microphone never crossed a fixed loudness threshold — which is exactly
+       what "it just says listening and nothing happens" looks like. */
+    var capT=setTimeout(function(){
+      if(!RECON||stopping) return;
+      micBar("Sending…", MIC_HEARD||"");
+      stopping=true; try{ MR.stop(); }catch(e){}
+    }, 20000);
+    var oldStop=MR.onstop;
+    MR.onstop=function(){ clearTimeout(capT); return oldStop.apply(this, arguments); };
+
     try{
       var AC=window.AudioContext||window.webkitAudioContext;
       MRAC=new AC();
+      if(MRAC.state==="suspended") try{ MRAC.resume(); }catch(e){}
       var src=MRAC.createMediaStreamSource(stream);
-      var an=MRAC.createAnalyser(); an.fftSize=1024;
+      var an=MRAC.createAnalyser(); an.fftSize=1024; an.smoothingTimeConstant=0.3;
       src.connect(an);
       var buf=new Uint8Array(an.fftSize);
-      var loud=false;
+      var loud=false, frames=0, floor=0.004, seen=0;
+
       (function tick(){
         if(!RECON || stopping) return;
         an.getByteTimeDomainData(buf);
         var sum=0;
         for(var i=0;i<buf.length;i++){ var v=(buf[i]-128)/128; sum+=v*v; }
         var rms=Math.sqrt(sum/buf.length);
-        if(rms>0.022){
-          loud=true; heard=true;
+        frames++;
+
+        /* The first half second measures HIS room rather than assuming one.
+           A fixed threshold is why a quiet mic never registered as speech. */
+        if(frames<=30){ floor=Math.max(floor, rms); raf=requestAnimationFrame(tick); return; }
+        var gate=Math.max(0.010, floor*2.2);
+
+        if(rms>gate){
+          loud=true; heard=true; seen++;
           if(silT){ clearTimeout(silT); silT=null; }
-          micBar("Listening…", MIC_HEARD||"");
+          micBar("Listening\u2026", MIC_HEARD||"");
         } else if(loud && !silT){
           silT=setTimeout(function(){
             if(!RECON||stopping) return;
-            micBar("Got it — sending…", MIC_HEARD||"");
+            micBar("Got it \u2014 sending\u2026", MIC_HEARD||"");
             stopping=true; try{ MR.stop(); }catch(e){}
-          }, 2000);
+          }, 1800);
         }
         raf=requestAnimationFrame(tick);
       })();
-    }catch(e){ /* no analyser: he taps to stop, which still works */ }
+    }catch(e){ /* no analyser: the hard stop and the button both still work */ }
 
     MR.start();
     RECON=true; micPaint(true);
