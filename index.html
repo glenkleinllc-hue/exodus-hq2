@@ -2697,27 +2697,60 @@ a.sp-g:hover{background:rgba(255,255,255,.05)}
 /* ---- the always-there talk button ----
    Bottom right, above everything, on the dashboard only. Green when idle,
    solid and pulsing while she is listening, gold while she is thinking. */
+/* ---- the talk button ----
+   Was a bright green jellybean with a microphone emoji on it. It is the one
+   control that is on screen the whole time, so it was setting the tone for
+   everything else. Now it is the same reactor as the voice pill, at rest:
+   near-black glass, one thin neon ring, a drawn microphone rather than an
+   emoji. The label only appears on hover, so most of the time it is just a
+   quiet circle in the corner. */
 .jvfab{position:fixed;right:22px;bottom:22px;z-index:1290;
-  display:none;align-items:center;gap:9px;padding:13px 20px 13px 17px;
-  border-radius:999px;cursor:pointer;font-family:inherit;
-  background:linear-gradient(150deg,#00ff85,#3f8f65);border:1px solid #6cc494;
-  color:#0d1210;font-size:13px;font-weight:800;letter-spacing:.3px;
-  box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 6px rgba(0,255,133,.10);
-  transition:transform .14s,box-shadow .14s,filter .14s}
+  display:none;align-items:center;justify-content:center;
+  width:56px;height:56px;padding:0;border-radius:50%;cursor:pointer;
+  font-family:inherit;background:rgba(13,13,15,.94);border:1px solid #2c2c33;
+  color:#9aa3a0;
+  box-shadow:0 14px 34px rgba(0,0,0,.55);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:transform .16s,box-shadow .18s,border-color .18s,color .18s}
 body.homeview .jvfab{display:inline-flex}
-.jvfab:hover{transform:translateY(-2px);filter:brightness(1.06);
-  box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 0 8px rgba(0,255,133,.14)}
+.jvfab:hover{transform:translateY(-2px);color:#00ff85;border-color:rgba(0,255,133,.5);
+  box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 22px rgba(0,255,133,.22)}
 .jvfab:active{transform:translateY(0)}
-.jvfab-i{font-size:16px;line-height:1}
-.jvfab.live{background:linear-gradient(150deg,#7fd8aa,#00ff85);
-  animation:jvFabPulse 1.15s ease-in-out infinite}
-.jvfab.busy{background:linear-gradient(150deg,#d4b06a,#b08f4e);border-color:#e0c084}
-@keyframes jvFabPulse{
-  0%,100%{box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 6px rgba(0,255,133,.16)}
-  50%    {box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 15px rgba(0,255,133,.04)}}
+.jvfab:focus-visible{outline:none;border-color:var(--blu);
+  box-shadow:0 0 0 3px rgba(0,255,133,.25)}
+
+/* the ring. Idle it is a faint circle; live it spins like the pill's core. */
+.jvfab-ring{position:absolute;inset:-1px;border-radius:50%;pointer-events:none;
+  border:1.5px solid transparent;transition:border-color .2s}
+.jvfab.live .jvfab-ring{border-color:rgba(0,255,133,.2);
+  border-top-color:rgba(0,255,133,.95);border-right-color:rgba(0,255,133,.55);
+  animation:jvSpin 1.5s linear infinite}
+.jvfab.busy .jvfab-ring{border-color:rgba(191,160,101,.2);
+  border-top-color:rgba(191,160,101,.9);animation:jvSpin 4s linear infinite}
+
+.micg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block;margin:auto}
+.micbtn.rec .micg{fill:currentColor;stroke:none}
+.jvfab-i{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;display:block}
+.jvfab.live{color:#00ff85;border-color:rgba(0,255,133,.45);
+  box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 26px rgba(0,255,133,.28)}
+.jvfab.busy{color:#bfa065;border-color:rgba(191,160,101,.4)}
+
+/* the word only shows on hover, and never on a touch screen where there is
+   no hover and it would just sit there taking up room */
+.jvfab-t{position:absolute;right:calc(100% + 10px);white-space:nowrap;
+  font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  color:#cfd6d2;background:rgba(13,13,15,.94);border:1px solid #2c2c33;
+  padding:6px 11px;border-radius:8px;opacity:0;transform:translateX(6px);
+  transition:opacity .16s,transform .16s;pointer-events:none}
+.jvfab:hover .jvfab-t,.jvfab:focus-visible .jvfab-t{opacity:1;transform:translateX(0)}
+@media (hover:none){ .jvfab-t{display:none} }
+
 @media (max-width:700px){
-  .jvfab{right:14px;bottom:78px;padding:12px 17px 12px 15px;font-size:12px}
+  .jvfab{right:14px;bottom:78px;width:52px;height:52px}
+  .jvfab-i{width:20px;height:20px}
 }
+@media (prefers-reduced-motion:reduce){ .jvfab-ring{animation:none} }
 /* while the CRM or a panel is full-screen it would sit on top of the content */
 body.dsheeting .jvfab{display:none}
 
@@ -4796,12 +4829,17 @@ textarea.dw-pi.big{min-height:92px}
     <!-- The header button was there all along and he never found it, which is
          the same as it not existing. This one is always on screen, bottom
          right, and does nothing but open her ear. -->
-    <button class="jvfab" id="jvfab" title="Hold a conversation with Claudius">
-      <span class="jvfab-i" aria-hidden="true">&#127908;</span>
+    <button class="jvfab" id="jvfab" aria-label="Talk to Claudius"
+            title="Hold a conversation with Claudius">
+      <span class="jvfab-ring" aria-hidden="true"></span>
+      <svg class="jvfab-i" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 3.5a2.9 2.9 0 0 1 2.9 2.9v5.2a2.9 2.9 0 0 1-5.8 0V6.4A2.9 2.9 0 0 1 12 3.5Z"/>
+        <path d="M6.4 11.1v.6a5.6 5.6 0 0 0 11.2 0v-.6M12 17.3v3.2"/>
+      </svg>
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0335 &middot; 07 Sep 03:35</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0420 &middot; 07 Sep 04:20</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -11997,13 +12035,20 @@ function micFix(text){
 
    Now there is one surface — the overlay — and its state lives in these two
    variables. Nothing else draws a listening indicator. */
+/* The microphone was a 🎤 emoji, which rendered as a different picture on
+   every platform and looked like a toy on all of them. One drawn glyph
+   instead, inheriting the button's colour. */
+var MIC_SVG='<svg class="micg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a2.9 2.9 0 0 1 2.9 2.9v5.2a2.9 2.9 0 0 1-5.8 0V6.4A2.9 2.9 0 0 1 12 3.5Z"/><path d="M6.4 11.1v.6a5.6 5.6 0 0 0 11.2 0v-.6M12 17.3v3.2"/></svg>';
+var MIC_SVG_STOP='<svg class="micg" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2.2"/></svg>';
+function micGlyph(on){ return on ? MIC_SVG_STOP : MIC_SVG; }
+
 var MIC_HEARD="", MIC_NOTE="";
 
 function micPaint(on){
   ["mic","mmic","jmic","tmic"].forEach(function(id){
     var b=document.getElementById(id); if(!b)return;
     b.classList.toggle("rec",on);
-    b.innerHTML = on ? "&#9632;" : "&#127908;";
+    b.innerHTML = micGlyph(on);
     b.title = on ? "Listening — stop when you have finished"
                  : "Tap and speak. It sends itself when you stop talking.";
   });
@@ -12089,7 +12134,7 @@ function aiChat(){
    +'<div class="st"><span class="dot"></span>On duty · sees your full pipeline</div></div></div>'
    +'<div class="log" id="log"></div>'
    +'<div class="chat-f">'
-   +'<button class="iconbtn micbtn" id="mic" title="Tap, speak, tap again">&#127908;</button>'
+   +'<button class="iconbtn micbtn" id="mic" title="Tap, speak, tap again">'+MIC_SVG+'</button>'
    +'<textarea id="ci" rows="1" placeholder="Type, or tap the mic…"></textarea>'
    +'<button class="iconbtn'+(SPEAK?" on":"")+'" id="spk" title="'+esc(voiceLabel())+'">'+(SPEAK?"🔊":"🔇")+'</button>'
    +'<button class="send" id="cs">Send</button></div></div>';
@@ -12839,7 +12884,7 @@ function jordanChat(){
   h+='<div class="chat">'
    +'<div class="log" id="jlog"></div>'
    +'<div class="chat-f">'
-   +'<button class="iconbtn micbtn" id="jmic" title="Tap, speak, tap again">&#127908;</button>'
+   +'<button class="iconbtn micbtn" id="jmic" title="Tap, speak, tap again">'+MIC_SVG+'</button>'
    +'<textarea id="jci" rows="1" placeholder="Who are we closing?"></textarea>'
    +'<button class="iconbtn'+(SPEAK?" on":"")+'" id="jspk" title="Jordan &middot; '+esc(voiceLabel())+'">'
    +(SPEAK?"&#128266;":"&#128263;")+'</button>'
@@ -13218,7 +13263,7 @@ function trainerChat(){
   h+='<div class="chat">'
    +'<div class="log" id="tlog"></div>'
    +'<div class="chat-f">'
-   +'<button class="iconbtn micbtn" id="tmic" title="Tap, speak, tap again">&#127908;</button>'
+   +'<button class="iconbtn micbtn" id="tmic" title="Tap, speak, tap again">'+MIC_SVG+'</button>'
    +'<textarea id="tci" rows="1" placeholder="Talk to Claude&hellip;"></textarea>'
    +'<button class="iconbtn'+(SPEAK?" on":"")+'" id="tspk" title="Claude &middot; '+esc(voiceLabel())+'">'
    +(SPEAK?"&#128266;":"&#128263;")+'</button>'
@@ -20183,7 +20228,7 @@ function operatorBar(){
         +'<div class="dk-f2">'
           +'<button class="dk-mic'+(dockMicLive(o.k)?" on":"")+'" id="dk-mic" '
           +'title="Tap, speak, tap again">'
-          +(dockMicLive(o.k)?"&#9632;":"&#127908;")+'</button>'
+          +micGlyph(dockMicLive(o.k))+'</button>'
           +'<input id="dk-in" placeholder="Say it, or type it" autocomplete="off">'
           +'<button class="dk-spk'+(SPEAK?" on":"")+'" id="dk-spk" '
           +'title="'+esc(voiceLabel())+'">'+(SPEAK?"&#128266;":"&#128263;")+'</button>'
