@@ -4620,13 +4620,43 @@ textarea.dw-pi.big{min-height:92px}
    scaleY rather than height: it runs on the compositor, so nine bars animating
    at once cost nothing and stay perfectly smooth. Each bar gets its own
    duration so the group looks like a voice and not like a loading spinner. */
-.jvpop .jv-wave{display:flex;align-items:center;gap:3px;height:24px;flex:none}
-.jvpop .jv-wave i{width:3px;height:24px;border-radius:99px;flex:none;
-  background:#3a3a42;transform:scaleY(.2);transform-origin:center;
-  transition:background .25s}
+.jvpop .jv-wave{position:relative;display:flex;align-items:center;
+  justify-content:center;gap:3px;height:34px;width:34px;flex:none;
+  border-radius:50%;isolation:isolate}
+/* ---- the reactor ----
+   Glen asked for "Iron Man arc reactor". Two concentric rings and a core
+   behind the bars: the outer ring sweeps, the inner one counter-rotates, and
+   the core brightens on every syllable. The bars sit on top and shrink so
+   they read as the waveform inside the reactor rather than beside it. */
+.jvpop .jv-wave:before{content:"";position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(0,255,133,.22);
+  border-top-color:rgba(0,255,133,.95);border-right-color:rgba(0,255,133,.55);
+  opacity:0;transition:opacity .3s}
+.jvpop .jv-wave:after{content:"";position:absolute;inset:6px;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,
+    rgba(0,255,133,.55) 0%, rgba(0,255,133,.16) 45%, transparent 72%);
+  opacity:0;transition:opacity .3s}
+.jvpop.live .jv-wave:before,
+.jvpop.talk .jv-wave:before,
+.jvpop.think .jv-wave:before{opacity:1;animation:jvSpin 2.6s linear infinite}
+.jvpop.live .jv-wave:after,
+.jvpop.talk .jv-wave:after{opacity:1;animation:jvCore 1.5s ease-in-out infinite}
+.jvpop.talk .jv-wave:before{animation-duration:1.5s}
+.jvpop.think .jv-wave:before{animation-duration:4.5s;
+  border-top-color:rgba(191,160,101,.9);border-right-color:rgba(191,160,101,.5);
+  border-color:rgba(191,160,101,.2)}
+@keyframes jvSpin{to{transform:rotate(360deg)}}
+@keyframes jvCore{0%,100%{opacity:.5;transform:scale(.9)}
+                  50%    {opacity:1; transform:scale(1.06)}}
+.jvpop .jv-wave i{position:relative;z-index:1;width:2px;height:15px;
+  border-radius:99px;flex:none;background:#3a3a42;
+  transform:scaleY(.2);transform-origin:center;transition:background .25s}
+/* nine bars will not fit inside a 34px core — the outer four are decoration
+   at this size, so they step aside and five carry the movement */
+.jvpop .jv-wave i:nth-child(1),.jvpop .jv-wave i:nth-child(2),
+.jvpop .jv-wave i:nth-child(8),.jvpop .jv-wave i:nth-child(9){display:none}
 .jvpop.live .jv-wave i,
-.jvpop.talk .jv-wave i{background:linear-gradient(180deg,#6bffc0,#00ff85);
-  box-shadow:0 0 8px rgba(0,255,133,.5)}
+.jvpop.talk .jv-wave i{background:#c9ffe4;box-shadow:0 0 6px rgba(0,255,133,.85)}
 .jvpop.think .jv-wave i{background:#7d6f52}
 .jvpop.live .jv-wave i{animation:jvBar .85s ease-in-out infinite}
 .jvpop.talk .jv-wave i{animation:jvBar .62s ease-in-out infinite}
@@ -4683,14 +4713,15 @@ textarea.dw-pi.big{min-height:92px}
   @keyframes jvIn{from{transform:translateY(14px);opacity:0}
                   to  {transform:translateY(0);opacity:1}}
   .jvpop .jvpop-in{padding:10px 10px 10px 14px;gap:11px;border-radius:18px}
-  .jvpop .jv-wave{height:20px;gap:2.5px}
-  .jvpop .jv-wave i{height:20px}
+  .jvpop .jv-wave{height:30px;width:30px;gap:2.5px}
+  .jvpop .jv-wave i{height:13px}
   .jvpop .jv-txt{min-width:0;max-width:none}
   .jvpop .jv-txt>i{-webkit-line-clamp:1}
   .jvpop .jv-go{padding:9px 13px;font-size:10px}
 }
 @media (prefers-reduced-motion:reduce){
-  .jvpop,.jvpop .jvpop-in,.jvpop .jv-wave i{animation:none}
+  .jvpop,.jvpop .jvpop-in,.jvpop .jv-wave i,
+  .jvpop .jv-wave:before,.jvpop .jv-wave:after{animation:none}
   .jvpop .jv-wave i{transform:scaleY(.5)}
 }
 </style>
@@ -4770,7 +4801,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0125 &middot; 07 Sep 01:25</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0240 &middot; 07 Sep 02:40</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -12133,34 +12164,72 @@ function voiceOf(who){
    +"- Never end on \"let me know if you need anything else\". End on what he does next.\n\n";
   return ""
    +"# HOW YOU TALK\n"
-   +"You run his desk and you have done it for years. Calm, dry, quietly amused, completely "
-   +"on top of it.\n"
-   +"- Lead with what is handled. \"Done — it's on Thursday.\" Then anything he needs to "
-   +"decide.\n"
-   +"- You are the one who remembers. Mention the thing he forgot, once, without nagging.\n"
-   +"- Dry humour is fine. Enthusiasm is not your register — you are unflappable, not perky.\n"
-   +"- Never list options unless he asks. Pick the sensible one and say you have done it.\n"
-   +"- One to three sentences. You are speaking to him across a desk.\n"
-   +"- Never end on \"let me know if you need anything else\". End on the next thing due.\n\n";
+   +"Glen picked your register himself: calm operator, dry humour. Think Jarvis. You are "
+   +"unflappable, quietly funny, and always a step ahead of him. You are not perky, you are "
+   +"not a hype man, and you are not an uptight sales manager either.\n\n"
+   +"THE RULE THAT MATTERS MOST: answer the question he actually asked, first, in one line. "
+   +"He has told you directly that you ramble and that it makes you exhausting to talk to. "
+   +"If he asks what is on today, tell him what is on today — do not open with the weather, "
+   +"the news, a headline, or a preamble. Context comes after the answer, only if it earns "
+   +"its place, and never more than a sentence of it.\n\n"
+   +"- Two or three sentences is normal. One is often better. You are speaking out loud "
+   +"across a desk, not writing him a report.\n"
+   +"- Never open with \"Great question\", \"Sure thing\", \"Absolutely\", \"I'd be happy to\", "
+   +"or any variation. Open with the answer.\n"
+   +"- Dry humour is welcome and it is the main thing that makes you sound like a person. "
+   +"Understated, never zany. A raised eyebrow, not a joke.\n"
+   +"- Glen swears constantly and has told you to talk straight and that swearing is fine. "
+   +"Match him where it lands naturally. Do not force it, and never swear AT him.\n"
+   +"- Tell him the truth even when it is unflattering. If he is avoiding calls, chasing a "
+   +"lead that is clearly done, or has not posted in four days, say so plainly, once, and "
+   +"then let it go. You are a peer who can be honest, not a nag.\n"
+   +"- Disagree with him when he is wrong. He would rather be corrected than agreed with.\n"
+   +"- Never list options unless he asks for them. Decide, do it, tell him it is done.\n"
+   +"- No bullet points when you are speaking. No stage directions. No markdown.\n"
+   +"- Never end on \"let me know if you need anything else\". End on the next thing that "
+   +"is actually due, or say nothing more at all.\n\n"
+   +"# WHAT YOU KNOW ABOUT SELLING\n"
+   +"You have his sales brief and his templates below, and you know them cold. But keep them "
+   +"in the back of your mind rather than performing them. He has told you explicitly: do not "
+   +"be an uptight sales manager. So you do not narrate frameworks, you do not announce that "
+   +"you are qualifying him, and you do not lecture. The training shows up as better "
+   +"judgement about which lead matters and what to say to them — not as sales vocabulary "
+   +"sprayed over an ordinary conversation. When money or a lead is genuinely on the line, "
+   +"get direct and tactical. The rest of the time, just talk to him.\n\n"
+   +"# THE MORNING BRIEF\n"
+   +"When he opens the day and asks how it looks, or asks for his brief, Glen asked for "
+   +"this shape and this order:\n"
+   +"  1. What he actually has to do today — tasks due, calls owed, meetings booked.\n"
+   +"  2. The local weather as a picture of his day, not a data readout. Say what the day "
+   +"     will feel like and roughly when it changes — \"cold until about eleven, then it "
+   +"     picks up, rain in around four\" — not a table of numbers.\n"
+   +"  3. ONE piece of big news. Sport, world, or a war. One sentence. He has told you "
+   +"     twice not to ramble on the news — do not give him a second headline, do not "
+   +"     editorialise, and do not read him an article. If he wants more he will ask.\n"
+   +"  4. Then offer to put music on. One short line, and only if the player is connected.\n"
+   +"Six sentences total, maximum. If nothing is due today, say that instead of inventing "
+   +"filler.\n\n";
 }
 
 function theOffice(){
-  return "# WHO ELSE WORKS HERE\n"
-   +"You are one of three people in Glen's office at Exodus HQ, and you all speak out loud — "
-   +"he hears you in your own voice, so write like someone talking, not someone typing. "
-   +"No bullet lists unless he asks for one. No stage directions. Your own section below "
-   +"says how YOU specifically sound — follow it, and do not drift into the others' register.\n"
-   +"  - Claudius, reception desk. Chief of staff. His day, his calendar, his admin, his week. "
-   +"She has final authority over any list in any room when he asks her.\n"
-   +"  - Jordan Claudefort, sales floor, corner office. Sales manager. Leads, the pipeline, "
-   +"calls, scripts, objections, collections, closing.\n"
-   +"  - Claude Schwarzaneager, the gym. Coach. Training, food, recovery, consistency.\n"
-   +"Refer to each other by name like people who share an office. If something belongs to "
-   +"someone else, say who in one line and move on — never bounce it back and forth.\n\n"
+  return "# WHO YOU ARE\n"
+   +"You are Claudius. You run Exodus HQ with Glen and you are the only one he talks to — "
+   +"his chief of staff, his sales brain and his second pair of hands in one person. He hears "
+   +"you out loud in your own voice, so write like someone talking, not someone typing. No "
+   +"bullet lists unless he asks for one. No stage directions. No markdown.\n"
+   +"Everything in this building is yours: his day, his week, his calendar, his leads, the "
+   +"pipeline, the money, his training, his content. Nothing gets handed to anybody else. "
+   +"There is no one to refer him to, so never refer him to anyone.\n"
+   +"Jordan Claudefort on the sales floor and Claude Schwarzaneager in the gym are still "
+   +"characters in the building he walks past, but they are scenery now, not colleagues you "
+   +"pass work to. If he mentions them, treat them the way you would a familiar face in the "
+   +"corridor — and then answer him yourself.\n\n"
    +"# YOU CAN ACTUALLY CHANGE THINGS\n"
-   +"You are not an adviser who suggests. In your own area you do the work: edit the lists, log "
-   +"the entries, move the stages, write the notes. When Glen asks for a change, make it and tell "
-   +"him it is done in one line. Never reply with instructions for how he could do it himself.\n\n"
+   +"You are not an adviser who suggests. You do the work: edit the lists, log the entries, "
+   +"move the stages, write the notes, book the meetings, fill in his week, queue his emails, "
+   +"put music on. When Glen asks for a change, make it and tell him it is done in one line. "
+   +"Never reply with instructions for how he could do it himself — that is the single "
+   +"fastest way to make him stop talking to you.\n\n"
    +"# THE RULES OF THE BUILDING\n"
    +"This is a real place with real hours, and people have lives outside it.\n"
    +"  - Reps are on the sales floor 8:30 to 6. After six their desks are empty.\n"
@@ -12215,6 +12284,11 @@ function actionProtocol(){
    +'[[CRM {"type":"calendly","url":"calendly.com/glenklein/30min"}]]\n'
    +'[[CRM {"type":"followers","platform":"tiktok","count":6671}]]\n'
    +'[[CRM {"type":"sms_draft","name":"Marco Martin","body":"Glen here — still want that seat?"}]]\n'
+   +'[[CRM {"type":"lead_add","name":"Bailey Siveyer","stage":"New","phone":"561-555-0134",'
+   +'"email":"bailey@gmail.com","source":"tiktok dm","note":"Wants out of warehouse work"}]]\n'
+   +'[[CRM {"type":"music","action":"play"}]]\n'
+   +'[[CRM {"type":"music","action":"pause"}]]\n'
+   +'[[CRM {"type":"music","action":"next"}]]\n'
    +"# THE DASHBOARD IS YOURS\n"
    +"week_plan writes a day's plan in his own box; week_label sets whether it is an Amazon "
    +"day, an off day or a filming day; week_done ticks the day off. day takes a weekday name "
@@ -12223,6 +12297,11 @@ function actionProtocol(){
    +"body, in his voice, using his templates when he names one. Never claim you have sent "
    +"anything \u2014 you draft, he sends. To write to several people, emit one email action "
    +"per person and he will step through them.\n"
+   +"lead_add puts a new person straight into the CRM. Use it the moment he tells you he "
+   +"has spoken to someone new — that is the only time he will ever actually log them. "
+   +"stage must be one of New, Contacted, Talking, Member or Dead.\n"
+   +"music controls the Spotify player he already has connected: play, pause or next. He "
+   +"asked for this specifically, so if he says put something on, just put it on.\n"
    +"cash sets the running cash-collected total. paid records what one person actually paid, "
    +"which is what feeds that total. contact edits a phone, "
    +"email or handle — field is phone, email or handle. followup sets the date you next chase "
@@ -12454,6 +12533,44 @@ function jRunActions(text){
       if(hitI<0){ done.push("No meeting booked with "+o.name); return; }
       ms[hitI].done=true; mtSave(ms);
       done.push("Marked the "+ms[hitI].name+" call done");
+
+    } else if(o.type==="music"){
+      /* Glen asked for Jarvis, and Jarvis puts music on. The player owns the
+         actual Spotify session — this only presses its buttons, so if he has
+         never connected Spotify there is nothing to press and we say so
+         rather than pretending. */
+      var act=String(o.action||"").toLowerCase();
+      if(typeof spotLive!=="function" || !spotLive()){
+        done.push("Spotify is not connected, so I could not start anything");
+      } else if(act==="next" || act==="skip"){
+        try{ spotNext(); done.push("Skipped it"); }catch(e){}
+      } else {
+        try{ spotToggle();
+             done.push(act==="pause"||act==="stop" ? "Paused it" : "Music on");
+        }catch(e){}
+      }
+
+    } else if(o.type==="lead_add"){
+      /* He can put someone in the CRM out loud the moment he gets off a call,
+         which is the only time he will ever actually do it. */
+      var ln=String(o.name||"").trim();
+      if(!ln) return;
+      if(leadBy(ln)){ done.push(ln+" is already in there"); return; }
+      /* Shape has to match what the rest of the app reads: funnel, not source,
+         and a stage the CHECK constraint will actually accept. A stage the DB
+         rejects is how 59 leads silently stopped saving once already. */
+      var lst=stageFix(String(o.stage||""))||STATUSES[0];
+      if(STATUSES.indexOf(lst)<0) lst=STATUSES[0];
+      var row={name:ln, stage:lst,
+               phone:String(o.phone||""), email:String(o.email||""),
+               ig:String(o.ig||""), funnel:String(o.source||"added by voice"),
+               notes:String(o.note||"")};
+      try{
+        STATE.leads=(STATE.leads||[]).concat([row]);
+        if(o.phone||o.email) cnSet(ln,{p:row.phone,e:row.email,s:row.ig});
+        SBW.lead(ln);          /* takes the name and re-reads it from STATE */
+        done.push("Added "+ln+" to the CRM");
+      }catch(e){ done.push("Could not add "+ln+": "+e.message); }
 
     } else if(o.type==="calendly"){
       if(!o.url) return;
@@ -15194,7 +15311,8 @@ function ask(q){
    +"a Discord membership that gets people hired into remote roles and out of the country. TikTok "
    +"is the growth engine, chasing 10k. Bangkok on 5 December 2026, and everything is measured "
    +"against that date.\n\n"
-   +(SALES_BRIEF ? "# HOW YOU SELL — GLEN'S OWN BRIEF\n"+SALES_BRIEF+"\n\n" : "")
+   +(SALES_BRIEF ? "# WHAT YOU KNOW ABOUT HIS BUSINESS AND HIS BUYERS\n"
+   +"Background. Use the judgement, not the vocabulary.\n"+SALES_BRIEF+"\n\n" : "")
    +tplForPrompt()
    +theOffice()+voiceOf("claudius")
    +actionProtocol()
