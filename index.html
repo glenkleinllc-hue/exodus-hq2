@@ -4774,6 +4774,74 @@ textarea.dw-pi.big{min-height:92px}
   .jvpop .jv-wave:before,.jvpop .jv-wave:after{animation:none}
   .jvpop .jv-wave i{transform:scaleY(.5)}
 }
+
+/* ============================================================
+   TABLET AND PHONE — last block in the file
+
+   Glen: "tables get a little weird and overlay when the browser is resizable,
+   make everything formatted really nice for mobile and iPad."
+
+   The overlap came from fixed pixel columns and fixed-layout tables that had
+   no room to shrink: .toprow held a hard 400px column, .todayrow held three
+   equal ones, the week held seven, and table-layout:fixed meant the CRM could
+   not give ground either. Below the breakpoints those all become fewer, wider
+   columns, and the CRM gets a scroll rail instead of crushing its own cells.
+
+   These are the only rules in the file allowed to override layout at width,
+   which is why they sit at the very bottom.
+   ============================================================ */
+
+/* every grid child gets permission to be narrower than its content */
+.toprow>*,.todayrow>*,.dsh-week>*,.tcard,.plat,.dp{min-width:0}
+.tcard,.plat,.dp,.sec{overflow-wrap:anywhere}
+
+/* ---- laptops and iPad landscape ---- */
+@media (max-width:1180px){
+  .wrap{padding:12px 12px 60px}
+  .toprow{grid-template-columns:1fr 1fr}
+  .todayrow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .todayrow.two{grid-template-columns:1fr 1fr}
+  .dsh-week{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+
+/* ---- iPad portrait ---- */
+@media (max-width:900px){
+  .toprow{grid-template-columns:1fr}
+  .todayrow,.todayrow.two{grid-template-columns:1fr}
+  .dsh-week{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .dw-d{min-height:96px}
+  /* The CRM stops pretending it fits. One rail, swipe sideways, columns keep
+     their real widths instead of overlapping each other. */
+  .crmwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .crmwrap table.lgrid{min-width:760px}
+}
+
+/* ---- phones ---- */
+@media (max-width:640px){
+  .wrap{padding:10px 10px 90px}
+  .dsh-week{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .dw-d{min-height:0;padding:10px}
+  .dw-p{-webkit-line-clamp:3}
+  .crmwrap table.lgrid{min-width:680px}
+  /* header buttons wrap onto their own line rather than squeezing the title */
+  .sec-h{flex-wrap:wrap;row-gap:8px}
+  .sec-h h2{flex:1 1 100%}
+  .sec-b{flex:1 1 auto;text-align:center}
+  /* the two sheets and the draft panel already go full width; make their
+     inner controls thumb-sized rather than mouse-sized */
+  .lk,.tplbar{flex-wrap:wrap;row-gap:6px}
+  .lk-t,.lk-u{flex:1 1 100%}
+  .mrow{flex-wrap:wrap;row-gap:4px}
+  .mrow .mt-e{flex:1 1 100%}
+  /* anything that still insists on being wide gets a rail of its own instead
+     of pushing the whole page sideways */
+  .scroll,.wbody{overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+
+/* Nothing may make the page itself scroll sideways — that is what produced the
+   overlapping look, because the layout was wider than the screen and every
+   absolutely-placed thing landed in the wrong spot. */
+html,body{max-width:100%;overflow-x:hidden}
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -4802,7 +4870,8 @@ textarea.dw-pi.big{min-height:92px}
       <!-- the two coins, polled on their own short cache -->
       <div class="tb-cx" id="tb-cx"></div>
 
-      <button class="vswitch" id="vswitch" title="Switch between the dashboard and the floor plan">
+      <button class="vswitch" id="vswitch" hidden aria-hidden="true"
+              title="Switch between the dashboard and the floor plan">
         <span class="vs-ic" id="vs-ic"></span><span class="vs-t" id="vs-t">Building</span>
       </button>
       <span class="syncdot idle" id="syncdot" title="Cloud sync"></span>
@@ -4856,7 +4925,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0805 &middot; 07 Sep 08:05</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0930 &middot; 07 Sep 09:30</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -9868,7 +9937,7 @@ function mOpen(k,tab){
      called mOpen directly opened the room underneath a dashboard that was still
      covering the whole screen — nothing visible, nothing tappable. */
   if(VIEW!=="floor"){
-    VIEW="floor"; LS("view","floor");
+    /* the floor plan is retired — stay on the dashboard */
     try{ document.body.classList.remove("homeview"); paintSwitch(); }catch(e){}
   }
   MVIEW=k; STATE.floor=k; STATE.tab=tab;
@@ -12359,7 +12428,14 @@ function ctxPack(){
       submitted:f.date?f.date.toDateString():""};}),
     jobBoard:STATE.jobs.map(function(j){return{title:j.title,ote:j.ote,niche:j.type};}),
     calendar:STATE.events.slice(0,25).map(function(e){return{
-      what:e.summary,start:(e.start&&(e.start.dateTime||e.start.date))||""};})
+      what:e.summary,start:(e.start&&(e.start.dateTime||e.start.date))||""};}),
+    /* Glen: "I don't know where she's getting the two PM, three PM meeting from,
+       I didn't mention any of that." She had no meetings in her context at all,
+       so she filled the gap from the syntax examples in the prompt. These are
+       the real ones, and the prompt now forbids inventing any others. */
+    meetings: mtLoad().filter(function(m){ return !m.done; }).map(function(m){
+      return { who:m.name||"", when:m.at||"", note:m.notes||"" };
+    })
   };
 }
 var JFACE='<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="80" height="80" fill="#202020"/><circle cx="40" cy="30" r="27" fill="#c8a86a" opacity=".1"/><rect y="56" width="80" height="24" fill="#181818"/><path d="M6 80 Q8 57 26 51 Q40 46 54 51 Q72 57 74 80 Z" fill="#1a1f30"/><path d="M10 80 Q12 60 27 55 Q40 51 53 55 Q68 60 70 80 Z" fill="#232a3e"/><path d="M32 80 Q31 60 40 55 Q49 60 48 80 Z" fill="#f4f9f6"/><path d="M31 56 L40 52 L36 80 L27 80 Z" fill="#1e1e1e"/><path d="M49 56 L40 52 L44 80 L53 80 Z" fill="#1e1e1e"/><path d="M40 56 l-3.4 5 l3.4 4 l3.4 -4 z" fill="#8f1d2a"/><path d="M36.6 65 h6.8 l2.6 15 h-12 z" fill="#a52833"/><path d="M52 62 l6 -2 l1 4 l-6 1 z" fill="#c8a86a"/><rect x="35" y="44" width="10" height="13" rx="4" fill="#e0b58e"/><path d="M31 55 L40 52 L36 60 Z" fill="#fff"/><path d="M49 55 L40 52 L44 60 Z" fill="#fff"/><path d="M25 30 Q25 51 40 54 Q55 51 55 30 Q55 15 40 14 Q25 15 25 30 Z" fill="#efc7a0"/><path d="M26 34 Q29 49 40 51 Q51 49 54 34 Q50 46 40 47 Q30 46 26 34 Z" fill="#d6a67c" opacity=".32"/><path d="M21 32 Q17 8 40 6 Q63 8 59 32 Q56 13 40 11.5 Q24 13 21 32 Z" fill="#1c1712"/><path d="M21 32 Q19 16 27 9 Q22 18 24.5 32 Z" fill="#1c1712"/><path d="M59 32 Q61 16 53 9 Q58 18 55.5 32 Z" fill="#1c1712"/><path d="M22 30 Q24 14 40 10 Q30 15 26 30 Z" fill="#302620" opacity=".9"/><path d="M40 11.5 Q56 14 58 30 Q53 16 40 13.5 Z" fill="#0f0c09" opacity=".55"/><path d="M33 9 Q36 18 34 28" stroke="#0f0c09" stroke-width="1.6" fill="none" opacity=".85"/><path d="M28 12 Q33 16 31 24" stroke="#3a2e26" stroke-width="1" fill="none" opacity=".7"/><path d="M46 11 Q50 16 49 25" stroke="#3a2e26" stroke-width="1" fill="none" opacity=".7"/><path d="M22.5 30 q1.4 9 3.4 13 l3 -1 q-2.6 -5 -3 -12 z" fill="#1c1712"/><path d="M57.5 30 q-1.4 9 -3.4 13 l-3 -1 q2.6 -5 3 -12 z" fill="#1c1712"/><path d="M28.5 26.5 q5 -2.6 9 -.6" stroke="#241c15" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M42.5 25.9 q4 -2 9 .6" stroke="#241c15" stroke-width="2.2" fill="none" stroke-linecap="round"/><ellipse cx="33" cy="32" rx="3.5" ry="3.2" fill="#fbfbfb"/><ellipse cx="47" cy="32" rx="3.5" ry="3.2" fill="#fbfbfb"/><circle cx="33.3" cy="32.2" r="2.1" fill="#3d2a1b"/><circle cx="47.3" cy="32.2" r="2.1" fill="#3d2a1b"/><circle cx="33.3" cy="32.2" r=".95" fill="#120e0a"/><circle cx="47.3" cy="32.2" r=".95" fill="#120e0a"/><circle cx="32.4" cy="31.1" r=".8" fill="#fff"/><circle cx="46.4" cy="31.1" r=".8" fill="#fff"/><path d="M29.4 30.3 q3.6 -2.2 7.2 -.3" stroke="#8a6a4a" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M43.4 30 q3.6 -1.9 7.2 .3" stroke="#8a6a4a" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M40 34 q-2 4.4 .6 6" stroke="#c99672" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M33.5 43.4 q6.5 4.4 13 -.6" stroke="#8f5240" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M34.5 44 q5.5 2.6 11 -.4 q-5.5 3.6 -11 .4 z" fill="#f5f9f7" opacity=".85"/><path d="M31 47 q9 5 18 0 q-9 3 -18 0 z" fill="#c08f66" opacity=".3"/></svg>';
@@ -12740,7 +12816,18 @@ function theOffice(){
 }
 
 function actionProtocol(){
-  return "# YOU CAN CHANGE THINGS YOURSELF\n"
+  return "# NEVER MAKE ANYTHING UP\n"
+   +"Every example below is SYNTAX, not data. The names, times, phone numbers and "
+   +"amounts in them are placeholders and Glen has never heard of any of them. "
+   +"Never repeat one back to him as though it were real.\n"
+   +"State a meeting, a lead, a number, a date or an amount ONLY if it appears in "
+   +"the data you were given this turn. If his meetings list is empty then he has "
+   +"nothing booked \u2014 say exactly that. Do not invent a two o'clock, do not "
+   +"guess at a time, and do not describe a plan he has not written down.\n"
+   +"If you do not know, say you do not know. He would far rather hear \"nothing "
+   +"booked\" than be told about an appointment that does not exist \u2014 one "
+   +"invented meeting makes everything else you say worthless to him.\n\n"
+   +"# YOU CAN CHANGE THINGS YOURSELF\n"
    +"Say your normal short reply, then on its own line at the very end put one action per change. "
    +"Never show him this syntax and never mention it — he sees a tick and the change appearing.\n"
    +'[[CRM {"type":"stage","name":"Marco Martin","stage":"Talking"}]]\n'
@@ -12765,8 +12852,8 @@ function actionProtocol(){
    +'[[CRM {"type":"contact","name":"Marco Martin","field":"phone","value":"561-307-4077"}]]\n'
    +'[[CRM {"type":"followup","name":"Marco Martin","date":"2026-08-05","note":"after payday"}]]\n'
    +'[[CRM {"type":"came","name":"Marco Martin","date":"2026-07-14"}]]\n'
-   +'[[CRM {"type":"meeting_add","name":"Marco Martin","at":"2026-08-05T14:30",'
-   +'"phone":"561-307-4077","notes":"Second call. Closing."}]]\n'
+   +'[[CRM {"type":"meeting_add","name":"EXAMPLE NAME","at":"2026-08-05T14:30",'
+   +'"phone":"000-000-0000","notes":"EXAMPLE ONLY"}]]\n'
    +'[[CRM {"type":"meeting_done","name":"Marco Martin"}]]\n'
    +'[[CRM {"type":"calendly","url":"calendly.com/glenklein/30min"}]]\n'
    +'[[CRM {"type":"followers","platform":"tiktok","count":6671}]]\n'
@@ -19191,7 +19278,13 @@ function musicView(){
    the panel it summarises. Every block is a door — tapping it opens the room
    that actually does the work.
    ============================================================ */
-var VIEW = (LS("view")==="floor") ? "floor" : "home";
+/* The floor plan is retired. It was a good idea that turned into clutter, and
+    it kept Jordan and the coach alive in a corner where they got in the way.
+    Nothing lived in there that is not on the dashboard, so the dashboard is now
+    the whole app. The drawing code stays put rather than being torn out at the
+    root — it is thousands of lines of SVG and nothing reaches it any more. */
+var VIEW = "home";
+try{ LS("view","home"); }catch(e){}
 
 function setView(v){
   VIEW = (v==="floor") ? "floor" : "home";
@@ -20198,7 +20291,9 @@ function dashView(){
       var dn=LS("week_done_"+i)==="1", pl2=(LS("week_plan_"+i)||"");
       h+='<div class="dw-d'+(i===today?" now":"")+(dn?" done":"")+(amz?" amz":"")+'">'
         +'<div class="dw-n"><span>'+DAYS[i]+(i===today?" &middot; today":"")+'</span>'
-        +(dn&&!WEEK_EDIT?'<i class="dw-ck" title="Finished">\u2713</i>':'')
+        /* The tick read as a stray green box sitting next to Sunday. The
+           tint already says the day is finished, so the mark is gone and the
+           dimming does the whole job. */
         +'</div>';
       if(WEEK_EDIT)
         h+='<input class="dw-lab-i'+(amz?" amz":"")+'" data-dwl="'+i+'" value="'+esc(dl)+'" '
@@ -20415,10 +20510,11 @@ function newThisWeek(){
 /* All three are always reachable. He said it plainly: "all the agents are always
    on shift". The shift hours stay in the building simulation, where they belong —
    they are not a reason to stop him talking to someone. */
+/* One operator. Glen: "get rid of the whole building now that we've got the AI
+   agent rolling — Jordan's still in there, the sales coach is still in there,
+   we can get rid of all of that." Claudius does the lot. */
 var OPERATORS=[
-  {k:"assistant", npc:"claudius", nm:"Claudius",   role:"Chief of staff", ac:"#00ff85"},
-  {k:"sales",     npc:"jordan",  nm:"Jordan",    role:"Sales",          ac:"#c8a86a"},
-  {k:"gym",       npc:"claude",  nm:"Claude S.", role:"Coach",          ac:"#84cc16"}
+  {k:"assistant", npc:"claudius", nm:"Claudius", role:"Chief of staff", ac:"#00ff85"}
 ];
 
 /* ============ THE OPERATOR DOCK  ("jarvis mode") ============
