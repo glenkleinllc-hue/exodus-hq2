@@ -19,8 +19,39 @@ export const config = { api: { bodyParser: { sizeLimit: "10mb" } } };
 const MODEL = "scribe_v2";
 
 export default async function handler(req, res) {
+  // A GET is a health check you can open in a browser. Diagnosing this from
+  // the outside was guesswork, so the route now says plainly whether it is
+  // deployed, whether it can see the key, and whether ElevenLabs answers.
+  if (req.method === "GET") {
+    const key = process.env.ELEVENLABS_API_KEY;
+    const out = { deployed: true, model: MODEL, keySet: Boolean(key && key.length > 6) };
+    if (!out.keySet) {
+      out.verdict = "No ELEVENLABS_API_KEY visible to this function. Add it in "
+                  + "Vercel > Settings > Environment Variables, then redeploy.";
+      return res.status(200).json(out);
+    }
+    try {
+      const r = await fetch("https://api.elevenlabs.io/v1/user/subscription",
+        { headers: { "xi-api-key": key } });
+      const j = await r.json().catch(() => ({}));
+      out.keyWorks = r.ok;
+      if (r.ok) {
+        out.tier = j.tier || j.subscription_tier || "unknown";
+        out.charactersUsed = j.character_count;
+        out.characterLimit = j.character_limit;
+        out.verdict = "Ready. The ears should work.";
+      } else {
+        out.verdict = "ElevenLabs rejected the key (" + r.status + "). Rotate it and update Vercel.";
+      }
+    } catch (e) {
+      out.keyWorks = false;
+      out.verdict = "Could not reach ElevenLabs: " + String(e.message || e);
+    }
+    return res.status(200).json(out);
+  }
+
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+    res.setHeader("Allow", "POST, GET");
     return res.status(405).json({ error: "POST only" });
   }
 
