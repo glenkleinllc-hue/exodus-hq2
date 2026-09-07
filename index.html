@@ -4647,7 +4647,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.2035 &middot; 06 Sep 20:35</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.2037 &middot; 06 Sep 20:37</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -14209,6 +14209,27 @@ function spPaint(){
     if(!byLg[k]){ byLg[k]=[]; order.push(k); }
     byLg[k].push(g);
   });
+  /* Within a league, order matters. The API hands college football back in its
+     own order, so the round-robin was pulling whichever fixtures happened to be
+     first — obscure matchups, and the same ones every refresh. Ranked teams
+     (ESPN prefixes them "#12") come first, then games already under way, then
+     the ones starting soonest. */
+  function rankOf(g){
+    var t=g.teams||[], s=String((t[0]&&t[0].team)||"")+" "+String((t[1]&&t[1].team)||"");
+    var m=s.match(/#(\d{1,2})/g);
+    if(!m) return 99;
+    return Math.min.apply(null, m.map(function(x){ return parseInt(x.slice(1),10); }));
+  }
+  order.forEach(function(k){
+    byLg[k].sort(function(a,b){
+      if(!!b.live !== !!a.live) return b.live?1:-1;      /* live first */
+      var ra=rankOf(a), rb=rankOf(b);
+      if(ra!==rb) return ra-rb;                           /* then ranked */
+      var da=spDate(a.detail), db=spDate(b.detail);       /* then soonest */
+      return (da?da.getTime():8e15)-(db?db.getTime():8e15);
+    });
+  });
+
   var picked=games.filter(function(g){ return g.live; });
   var seen={};
   picked.forEach(function(g){ seen[g.league+"|"+g.name]=1; });
