@@ -30,18 +30,29 @@ export default async function handler(req, res) {
                   + "Vercel > Settings > Environment Variables, then redeploy.";
       return res.status(200).json(out);
     }
+    // /v1/models is the request ElevenLabs' own auth docs use as the first
+    // test, and it needs no scopes beyond a working key. The previous check
+    // hit /v1/user/subscription, which can 400 for reasons that have nothing
+    // to do with whether the key is valid — it reported a good key as dead.
     try {
-      const r = await fetch("https://api.elevenlabs.io/v1/user/subscription",
+      const r = await fetch("https://api.elevenlabs.io/v1/models",
         { headers: { "xi-api-key": key } });
-      const j = await r.json().catch(() => ({}));
+      const body = await r.text().catch(() => "");
       out.keyWorks = r.ok;
+      out.status = r.status;
       if (r.ok) {
-        out.tier = j.tier || j.subscription_tier || "unknown";
-        out.charactersUsed = j.character_count;
-        out.characterLimit = j.character_limit;
-        out.verdict = "Ready. The ears should work.";
+        let n = 0;
+        try { const j = JSON.parse(body); n = Array.isArray(j) ? j.length : (j.models || []).length; }
+        catch { /* count is a nicety, not the answer */ }
+        out.modelsVisible = n;
+        out.verdict = "Key works. If the mic still does nothing, it is the browser's "
+                    + "microphone permission, not the server.";
+      } else if (r.status === 401) {
+        out.verdict = "ElevenLabs says the key is invalid (401). Make a new one and update Vercel.";
+        out.detail = body.slice(0, 300);
       } else {
-        out.verdict = "ElevenLabs rejected the key (" + r.status + "). Rotate it and update Vercel.";
+        out.verdict = "ElevenLabs returned " + r.status + ". Detail below.";
+        out.detail = body.slice(0, 300);
       }
     } catch (e) {
       out.keyWorks = false;
