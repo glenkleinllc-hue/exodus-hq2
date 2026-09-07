@@ -1805,56 +1805,8 @@ a.lnk:hover{color:#d2ebdd}
   background:rgba(200,168,106,.15);border:1px solid rgba(200,168,106,.4);color:#dcbe86}
 .cm-clr:hover{background:rgba(200,168,106,.28);color:#f0dcae}
 
-/* ---- Claudius: a waveform, and one word ----
-   Glen asked for Jarvis. Jarvis does not show you a transcript while he is
-   talking to you. A centred pill with the bars moving is the whole interface. */
-.jvpop{position:fixed;left:0;right:0;bottom:26px;z-index:900;
-  display:flex;justify-content:center;pointer-events:none}
-.jvpop[hidden]{display:none}
-.jvpop-in{display:flex;align-items:center;gap:13px;
-  padding:12px 18px;border-radius:99px;pointer-events:auto;
-  background:rgba(14,14,14,.93);border:1px solid #2f2f33;
-  box-shadow:0 14px 44px rgba(0,0,0,.55);
-  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
-.jvpop-in>b{font-size:12px;font-weight:800;letter-spacing:.4px;color:#dfeae4;
-  min-width:64px}
-.jvpop.live .jvpop-in{border-color:#2c5340}
-.jvpop.live .jvpop-in>b{color:#9dffd2}
-.jvpop.talk .jvpop-in{border-color:#3a5f4b}
-.jvpop.talk .jvpop-in>b{color:#a7d8bd}
-
-.jvpop .jv-wave{display:flex;align-items:center;gap:3px;height:22px}
-.jvpop .jv-wave i{width:3px;height:5px;border-radius:2px;background:#3d4a5a;
-  animation:none}
-.jvpop.live .jv-wave i{background:#9dffd2;animation:jvBar .78s ease-in-out infinite}
-.jvpop.talk .jv-wave i{background:#9cd2b4;animation:jvBar .62s ease-in-out infinite}
-.jvpop.think .jv-wave i{background:#6f7c8d;animation:jvBar 1.5s ease-in-out infinite}
-@keyframes jvBar{0%,100%{height:5px;opacity:.55}50%{height:20px;opacity:1}}
-
-/* The label and, under it, what it has actually heard so far. Before this
-   there were two competing strips on screen at once — this overlay saying
-   "Listening / Stop" and a separate red bar saying "Listening / Done" — which
-   is why it made no sense. There is one now. */
-.jvpop .jv-txt{display:flex;flex-direction:column;gap:2px;min-width:104px;max-width:340px}
-.jvpop .jv-txt>b{font-size:12px;font-weight:800;letter-spacing:.4px;color:#dfeae4}
-.jvpop .jv-txt>i{font-style:normal;font-size:11.5px;line-height:1.35;color:#9fb3a8;
-  max-height:32px;overflow:hidden;display:none}
-.jvpop .jv-txt>i.on{display:block}
-
-/* The primary button always says what it will do, and then does that. */
-.jvpop .jv-go{font-size:10.5px;font-weight:800;letter-spacing:.6px;
-  padding:7px 14px;border-radius:99px;cursor:pointer;font-family:inherit;
-  background:#00ff85;border:1px solid #6cc494;color:#0d1210;transition:.14s}
-.jvpop .jv-go:hover{filter:brightness(1.08)}
-.jvpop .jv-go[disabled]{opacity:.4;cursor:default}
-.jvpop.talk .jv-go{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.42);color:#f0857f}
-.jvpop.think .jv-go{background:rgba(201,168,106,.16);border-color:rgba(201,168,106,.42);color:#e0c084}
-
-.jvpop .jv-stop{font-size:12px;font-weight:800;line-height:1;
-  width:26px;height:26px;border-radius:50%;cursor:pointer;font-family:inherit;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.05);border:1px solid #33333a;color:#8d8d94;transition:.14s}
-.jvpop .jv-stop:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.4);color:#f0857f}
+/* The voice pill's rules are defined once, at the end of this stylesheet.
+   This is where the first of three competing copies used to be. */
 
 /* ---- a booked meeting reads as a record ---- */
 .mt-e:hover{background:#232325;color:#ececed;border-color:#41414a}
@@ -2612,20 +2564,6 @@ a.sp-g:hover{background:rgba(255,255,255,.05)}
 .spot-n{margin-top:10px;font-size:10.5px;line-height:1.5;color:#4f6659}
 .spot-msg{margin-top:9px;font-size:11.5px;color:#f0b8b6}
 
-/* the exchange, inside the voice overlay */
-/* The old full-width panel rules, from when this was a transcript window. The
-   overlay is a pill now — waveform, one word, Stop, on one line — so both
-   copies are overridden rather than deleted. */
-.jvpop-in{flex-direction:row;align-items:center;gap:13px;width:auto}
-.jvpop-top{display:flex;align-items:center;gap:14px}
-.jv-say{display:flex;flex-direction:column;gap:7px;margin-top:12px;padding-top:12px;
-  border-top:1px solid rgba(255,255,255,.08);max-height:190px;overflow-y:auto}
-.jv-me{align-self:flex-end;max-width:88%;padding:7px 11px;border-radius:11px;
-  background:rgba(0,255,133,.2);border:1px solid rgba(0,255,133,.34);
-  font-size:12.5px;line-height:1.45;color:#ecf5f0}
-.jv-her{align-self:flex-start;max-width:92%;padding:7px 11px;border-radius:11px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
-  font-size:12.5px;line-height:1.5;color:#dfeae4;white-space:pre-line}
 
 /* the playlist picker */
 .spot-picks{display:flex;flex-direction:column;gap:3px;margin-top:12px;
@@ -2783,21 +2721,9 @@ body.homeview .jvfab{display:inline-flex}
 /* while the CRM or a panel is full-screen it would sit on top of the content */
 body.dsheeting .jvfab{display:none}
 
-/* the waveform overlay, only while she is listening or talking */
-.jvpop{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:1300;
-  animation:jvPopIn .18s ease-out}
-.jvpop[hidden]{display:none}
-@keyframes jvPopIn{from{transform:translate(-50%,10px);opacity:0}
-                   to{transform:translate(-50%,0);opacity:1}}
-.jvpop-in{display:flex;align-items:center;gap:14px;padding:13px 18px;
-  border-radius:14px;background:linear-gradient(150deg,#1e1e1e,#161616);
-  border:1px solid #22d3ee55;box-shadow:0 18px 44px rgba(0,0,0,.6)}
-.jvpop.think .jvpop-in{border-color:#c8a86a55}
-.jvpop.talk .jvpop-in{border-color:#4b7bd455}
-.jv-stop{flex:none;padding:8px 15px;border-radius:9px;cursor:pointer;font-family:inherit;
-  background:rgba(212,115,111,.16);border:1px solid rgba(212,115,111,.45);
-  font-size:10.5px;font-weight:800;letter-spacing:.5px;color:#f0b8b6;transition:.14s}
-.jv-stop:hover{background:var(--red);color:#fff;border-color:var(--red)}
+/* The voice overlay's styling now lives in one block at the end of this
+   stylesheet. Three copies of these rules used to fight each other and the
+   last one won, which is why the pill kept coming back cyan. */
 
 /* the sky, where he actually is */
 .wxp{display:flex;flex-direction:column;justify-content:center;min-width:0;
@@ -3132,18 +3058,36 @@ body.homeview .tower{display:none}
   padding:11px 11px 13px;min-width:0;min-height:112px;cursor:pointer;transition:.14s;
   display:flex;flex-direction:column}
 .dw-d:hover{border-color:var(--blu)}
-.dw-d.now{border-color:var(--blu);background:#1e2530}
+.dw-d.now{border-color:var(--blu);background:#12201a;
+  box-shadow:inset 0 0 0 1px rgba(0,255,133,.14)}
 .dw-d.done{opacity:.62}
 .dw-n{font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
   color:var(--mut);display:flex;justify-content:space-between;align-items:center;gap:4px}
 .dw-d.now .dw-n{color:var(--blu2)}
-.dw-tick{flex:none;width:19px;height:19px;border-radius:6px;padding:0;cursor:pointer;
-  border:1px solid #33333a;background:#131316;color:transparent;
-  font-size:11px;font-weight:900;line-height:1;transition:.13s}
-.dw-tick:hover{border-color:var(--blu);color:#4a5a52}
-.dw-d.done .dw-tick{background:var(--blu);border-color:var(--blu);color:#06210f}
-.dw-d.done .dw-tick:hover{background:#3dffa2;border-color:#3dffa2;color:#06210f}
-.dw-tick.auto{border-style:dashed}
+/* ---- a finished day tints out, it does not grow a checkbox ----
+   Glen: "make it so it'll tint out, and I can select the day off when I hit
+   edit the week, not just normally. Make it look nice when I'm looking at my
+   week."
+
+   So in reading mode there is no control at all — a done day just recedes,
+   with one small neon check where the day name is. The toggle only exists
+   inside Edit the week, where controls are expected and cannot be hit by
+   accident while he is scanning his week. */
+.dw-ck{font-style:normal;flex:none;font-size:10px;font-weight:900;color:var(--blu);
+  text-shadow:0 0 9px rgba(0,255,133,.55);line-height:1}
+.dsh-week:not(.editing) .dw-d.done{opacity:.4;background:#121213}
+.dsh-week:not(.editing) .dw-d.done .dw-p{color:#6b7079}
+.dsh-week:not(.editing) .dw-d.done .dw-lab{color:#5c6068}
+.dsh-week:not(.editing) .dw-d.done:hover{opacity:.72}
+/* the toggle, edit mode only */
+.dw-mk{margin-top:8px;width:100%;background:#131316;border:1px solid #2b2b32;
+  border-radius:7px;color:#82828b;font:inherit;font-size:9px;font-weight:800;
+  letter-spacing:1.2px;text-transform:uppercase;padding:7px 6px;cursor:pointer;
+  transition:.13s;line-height:1}
+.dw-mk:hover{border-color:var(--blu);color:var(--ink)}
+.dw-mk.on{background:rgba(0,255,133,.12);border-color:rgba(0,255,133,.45);
+  color:var(--blu2)}
+.dw-mk.on:hover{border-color:var(--blu);color:#dfffee}
 .dw-lab{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
   margin-top:5px;color:#7f8b9c}
 .dw-d.amz .dw-lab{color:#b5d3c2}
@@ -4624,6 +4568,131 @@ textarea.dw-pi.big{min-height:92px}
 .sp-tb.on{background:rgba(255,255,255,.05);border-color:#242e3a;color:#c3cede}
 .sptick .ph-list{flex:1;display:flex;flex-direction:column;min-height:0;
   overflow-y:auto;padding:0 10px 10px}
+
+/* ============================================================
+   THE VOICE — one stylesheet, last in the file
+
+   Glen: "I want the voice to look good and not be shitty."
+
+   It was not a tuning problem. Three separate .jvpop blocks were defined in
+   this file and the last one won, so every time the pill was restyled it came
+   back the old cyan. Two are gone. This is the only one left, and it sits at
+   the end of the stylesheet so nothing can quietly outrank it again.
+
+   The design is a floating glass pill: bars on the left, one line of state and
+   what it heard in the middle, one primary button and a dismiss on the right.
+   Nothing else. Jarvis does not show you a transcript window while he talks.
+   ============================================================ */
+.jvpop{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);
+  z-index:1300;max-width:calc(100vw - 28px);
+  animation:jvIn .22s cubic-bezier(.2,.9,.3,1.2)}
+.jvpop[hidden]{display:none}
+@keyframes jvIn{from{transform:translate(-50%,14px) scale(.96);opacity:0}
+                to  {transform:translate(-50%,0)    scale(1);  opacity:1}}
+
+.jvpop .jvpop-in{display:flex;align-items:center;gap:14px;width:auto;
+  padding:11px 12px 11px 18px;border-radius:999px;
+  background:rgba(13,13,15,.93);
+  border:1px solid #2a2a30;
+  box-shadow:0 20px 55px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter:blur(14px) saturate(1.3);
+  -webkit-backdrop-filter:blur(14px) saturate(1.3);
+  transition:border-color .25s, box-shadow .25s}
+
+/* Each state gets its own ring and its own breathing glow, so which of the
+   three things is happening is readable from across the room without reading
+   the word. */
+.jvpop.live .jvpop-in{border-color:rgba(0,255,133,.55);
+  box-shadow:0 20px 55px rgba(0,0,0,.62), 0 0 26px rgba(0,255,133,.20),
+             inset 0 1px 0 rgba(255,255,255,.05);
+  animation:jvBreathe 2.4s ease-in-out infinite}
+.jvpop.talk .jvpop-in{border-color:rgba(0,255,133,.34);
+  box-shadow:0 20px 55px rgba(0,0,0,.62), 0 0 20px rgba(0,255,133,.13),
+             inset 0 1px 0 rgba(255,255,255,.05)}
+.jvpop.think .jvpop-in{border-color:rgba(191,160,101,.40)}
+@keyframes jvBreathe{
+  0%,100%{box-shadow:0 20px 55px rgba(0,0,0,.62),0 0 20px rgba(0,255,133,.14),
+                     inset 0 1px 0 rgba(255,255,255,.05)}
+  50%    {box-shadow:0 20px 55px rgba(0,0,0,.62),0 0 34px rgba(0,255,133,.30),
+                     inset 0 1px 0 rgba(255,255,255,.05)}}
+
+/* ---- the bars ----
+   scaleY rather than height: it runs on the compositor, so nine bars animating
+   at once cost nothing and stay perfectly smooth. Each bar gets its own
+   duration so the group looks like a voice and not like a loading spinner. */
+.jvpop .jv-wave{display:flex;align-items:center;gap:3px;height:24px;flex:none}
+.jvpop .jv-wave i{width:3px;height:24px;border-radius:99px;flex:none;
+  background:#3a3a42;transform:scaleY(.2);transform-origin:center;
+  transition:background .25s}
+.jvpop.live .jv-wave i,
+.jvpop.talk .jv-wave i{background:linear-gradient(180deg,#6bffc0,#00ff85);
+  box-shadow:0 0 8px rgba(0,255,133,.5)}
+.jvpop.think .jv-wave i{background:#7d6f52}
+.jvpop.live .jv-wave i{animation:jvBar .85s ease-in-out infinite}
+.jvpop.talk .jv-wave i{animation:jvBar .62s ease-in-out infinite}
+.jvpop.think .jv-wave i{animation:jvBar 1.7s ease-in-out infinite;
+  box-shadow:none}
+@keyframes jvBar{0%,100%{transform:scaleY(.18)}50%{transform:scaleY(1)}}
+/* uneven maximums, so it reads as speech rather than a wave machine */
+.jvpop .jv-wave i:nth-child(1),.jvpop .jv-wave i:nth-child(9){animation-duration:1.05s}
+.jvpop .jv-wave i:nth-child(2),.jvpop .jv-wave i:nth-child(8){animation-duration:.72s}
+.jvpop .jv-wave i:nth-child(3),.jvpop .jv-wave i:nth-child(7){animation-duration:.94s}
+.jvpop .jv-wave i:nth-child(4),.jvpop .jv-wave i:nth-child(6){animation-duration:.66s}
+.jvpop .jv-wave i:nth-child(5){animation-duration:.82s}
+
+/* ---- state, and what it heard ---- */
+.jvpop .jv-txt{display:flex;flex-direction:column;gap:2px;
+  min-width:112px;max-width:330px;flex:1 1 auto;min-width:0}
+.jvpop .jv-txt>b{font-size:10px;font-weight:800;letter-spacing:1.5px;
+  text-transform:uppercase;color:#8f8f98;transition:color .25s;white-space:nowrap}
+.jvpop.live .jv-txt>b{color:#00ff85}
+.jvpop.talk .jv-txt>b{color:#6bffc0}
+.jvpop.think .jv-txt>b{color:#bfa065}
+.jvpop .jv-txt>i{font-style:normal;font-size:13px;line-height:1.35;color:#e4e4e6;
+  display:none;overflow:hidden;text-overflow:ellipsis;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.jvpop .jv-txt>i{display:none}
+.jvpop .jv-txt>i.on{display:-webkit-box}
+
+/* ---- the two controls ---- */
+.jvpop .jv-go{flex:none;font-size:10.5px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;padding:9px 17px;border-radius:99px;cursor:pointer;
+  font-family:inherit;background:#00ff85;border:1px solid #00ff85;color:#052013;
+  box-shadow:0 0 18px rgba(0,255,133,.3);transition:.14s}
+.jvpop .jv-go:hover{background:#3dffa2;border-color:#3dffa2;
+  box-shadow:0 0 24px rgba(0,255,133,.45)}
+.jvpop .jv-go[disabled]{opacity:.32;cursor:default;box-shadow:none;
+  background:#2a2a30;border-color:#2a2a30;color:#8f8f98}
+.jvpop.talk .jv-go{background:rgba(201,123,118,.16);border-color:rgba(201,123,118,.45);
+  color:#f0a9a4;box-shadow:none}
+.jvpop.talk .jv-go:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+.jvpop .jv-stop{flex:none;width:28px;height:28px;border-radius:50%;cursor:pointer;
+  font-family:inherit;font-size:12px;font-weight:800;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.04);border:1px solid #33333a;color:#82828b;
+  transition:.14s}
+.jvpop .jv-stop:hover{background:rgba(201,123,118,.16);
+  border-color:rgba(201,123,118,.45);color:#f0a9a4}
+
+/* ---- phones ----
+   The pill spans the screen with a little air, the heard-text truncates to one
+   line, and nothing wraps onto a second row. */
+@media (max-width:700px){
+  .jvpop{left:12px;right:12px;transform:none;bottom:16px;max-width:none}
+  @keyframes jvIn{from{transform:translateY(14px);opacity:0}
+                  to  {transform:translateY(0);opacity:1}}
+  .jvpop .jvpop-in{padding:10px 10px 10px 14px;gap:11px;border-radius:18px}
+  .jvpop .jv-wave{height:20px;gap:2.5px}
+  .jvpop .jv-wave i{height:20px}
+  .jvpop .jv-txt{min-width:0;max-width:none}
+  .jvpop .jv-txt>i{-webkit-line-clamp:1}
+  .jvpop .jv-go{padding:9px 13px;font-size:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  .jvpop,.jvpop .jvpop-in,.jvpop .jv-wave i{animation:none}
+  .jvpop .jv-wave i{transform:scaleY(.5)}
+}
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -4701,7 +4770,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0010 &middot; 07 Sep 00:10</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0125 &middot; 07 Sep 01:25</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -19512,22 +19581,23 @@ function dashView(){
        what he is doing. The Plan and Needs You came out — the plan is right
        below in the seven days, and Needs You was repeating the CRM. */
     /* the seven days */
-    h+='<div class="dsh-week">';
+    h+='<div class="dsh-week'+(WEEK_EDIT?" editing":"")+'">';
     for(var i=0;i<7;i++){
       var dl=dayLabel(i), amz=/amazon/i.test(dl);
       var dn=LS("week_done_"+i)==="1", pl2=(LS("week_plan_"+i)||"");
       h+='<div class="dw-d'+(i===today?" now":"")+(dn?" done":"")+(amz?" amz":"")+'">'
         +'<div class="dw-n"><span>'+DAYS[i]+(i===today?" &middot; today":"")+'</span>'
-        +'<button class="dw-tick'+(LS("week_auto_"+i)==="1"?" auto":"")+'" data-dwdone="'+i+'" '
-          +'title="'+(dn?"Done. Click to un-tick.":"Mark this day done.")+'" '
-          +'aria-pressed="'+(dn?"true":"false")+'">\u2713</button>'
+        +(dn&&!WEEK_EDIT?'<i class="dw-ck" title="Finished">\u2713</i>':'')
         +'</div>';
       if(WEEK_EDIT)
         h+='<input class="dw-lab-i'+(amz?" amz":"")+'" data-dwl="'+i+'" value="'+esc(dl)+'" '
           +'placeholder="Amazon / Off / Filming">'
           +'<textarea class="dw-pi" data-dwp="'+i+'" rows="3" '
           +'placeholder="'+(amz?"Post before shift.":"3 videos. 10 calls.")+'">'
-          +esc(pl2)+'</textarea>';
+          +esc(pl2)+'</textarea>'
+          +'<button class="dw-mk'+(dn?" on":"")+'" data-dwdone="'+i+'" '
+            +'aria-pressed="'+(dn?"true":"false")+'">'
+            +(dn?'\u2713 Done':'Mark done')+'</button>';
       else
         h+='<div class="dw-lab">'+esc(dl)+'</div>'
           +'<div class="dw-p'+(pl2.trim()?"":" none")+'">'
