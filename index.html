@@ -4535,9 +4535,10 @@ textarea.dw-pi.big{min-height:92px}
    lists at ~74px, which is two rows and a scrollbar — unreadable and fiddly,
    which is what made it feel broken. Philly gets three rows, news gets the
    rest, and the panel matches the weather beside it. */
-/* The panel is scores over Philly, the way it was. One list, no caps, no
-   hairline scrollbars. */
-.sptick.on{max-height:none}
+/* The panel needs a height of its own or the list — which is flex:1 — has
+   nothing to fill and collapses to a single row. It matches the weather card
+   beside it. */
+.sptick.on{max-height:none;min-height:188px}
 .sptick .ph-s{width:62px;font-size:8.5px;letter-spacing:.5px;color:#6d7e96}
 .sptick .ph-t{font-size:12px;font-weight:500;color:#c3cede}
 .sptick .ph-r{padding:6px 5px}
@@ -4570,6 +4571,16 @@ textarea.dw-pi.big{min-height:92px}
 /* the restored news card gets the full width of its section */
 .dash .tcard.news{display:block}
 .dash .tcard.news .ntabs{margin:0}
+
+/* the panel's own tabs: Headlines or Philly, one at a time */
+.sp-tabs{flex:none;display:flex;gap:4px;padding:8px 10px 4px}
+.sp-tb{flex:none;height:24px;line-height:22px;padding:0 11px;border-radius:6px;cursor:pointer;
+  font-family:inherit;font-size:10px;font-weight:700;letter-spacing:.9px;
+  text-transform:uppercase;background:none;border:1px solid transparent;color:#5b6478}
+.sp-tb:hover{color:#9aa8bd}
+.sp-tb.on{background:rgba(255,255,255,.05);border-color:#242e3a;color:#c3cede}
+.sptick .ph-list{flex:1;display:flex;flex-direction:column;min-height:0;
+  overflow-y:auto;padding:0 10px 10px}
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -4647,7 +4658,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.2037 &middot; 06 Sep 20:37</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.2137 &middot; 06 Sep 21:37</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -14266,14 +14277,37 @@ function spPaint(){
      out: two capped, scrolling lists in a panel this size gave hairline
      scrollbars and rows you could not read. The headlines have their own card
      below, which is where Glen had them and where they work. */
-  if(!rows && !phRows){ host.className="sptick"; host.innerHTML=""; return; }
+  /* headlines, in the same row shape as Philly */
+  var wr=(typeof BRIEF!=="undefined" && BRIEF && (BRIEF.news||BRIEF.headlines)) || [];
+  var wRows=wr.filter(function(x){ return x&&x.title; }).slice(0,6).map(function(x){
+    var href=/^https?:\/\//i.test(x.link||"") ? x.link : "";
+    var body='<span class="ph-s">'+esc(String(x.src||"").slice(0,10))+'</span>'
+            +'<span class="ph-t">'+esc(x.title)+'</span>';
+    return href
+      ? '<a class="ph-r" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+body+'</a>'
+      : '<span class="ph-r">'+body+'</span>';
+  }).join("");
+
+  if(!rows && !phRows && !wRows){ host.className="sptick"; host.innerHTML=""; return; }
+  var tab = SPTAB;
+  if(tab==="philly" && !phRows) tab="news";
+  if(tab==="news" && !wRows) tab="philly";
+
   host.className="sptick on";
   host.innerHTML=
      (rows ? '<div class="sp-top"><div class="sp-lbl">SCORES</div>'
              +'<div class="sp-rail">'+rows+'</div></div>' : "")
-    +(phRows ? '<div class="sp-phl"><span>PHILLY</span></div>'
-               +'<div class="ph-list">'+phRows+'</div>' : "")
-;
+    +'<div class="sp-tabs">'
+      +(wRows ?'<button class="sp-tb'+(tab==="news"?" on":"")+'" data-sptab="news">Headlines</button>':'')
+      +(phRows?'<button class="sp-tb'+(tab==="philly"?" on":"")+'" data-sptab="philly">Philly</button>':'')
+    +'</div>'
+    +'<div class="ph-list">'+(tab==="philly"?phRows:wRows)+'</div>';
+
+  /* the panel repaints on a timer, so the tabs are bound here rather than in
+     the one-time wiring pass */
+  host.querySelectorAll("[data-sptab]").forEach(function(el){
+    el.onclick=function(){ SPTAB=el.getAttribute("data-sptab"); LS("sptab",SPTAB); spPaint(); };
+  });
 }
 
 /* ======================= WHAT SHE KNOWS ABOUT HIM =======================
@@ -14459,6 +14493,10 @@ function todayLabelNow(){ return dayLabel(new Date().getDay()); }
 /* Which tab the top-left card is showing. Remembered, because a man who
    watches something every evening should not have to click twice for it. */
 var NEWSTAB=(LS("newstab")==="watch") ? "watch" : "news";
+/* The scores panel carries Philly AND the headlines now. Two stacked lists in
+   a panel this size was the cramped, hairline-scrollbar version Glen rejected,
+   so only one shows at a time and a tab switches between them. */
+var SPTAB = LS("sptab") || "news";
 /* Folded or not. It runs a lot taller than the task list beside it, and some
    days he does not want to look at the world at all. */
 var NEWS_SHUT=(LS("news_shut")==="1");
@@ -19412,24 +19450,6 @@ function dashView(){
     h+='</div>';        /* .sec  — Today */
   })();
 
-
-  /* THE NEWS CARD, restored. Glen: "use the news that we had before." It is the
-     same Headlines / Watch card it always was — it just gets the full width of
-     its own section now instead of fighting the meetings for a column. */
-  (function(){
-    h+='<div class="sec"><div class="sec-h"><h2>Headlines</h2>'
-      +'<span class="sec-s">'+newsAge()+'</span>'
-      +'<button class="sec-b" id="news-go">Refresh</button></div>';
-    h+='<div class="tcard news">'
-      +'<div class="tc-h"><span class="ntabs">'
-        +'<button class="ntab'+(NEWSTAB==="news"?" on":"")+'" data-ntab="news">Headlines</button>'
-        +'<button class="ntab'+(NEWSTAB==="watch"?" on":"")+'" data-ntab="watch">Watch</button>'
-      +'</span></div>'
-      +(NEWSTAB==="news"
-        ? newsDeskTabs()+'<div class="newsbox" id="newsbox">'+newsList()+'</div>'
-        : watchBox())
-      +'</div></div>';
-  })();
 
   /* ============ 2. EXODUS CRM  —  the real pipeline, in place ============
      Sales is the top of the page because it is the top of the business.
