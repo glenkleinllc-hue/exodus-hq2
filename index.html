@@ -4846,7 +4846,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0510 &middot; 07 Sep 05:10</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0605 &middot; 07 Sep 06:05</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -11782,20 +11782,32 @@ function startMicScribe(who){
    stays a dozen lines instead of parsing form data, and a few seconds of opus
    is tiny. */
 function scribeSend(blob, T){
+  MIC_WORK=true;
   micBar("Working out what you said…", "");
+  try{ jvPaint(); }catch(e){}
+  function scribeDone(){ MIC_WORK=false; try{ jvPaint(); }catch(e){} }
   var fr=new FileReader();
-  fr.onerror=function(){ RECON=false; micPaint(false);
+  fr.onerror=function(){ RECON=false; MIC_WORK=false; micPaint(false);
     micErr("Could not read the recording.", T); };
   fr.onload=function(){
     var b64=String(fr.result||"").split(",")[1]||"";
     var headers={"Content-Type":"application/json"};
     try{ var tk=localStorage.getItem("exodus_hq_token");
          if(tk) headers["x-hq-token"]=tk; }catch(e){}
+    /* A request with no deadline is how this looked broken rather than slow:
+       if the function hung, the promise never settled and nothing on screen
+       ever changed again. Twenty-five seconds, then say so. */
+    var ctl = (typeof AbortController!=="undefined") ? new AbortController() : null;
+    var killed=false;
+    var timer=setTimeout(function(){
+      killed=true; if(ctl) try{ ctl.abort(); }catch(e){}
+    }, 25000);
     fetch("/api/listen",{
-      method:"POST", headers:headers,
+      method:"POST", headers:headers, signal: ctl?ctl.signal:undefined,
       body:JSON.stringify({audio:b64, mime:blob.type||"audio/webm",
                            keyterms:scribeKeyterms()})
     }).then(function(r){
+      clearTimeout(timer);
       if(!r.ok){
         return r.json().catch(function(){return {};}).then(function(j){
           /* 404 means the function was never deployed, 503 means no key. Both
@@ -11807,7 +11819,7 @@ function scribeSend(blob, T){
       }
       return r.json();
     }).then(function(j){
-      SCRIBE_OK=true;
+      clearTimeout(timer); scribeDone(); SCRIBE_OK=true;
       var q=micFix(String((j&&j.text)||"").trim());
       micPaint(false);
       if(!q){ micErr("Heard you, but no words came back. Try again.", T); return; }
@@ -11815,8 +11827,15 @@ function scribeSend(blob, T){
         var t=document.getElementById(id); if(t) t.value=q; });
       T.send(q);
     }).catch(function(e){
-      micPaint(false);
-      micErr((e && e.message) ? e.message : "Could not transcribe that.", T);
+      clearTimeout(timer); scribeDone(); micPaint(false);
+      /* Whatever went wrong server-side, he still needs to be able to talk to
+         Claudius. Drop to the browser's own recogniser for the rest of the
+         session — worse at names, but it works — and say so plainly rather
+         than leaving him tapping a button that does nothing. */
+      SCRIBE_OK=false;
+      micErr((killed ? "The transcription server did not answer in 25 seconds."
+                     : ((e && e.message) ? e.message : "Could not transcribe that."))
+             +" Switched to basic speech — tap and try again.", T);
     });
   };
   fr.readAsDataURL(blob);
@@ -12052,6 +12071,11 @@ var MIC_HEARD="", MIC_NOTE="";
    both looked identical to nothing happening at all. This keeps the overlay on
    screen with the actual reason on it. */
 var MIC_ERR="", MIC_ERR_AT=0;
+/* While the clip is uploading and being transcribed, RECON is already false
+   and nothing is speaking or thinking yet — so the overlay hid itself and
+   the whole thing looked dead for however long the round trip took. This
+   keeps it on screen for that gap. */
+var MIC_WORK=false;
 function micErr(msg, T){
   MIC_ERR=String(msg||""); MIC_ERR_AT=Date.now();
   try{ if(T && T.note) T.note(MIC_ERR); }catch(e){}
@@ -12070,7 +12094,7 @@ function micPaint(on){
     b.title = on ? "Listening — stop when you have finished"
                  : "Tap and speak. It sends itself when you stop talking.";
   });
-  if(!on){ MIC_HEARD=""; MIC_NOTE=""; }
+  if(!on && !MIC_WORK){ MIC_HEARD=""; MIC_NOTE=""; }
   try{ jvPaint(); }catch(e){}
 }
 
@@ -13907,7 +13931,7 @@ function jvPaint(){
   var pop=document.getElementById("jvpop");
   if(pop){
     var erring = micErrLive();
-    var on = live || think || talking || erring;
+    var on = live || think || talking || erring || MIC_WORK;
     pop.hidden = !on;
     pop.classList.toggle("bad", !!erring && !live && !think && !talking);
     pop.classList.toggle("live", !!live);
@@ -13921,6 +13945,7 @@ function jvPaint(){
 
     /* The label says which of the three things is happening and to whom. */
     if(lab) lab.textContent = erring && !live && !think && !talking ? "Problem"
+                            : MIC_WORK && !live && !think && !talking ? "Working out what you said"
                             : live    ? "Listening"
                             : talking ? micWhoName()+" is speaking"
                             :           micWhoName()+" is thinking";
