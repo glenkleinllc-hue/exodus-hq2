@@ -23,6 +23,58 @@ export default async function handler(req, res) {
   // the outside was guesswork, so the route now says plainly whether it is
   // deployed, whether it can see the key, and whether ElevenLabs answers.
   if (req.method === "GET") {
+    // ?anthropic=1 tests the key that actually makes Claudius think, and
+    // reports Anthropic's own words rather than the app's paraphrase of them.
+    // This route needs no sign-in, which is the point: it can be checked from
+    // a browser when nothing else in the app is working.
+    if (req.query && req.query.anthropic) {
+      const ak = process.env.ANTHROPIC_API_KEY;
+      const o = {
+        anthropicKeySet: Boolean(ak && ak.length > 6),
+        looksRight: Boolean(ak && ak.startsWith("sk-ant-")),
+        length: ak ? ak.length : 0,
+        // every env var name present, so a misspelt one is obvious
+        envNames: Object.keys(process.env).filter(k => /ANTHROPIC|CLAUDE/i.test(k))
+      };
+      if (!o.anthropicKeySet) {
+        o.verdict = "No ANTHROPIC_API_KEY is visible to this deployment. Either it was "
+                  + "never saved, or the site has not been redeployed since it was.";
+        return res.status(200).json(o);
+      }
+      try {
+        const r = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "x-api-key": ak,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-5",
+            max_tokens: 8,
+            messages: [{ role: "user", content: "ping" }]
+          })
+        });
+        const body = await r.text().catch(() => "");
+        o.status = r.status;
+        o.works = r.ok;
+        o.detail = body.slice(0, 400);
+        o.verdict = r.ok
+          ? "The Anthropic key works. Claudius should answer."
+          : r.status === 401
+            ? "Anthropic rejected the key (401). It is wrong, revoked, or the site was "
+              + "not redeployed after you saved it."
+            : r.status === 400 && /credit|balance/i.test(body)
+              ? "The key is valid but the account has no credit. Add billing at "
+                + "console.anthropic.com."
+              : "Anthropic returned " + r.status + ". Detail above.";
+      } catch (e) {
+        o.works = false;
+        o.verdict = "Could not reach Anthropic: " + String(e.message || e);
+      }
+      return res.status(200).json(o);
+    }
+
     const key = process.env.ELEVENLABS_API_KEY;
     const out = { deployed: true, model: MODEL, keySet: Boolean(key && key.length > 6) };
     if (!out.keySet) {
