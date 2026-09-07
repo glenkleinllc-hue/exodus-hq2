@@ -4333,8 +4333,8 @@ textarea.dw-pi.big{min-height:92px}
 .dash .tcard.mt,.dash .tcard.news{display:flex;flex-direction:column}
 .dash .tcard.mt .mts,.dash .newsbox{overflow:auto;min-height:0}
 /* a full week of calls scrolls; it never pushes the page down */
-.dash .tcard.mt .mts{max-height:340px}
-.dash .newsbox{max-height:340px}
+.dash .tcard.mt .mts{max-height:none}
+.dash .newsbox{max-height:none}
 
 /* the compact agenda: no day headings, tighter rows */
 /* Flex, not grid. Grid track sizing at this width kept collapsing either the
@@ -4531,18 +4531,45 @@ textarea.dw-pi.big{min-height:92px}
 
 /* The scores panel now carries scores, Philly and world news. It must not grow
    as stories arrive, so the lists are capped and scroll inside the panel. */
-.sptick.on{max-height:236px;overflow:hidden}
-.ph-list{max-height:74px;overflow:auto;scrollbar-width:thin}
-.ph-list.news{max-height:78px;border-top:1px solid #1a1a20;padding-top:2px}
+/* The panel holds scores, Philly and world news. My first pass capped the
+   lists at ~74px, which is two rows and a scrollbar — unreadable and fiddly,
+   which is what made it feel broken. Philly gets three rows, news gets the
+   rest, and the panel matches the weather beside it. */
+/* The panel is scores over Philly, the way it was. One list, no caps, no
+   hairline scrollbars. */
+.sptick.on{max-height:none}
+.sptick .ph-s{width:62px;font-size:8.5px;letter-spacing:.5px;color:#6d7e96}
+.sptick .ph-t{font-size:12px;font-weight:500;color:#c3cede}
+.sptick .ph-r{padding:6px 5px}
+.sptick .sp-phl{padding:9px 12px 4px}
+.sptick .sp-phl span{font-size:8.5px;letter-spacing:1.6px;color:#6d7e96}
 .ph-list::-webkit-scrollbar{width:4px}
 .ph-list::-webkit-scrollbar-thumb{background:#26262d;border-radius:2px}
 .sp-phl{margin-top:6px}
 
 /* the two cards sit side by side and match heights, whatever is in them */
 .dash .todayrow.two{align-items:stretch}
-.dash .todayrow.two > .tcard{display:flex;flex-direction:column;min-height:0}
+/* .mlist uses margin:0 -14px so its rows run the full width of the card.
+   Without a clip that negative margin spills into the next grid column,
+   which is the meetings 'bleeding into' the tasks. */
+.dash .todayrow.two > .tcard{display:flex;flex-direction:column;
+  min-width:0;min-height:0;overflow:hidden}
 .dash .tcard.mt .mlist{flex:1;min-height:0;overflow:auto}
 .dash .tcard.list .checks{flex:1;min-height:0;overflow:auto}
+
+/* Scrollbars, when they are genuinely needed, are visible enough to grab.
+   A 4px hairline is not a control. */
+.dash *::-webkit-scrollbar,.sptick *::-webkit-scrollbar{width:9px;height:9px}
+.dash *::-webkit-scrollbar-track,.sptick *::-webkit-scrollbar-track{background:transparent}
+.dash *::-webkit-scrollbar-thumb,.sptick *::-webkit-scrollbar-thumb{
+  background:#2c2c34;border-radius:6px;border:2px solid transparent;background-clip:content-box}
+.dash *::-webkit-scrollbar-thumb:hover,.sptick *::-webkit-scrollbar-thumb:hover{background:#3d3d47;
+  background-clip:content-box}
+.dash *,.sptick *{scrollbar-width:auto;scrollbar-color:#2c2c34 transparent}
+
+/* the restored news card gets the full width of its section */
+.dash .tcard.news{display:block}
+.dash .tcard.news .ntabs{margin:0}
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -4620,7 +4647,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.2012 &middot; 06 Sep 20:12</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.2035 &middot; 06 Sep 20:35</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -14214,29 +14241,18 @@ function spPaint(){
       : '<span class="ph-r">'+body+'</span>';
   }).join("");
 
-  /* World headlines go in here too, under Philly, at Glen's request — he wants
-     one band for everything ambient rather than a card competing for height in
-     the working area. The panel keeps its size: the list is capped and scrolls
-     inside itself, so more stories never make the box taller. */
-  var wr=(typeof BRIEF!=="undefined" && BRIEF && (BRIEF.news||BRIEF.headlines)) || [];
-  var wRows=wr.filter(function(x){ return x&&x.title; }).slice(0,8).map(function(x){
-    var href=/^https?:\/\//i.test(x.link||"") ? x.link : "";
-    var body='<span class="ph-s">'+esc(String(x.src||"").slice(0,10))+'</span>'
-            +'<span class="ph-t">'+esc(x.title)+'</span>';
-    return href
-      ? '<a class="ph-r" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+body+'</a>'
-      : '<span class="ph-r">'+body+'</span>';
-  }).join("");
-
-  if(!rows && !phRows && !wRows){ host.className="sptick"; host.innerHTML=""; return; }
+  /* World news is NOT in here. It went in for one build and came straight back
+     out: two capped, scrolling lists in a panel this size gave hairline
+     scrollbars and rows you could not read. The headlines have their own card
+     below, which is where Glen had them and where they work. */
+  if(!rows && !phRows){ host.className="sptick"; host.innerHTML=""; return; }
   host.className="sptick on";
   host.innerHTML=
      (rows ? '<div class="sp-top"><div class="sp-lbl">SCORES</div>'
              +'<div class="sp-rail">'+rows+'</div></div>' : "")
     +(phRows ? '<div class="sp-phl"><span>PHILLY</span></div>'
                +'<div class="ph-list">'+phRows+'</div>' : "")
-    +(wRows ? '<div class="sp-phl"><span>NEWS</span></div>'
-              +'<div class="ph-list news">'+wRows+'</div>' : "");
+;
 }
 
 /* ======================= WHAT SHE KNOWS ABOUT HIM =======================
@@ -19373,6 +19389,25 @@ function dashView(){
 
     h+='</div>';        /* .todayrow */
     h+='</div>';        /* .sec  — Today */
+  })();
+
+
+  /* THE NEWS CARD, restored. Glen: "use the news that we had before." It is the
+     same Headlines / Watch card it always was — it just gets the full width of
+     its own section now instead of fighting the meetings for a column. */
+  (function(){
+    h+='<div class="sec"><div class="sec-h"><h2>Headlines</h2>'
+      +'<span class="sec-s">'+newsAge()+'</span>'
+      +'<button class="sec-b" id="news-go">Refresh</button></div>';
+    h+='<div class="tcard news">'
+      +'<div class="tc-h"><span class="ntabs">'
+        +'<button class="ntab'+(NEWSTAB==="news"?" on":"")+'" data-ntab="news">Headlines</button>'
+        +'<button class="ntab'+(NEWSTAB==="watch"?" on":"")+'" data-ntab="watch">Watch</button>'
+      +'</span></div>'
+      +(NEWSTAB==="news"
+        ? newsDeskTabs()+'<div class="newsbox" id="newsbox">'+newsList()+'</div>'
+        : watchBox())
+      +'</div></div>';
   })();
 
   /* ============ 2. EXODUS CRM  —  the real pipeline, in place ============
