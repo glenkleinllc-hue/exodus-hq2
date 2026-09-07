@@ -4450,6 +4450,16 @@ textarea.dw-pi.big{min-height:92px}
 .dr-b.go{margin-left:auto;background:var(--blu);border-color:var(--blu);color:#06210f;
   font-weight:800;box-shadow:0 0 18px rgba(0,255,133,.22)}
 .dr-b.go:hover{background:#3dffa2;border-color:#3dffa2;color:#06210f}
+.vc-r{display:flex;align-items:baseline;gap:9px;padding:9px 0;
+  border-bottom:1px solid #1e1e22;font-size:13px}
+.vc-r b{flex:none;width:16px;font-size:12px}
+.vc-r span{flex:none;color:var(--ink);font-weight:600}
+.vc-r i{font-style:normal;color:var(--mut);font-size:12px;line-height:1.4}
+.vc-r.ok b{color:var(--blu)} .vc-r.bad b{color:#e08a85} .vc-r.run b{color:var(--amber)}
+.vc-r.bad span{color:#f0a9a4}
+.vc-v{margin-top:14px;padding:12px 13px;border-radius:9px;font-size:13px;line-height:1.5;
+  background:rgba(201,123,118,.12);border:1px solid rgba(201,123,118,.4);color:#f0c9c6}
+.vc-v.good{background:rgba(0,255,133,.10);border-color:rgba(0,255,133,.4);color:#9dffd2}
 .dr-f{margin-top:11px;font-size:10.5px;line-height:1.5;color:var(--mut)}
 @media(max-width:760px){
   .drsheet{padding:16px 14px 14px}
@@ -4846,7 +4856,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0710 &middot; 07 Sep 07:10</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0805 &middot; 07 Sep 08:05</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -11860,6 +11870,171 @@ function scribeSend(blob, T){
     });
   };
   fr.readAsDataURL(blob);
+}
+
+/* ================= VOICE CHECK =================
+   Built because diagnosing this by asking Glen what he saw was not working.
+   It runs the whole chain itself and prints a verdict in plain English:
+   microphone -> is there sound -> did it record bytes -> did the server
+   transcribe it -> can it reach Claudius. Whichever line says FAILED is the
+   problem, and nobody has to open a console. */
+var VCHK=null;
+function vcSet(step, state, detail){
+  if(!VCHK) return;
+  VCHK.rows.push({step:step, state:state, detail:detail||""});
+  vcPaint();
+}
+function vcPaint(){
+  var el=document.getElementById("vchk-b"); if(!el||!VCHK) return;
+  el.innerHTML = VCHK.rows.map(function(r){
+    var cls = r.state==="ok" ? "ok" : r.state==="fail" ? "bad" : "run";
+    var mark= r.state==="ok" ? "✓" : r.state==="fail" ? "✕" : "…";
+    return '<div class="vc-r '+cls+'"><b>'+mark+'</b><span>'+esc(r.step)+'</span>'
+         + (r.detail?'<i>'+esc(r.detail)+'</i>':'') + '</div>';
+  }).join("") + (VCHK.verdict
+      ? '<div class="vc-v'+(VCHK.good?" good":"")+'">'+esc(VCHK.verdict)+'</div>' : "");
+}
+function vcOpen(){
+  VCHK={rows:[], verdict:"", good:false};
+  var old=document.getElementById("vchk"); if(old) old.remove();
+  document.body.insertAdjacentHTML("beforeend",
+    '<div class="shwrap" id="vchk"><div class="shsheet drsheet" onclick="event.stopPropagation()">'
+    +'<button class="sh-x" id="vchk-x" title="Close">&times;</button>'
+    +'<div class="dr-h"><b>Voice check</b><span class="dr-n">speak when it asks</span></div>'
+    +'<div id="vchk-b"></div></div></div>');
+  document.getElementById("vchk-x").onclick=function(){
+    var n=document.getElementById("vchk"); if(n) n.remove(); VCHK=null; };
+  vcRun();
+}
+function vcRun(){
+  vcSet("Secure connection", window.isSecureContext?"ok":"fail",
+        window.isSecureContext?"":"The page must be on https for the microphone to work.");
+  if(typeof MediaRecorder==="undefined"){
+    vcSet("Browser can record","fail","This browser has no MediaRecorder. Use Chrome or Edge.");
+    VCHK.verdict="Your browser cannot record audio. Try Chrome."; vcPaint(); return;
+  }
+  vcSet("Browser can record","ok","");
+  vcSet("Microphone permission","run","asking…");
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    VCHK.rows.pop();
+    var lbl="";
+    try{ var tr=stream.getAudioTracks()[0]; lbl=tr?tr.label:""; }catch(e){}
+    vcSet("Microphone permission","ok",lbl||"granted");
+
+    var mime=mrMime();
+    var mr = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream);
+    var chunks=[], peak=0, raf=0, ac=null;
+    try{
+      var AC=window.AudioContext||window.webkitAudioContext;
+      ac=new AC(); if(ac.state==="suspended") ac.resume();
+      var an=ac.createAnalyser(); an.fftSize=1024;
+      ac.createMediaStreamSource(stream).connect(an);
+      var buf=new Uint8Array(an.fftSize);
+      (function tick(){
+        an.getByteTimeDomainData(buf);
+        var sum=0; for(var i=0;i<buf.length;i++){ var v=(buf[i]-128)/128; sum+=v*v; }
+        peak=Math.max(peak, Math.sqrt(sum/buf.length));
+        raf=requestAnimationFrame(tick);
+      })();
+    }catch(e){}
+
+    mr.ondataavailable=function(e){ if(e.data&&e.data.size) chunks.push(e.data); };
+    mr.onstop=function(){
+      if(raf) cancelAnimationFrame(raf);
+      try{ if(ac) ac.close(); }catch(e){}
+      try{ stream.getTracks().forEach(function(t){t.stop();}); }catch(e){}
+
+      var loudEnough = peak > 0.012;
+      vcSet("Your microphone hears you", loudEnough?"ok":"fail",
+            "loudest level " + peak.toFixed(3)
+            + (loudEnough ? "" : " — that is silence. Windows is probably "
+              + "recording from the wrong microphone."));
+
+      var blob = chunks.length ? new Blob(chunks,{type:mr.mimeType||"audio/webm"}) : null;
+      var size = blob?blob.size:0;
+      vcSet("Recorded audio", size>1200?"ok":"fail", size+" bytes");
+      if(!blob || size<=1200){
+        VCHK.verdict = loudEnough
+          ? "Recording produced nothing. Try Chrome, or another microphone."
+          : "Windows is sending silence. Open Windows sound settings and pick the "
+            + "microphone you actually speak into as the Input device.";
+        vcPaint(); return;
+      }
+
+      vcSet("Sending to the transcriber","run","…");
+      var fr=new FileReader();
+      fr.onload=function(){
+        var b64=String(fr.result||"").split(",")[1]||"";
+        var h={"Content-Type":"application/json"};
+        try{ var tk=localStorage.getItem("exodus_hq_token"); if(tk) h["x-hq-token"]=tk; }catch(e){}
+        fetch("/api/listen",{method:"POST",headers:h,
+          body:JSON.stringify({audio:b64,mime:blob.type||"audio/webm",
+                               keyterms:scribeKeyterms()})})
+        .then(function(r){ return r.text().then(function(t){ return {s:r.status,t:t}; }); })
+        .then(function(o){
+          VCHK.rows.pop();
+          var j={}; try{ j=JSON.parse(o.t); }catch(e){}
+          if(o.s!==200){
+            vcSet("Sending to the transcriber","fail","HTTP "+o.s+" "+(j.error||o.t.slice(0,120)));
+            VCHK.verdict="The transcription server refused it. Detail above."; vcPaint(); return;
+          }
+          var text=String(j.text||"").trim();
+          vcSet("Transcribed", text?"ok":"fail", text?('"'+text+'"'):"came back empty");
+
+          vcSet("Reaching Claudius","run","…");
+          askAgent("Reply with exactly: OK", []).then(function(rr){
+            VCHK.rows.pop();
+            vcSet("Reaching Claudius","ok",String(rr).slice(0,60));
+            VCHK.good=!!text; 
+            VCHK.verdict = text ? "Everything works. Close this and talk to him."
+                                : "Everything connects, but no words came back. Speak louder "
+                                  + "and closer to the microphone.";
+            vcPaint();
+          }, function(err){
+            VCHK.rows.pop();
+            vcSet("Reaching Claudius","fail",String(err && err.message || err).slice(0,140));
+            VCHK.verdict="Recording and transcription work. The failure is the connection "
+                       + "to Claudius — the message above says why.";
+            vcPaint();
+          });
+        }).catch(function(e){
+          VCHK.rows.pop();
+          vcSet("Sending to the transcriber","fail",String(e.message||e));
+          VCHK.verdict="Could not reach the transcription server."; vcPaint();
+        });
+      };
+      fr.readAsDataURL(blob);
+    };
+
+    mr.start();
+    vcSet("Recording 4 seconds","run","SPEAK NOW — say your name out loud");
+    var left=4;
+    var iv=setInterval(function(){
+      left--;
+      if(VCHK && VCHK.rows.length){
+        var r=VCHK.rows[VCHK.rows.length-1];
+        if(r.state==="run"){ r.detail="SPEAK NOW — "+left+"s left"; vcPaint(); }
+      }
+      if(left<=0){ clearInterval(iv);
+        if(VCHK && VCHK.rows.length){
+          var q=VCHK.rows[VCHK.rows.length-1];
+          if(q.state==="run"){ q.state="ok"; q.detail="done"; }
+        }
+        try{ mr.stop(); }catch(e){}
+      }
+    },1000);
+
+  }).catch(function(err){
+    VCHK.rows.pop();
+    var nm=(err&&err.name)||"";
+    vcSet("Microphone permission","fail",
+      nm==="NotAllowedError" ? "Blocked. Click the padlock in the address bar and allow the microphone."
+      : nm==="NotFoundError" ? "Windows reports no microphone at all."
+      : String(err.message||err));
+    VCHK.verdict="The browser will not give the page a microphone. Nothing else can work "
+               + "until that is fixed.";
+    vcPaint();
+  });
 }
 
 /* One entry point. Everything in the app still calls startMic and does not
@@ -20009,6 +20184,7 @@ function dashView(){
       +'<button class="sec-b script" id="sc-open">Call Script</button>'
       +'<button class="sec-b" id="lk-open">Links</button>'
       +'<button class="sec-b" id="tpl-open">Templates</button>'
+      +'<button class="sec-b" id="vchk-open">Voice check</button>'
       +'<button class="sec-b'+(WEEK_EDIT?" hot":"")+'" id="wk-edit">'
       +(WEEK_EDIT?"Done editing":"Edit the week")+'</button></div>';
 
@@ -20500,6 +20676,8 @@ function wireDash(){
 
   var lko=document.getElementById("lk-open");
   if(lko) lko.onclick=function(){ LINKS_OPEN=true; TPL_OPEN=false; drawDash(); };
+  var vco=document.getElementById("vchk-open");
+  if(vco) vco.onclick=function(){ vcOpen(); };
   var tpo=document.getElementById("tpl-open");
   if(tpo) tpo.onclick=function(){ TPL_OPEN=true; LINKS_OPEN=false; drawDash(); };
   document.querySelectorAll("[data-shx],[data-shclose]").forEach(function(el){
