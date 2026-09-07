@@ -2035,13 +2035,13 @@ table.lgrid{width:100%;border-collapse:collapse;table-layout:fixed;
   background:#0f0f12;border:1px solid #1e1e23;border-radius:10px;overflow:hidden}
 
 table.lgrid col.c-pr{width:26px}
-table.lgrid col.c-nm{width:23%}
+table.lgrid col.c-nm{width:24%}
 table.lgrid col.c-st{width:12%}
 table.lgrid col.c-ph{width:13%}
-table.lgrid col.c-em{width:18%}
-table.lgrid col.c-sr{width:9%}
-table.lgrid col.c-nt{width:12%}
-table.lgrid col.c-rc{width:15%}
+table.lgrid col.c-em{width:17%}
+table.lgrid col.c-nt{width:13%}
+/* Reach carries three real buttons now, so it gets the width Source gave up. */
+table.lgrid col.c-rc{width:21%}
 
 table.lgrid thead th{
   position:sticky;top:0;z-index:2;text-align:left;padding:10px 14px;
@@ -4842,6 +4842,139 @@ textarea.dw-pi.big{min-height:92px}
    overlapping look, because the layout was wider than the screen and every
    absolutely-placed thing landed in the wrong spot. */
 html,body{max-width:100%;overflow-x:hidden}
+
+/* ============================================================
+   MEETINGS AND CALLS — the fix, and the swap
+
+   Two bugs, both structural:
+
+   1. ".mrow" was defined TWICE in this file — once at the top as an old
+      four-column form row (grid, 2fr 1fr 1fr auto, with its own input and
+      button styling) and again lower down as the meeting line. Both matched
+      the same elements, so the meeting buttons inherited form-button sizing
+      and the row inherited grid columns it was never designed for.
+   2. ".mlist" carried margin:0 -14px to bleed to the card edge, so the list
+      was always 28px wider than the box holding it. On a narrow column that
+      is exactly the overlap he kept seeing.
+
+   The row is now a three-track grid that cannot overflow: a fixed time column,
+   a middle column that is allowed to shrink to nothing, and actions that take
+   only the space they need. The actions no longer reserve width while hidden —
+   they sit over the right-hand end and fade in, with a gradient behind them so
+   they never land on top of a name.
+   ============================================================ */
+.todayrow.two.swap{grid-template-columns:1.25fr 1fr}
+.todayrow.two.swap > .tcard.mt{order:1}
+.todayrow.two.swap > .tcard.list{order:2}
+.tcard.mt,.tcard.list{min-width:0;overflow:hidden}
+
+.mlist{margin:0;border-top:1px solid var(--hair)}
+.tcard.mt .mlist .mrow{
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  align-items:center;gap:10px;height:auto;min-height:46px;
+  padding:7px 2px;position:relative;
+  border-bottom:1px solid var(--hair);border-radius:8px}
+.tcard.mt .mlist .mrow:last-child{border-bottom:none}
+.tcard.mt .mlist .mrow:hover{background:var(--hover)}
+.tcard.mt .mlist .mrow.now{box-shadow:inset 2px 0 0 var(--blu)}
+.tcard.mt .mlist .mrow.now .mrow-t i{color:var(--blu)}
+
+.tcard.mt .mrow-t{grid-column:1;flex:none;font-size:12.5px;font-weight:600;
+  color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2;
+  padding-left:8px}
+.tcard.mt .mrow-t i{display:block;font-style:normal;font-size:10px;
+  font-weight:500;color:var(--mut);margin-top:1px;white-space:nowrap}
+
+.tcard.mt .mrow-m{grid-column:2;min-width:0;line-height:1.3;
+  padding-right:8px}
+.tcard.mt .mrow-m b{display:block;font-size:12.5px;font-weight:600;
+  color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcard.mt .mrow-m i{display:block;font-style:normal;font-size:11px;
+  color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-top:1px}
+
+/* The actions overlay the end of the row instead of competing for width. That
+   is what stops four buttons pushing a long name out of the card. */
+.tcard.mt .mrow-a{position:absolute;top:0;right:0;bottom:0;
+  display:flex;align-items:center;gap:4px;padding:0 8px 0 30px;
+  opacity:0;pointer-events:none;transition:opacity .13s;
+  background:linear-gradient(90deg,rgba(22,22,23,0) 0%,var(--paper2) 26%)}
+.tcard.mt .mrow:hover .mrow-a,
+.tcard.mt .mrow:focus-within .mrow-a{opacity:1;pointer-events:auto}
+.tcard.mt .mrow-a .mrow-b{flex:none;width:auto;min-width:0;height:24px;
+  line-height:22px;padding:0 9px;font-size:10.5px;font-weight:700;
+  border-radius:6px;background:#17171c;border:1px solid #2c2c33;color:#9a9aa2;
+  text-decoration:none;display:inline-block;cursor:pointer;font-family:inherit}
+.tcard.mt .mrow-a .mrow-b:hover{border-color:var(--blu);color:var(--ink)}
+.tcard.mt .mrow-a .mrow-b[disabled]{opacity:.35;cursor:default}
+
+/* the old form-row rules must not reach in here */
+.tcard.mt .mrow input,.tcard.mt .mrow button{min-width:0}
+
+.tcard.mt .mfoot{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  padding-top:10px;margin-top:2px;border-top:1px solid var(--hair)}
+.tcard.mt .mfoot .mf-l,.tcard.mt .mfoot .mf-m{font-size:11px;color:var(--mut)}
+.tcard.mt .mfoot .mf-b{margin-left:auto}
+.tcard.mt .mfoot .mf-b + .mf-b{margin-left:0}
+
+/* ---- touch and narrow: nothing hides behind hover ---- */
+@media (max-width:900px),(hover:none){
+  .todayrow.two.swap{grid-template-columns:1fr}
+  .tcard.mt .mlist .mrow{grid-template-columns:60px minmax(0,1fr);
+    padding:9px 2px 10px}
+  .tcard.mt .mrow-a{position:static;opacity:1;pointer-events:auto;
+    grid-column:1 / -1;background:none;padding:6px 8px 0 8px;flex-wrap:wrap}
+  .tcard.mt .mrow-a .mrow-b{flex:1 1 auto;text-align:center;height:30px;
+    line-height:28px}
+}
+
+/* ============================================================
+   REACH — Call, Text, Email
+
+   Glen: "make the buttons to text / call / email on the CRM more visible."
+   They were 9.5px uppercase on a 12% tint — the right size for something you
+   rarely press, and these are the three things he presses all day. Solid
+   fills, bigger type, real height, and a proper disabled state so a lead with
+   no number reads as unavailable rather than just dim.
+
+   Source has gone from the table, so the column has the room for it.
+   ============================================================ */
+table.lgrid td.reach{padding:0 10px}
+.rbx{display:flex;gap:5px;flex-wrap:nowrap}
+.rb{flex:1 1 0;min-width:0;height:28px;line-height:26px;padding:0 6px;
+  border-radius:7px;cursor:pointer;font-family:inherit;
+  font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  border:1px solid;transition:.12s;text-align:center;white-space:nowrap;
+  display:inline-block;text-decoration:none}
+
+.rb.call{background:var(--blu);border-color:var(--blu);color:#052013;
+  box-shadow:0 0 12px rgba(0,255,133,.20)}
+.rb.call:hover:not([disabled]){background:#3dffa2;border-color:#3dffa2;
+  box-shadow:0 0 18px rgba(0,255,133,.36)}
+
+.rb.txt{background:rgba(0,255,133,.16);border-color:rgba(0,255,133,.55);
+  color:#8dffc4}
+.rb.txt:hover:not([disabled]){background:rgba(0,255,133,.30);color:#dfffee;
+  border-color:var(--blu)}
+
+.rb.mail{background:#1b1b21;border-color:#3a3a44;color:#c3c3cb}
+.rb.mail:hover:not([disabled]){background:#26262e;border-color:#4c4c58;
+  color:#fff}
+
+/* The second number is genuinely secondary — it stays quiet and narrow so it
+   never competes with the three that matter. */
+.rb.alt{flex:0 0 40px;background:#17171c;border-color:#2e2e36;color:#8a8a93;
+  font-size:9.5px}
+.rb.alt:hover:not([disabled]){border-color:var(--amber);color:#e0c084}
+
+.rb[disabled]{opacity:.28;cursor:not-allowed;box-shadow:none;
+  background:#161619;border-color:#26262c;color:#7a7a82}
+
+@media (max-width:1180px){
+  .rb{font-size:10px;padding:0 4px}
+  .rb.alt{flex:0 0 34px}
+}
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -4925,7 +5058,7 @@ html,body{max-width:100%;overflow-x:hidden}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0930 &middot; 07 Sep 09:30</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.1045 &middot; 07 Sep 10:45</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -16220,7 +16353,8 @@ function execMoney(){
    +'Log what each member paid'+(todo.length?' \u2014 '+todo.length+' left':'')+'</h4>';
 
   if(!todo.length){
-    h+='<div class="okbox"><b>All '+mem.length+' logged.</b> Cash collected reads $'+m.collected.toLocaleString()+'.</div>';
+    /* Glen: "don't need to mention cash collected in the CRM at all." */
+    h+='<div class="okbox"><b>All '+mem.length+' logged.</b></div>';
   }else{
     h+='<div class="note-c" style="margin-bottom:7px">Type an amount and the row clears itself.</div>';
     h+='<table><thead><tr><th>Member</th><th>Stage</th><th style="text-align:right">Paid ($)</th><th>Notes</th></tr></thead><tbody>';
@@ -18003,13 +18137,12 @@ function salesPipe(){
        columns are declared once and cannot drift apart from the stylesheet. */
     h+='<div class="crmcard"><table class="lgrid">'
      +'<colgroup><col class="c-pr"><col class="c-nm"><col class="c-st">'
-     +'<col class="c-ph"><col class="c-em"><col class="c-sr">'
+     +'<col class="c-ph"><col class="c-em">'
      +'<col class="c-nt"><col class="c-rc"></colgroup>'
      +'<thead><tr>'
      +'<th title="Priority"></th>'
      +'<th>Name</th><th>Status</th>'
      +'<th>Phone</th><th>Email</th>'
-     +'<th>Source</th>'
      +'<th>Notes</th><th>Reach</th></tr></thead><tbody>';
     g.rows.forEach(function(x){
     var c=scol(x.stage), pri=prGet(x.name);
@@ -18076,14 +18209,9 @@ function salesPipe(){
         ? '<span class="celv">'+esc(em)+'</span>'
         : '<span class="celn">&mdash;</span>')+'</td>'
 
-     /* ---- where from, and when ---- */
-     +'<td class="cel">'
-       +(srcGet(x.name)
-          ? '<span class="srcv">'+esc(srcGet(x.name))+'</span>'
-          : '<span class="celn">&mdash;</span>')
-       +(cameLabel(x.name)
-          ? '<span class="camev">'+esc(cameLabel(x.name))+'</span>' : '')
-     +'</td>'
+     /* Source column removed — Glen: "we don't need source". It is still
+        stored, still on the lead's own record, just not a column he scans
+        past eight times a day. */
 
      /* ---- the note, one line, full text on hover ---- */
      +'<td class="cel ced" data-ed="nt" data-n="'+esc(x.name)+'" '
@@ -20312,7 +20440,10 @@ function dashView(){
     }
     h+='</div>';
 
-    h+='<div class="todayrow two">';   /* tasks left, meetings right */
+    /* Glen: "tasks are less important than meetings and calls, swap the sides."
+       Meetings lead now, and take the wider column. The swap is done with grid
+       order rather than by moving the markup, so nothing else shifts. */
+    h+='<div class="todayrow two swap">';
 
     /* the checklist */
     h+='<div class="tcard list'+(TASK_SHUT?" shut":"")+'">'
