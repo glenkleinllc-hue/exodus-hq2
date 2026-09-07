@@ -4801,7 +4801,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0240 &middot; 07 Sep 02:40</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0335 &middot; 07 Sep 03:35</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -11591,7 +11591,211 @@ var MICTARGET={
 };
 function micT(){ return MICTARGET[MICWHO]||MICTARGET.claudius; }
 
+/* ================= THE EARS =================
+   The browser's own recogniser is free Google web speech. It has never seen
+   "Jadon", "Mohannad", "Siveyer" or "Exodus", so it returns whatever ordinary
+   English sounds nearest and Glen spends the conversation correcting it. That
+   is the single biggest reason talking to Claudius felt pointless.
+
+   So on the live site we record the audio ourselves and send it to ElevenLabs
+   Scribe through /api/listen, with his actual lead names attached as keyterms
+   — the model is told those words exist before it starts. The browser
+   recogniser stays as the fallback for every case Scribe cannot serve: no
+   /api/listen deployed, no key, offline, or a browser without MediaRecorder.
+
+   The recorder deliberately presents the same __stop/__cancel interface the
+   old one did, so the overlay, the buttons and every caller keep working
+   without knowing which set of ears is listening. */
+var SCRIBE_OK = null;      /* null untried, true working, false fall back */
+var MR=null, MRCHUNKS=[], MRSTREAM=null, MRAC=null;
+
+function scribePossible(){
+  return SCRIBE_OK!==false
+      && !!window.__EXODUS_HOSTED__
+      && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+      && typeof window.MediaRecorder!=="undefined";
+}
+
+/* The words a general model will get wrong: every lead, every student, and the
+   handful of proper nouns this business runs on. Capped well under the API's
+   limit, newest leads first, because those are the ones he says out loud. */
+function scribeKeyterms(){
+  var out=["Exodus","Exodus HQ","Claudius","Bangkok","Thailand","Discord",
+           "TikTok","Calendly","GoHighLevel"];
+  try{
+    (STATE.leads||[]).slice(0,200).forEach(function(L){
+      var n=String(L.name||"").trim();
+      if(!n) return;
+      if(n.length<50 && n.split(/\s+/).length<=5 && out.indexOf(n)<0) out.push(n);
+      var f=n.split(/\s+/)[0];
+      if(f && f.length>2 && out.indexOf(f)<0) out.push(f);
+    });
+  }catch(e){}
+  return out.slice(0,400);
+}
+
+function mrMime(){
+  var want=["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg;codecs=opus"];
+  for(var i=0;i<want.length;i++){
+    try{ if(MediaRecorder.isTypeSupported(want[i])) return want[i]; }catch(e){}
+  }
+  return "";
+}
+
+function scribeCleanup(){
+  try{ if(MRAC && MRAC.close) MRAC.close(); }catch(e){}
+  MRAC=null;
+  try{ if(MRSTREAM) MRSTREAM.getTracks().forEach(function(t){ t.stop(); }); }catch(e){}
+  MRSTREAM=null; MR=null;
+}
+
+function startMicScribe(who){
+  if(who) MICWHO=who;
+  var T=micT();
+  var heard=false, cancelled=false, stopping=false, silT=null, raf=0;
+
+  navigator.mediaDevices.getUserMedia({audio:{
+    echoCancellation:true, noiseSuppression:true, autoGainControl:true
+  }}).then(function(stream){
+    MRSTREAM=stream;
+    var mime=mrMime();
+    try{ MR = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream); }
+    catch(e){ scribeCleanup(); SCRIBE_OK=false; startMicWeb(who); return; }
+
+    MRCHUNKS=[];
+    MR.ondataavailable=function(ev){ if(ev.data && ev.data.size) MRCHUNKS.push(ev.data); };
+    MR.onstop=function(){
+      if(raf) cancelAnimationFrame(raf);
+      if(silT) clearTimeout(silT);
+      var blob = MRCHUNKS.length ? new Blob(MRCHUNKS,{type:(MR&&MR.mimeType)||"audio/webm"}) : null;
+      scribeCleanup();
+      RECON=false; micPaint(false);
+      if(cancelled || !blob || blob.size<1200){
+        if(!cancelled) T.note("Did not catch anything. Tap and speak a little sooner.");
+        return;
+      }
+      scribeSend(blob, T);
+    };
+
+    /* ---- knowing when he has stopped talking ----
+       Same two-second rule the old one used, but measured off the real signal
+       instead of the recogniser's guesses, so a pause mid-sentence no longer
+       counts as the end of the turn. */
+    try{
+      var AC=window.AudioContext||window.webkitAudioContext;
+      MRAC=new AC();
+      var src=MRAC.createMediaStreamSource(stream);
+      var an=MRAC.createAnalyser(); an.fftSize=1024;
+      src.connect(an);
+      var buf=new Uint8Array(an.fftSize);
+      var loud=false;
+      (function tick(){
+        if(!RECON || stopping) return;
+        an.getByteTimeDomainData(buf);
+        var sum=0;
+        for(var i=0;i<buf.length;i++){ var v=(buf[i]-128)/128; sum+=v*v; }
+        var rms=Math.sqrt(sum/buf.length);
+        if(rms>0.022){
+          loud=true; heard=true;
+          if(silT){ clearTimeout(silT); silT=null; }
+          micBar("Listening…", MIC_HEARD||"");
+        } else if(loud && !silT){
+          silT=setTimeout(function(){
+            if(!RECON||stopping) return;
+            micBar("Got it — sending…", MIC_HEARD||"");
+            stopping=true; try{ MR.stop(); }catch(e){}
+          }, 2000);
+        }
+        raf=requestAnimationFrame(tick);
+      })();
+    }catch(e){ /* no analyser: he taps to stop, which still works */ }
+
+    MR.start();
+    RECON=true; micPaint(true);
+    micBar("Listening… speak now", "");
+
+    REC={
+      __stop:function(){ stopping=true; try{ MR.stop(); }catch(e){} },
+      __cancel:function(){ cancelled=true; stopping=true; try{ MR.stop(); }catch(e){}
+                           T.inputs.forEach(function(id){
+                             var t=document.getElementById(id); if(t) t.value=""; }); },
+      stop:function(){ stopping=true; try{ MR.stop(); }catch(e){} },
+      abort:function(){ cancelled=true; stopping=true; try{ MR.stop(); }catch(e){} }
+    };
+  }).catch(function(err){
+    scribeCleanup(); RECON=false; micPaint(false);
+    var nm=(err&&err.name)||"";
+    if(nm==="NotAllowedError"||nm==="SecurityError")
+      T.note("Microphone blocked. Allow the mic for this site in your browser, then tap again.");
+    else if(nm==="NotFoundError")
+      T.note("No microphone found on this machine.");
+    else { SCRIBE_OK=false; startMicWeb(who); }
+  });
+}
+
+/* Ship the clip as base64 JSON rather than multipart — the serverless function
+   stays a dozen lines instead of parsing form data, and a few seconds of opus
+   is tiny. */
+function scribeSend(blob, T){
+  micBar("Working out what you said…", "");
+  var fr=new FileReader();
+  fr.onerror=function(){ RECON=false; micPaint(false);
+    T.note("Could not read the recording."); };
+  fr.onload=function(){
+    var b64=String(fr.result||"").split(",")[1]||"";
+    var headers={"Content-Type":"application/json"};
+    try{ var tk=localStorage.getItem("exodus_hq_token");
+         if(tk) headers["x-hq-token"]=tk; }catch(e){}
+    fetch("/api/listen",{
+      method:"POST", headers:headers,
+      body:JSON.stringify({audio:b64, mime:blob.type||"audio/webm",
+                           keyterms:scribeKeyterms()})
+    }).then(function(r){
+      if(!r.ok){
+        return r.json().catch(function(){return {};}).then(function(j){
+          /* 404 means the function was never deployed, 503 means no key. Both
+             are permanent for this session, so stop asking and use the
+             browser's ears from here on rather than failing every turn. */
+          if(r.status===404||r.status===503) SCRIBE_OK=false;
+          throw new Error((j&&j.error)||("Transcription returned "+r.status));
+        });
+      }
+      return r.json();
+    }).then(function(j){
+      SCRIBE_OK=true;
+      var q=micFix(String((j&&j.text)||"").trim());
+      micPaint(false);
+      if(!q){ T.note("Did not catch anything. Try again."); return; }
+      T.inputs.forEach(function(id){
+        var t=document.getElementById(id); if(t) t.value=q; });
+      T.send(q);
+    }).catch(function(e){
+      micPaint(false);
+      if(SCRIBE_OK===false)
+        T.note("Falling back to the browser's own speech for now — "
+              +"tap the mic and try again.");
+      else
+        T.note("Could not transcribe that: "+(e.message||"unknown error"));
+    });
+  };
+  fr.readAsDataURL(blob);
+}
+
+/* One entry point. Everything in the app still calls startMic and does not
+   need to know which set of ears answered. */
 function startMic(who){
+  if(who) MICWHO=who;
+  /* tapping while live means stop, whichever recorder is running */
+  if(RECON){
+    if(REC && REC.__stop) REC.__stop();
+    else { try{ REC.stop(); }catch(e){} }
+    return;
+  }
+  if(scribePossible()) startMicScribe(who);
+  else startMicWeb(who);
+}
+
+function startMicWeb(who){
   if(who) MICWHO=who;
   var T=micT(), C=srCtor();
   if(!C){ T.note("This browser has no speech recognition. On iPhone use Safari, "
