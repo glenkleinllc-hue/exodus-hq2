@@ -4517,18 +4517,7 @@ textarea.dw-pi.big{min-height:92px}
 .mf-b:hover{background:#23232b;color:var(--ink)}
 
 /* ---------------- THE HEADLINE STRIP ---------------- */
-.newsbar{display:flex;align-items:center;gap:10px;height:30px;padding:0 16px;
-  background:#0c0c0f;border-bottom:1px solid var(--edge,#1e1e23);overflow:hidden}
-.newsbar[hidden]{display:none}
-.nb-tag{flex:none;font-size:8.5px;font-weight:700;letter-spacing:1.4px;color:#4a505a}
-.nb-track{flex:1;min-width:0;display:flex;align-items:center;gap:9px;
-  transition:opacity .25s,transform .25s}
-.nb-track.in{opacity:0;transform:translateY(4px)}
-.nb-src{flex:none;font-size:8.5px;font-weight:700;letter-spacing:.8px;color:#5c636e;
-  border:1px solid #23232a;border-radius:4px;padding:2px 6px}
-.nb-t{flex:1;min-width:0;font-size:11.5px;color:#98a0ac;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis}
-.nb-n{flex:none;font-size:9.5px;color:#3a3f47;font-variant-numeric:tabular-nums}
+
 
 /* ---------------- COIN BADGES ---------------- */
 .cxs{display:inline-flex;align-items:center;justify-content:center;
@@ -4539,6 +4528,21 @@ textarea.dw-pi.big{min-height:92px}
 .cx-eth{background:#1c1f2b;color:#8f9fd4;border-color:#272b3a}
 .cx-xrp{background:#1b1f22;color:#a9b6bd;border-color:#262b30}
 .cx-sol{background:#1a2426;color:#7fc9bd;border-color:#243133}
+
+/* The scores panel now carries scores, Philly and world news. It must not grow
+   as stories arrive, so the lists are capped and scroll inside the panel. */
+.sptick.on{max-height:236px;overflow:hidden}
+.ph-list{max-height:74px;overflow:auto;scrollbar-width:thin}
+.ph-list.news{max-height:78px;border-top:1px solid #1a1a20;padding-top:2px}
+.ph-list::-webkit-scrollbar{width:4px}
+.ph-list::-webkit-scrollbar-thumb{background:#26262d;border-radius:2px}
+.sp-phl{margin-top:6px}
+
+/* the two cards sit side by side and match heights, whatever is in them */
+.dash .todayrow.two{align-items:stretch}
+.dash .todayrow.two > .tcard{display:flex;flex-direction:column;min-height:0}
+.dash .tcard.mt .mlist{flex:1;min-height:0;overflow:auto}
+.dash .tcard.list .checks{flex:1;min-height:0;overflow:auto}
 </style>
 </head>
 <body data-build="2026-08-16-e">
@@ -4573,26 +4577,9 @@ textarea.dw-pi.big{min-height:92px}
       <span class="syncdot idle" id="syncdot" title="Cloud sync"></span>
     </div>
 
-    <!-- Headlines used to be a card in the working area, competing for height
-         with the meetings beside it. They belong up here with the other ambient
-         readouts: a fixed strip that cycles, never grows, never pushes anything
-         down. -->
-    <div class="newsbar" id="newsbar" hidden>
-      <span class="nb-tag">NEWS</span>
-      <span class="nb-track" id="nb-track"></span>
-    </div>
-
-    <!-- ============ THE DASHBOARD ============
-         This is the homepage. The floor plan is one tap away and nothing about
-         it changed — same rooms, same panels, same data. This is just a flat,
-         quiet way to see the whole business at once. -->
-    <!-- ============ THE JARVIS BAR ============
-         A waveform, not a face. Tap it and the mic is already listening; talk,
-         tap again, she answers out loud. The bars idle slowly when nothing is
-         happening and run fast while she is hearing you, so the state of the
-         thing is visible from across the room. -->
     <!-- The sky on the left, the scores on the right. One band, two panels,
-         both filled from /api/brief. -->
+         both filled from /api/brief. World headlines live in the scores panel
+         now, under Philly, so nothing ambient sits in the working area. -->
     <div class="toprow">
       <div class="wxp" id="wxp"></div>
       <div class="sptick" id="sptick"></div>
@@ -4633,7 +4620,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.1945 &middot; 06 Sep 19:45</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0906.2012 &middot; 06 Sep 20:12</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -13550,30 +13537,6 @@ function smsSend(){
 var CRYPTO=null;
 /* The banner said NEW YORK CITY no matter where he was. It follows the same
    fix the forecast uses, so the clock and the city agree with each other. */
-/* The headline strip. Cycles through what the brief already fetched, so it
-   costs nothing extra — same data the news card used to show, without a card. */
-var NB_I=0, NB_TIMER=null;
-function newsBarPaint(){
-  var bar=document.getElementById("newsbar"), tr=document.getElementById("nb-track");
-  if(!bar||!tr) return;
-  var rows=(typeof BRIEF!=="undefined" && BRIEF && (BRIEF.news||BRIEF.headlines)) || [];
-  rows=rows.filter(function(x){ return x && x.title; }).slice(0,8);
-  if(!rows.length){ bar.hidden=true; return; }
-  bar.hidden=false;
-  if(NB_I>=rows.length) NB_I=0;
-  var x=rows[NB_I];
-  tr.innerHTML='<span class="nb-src">'+esc(String(x.src||"").slice(0,10))+'</span>'
-    +'<span class="nb-t">'+esc(x.title)+'</span>'
-    +'<span class="nb-n">'+(NB_I+1)+'/'+rows.length+'</span>';
-  tr.className="nb-track in";
-  setTimeout(function(){ if(tr) tr.className="nb-track"; },40);
-}
-function newsBarStart(){
-  if(NB_TIMER) clearInterval(NB_TIMER);
-  newsBarPaint();
-  NB_TIMER=setInterval(function(){ NB_I++; newsBarPaint(); }, 7000);
-}
-setTimeout(newsBarStart, 1500);
 
 function bannerPaint(){
   var el=document.getElementById("tb-place");
@@ -14251,13 +14214,29 @@ function spPaint(){
       : '<span class="ph-r">'+body+'</span>';
   }).join("");
 
-  if(!rows && !phRows){ host.className="sptick"; host.innerHTML=""; return; }
+  /* World headlines go in here too, under Philly, at Glen's request — he wants
+     one band for everything ambient rather than a card competing for height in
+     the working area. The panel keeps its size: the list is capped and scrolls
+     inside itself, so more stories never make the box taller. */
+  var wr=(typeof BRIEF!=="undefined" && BRIEF && (BRIEF.news||BRIEF.headlines)) || [];
+  var wRows=wr.filter(function(x){ return x&&x.title; }).slice(0,8).map(function(x){
+    var href=/^https?:\/\//i.test(x.link||"") ? x.link : "";
+    var body='<span class="ph-s">'+esc(String(x.src||"").slice(0,10))+'</span>'
+            +'<span class="ph-t">'+esc(x.title)+'</span>';
+    return href
+      ? '<a class="ph-r" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+body+'</a>'
+      : '<span class="ph-r">'+body+'</span>';
+  }).join("");
+
+  if(!rows && !phRows && !wRows){ host.className="sptick"; host.innerHTML=""; return; }
   host.className="sptick on";
   host.innerHTML=
      (rows ? '<div class="sp-top"><div class="sp-lbl">SCORES</div>'
              +'<div class="sp-rail">'+rows+'</div></div>' : "")
     +(phRows ? '<div class="sp-phl"><span>PHILLY</span></div>'
-               +'<div class="ph-list">'+phRows+'</div>' : "");
+               +'<div class="ph-list">'+phRows+'</div>' : "")
+    +(wRows ? '<div class="sp-phl"><span>NEWS</span></div>'
+              +'<div class="ph-list news">'+wRows+'</div>' : "");
 }
 
 /* ======================= WHAT SHE KNOWS ABOUT HIM =======================
@@ -19281,7 +19260,7 @@ function dashView(){
     }
     h+='</div>';
 
-    h+='<div class="todayrow two"><div class="tcol">';
+    h+='<div class="todayrow two">';   /* tasks left, meetings right */
 
     /* the checklist */
     h+='<div class="tcard list'+(TASK_SHUT?" shut":"")+'">'
@@ -19392,7 +19371,6 @@ function dashView(){
     h+='</div>';
   })();
 
-    h+='</div>';   /* .tcol — tasks and meetings share the left column */
     h+='</div>';        /* .todayrow */
     h+='</div>';        /* .sec  — Today */
   })();
