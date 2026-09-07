@@ -4643,6 +4643,13 @@ textarea.dw-pi.big{min-height:92px}
   box-shadow:0 20px 55px rgba(0,0,0,.62), 0 0 20px rgba(0,255,133,.13),
              inset 0 1px 0 rgba(255,255,255,.05)}
 .jvpop.think .jvpop-in{border-color:rgba(191,160,101,.40)}
+.jvpop.bad .jvpop-in{border-color:rgba(201,123,118,.55)}
+.jvpop.bad .jv-txt>b{color:#f0a9a4}
+.jvpop.bad .jv-txt>i{color:#e9c8c5;-webkit-line-clamp:3}
+.jvpop.bad .jv-wave:before{border-color:rgba(201,123,118,.25);
+  border-top-color:rgba(201,123,118,.9);animation:none;opacity:1}
+.jvpop.bad .jv-wave:after{opacity:0}
+.jvpop.bad .jv-wave i{background:#6b4a48;box-shadow:none;animation:none;transform:scaleY(.35)}
 @keyframes jvBreathe{
   0%,100%{box-shadow:0 20px 55px rgba(0,0,0,.62),0 0 20px rgba(0,255,133,.14),
                      inset 0 1px 0 rgba(255,255,255,.05)}
@@ -4839,7 +4846,7 @@ textarea.dw-pi.big{min-height:92px}
       <span class="jvfab-t">Talk</span>
     </button>
 
-    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0420 &middot; 07 Sep 04:20</div>
+    <div class="buildstamp" id="buildstamp" title="Which build you are looking at. If this is not the newest one, the deploy has not landed or the page is cached.">v0907.0510 &middot; 07 Sep 05:10</div>
     <div class="dash" id="dash"></div>
 
     <div class="tower">
@@ -11709,7 +11716,7 @@ function startMicScribe(who){
       scribeCleanup();
       RECON=false; micPaint(false);
       if(cancelled || !blob || blob.size<1200){
-        if(!cancelled) T.note("Did not catch anything. Tap and speak a little sooner.");
+        if(!cancelled) micErr("Nothing was recorded. Tap, wait for the ring, then speak.", T);
         return;
       }
       scribeSend(blob, T);
@@ -11764,9 +11771,9 @@ function startMicScribe(who){
     scribeCleanup(); RECON=false; micPaint(false);
     var nm=(err&&err.name)||"";
     if(nm==="NotAllowedError"||nm==="SecurityError")
-      T.note("Microphone blocked. Allow the mic for this site in your browser, then tap again.");
+      micErr("Microphone blocked. Click the padlock in the address bar, set Microphone to Allow, then reload.", T);
     else if(nm==="NotFoundError")
-      T.note("No microphone found on this machine.");
+      micErr("No microphone found on this machine.", T);
     else { SCRIBE_OK=false; startMicWeb(who); }
   });
 }
@@ -11778,7 +11785,7 @@ function scribeSend(blob, T){
   micBar("Working out what you said…", "");
   var fr=new FileReader();
   fr.onerror=function(){ RECON=false; micPaint(false);
-    T.note("Could not read the recording."); };
+    micErr("Could not read the recording.", T); };
   fr.onload=function(){
     var b64=String(fr.result||"").split(",")[1]||"";
     var headers={"Content-Type":"application/json"};
@@ -11803,17 +11810,13 @@ function scribeSend(blob, T){
       SCRIBE_OK=true;
       var q=micFix(String((j&&j.text)||"").trim());
       micPaint(false);
-      if(!q){ T.note("Did not catch anything. Try again."); return; }
+      if(!q){ micErr("Heard you, but no words came back. Try again.", T); return; }
       T.inputs.forEach(function(id){
         var t=document.getElementById(id); if(t) t.value=q; });
       T.send(q);
     }).catch(function(e){
       micPaint(false);
-      if(SCRIBE_OK===false)
-        T.note("Falling back to the browser's own speech for now — "
-              +"tap the mic and try again.");
-      else
-        T.note("Could not transcribe that: "+(e.message||"unknown error"));
+      micErr((e && e.message) ? e.message : "Could not transcribe that.", T);
     });
   };
   fr.readAsDataURL(blob);
@@ -12043,6 +12046,21 @@ var MIC_SVG_STOP='<svg class="micg" viewBox="0 0 24 24" aria-hidden="true"><rect
 function micGlyph(on){ return on ? MIC_SVG_STOP : MIC_SVG; }
 
 var MIC_HEARD="", MIC_NOTE="";
+/* Errors used to go to T.note(), which writes into an agent's chat log. If the
+   dock was closed — which it is, most of the time — the message was written
+   somewhere Glen could not see, so a blocked microphone and a broken route
+   both looked identical to nothing happening at all. This keeps the overlay on
+   screen with the actual reason on it. */
+var MIC_ERR="", MIC_ERR_AT=0;
+function micErr(msg, T){
+  MIC_ERR=String(msg||""); MIC_ERR_AT=Date.now();
+  try{ if(T && T.note) T.note(MIC_ERR); }catch(e){}
+  try{ jvPaint(); }catch(e){}
+  setTimeout(function(){
+    if(Date.now()-MIC_ERR_AT >= 7800){ MIC_ERR=""; try{ jvPaint(); }catch(e){} }
+  }, 8000);
+}
+function micErrLive(){ return !!MIC_ERR && (Date.now()-MIC_ERR_AT < 8000); }
 
 function micPaint(on){
   ["mic","mmic","jmic","tmic"].forEach(function(id){
@@ -13888,8 +13906,10 @@ function jvPaint(){
      the full-width bar had become. */
   var pop=document.getElementById("jvpop");
   if(pop){
-    var on = live || think || talking;
+    var erring = micErrLive();
+    var on = live || think || talking || erring;
     pop.hidden = !on;
+    pop.classList.toggle("bad", !!erring && !live && !think && !talking);
     pop.classList.toggle("live", !!live);
     pop.classList.toggle("think", !live && think && !talking);
     pop.classList.toggle("talk", !!talking && !live);
@@ -13900,14 +13920,16 @@ function jvPaint(){
     var xb =document.getElementById("jv-stop");
 
     /* The label says which of the three things is happening and to whom. */
-    if(lab) lab.textContent = live    ? "Listening"
+    if(lab) lab.textContent = erring && !live && !think && !talking ? "Problem"
+                            : live    ? "Listening"
                             : talking ? micWhoName()+" is speaking"
                             :           micWhoName()+" is thinking";
 
     /* Underneath it, the words it has actually caught. Seeing your own
        sentence appear is the only reliable signal that it is hearing you. */
     if(hrd){
-      var show = live ? (MIC_HEARD || "") : "";
+      var show = (erring && !live && !think && !talking) ? MIC_ERR
+               : live ? (MIC_HEARD || "") : "";
       hrd.textContent = show;
       hrd.classList.toggle("on", !!show);
     }
